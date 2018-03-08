@@ -1,0 +1,11 @@
+[Protocol]
+exec=fantasygold-qt '%u'
+protocol=fantasygold
+input=none
+output=none
+helper=true
+listing=
+reading=false
+writing=false
+makedir=false
+deleting=false
