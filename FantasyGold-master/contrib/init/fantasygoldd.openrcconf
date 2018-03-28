@@ -1,0 +1,26 @@
+# /etc/conf.d/fantasygoldd: config file for /etc/init.d/fantasygoldd
+
+# Config file location
+#BITCOIND_CONFIGFILE="/etc/fantasygold/fantasygold.conf"
+
+# What directory to write pidfile to?  (created and owned by $BITCOIND_USER)
+#BITCOIND_PIDDIR="/var/run/fantasygoldd"
+
+# What filename to give the pidfile
+#BITCOIND_PIDFILE="${BITCOIND_PIDDIR}/fantasygoldd.pid"
+
+# Where to write fantasygoldd data (be mindful that the blockchain is large)
+#BITCOIND_DATADIR="/var/lib/fantasygoldd"
+
+# User and group to own fantasygoldd process
+#BITCOIND_USER="fantasygold"
+#BITCOIND_GROUP="fantasygold"
+
+# Path to fantasygoldd executable
+#BITCOIND_BIN="/usr/bin/fantasygoldd"
+
+# Nice value to run fantasygoldd under
+#BITCOIND_NICE=0
+
+# Additional options (avoid -conf and -datadir, use flags above)
+BITCOIND_OPTS=""
