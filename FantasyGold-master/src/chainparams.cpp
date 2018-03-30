@@ -223,9 +223,14 @@ public:
 
 	//! Modify the testnet genesis block so the timestamp is valid for a later start.
 	genesis.nTime = 1514516171;
-	genesis.nNonce = 250375;
+	genesis.nNonce = 0;
 	genesis.nBits = bnProofOfWorkLimit.GetCompact();
+	
 	hashGenesisBlock = genesis.GetHash();
+	        printf("%s\n MAIN ", hashGenesisBlock.ToString().c_str());
+        printf("%s\n MAIN ", genesis.hashMerkleRoot.ToString().c_str());
+        printf("%x\n MAIN ", bnProofOfWorkLimit.GetCompact());
+        printf("%d\n MAIN ", genesis.nNonce);
 	
 	assert(hashGenesisBlock == uint256("0x000001a2f1a9a313468d66b81dd2cb199f6f8f5d426198a7c4daa9c3f9498285"));
 	assert(genesis.hashMerkleRoot == uint256("0x77976d6bd593c84063ac3937525bc15e25188d96871b13d4451ffc382999f64f"));
