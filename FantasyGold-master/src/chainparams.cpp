@@ -128,12 +128,9 @@ public:
         genesis.nBits = bnProofOfWorkLimit.GetCompact();;
         genesis.nNonce = 125854; 
 
-	hashGenesisBlock = genesis.GetHash();
-	while (hashGenesisBlock > bnProofOfWorkLimit.getuint256()){
-        if (++genesis.nNonce==0) break;
         hashGenesisBlock = genesis.GetHash();
-        }
-        printf("%s\n MAIN ", hashGenesisBlock.ToString().c_str());
+       
+       printf("%s\n MAIN ", hashGenesisBlock.ToString().c_str());
         printf("%s\n MAIN ", genesis.hashMerkleRoot.ToString().c_str());
         printf("%x\n MAIN ", bnProofOfWorkLimit.GetCompact());
         printf("%d\n MAIN ", genesis.nNonce);
@@ -221,29 +218,16 @@ public:
 	genesis.nTime = 1514516171;
 	genesis.nNonce = 250375;
 	genesis.nBits = bnProofOfWorkLimit.GetCompact();
-	//hashGenesisBlock = genesis.GetHash();
-	
-	
-	//debug print
-	
-	while (hashGenesisBlock > bnProofOfWorkLimit.getuint256()){
-        if (++genesis.nNonce==0) break;
-        hashGenesisBlock = genesis.GetHash();
-        }
-        printf("%s\n MAIN ", hashGenesisBlock.ToString().c_str());
-        printf("%s\n MAIN ", genesis.hashMerkleRoot.ToString().c_str());
-        printf("%x\n MAIN ", bnProofOfWorkLimit.GetCompact());
-        printf("%d\n MAIN ", genesis.nNonce);
-	
+	hashGenesisBlock = genesis.GetHash();
 	
 	assert(hashGenesisBlock == uint256("0x000001a2f1a9a313468d66b81dd2cb199f6f8f5d426198a7c4daa9c3f9498285"));
 	assert(genesis.hashMerkleRoot == uint256("0x77976d6bd593c84063ac3937525bc15e25188d96871b13d4451ffc382999f64f"));
 
         vFixedSeeds.clear();
         vSeeds.clear();
-        vSeeds.push_back(CDNSSeedData("testnet01.mempool.pw", "testnet01.mempool.pw"));
-	vSeeds.push_back(CDNSSeedData("testnet02.mempool.pw", "testnet02.mempool.pw"));
-	vSeeds.push_back(CDNSSeedData("testnet03.mempool.pw", "testnet03.mempool.pw"));
+        //vSeeds.push_back(CDNSSeedData("testnet01.mempool.pw", "testnet01.mempool.pw"));
+	//vSeeds.push_back(CDNSSeedData("testnet02.mempool.pw", "testnet02.mempool.pw"));
+	//vSeeds.push_back(CDNSSeedData("testnet03.mempool.pw", "testnet03.mempool.pw"));
 
         base58Prefixes[PUBKEY_ADDRESS] = std::vector<unsigned char>(1, 65); // Testnet fantasygold addresses start with 'T'
         base58Prefixes[SCRIPT_ADDRESS] = std::vector<unsigned char>(1, 12);  // Testnet fantasygold script addresses start with '5' or '6'
@@ -297,7 +281,7 @@ public:
         genesis.nNonce = 12345;
         hashGenesisBlock = genesis.GetHash();
         nDefaultPort = 51476;
-//        assert(hashGenesisBlock == uint256("0x4f023a2120d9127b21bbad01724fdb79b519f593f2a85b60d3d79160ec5f29df"));
+        assert(hashGenesisBlock == uint256("0x4f023a2120d9127b21bbad01724fdb79b519f593f2a85b60d3d79160ec5f29df"));
         vFixedSeeds.clear(); //! Testnet mode doesn't have any fixed seeds.
         vSeeds.clear();      //! Testnet mode doesn't have any DNS seeds.
         fRequireRPCPassword = false;
