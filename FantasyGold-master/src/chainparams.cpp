@@ -120,7 +120,7 @@ public:
          //   vMerkleTree: e0028e
 	 
 	 //
-        const char* pszTimestamp = "November 30 2017 - Niger Approves Armed U.S. Drone Flights, Expanding Pentagon’s Role in Africa";
+        const char* pszTimestamp = "FGC Starts Now";
         CMutableTransaction txNew;
         txNew.vin.resize(1);
         txNew.vout.resize(1);
@@ -131,7 +131,7 @@ public:
         genesis.hashPrevBlock = 0;
         genesis.hashMerkleRoot = genesis.BuildMerkleTree();
         genesis.nVersion = 1;
-        genesis.nTime = 1512131946;
+        genesis.nTime = 1522393700;
         genesis.nBits = bnProofOfWorkLimit.GetCompact();;
         genesis.nNonce = 0; 
 
