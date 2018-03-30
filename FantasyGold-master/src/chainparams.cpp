@@ -143,8 +143,8 @@ public:
         printf("%d\n MAIN ", genesis.nNonce);
 
 	
-        assert(hashGenesisBlock == uint256("0x0000068e7ab8e264f6759d2d81b29e8b917c10b04db47a9a0bb3cba3fba5d574"));
-	assert(genesis.hashMerkleRoot == uint256("0x77976d6bd593c84063ac3937525bc15e25188d96871b13d4451ffc382999f64f"));
+        assert(hashGenesisBlock == uint256("0x8b8217c10505fdbfcdfcf4f38b57886f0d20533706368047bc73411726974405"));
+	assert(genesis.hashMerkleRoot == uint256("0x5fbe589d4a45f9e3af3428d0d608fe54d683d068c61b7451e0a377380e26868a"));
 
 	//vSeeds.push_back(CDNSSeedData("mempool.pw", "bwkseed.mempool.pw"));
         /*vSeeds.push_back(CDNSSeedData("ssus.tech", "bulwark-dns-seed04.ssus.tech"));
