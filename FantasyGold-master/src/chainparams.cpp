@@ -129,11 +129,21 @@ public:
         genesis.nNonce = 125854; 
 
 	hashGenesisBlock = genesis.GetHash();
+	while (hashGenesisBlock > bnProofOfWorkLimit.getuint256()){
+        if (++genesis.nNonce==0) break;
+        hashGenesisBlock = genesis.GetHash();
+        }
+        printf("%s\n MAIN ", hashGenesisBlock.ToString().c_str());
+        printf("%s\n MAIN ", genesis.hashMerkleRoot.ToString().c_str());
+        printf("%x\n MAIN ", bnProofOfWorkLimit.GetCompact());
+        printf("%d\n MAIN ", genesis.nNonce);
+
+	
         assert(hashGenesisBlock == uint256("0x0000068e7ab8e264f6759d2d81b29e8b917c10b04db47a9a0bb3cba3fba5d574"));
 	assert(genesis.hashMerkleRoot == uint256("0x77976d6bd593c84063ac3937525bc15e25188d96871b13d4451ffc382999f64f"));
 
-	vSeeds.push_back(CDNSSeedData("mempool.pw", "bwkseed.mempool.pw"));
-        vSeeds.push_back(CDNSSeedData("ssus.tech", "bulwark-dns-seed04.ssus.tech"));
+	//vSeeds.push_back(CDNSSeedData("mempool.pw", "bwkseed.mempool.pw"));
+        /*vSeeds.push_back(CDNSSeedData("ssus.tech", "bulwark-dns-seed04.ssus.tech"));
 	vSeeds.push_back(CDNSSeedData("blocksuckernation.com", "bwkseed.blocksuckernation.com"));
 	vSeeds.push_back(CDNSSeedData("bwk1.masterhash.us", "bwk1.masterhash.us"));      // Single node address
         vSeeds.push_back(CDNSSeedData("bwk2.masterhash.us", "bwk2.masterhash.us")); 	 // Single node address
@@ -145,7 +155,7 @@ public:
         vSeeds.push_back(CDNSSeedData("bwk8.masterhash.us", "bwk8.masterhash.us"));      // Single node address
         vSeeds.push_back(CDNSSeedData("bwk9.masterhash.us", "bwk9.masterhash.us"));      // Single node address
 	vSeeds.push_back(CDNSSeedData("bwk10.masterhash.us", "bwk10.masterhash.us"));    // Single node address
-        
+        */
         base58Prefixes[PUBKEY_ADDRESS] = std::vector<unsigned char>(1, 35); // F
         base58Prefixes[SCRIPT_ADDRESS] = std::vector<unsigned char>(1, 18); 
         base58Prefixes[SECRET_KEY] = std::vector<unsigned char>(1, 212);
@@ -211,8 +221,21 @@ public:
 	genesis.nTime = 1514516171;
 	genesis.nNonce = 250375;
 	genesis.nBits = bnProofOfWorkLimit.GetCompact();
-
-	hashGenesisBlock = genesis.GetHash();
+	//hashGenesisBlock = genesis.GetHash();
+	
+	
+	//debug print
+	
+	while (hashGenesisBlock > bnProofOfWorkLimit.getuint256()){
+        if (++genesis.nNonce==0) break;
+        hashGenesisBlock = genesis.GetHash();
+        }
+        printf("%s\n MAIN ", hashGenesisBlock.ToString().c_str());
+        printf("%s\n MAIN ", genesis.hashMerkleRoot.ToString().c_str());
+        printf("%x\n MAIN ", bnProofOfWorkLimit.GetCompact());
+        printf("%d\n MAIN ", genesis.nNonce);
+	
+	
 	assert(hashGenesisBlock == uint256("0x000001a2f1a9a313468d66b81dd2cb199f6f8f5d426198a7c4daa9c3f9498285"));
 	assert(genesis.hashMerkleRoot == uint256("0x77976d6bd593c84063ac3937525bc15e25188d96871b13d4451ffc382999f64f"));
 
