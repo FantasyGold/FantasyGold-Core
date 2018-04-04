@@ -312,4 +312,4 @@ if __name__ == '__main__':
 	if not settings['genesis'] in blkmap:
 		print("Genesis block not found in hashlist")
 	else:
-		BlockDataCopier(settings, blkindex, blkmap).run()
+BlockDataCopier(settings, blkindex, blkmap).run()

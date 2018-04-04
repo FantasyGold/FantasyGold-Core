@@ -154,4 +154,4 @@ if __name__ == '__main__':
 	if use_datadir:
 		get_rpc_cookie()
 
-	get_block_hashes(settings)
+get_block_hashes(settings)
