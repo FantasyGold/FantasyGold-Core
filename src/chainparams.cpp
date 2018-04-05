@@ -15,9 +15,9 @@
 #include "utilstrencodings.h"
 
 
-#include < assert.h >
+#include <assert.h>
 
-#include < boost / assign / list_of.hpp >
+#include <boost/assign/list_of.hpp>
 
 using namespace std;
 using namespace boost::assign;
@@ -275,7 +275,7 @@ class CRegTestParams: public CTestNetParams {
     genesis.nNonce = 12345;
     hashGenesisBlock = genesis.GetHash();
     nDefaultPort = 51476;
-    assert(hashGenesisBlock == uint256("0x4f023a2120d9127b21bbad01724fdb79b519f593f2a85b60d3d79160ec5f29df"));
+    //assert(hashGenesisBlock == uint256("0x4f023a2120d9127b21bbad01724fdb79b519f593f2a85b60d3d79160ec5f29df"));
     vFixedSeeds.clear(); //! Testnet mode doesn't have any fixed seeds.
     vSeeds.clear(); //! Testnet mode doesn't have any DNS seeds.
     fRequireRPCPassword = false;
