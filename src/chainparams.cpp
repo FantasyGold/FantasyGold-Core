@@ -148,7 +148,7 @@ class CMainParams: public CChainParams {
     assert(hashGenesisBlock == uint256("0x00000000579133b6ce9f275d5dfa9bcda51fcb6969ecb110ca90900b9fd2c3c1"));
     assert(genesis.hashMerkleRoot == uint256("0xbddc49f72d985b3d3469c6f38350621a4cea2b0830a965714831d9c5cbbd0052"));
 
-   vSeeds.push_back(CDNSSeedData("ec2-18-221-160-231.us-east-2.compute.amazonaws.com"));
+   vSeeds.push_back(CDNSSeedData("ec2-18-221-160-231.us-east-2.compute.amazonaws.com", "ec2-18-221-160-231.us-east-2.compute.amazonaws.com"));
   
     base58Prefixes[PUBKEY_ADDRESS] = std::vector < unsigned char > (1, 35); // F
     base58Prefixes[SCRIPT_ADDRESS] = std::vector < unsigned char > (1, 18);
