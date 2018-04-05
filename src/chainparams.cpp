@@ -127,7 +127,7 @@ class CMainParams: public CChainParams {
     genesis.nBits = bnProofOfWorkLimit.GetCompact();
     genesis.nNonce = 2765953;
     hashGenesisBlock = genesis.GetHash();
-    MineGenesisBlock(genesis);
+    //MineGenesisBlock(genesis);
     assert(hashGenesisBlock == uint256("0x00000a29a4e72b27b41c203379bc549593f10760f7260daef1a87bf667854846"));
     assert(genesis.hashMerkleRoot == uint256("0x634fd30aee03a4da0402ec7255286c3bef6f239e4ba6c4a2c7154319f635cecc"));
     vSeeds.push_back(CDNSSeedData("ec2-18-221-160-231.us-east-2.compute.amazonaws.com", "ec2-18-221-160-231.us-east-2.compute.amazonaws.com"));
@@ -344,7 +344,7 @@ bool SelectParamsFromCommandLine() {
 
 void MineGenesisBlock(CBlock &genesis)
 {
-    uint256 best = uint256();();
+    uint256 best = uint256();
     int n=0;
     uint256 hashTarget = uint256().SetCompact(genesis.nBits);
     while (uint256(genesis.GetHash()) > hashTarget) {
