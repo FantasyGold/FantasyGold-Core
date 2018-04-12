@@ -104,7 +104,7 @@ BOOST_AUTO_TEST_CASE(compress_script_to_compressed_pubkey_id)
     CKey key;
     key.MakeNewKey(true); // case compressed PubKeyID
 
-    CScript script = CScript() << ToByteVector(key.GetPubKey()) << OP_CHECKSIG; // COMPRESSED_PUBLIC_KEY_SIZE (33)
+    CScript script = CScript() << ToByteVector(key.GetPubKey()) << OP_CHECKSIG; // COMPRESSED_SIZE (33)
     BOOST_CHECK_EQUAL(script.size(), 35);
 
     std::vector<unsigned char> out;
@@ -121,7 +121,7 @@ BOOST_AUTO_TEST_CASE(compress_script_to_uncompressed_pubkey_id)
 {
     CKey key;
     key.MakeNewKey(false); // case uncompressed PubKeyID
-    CScript script =  CScript() << ToByteVector(key.GetPubKey()) << OP_CHECKSIG; // PUBLIC_KEY_SIZE (65)
+    CScript script =  CScript() << ToByteVector(key.GetPubKey()) << OP_CHECKSIG; // SIZE (65)
     BOOST_CHECK_EQUAL(script.size(), 67);                   // 1 char code + 65 char pubkey + OP_CHECKSIG
 
     std::vector<unsigned char> out;
