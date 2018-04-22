@@ -1,7 +1,7 @@
 // Copyright (c) 2010 Satoshi Nakamoto
 // Copyright (c) 2009-2014 The Bitcoin developers
 // Copyright (c) 2014-2015 The Dash developers
-// Copyright (c) 2015-2017 The PIVX developers
+// // Copyright (c) 2015-2017 The Bulwark developers
 // Copyright (c) 2017-2018 The FantasyGold developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
@@ -94,7 +94,7 @@ static inline int64_t roundint64(double d)
 CAmount AmountFromValue(const Value& value)
 {
     double dAmount = value.get_real();
-    if (dAmount <= 0.0 || dAmount > 21000000.0)
+    if (dAmount <= 0.0 || dAmount > 100000000.0)
         throw JSONRPCError(RPC_TYPE_ERROR, "Invalid amount");
     CAmount nAmount = roundint64(dAmount * COIN);
     if (!MoneyRange(nAmount))
@@ -300,34 +300,14 @@ static const CRPCCommand vRPCCommands[] =
         {"hidden", "reconsiderblock", &reconsiderblock, true, true, false},
         {"hidden", "setmocktime", &setmocktime, true, false, false},
 
-        /* Pivx features */
+        /* FantasyGold features */
         {"fantasygold", "masternode", &masternode, true, true, false},
-        {"fantasygold", "listmasternodes", &listmasternodes, true, true, false},
-        {"fantasygold", "getmasternodecount", &getmasternodecount, true, true, false},
-        {"fantasygold", "masternodeconnect", &masternodeconnect, true, true, false},
-        {"fantasygold", "masternodecurrent", &masternodecurrent, true, true, false},
-        {"fantasygold", "masternodedebug", &masternodedebug, true, true, false},
-        {"fantasygold", "startmasternode", &startmasternode, true, true, false},
-        {"fantasygold", "createmasternodekey", &createmasternodekey, true, true, false},
-        {"fantasygold", "getmasternodeoutputs", &getmasternodeoutputs, true, true, false},
-        {"fantasygold", "listmasternodeconf", &listmasternodeconf, true, true, false},
-        {"fantasygold", "getmasternodestatus", &getmasternodestatus, true, true, false},
-        {"fantasygold", "getmasternodewinners", &getmasternodewinners, true, true, false},
-        {"fantasygold", "getmasternodescores", &getmasternodescores, true, true, false},
+        {"fantasygold", "masternodelist", &masternodelist, true, true, false},
         {"fantasygold", "mnbudget", &mnbudget, true, true, false},
-        {"fantasygold", "preparebudget", &preparebudget, true, true, false},
-        {"fantasygold", "submitbudget", &submitbudget, true, true, false},
-        {"fantasygold", "mnbudgetvote", &mnbudgetvote, true, true, false},
-        {"fantasygold", "getbudgetvotes", &getbudgetvotes, true, true, false},
-        {"fantasygold", "getnextsuperblock", &getnextsuperblock, true, true, false},
-        {"fantasygold", "getbudgetprojection", &getbudgetprojection, true, true, false},
-        {"fantasygold", "getbudgetinfo", &getbudgetinfo, true, true, false},
-        {"fantasygold", "mnbudgetrawvote", &mnbudgetrawvote, true, true, false},
+        {"fantasygold", "mnbudgetvoteraw", &mnbudgetvoteraw, true, true, false},
         {"fantasygold", "mnfinalbudget", &mnfinalbudget, true, true, false},
-        {"fantasygold", "checkbudgets", &checkbudgets, true, true, false},
         {"fantasygold", "mnsync", &mnsync, true, true, false},
         {"fantasygold", "spork", &spork, true, true, false},
-        {"fantasygold", "getpoolinfo", &getpoolinfo, true, true, false},
 #ifdef ENABLE_WALLET
         {"fantasygold", "obfuscation", &obfuscation, false, false, true}, /* not threadSafe because of SendMoney */
 
@@ -1061,7 +1041,7 @@ std::string HelpExampleRpc(string methodname, string args)
 {
     return "> curl --user myusername --data-binary '{\"jsonrpc\": \"1.0\", \"id\":\"curltest\", "
            "\"method\": \"" +
-           methodname + "\", \"params\": [" + args + "] }' -H 'content-type: text/plain;' http://127.0.0.1:51473/\n";
+           methodname + "\", \"params\": [" + args + "] }' -H 'content-type: text/plain;' http://127.0.0.1:52541/\n";
 }
 
 const CRPCTable tableRPC;

@@ -89,7 +89,7 @@ use old versions of Upstart and do not supply the start-stop-daemon uitility.
 Copy fantasygoldd.init to /etc/init.d/fantasygoldd. Test by running "service fantasygoldd start".
 
 Using this script, you can adjust the path and flags to the fantasygoldd program by
-setting the FANTASYGOLDD and FLAGS environment variables in the file
+setting the FantasyGoldD and FLAGS environment variables in the file
 /etc/sysconfig/fantasygoldd. You can also use the DAEMONOPTS environment variable here.
 
 5. Auto-respawn

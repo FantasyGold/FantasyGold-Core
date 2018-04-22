@@ -27,18 +27,18 @@ static std::string makeHRef(const std::string& Str)
     return "<a href=\"" + Str + "\">" + Str + "</a>";
 }
 
-static CAmount getTxIn(const CTransaction& tx)
+static int64_t getTxIn(const CTransaction& tx)
 {
     if (tx.IsCoinBase())
         return 0;
 
-    CAmount Sum = 0;
+    int64_t Sum = 0;
     for (unsigned int i = 0; i < tx.vin.size(); i++)
         Sum += getPrevOut(tx.vin[i].prevout).nValue;
     return Sum;
 }
 
-static std::string ValueToString(CAmount nValue, bool AllowNegative = false)
+static std::string ValueToString(int64_t nValue, bool AllowNegative = false)
 {
     if (nValue < 0 && !AllowNegative)
         return "<span>" + _("unknown") + "</span>";
@@ -196,9 +196,9 @@ std::string BlockToString(CBlockIndex* pBlock)
     CBlock block;
     ReadBlockFromDisk(block, pBlock);
 
-    CAmount Fees = 0;
-    CAmount OutVolume = 0;
-    CAmount Reward = 0;
+    int64_t Fees = 0;
+    int64_t OutVolume = 0;
+    int64_t Reward = 0;
 
     std::string TxLabels[] = {_("Hash"), _("From"), _("Amount"), _("To"), _("Amount")};
 
@@ -207,12 +207,12 @@ std::string BlockToString(CBlockIndex* pBlock)
         const CTransaction& tx = block.vtx[i];
         TxContent += TxToRow(tx);
 
-        CAmount In = getTxIn(tx);
-        CAmount Out = tx.GetValueOut();
+        int64_t In = getTxIn(tx);
+        int64_t Out = tx.GetValueOut();
         if (tx.IsCoinBase())
             Reward += Out;
         else if (In < 0)
-            Fees = -Params().MaxMoneyOut();
+            Fees = -MAX_MONEY;
         else {
             Fees += In - Out;
             OutVolume += Out;
@@ -220,7 +220,7 @@ std::string BlockToString(CBlockIndex* pBlock)
     }
     TxContent += "</table>";
 
-    CAmount Generated;
+    int64_t Generated;
     if (pBlock->nHeight == 0)
         Generated = OutVolume;
     else
@@ -307,7 +307,7 @@ std::string TxToString(uint256 BlockHash, const CTransaction& tx)
             COutPoint Out = tx.vin[i].prevout;
             CTxOut PrevOut = getPrevOut(tx.vin[i].prevout);
             if (PrevOut.nValue < 0)
-                Input = -Params().MaxMoneyOut();
+                Input = -MAX_MONEY;
             else
                 Input += PrevOut.nValue;
             std::string InputsContentCells[] =

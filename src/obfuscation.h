@@ -1,5 +1,5 @@
 // Copyright (c) 2014-2015 The Dash developers
-// Copyright (c) 2015-2017 The PIVX developers
+// // Copyright (c) 2015-2017 The Bulwark developers
 // Copyright (c) 2017-2018 The FantasyGold developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
@@ -48,7 +48,7 @@ class CActiveMasternode;
 #define OBFUSCATION_RELAY_SIG 3
 
 static const int64_t OBFUSCATION_COLLATERAL = (10 * COIN);
-static const int64_t OBFUSCATION_POOL_MAX = (99999.99 * COIN);
+static const int64_t OBFUSCATION_POOL_MAX = (4999.99 * COIN);
 
 extern CObfuscationPool obfuScationPool;
 extern CObfuScationSigner obfuScationSigner;
@@ -99,7 +99,7 @@ public:
     bool isSet;
     std::vector<CTxDSIn> sev;
     std::vector<CTxDSOut> vout;
-    CAmount amount;
+    int64_t amount;
     CTransaction collateral;
     CTransaction txSupporting;
     int64_t addedTime; // time in UTC milliseconds
@@ -112,7 +112,7 @@ public:
     }
 
     /// Add entries to use for Obfuscation
-    bool Add(const std::vector<CTxIn> vinIn, CAmount amountIn, const CTransaction collateralIn, const std::vector<CTxOut> voutIn)
+    bool Add(const std::vector<CTxIn> vinIn, int64_t amountIn, const CTransaction collateralIn, const std::vector<CTxOut> voutIn)
     {
         if (isSet) {
             return false;
@@ -248,7 +248,7 @@ public:
 class CObfuScationSigner
 {
 public:
-    /// Is the inputs associated with this public key? (and there is 5000 FGC- checking if valid masternode)
+    /// Is the inputs associated with this public key? (and there is 10,000 FGC - checking if valid masternode)
     bool IsVinAssociatedWithPubkey(CTxIn& vin, CPubKey& pubkey);
     /// Set the private/public key values, returns true if successful
     bool GetKeysFromSecret(std::string strSecret, CKey& keyRet, CPubKey& pubkeyRet);
@@ -442,7 +442,7 @@ public:
     bool IsCompatibleWithEntries(std::vector<CTxOut>& vout);
 
     /// Is this amount compatible with other client in the pool?
-    bool IsCompatibleWithSession(CAmount nAmount, CTransaction txCollateral, int& errorID);
+    bool IsCompatibleWithSession(int64_t nAmount, CTransaction txCollateral, int& errorID);
 
     /// Passively run Obfuscation in the background according to the configuration in settings (only for QT)
     bool DoAutomaticDenominating(bool fDryRun = false);
@@ -462,13 +462,13 @@ public:
     /// If the collateral is valid given by a client
     bool IsCollateralValid(const CTransaction& txCollateral);
     /// Add a clients entry to the pool
-    bool AddEntry(const std::vector<CTxIn>& newInput, const CAmount& nAmount, const CTransaction& txCollateral, const std::vector<CTxOut>& newOutput, int& errorID);
+    bool AddEntry(const std::vector<CTxIn>& newInput, const int64_t& nAmount, const CTransaction& txCollateral, const std::vector<CTxOut>& newOutput, int& errorID);
     /// Add signature to a vin
     bool AddScriptSig(const CTxIn& newVin);
     /// Check that all inputs are signed. (Are all inputs signed?)
     bool SignaturesComplete();
     /// As a client, send a transaction to a Masternode to start the denomination process
-    void SendObfuscationDenominate(std::vector<CTxIn>& vin, std::vector<CTxOut>& vout, CAmount amount);
+    void SendObfuscationDenominate(std::vector<CTxIn>& vin, std::vector<CTxOut>& vout, int64_t amount);
     /// Get Masternode updates about the progress of Obfuscation
     bool StatusUpdate(int newState, int newEntriesCount, int newAccepted, int& errorID, int newSessionID = 0);
 
@@ -486,7 +486,7 @@ public:
 
     /// Split up large inputs or make fee sized inputs
     bool MakeCollateralAmounts();
-    bool CreateDenominated(CAmount nTotalValue);
+    bool CreateDenominated(int64_t nTotalValue);
 
     /// Get the denominations for a list of outputs (returns a bitshifted integer)
     int GetDenominations(const std::vector<CTxOut>& vout, bool fSingleRandomDenom = false);
@@ -495,7 +495,7 @@ public:
     void GetDenominationsToString(int nDenom, std::string& strDenom);
 
     /// Get the denominations for a specific amount of fantasygold.
-    int GetDenominationsByAmount(CAmount nAmount, int nDenomTarget = 0); // is not used anymore?
+    int GetDenominationsByAmount(int64_t nAmount, int nDenomTarget = 0); // is not used anymore?
     int GetDenominationsByAmounts(std::vector<int64_t>& vecAmount);
 
     std::string GetMessageByID(int messageID);

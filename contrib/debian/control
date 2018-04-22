@@ -22,9 +22,9 @@ Build-Depends: debhelper,
  libqrencode-dev,
  libprotobuf-dev, protobuf-compiler
 Standards-Version: 3.9.2
-Homepage: https://www.fantasygold.io
-Vcs-Git: git://github.com/FantasyGoldCoin/FantasyGold.git
-Vcs-Browser: http://github.com/FantasyGoldCoin/FantasyGold
+Homepage: http://www.draftdaily.com
+Vcs-Git: git://github.com/FantasyGold-Project/FantasyGold.git
+Vcs-Browser: http://github.com/FantasyGold-Project/FantasyGold
 
 Package: fantasygoldd
 Architecture: any

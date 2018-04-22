@@ -92,9 +92,6 @@ public slots:
     /** Show MultiSend Dialog */
     void gotoMultiSendDialog();
 
-     /** Show a multisig tab **/
-    void gotoMultisigDialog(int index);
-
     /** Show BIP 38 tool - default to Encryption tab */
     void gotoBip38Tool();
 
@@ -125,7 +122,7 @@ public slots:
     /** Show progress dialog e.g. for rescan */
     void showProgress(const QString& title, int nProgress);
 
-    /** Update selected FGCamount from transactionview */
+    /** Update selected FGC amount from transactionview */
     void trxAmount(QString amount);
 
 signals:

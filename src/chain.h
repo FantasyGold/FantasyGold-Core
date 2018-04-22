@@ -199,7 +199,7 @@ public:
         nStakeTime = 0;
 
         nVersion = 0;
-        hashMerkleRoot = uint256();
+        hashMerkleRoot = 0;
         nTime = 0;
         nBits = 0;
         nNonce = 0;
@@ -221,13 +221,13 @@ public:
         nNonce = block.nNonce;
 
         //Proof of Stake
-        bnChainTrust = uint256();
+        bnChainTrust = 0;
         nMint = 0;
         nMoneySupply = 0;
         nFlags = 0;
         nStakeModifier = 0;
         nStakeModifierChecksum = 0;
-        hashProofOfStake = uint256();
+        hashProofOfStake = 0;
 
         if (block.IsProofOfStake()) {
             SetProofOfStake();
@@ -342,8 +342,6 @@ public:
             nFlags |= BLOCK_STAKE_MODIFIER;
     }
 
-    static bool IsSuperMajority(int minVersion, const CBlockIndex* pstart, unsigned int nRequired);
-
     std::string ToString() const
     {
         return strprintf("CBlockIndex(pprev=%p, nHeight=%d, merkle=%s, hashBlock=%s)",
@@ -392,13 +390,13 @@ public:
 
     CDiskBlockIndex()
     {
-        hashPrev = uint256();
-        hashNext = uint256();
+        hashPrev = 0;
+        hashNext = 0;
     }
 
     explicit CDiskBlockIndex(CBlockIndex* pindex) : CBlockIndex(*pindex)
     {
-        hashPrev = (pprev ? pprev->GetBlockHash() : uint256());
+        hashPrev = (pprev ? pprev->GetBlockHash() : 0);
     }
 
     ADD_SERIALIZE_METHODS;
@@ -430,7 +428,7 @@ public:
         } else {
             const_cast<CDiskBlockIndex*>(this)->prevoutStake.SetNull();
             const_cast<CDiskBlockIndex*>(this)->nStakeTime = 0;
-            const_cast<CDiskBlockIndex*>(this)->hashProofOfStake = uint256();
+            const_cast<CDiskBlockIndex*>(this)->hashProofOfStake = 0;
         }
 
         // block header

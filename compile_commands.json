@@ -1,0 +1,37 @@
+[
+    {
+        "arguments": [
+            "c++", 
+            "-c", 
+            "-DHAVE_CONFIG_H", 
+            "-I.", 
+            "-I../src/config", 
+            "-I./obj", 
+            "-DBUILD_BITCOIN_INTERNAL", 
+            "-DBOOST_SPIRIT_THREADSAFE", 
+            "-DHAVE_BUILD_INFO", 
+            "-D__STDC_FORMAT_MACROS", 
+            "-U_FORTIFY_SOURCE", 
+            "-D_FORTIFY_SOURCE=2", 
+            "-DHAVE_QT5", 
+            "-g", 
+            "-O2", 
+            "-Wall", 
+            "-Wextra", 
+            "-Wformat", 
+            "-Wformat-security", 
+            "-Wno-unused-parameter", 
+            "-Wstack-protector", 
+            "-fstack-protector-all", 
+            "-fPIC", 
+            "-fvisibility=hidden", 
+            "-fPIC", 
+            "-DPIC", 
+            "-o", 
+            "primitives/.libs/libbitcoinconsensus_la-transaction.o", 
+            "primitives/transaction.cpp"
+        ], 
+        "directory": "/home/silence/devfsg/Fangold/FantasyGold/src", 
+        "file": "primitives/transaction.cpp"
+    }
+]

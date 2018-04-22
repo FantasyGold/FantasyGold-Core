@@ -1,6 +1,6 @@
 // Copyright (c) 2011-2014 The Bitcoin developers
 // Copyright (c) 2014-2015 The Dash developers
-// Copyright (c) 2015-2017 The PIVX developers
+// // Copyright (c) 2015-2017 The Bulwark developers
 // Copyright (c) 2017-2018 The FantasyGold developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
@@ -86,9 +86,9 @@ QString BitcoinUnits::description(int unit)
         case FGC:
             return QString("FGC");
         case mFGC:
-            return QString("Milli-FGC(1 / 1" THIN_SP_UTF8 "000)");
+            return QString("Milli-FGC (1 / 1" THIN_SP_UTF8 "000)");
         case uFGC:
-            return QString("Micro-FGC(1 / 1" THIN_SP_UTF8 "000" THIN_SP_UTF8 "000)");
+            return QString("Micro-FGC (1 / 1" THIN_SP_UTF8 "000" THIN_SP_UTF8 "000)");
         default:
             return QString("???");
         }
@@ -97,9 +97,9 @@ QString BitcoinUnits::description(int unit)
         case FGC:
             return QString("TestFGCs");
         case mFGC:
-            return QString("Milli-TestFGC(1 / 1" THIN_SP_UTF8 "000)");
+            return QString("Milli-TestFGC (1 / 1" THIN_SP_UTF8 "000)");
         case uFGC:
-            return QString("Micro-TestFGC(1 / 1" THIN_SP_UTF8 "000" THIN_SP_UTF8 "000)");
+            return QString("Micro-TestFGC (1 / 1" THIN_SP_UTF8 "000" THIN_SP_UTF8 "000)");
         default:
             return QString("???");
         }
@@ -283,5 +283,5 @@ QVariant BitcoinUnits::data(const QModelIndex& index, int role) const
 
 CAmount BitcoinUnits::maxMoney()
 {
-    return Params().MaxMoneyOut(); 
+    return MAX_MONEY;
 }

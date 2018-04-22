@@ -1,6 +1,6 @@
 // Copyright (c) 2011-2014 The Bitcoin developers
 // Copyright (c) 2014-2015 The Dash developers
-// Copyright (c) 2015-2017 The PIVX developers
+// // Copyright (c) 2015-2017 The Bulwark developers
 // Copyright (c) 2017-2018 The FantasyGold developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
@@ -893,10 +893,6 @@ QString formatServicesStr(quint64 mask)
         uint64_t check = 1 << i;
         if (mask & check) {
             switch (check) {
-	    case NODE_BLOOM:
-	    case NODE_BLOOM_WITHOUT_MN:
-		    strList.append(QObject::tr("BLOOM"));
-		    break;
             case NODE_NETWORK:
                 strList.append(QObject::tr("NETWORK"));
                 break;

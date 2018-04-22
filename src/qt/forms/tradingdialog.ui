@@ -1777,7 +1777,7 @@
          </font>
         </property>
         <property name="text">
-         <string>FGCAvailable:</string>
+         <string>FGC Available:</string>
         </property>
        </widget>
       </item>
@@ -2762,7 +2762,7 @@
       </font>
      </property>
      <property name="text">
-      <string>FGCBalance:</string>
+      <string>FGC Balance:</string>
      </property>
     </widget>
     <widget class="QLabel" name="label_12">
@@ -2813,7 +2813,7 @@
       </font>
      </property>
      <property name="text">
-      <string>FGCAvailable:</string>
+      <string>FGC Available:</string>
      </property>
     </widget>
     <widget class="QLabel" name="label_14">
@@ -2832,7 +2832,7 @@
       </font>
      </property>
      <property name="text">
-      <string>FGCPending:</string>
+      <string>FGC Pending:</string>
      </property>
     </widget>
     <widget class="QLabel" name="FGCPendingLabel">
@@ -2928,7 +2928,7 @@
       </font>
      </property>
      <property name="text">
-      <string>Bittrex FGCDeposit Address:</string>
+      <string>Bittrex FGC Deposit Address:</string>
      </property>
     </widget>
     <widget class="QPushButton" name="GenDepositBTN">

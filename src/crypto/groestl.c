@@ -2874,7 +2874,7 @@ static void
 groestl_big_init(sph_groestl_big_context *sc, unsigned out_size)
 {
 	size_t u;
-	for (u = 0; u < 128; u ++) sc->buf[u] = 0;
+for (u = 0; u < 128; u ++) sc->buf[u] = 0;
 	sc->ptr = 0;
 #if SPH_GROESTL_64
 	for (u = 0; u < 15; u ++)

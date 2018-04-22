@@ -1,4 +1,4 @@
-.TH FANTASYGOLDD "1" "February 2017" "fantasygoldd 2.1.4.1"
+.TH FGCD "1" "February 2017" "fantasygoldd 2.1.4.1"
 .SH NAME
 FantasyGold \- peer-to-peer network based digital currency
 .SH SYNOPSIS
@@ -183,7 +183,7 @@ Returns a list of the last ['count'] transactions for 'account' \- for all accou
 Moves funds between accounts.
 .TP
 \fBsendfrom* <'account'> <'fantasygoldaddress'> <'amount'> ['minconf=1'] ['comment'] ['comment-to']\fR
-Sends amount from account's balance to 'fantasygoldaddress'. This method will fail if there is less than amount FGCwith ['minconf'] confirmations in the account's balance (unless account is the empty-string-named default account; it behaves like the *sendtoaddress* method). Returns transaction ID on success.
+Sends amount from account's balance to 'fantasygoldaddress'. This method will fail if there is less than amount FGC with ['minconf'] confirmations in the account's balance (unless account is the empty-string-named default account; it behaves like the *sendtoaddress* method). Returns transaction ID on success.
 .TP
 \fBsendtoaddress 'fantasygoldaddress' 'amount' ['comment'] ['comment-to']\fR
 Sends amount from the server's available balance to 'fantasygoldaddress'. amount is a real and is rounded to the nearest 0.01. Returns transaction id on success.
