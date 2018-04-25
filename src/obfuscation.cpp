@@ -174,7 +174,7 @@ void CObfuscationPool::ProcessMessageObfuscation(CNode* pfrom, std::string& strC
         }
 
         std::vector<CTxIn> in;
-        int64_t nAmount;
+        CAmount nAmount;
         CTransaction txCollateral;
         std::vector<CTxOut> out;
         vRecv >> in >> nAmount >> txCollateral >> out;
@@ -197,8 +197,8 @@ void CObfuscationPool::ProcessMessageObfuscation(CNode* pfrom, std::string& strC
 
         //check it like a transaction
         {
-            int64_t nValueIn = 0;
-            int64_t nValueOut = 0;
+            CAmount nValueIn = 0;
+            CAmount nValueOut = 0;
             bool missingTx = false;
 
             CValidationState state;
@@ -954,8 +954,8 @@ bool CObfuscationPool::IsCollateralValid(const CTransaction& txCollateral)
     if (txCollateral.vout.size() < 1) return false;
     if (txCollateral.nLockTime != 0) return false;
 
-    int64_t nValueIn = 0;
-    int64_t nValueOut = 0;
+    CAmount nValueIn = 0;
+    CAmount nValueOut = 0;
     bool missingTx = false;
 
     BOOST_FOREACH (const CTxOut o, txCollateral.vout) {
@@ -1008,7 +1008,7 @@ bool CObfuscationPool::IsCollateralValid(const CTransaction& txCollateral)
 //
 // Add a clients transaction to the pool
 //
-bool CObfuscationPool::AddEntry(const std::vector<CTxIn>& newInput, const int64_t& nAmount, const CTransaction& txCollateral, const std::vector<CTxOut>& newOutput, int& errorID)
+bool CObfuscationPool::AddEntry(const std::vector<CTxIn>& newInput, const CAmount& nAmount, const CTransaction& txCollateral, const std::vector<CTxOut>& newOutput, int& errorID)
 {
     if (!fMasterNode) return false;
 
@@ -1113,7 +1113,7 @@ bool CObfuscationPool::SignaturesComplete()
 // Execute a Obfuscation denomination via a Masternode.
 // This is only ran from clients
 //
-void CObfuscationPool::SendObfuscationDenominate(std::vector<CTxIn>& vin, std::vector<CTxOut>& vout, int64_t amount)
+void CObfuscationPool::SendObfuscationDenominate(std::vector<CTxIn>& vin, std::vector<CTxOut>& vout, CAmount amount)
 {
     if (fMasterNode) {
         LogPrintf("CObfuscationPool::SendObfuscationDenominate() - Obfuscation from a Masternode is not supported currently.\n");
@@ -1160,7 +1160,7 @@ void CObfuscationPool::SendObfuscationDenominate(std::vector<CTxIn>& vin, std::v
 
     //check it against the memory pool to make sure it's valid
     {
-        int64_t nValueOut = 0;
+        CAmount nValueOut = 0;
 
         CValidationState state;
         CMutableTransaction tx;
@@ -1668,8 +1668,8 @@ bool CObfuscationPool::PrepareObfuscationDenominate()
 
 bool CObfuscationPool::SendRandomPaymentToSelf()
 {
-    int64_t nBalance = pwalletMain->GetBalance();
-    int64_t nPayment = (nBalance * 0.35) + (rand() % nBalance);
+    CAmount nBalance = pwalletMain->GetBalance();
+    CAmount nPayment = (nBalance * 0.35) + (rand() % nBalance);
 
     if (nPayment > nBalance) nPayment = nBalance - (0.1 * COIN);
 
@@ -1682,9 +1682,9 @@ bool CObfuscationPool::SendRandomPaymentToSelf()
     scriptChange = GetScriptForDestination(vchPubKey.GetID());
 
     CWalletTx wtx;
-    int64_t nFeeRet = 0;
+    CAmount nFeeRet = 0;
     std::string strFail = "";
-    vector<pair<CScript, int64_t> > vecSend;
+    vector<pair<CScript, CAmount> > vecSend;
 
     // ****** Add fees ************ /
     vecSend.push_back(make_pair(scriptChange, nPayment));
@@ -1707,9 +1707,9 @@ bool CObfuscationPool::SendRandomPaymentToSelf()
 bool CObfuscationPool::MakeCollateralAmounts()
 {
     CWalletTx wtx;
-    int64_t nFeeRet = 0;
+    CAmount nFeeRet = 0;
     std::string strFail = "";
-    vector<pair<CScript, int64_t> > vecSend;
+    vector<pair<CScript, CAmount> > vecSend;
     CCoinControl coinControl;
     coinControl.fAllowOtherInputs = false;
     coinControl.fAllowWatchOnly = false;
@@ -1758,13 +1758,13 @@ bool CObfuscationPool::MakeCollateralAmounts()
 }
 
 // Create denominations
-bool CObfuscationPool::CreateDenominated(int64_t nTotalValue)
+bool CObfuscationPool::CreateDenominated(CAmount nTotalValue)
 {
     CWalletTx wtx;
-    int64_t nFeeRet = 0;
+    CAmount nFeeRet = 0;
     std::string strFail = "";
-    vector<pair<CScript, int64_t> > vecSend;
-    int64_t nValueLeft = nTotalValue;
+    vector<pair<CScript, CAmount> > vecSend;
+    CAmount nValueLeft = nTotalValue;
 
     // make our collateral address
     CReserveKey reservekeyCollateral(pwalletMain);
@@ -1785,7 +1785,7 @@ bool CObfuscationPool::CreateDenominated(int64_t nTotalValue)
     }
 
     // ****** Add denoms ************ /
-    BOOST_REVERSE_FOREACH (int64_t v, obfuScationDenominations) {
+    BOOST_REVERSE_FOREACH (CAmount v, obfuScationDenominations) {
         int nOutputs = 0;
 
         // add each output up to 10 times until it can't be added again
@@ -2012,15 +2012,15 @@ int CObfuscationPool::GetDenominationsByAmounts(std::vector<int64_t>& vecAmount)
     return GetDenominations(vout1, true);
 }
 
-int CObfuscationPool::GetDenominationsByAmount(int64_t nAmount, int nDenomTarget)
+int CObfuscationPool::GetDenominationsByAmount(CAmount nAmount, int nDenomTarget)
 {
     CScript e = CScript();
-    int64_t nValueLeft = nAmount;
+    CAmount nValueLeft = nAmount;
 
     std::vector<CTxOut> vout1;
 
     // Make outputs by looping through denominations, from small to large
-    BOOST_REVERSE_FOREACH (int64_t v, obfuScationDenominations) {
+    BOOST_REVERSE_FOREACH (CAmount v, obfuScationDenominations) {
         if (nDenomTarget != 0) {
             bool fAccepted = false;
             if ((nDenomTarget & (1 << 0)) && v == ((100 * COIN) + 100000)) {

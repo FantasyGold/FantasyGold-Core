@@ -543,7 +543,7 @@ Value masternodelist(const Array& params, bool fHelp)
 			"    \"txhash\": \"hash\",    (string) Collateral transaction hash\n"
 			"    \"outidx\": n,         (numeric) Collateral transaction output index\n"
 			"    \"status\": s,         (string) Status (ENABLED/EXPIRED/REMOVE/etc)\n"
-			"    \"addr\": \"addr\",      (string) Masternode PIVX address\n"
+			"    \"addr\": \"addr\",      (string) Masternode Fantasy Gold address\n"
 			"    \"version\": v,        (numeric) Masternode protocol version\n"
 			"    \"lastseen\": ttt,     (numeric) The time in seconds since epoch (Jan 1 1970 GMT) of the last seen\n"
 			"    \"activetime\": ttt,   (numeric) The time in seconds since epoch (Jan 1 1970 GMT) masternode has been active\n"
@@ -568,12 +568,8 @@ BOOST_FOREACH (PAIRTYPE(int, CMasternode) & s, vMasternodeRanks) {
 	std::string strTxHash = s.second.vin.prevout.hash.ToString();
 	uint32_t oIdx = s.second.vin.prevout.n;
 	CMasternode* mn = mnodeman.Find(s.second.vin);
-	if (mn != NULL) {
-		mn->Status().find(strFilter) == string:: npos && 
-		CBitcoinAddress(
-			mn->pubKeyCollateralAddress.GetID()).ToString().find(strFilter) == string::npos
-			) 
-		continue;
+if (strFilter != "" && strTxHash.find(strFilter) == string::npos &&
+	 mn->Status().find(strFilter) == string::npos && CBitcoinAddress(mn->pubKeyCollateralAddress.GetID()).ToString().find(strFilter) == string::npos) continue;
 		std::string strStatus = mn->Status();
 		obj.push_back(Pair("rank", (strStatus == "ENABLED" ? s.first : 0)));
 		obj.push_back(Pair("txhash", strTxHash));
