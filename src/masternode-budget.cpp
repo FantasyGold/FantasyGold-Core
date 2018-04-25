@@ -28,11 +28,9 @@ int nSubmittedFinalBudget;
 
 int GetBudgetPaymentCycleBlocks()
 {
-    // Amount of blocks in a months period of time (using 1 minutes per) = (60*24*30)
-    if (Params().NetworkID() == CBaseChainParams::MAIN) return 28800;
-    //for testing purposes
-
-    return 144; //ten times per day
+    // Amount of blocks in a months period of time (using 90 seconds per) = (60*60*24*30) / 90
+	if (Params().NetworkID() == CBaseChainParams::TESTNET) return 96; //ten times per day
+    return 28800; //one month
 }
 
 bool IsBudgetCollateralValid(uint256 nTxCollateralHash, uint256 nExpectedHash, std::string& strError, int64_t& nTime, int& nConf)
@@ -136,7 +134,7 @@ void CBudgetManager::SubmitFinalBudget()
 
     int nBlockStart = nCurrentHeight - nCurrentHeight % GetBudgetPaymentCycleBlocks() + GetBudgetPaymentCycleBlocks();
     if (nSubmittedHeight >= nBlockStart) return;
-    //submit final budget 2 days before payment for Mainnet, about 9 minutes for Testnet
+    //submit final budget 2 days before payment for Mainnet, 9.6 minutes for Testnet
     if (nBlockStart - nCurrentHeight > ((GetBudgetPaymentCycleBlocks() / 30) * 2)) return;
 
     std::vector<CBudgetProposal*> vBudgetProposals = budget.GetBudget();
@@ -786,65 +784,18 @@ std::string CBudgetManager::GetRequiredPaymentsString(int nBlockHeight)
 }
 
 CAmount CBudgetManager::GetTotalBudget(int nHeight)
+//calculates total budget for a month
 {
-    if (chainActive.Tip() == NULL) return 0;
-
-    if (Params().NetworkID() == CBaseChainParams::TESTNET) {
-        CAmount nSubsidy = 500 * COIN;
-        return ((nSubsidy / 100) * 10) * 146;
-    }
-
-    //get block value and calculate from that
-    CAmount nSubsidy = 0;
-    if (nHeight <= Params().LAST_POW_BLOCK() && nHeight > 259200) {
-        nSubsidy = 31.25 * COIN;
-    // POS Year 1 
-    } else if (nHeight <= 431999 && nHeight > Params().LAST_POW_BLOCK()) {
-        nSubsidy = 25 * COIN;
-    } else if (nHeight <= 518399 && nHeight >= 432000) {
-        nSubsidy = 21.875 * COIN;
-    } else if (nHeight <= 604799 && nHeight >= 518400) {
-        nSubsidy = 18.750 * COIN;
-    } else if (nHeight <= 691199 && nHeight >= 604800) {
-        nSubsidy = 15.625 * COIN;
-    // POS Year 2
-
-    } else if (nHeight <= 777599 && nHeight >= 691200) {
-        nSubsidy = 12.50 * COIN;
-    } else if (nHeight <= 863999 && nHeight >= 777600) {
-        nSubsidy = 10.938 * COIN;
-    } else if (nHeight <= 950399 && nHeight >= 864000) {
-        nSubsidy = 9.375 * COIN;
-    } else if (nHeight <= 1036799 && nHeight >= 950400) {
-        nSubsidy = 7.812 * COIN;
-
-    // POS Year 3
-    } else if (nHeight <= 1123199 && nHeight >= 1036800) {
-        nSubsidy = 6.250 * COIN;
-    } else if (nHeight <= 1209599 && nHeight >= 1123200) {
-        nSubsidy = 5.469 * COIN;
-    } else if (nHeight <= 1295999 && nHeight >= 1209600) {
-        nSubsidy = 4.688 * COIN;
-    } else if (nHeight <= 1382399 && nHeight >= 1296000) {
-        nSubsidy = 3.906 * COIN;
-
-    // POS Year 4
-    } else if (nHeight <= 1468799 && nHeight >= 1382400) {
-        nSubsidy = 3.125 * COIN;
-    } else if (nHeight <= 1555199 && nHeight >= 1468800) {
-        nSubsidy = 2.734 * COIN;
-    } else if (nHeight <= 1641599 && nHeight >= 1555200) {
-        nSubsidy = 2.344 * COIN;
-    } else if (nHeight <= 1727999 && nHeight >= 1641600) {
-        nSubsidy = 1.953 * COIN;
-
-    } else if (nHeight > 1728000) {
-        nSubsidy = 1.625 * COIN;
-    } else {
-        nSubsidy = 0 * COIN;
-    }
-    // Amount of blocks in a months period of time (using 1.5 minutes per)
-    return ((nSubsidy / 100) * 10) * 960 * 30;
+    CAmount nBudgetBudget = .10; // Percentage of block reward to allocate to budgets
+	CAmount nSubsidy = 0; 
+	if (nHeight > 345600) {
+     // If it is before block 345600 then we return 0 as budgets don't start til then.  
+	// otherwise, we get the blockvalue and calculate total budget from the parameters defined in other functions
+	// this way the testnet and main can be defined in GetBudgetPaymentCycleBlocks().
+	// GetBudgetPaymentCycleBlocks could also return 0 if before block 345600 and we could get this function down to nothing but one line.
+		nSubsidy = GetBlockValue(nHeight) * GetBudgetPaymentCycleBlocks() * nBudgetBudget
+	}
+	return nSubsidy
 }
 
 void CBudgetManager::NewBlock()
