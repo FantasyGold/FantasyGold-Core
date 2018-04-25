@@ -117,6 +117,7 @@ public:
         nLastPOWBlock = 500;
         nMaturity = 66;
         nModifierUpdateBlock = 1;
+		nMaxMoneyOut = 21000000 * COIN;
         const char* pszTimestamp = "FORBES AUG 20 2013 The $70 Billion Fantasy Football Market";
         CMutableTransaction txNew;
         txNew.vin.resize(1);
@@ -164,7 +165,7 @@ public:
         fTestnetToBeDeprecatedFieldRPC = false;
         fHeadersFirstSyncingActive = false;
         nPoolMaxTransactions = 3;
-        strSporkKey = "04f797a49391edf1488c226700a96fa93d225a3645a57edc3f66fa402cedb34bd6853635c98c72dfbc3eb5b2eb230a06e3c4f6ef008b71e28b1d815a4606b077c3";
+		strSporkKey = "04f797a49391edf1488c226700a96fa93d225a3645a57edc3f66fa402cedb34bd6853635c98c72dfbc3eb5b2eb230a06e3c4f6ef008b71e28b1d815a4606b077c3";
         //FIXME
         strObfuscationPoolDummyAddress = "bDiJwVuKv9dcKBN4KCfX6UmXbkpqLfzGyf";
         nStartMasternodePayments = 1511092620; //Wed, 25 Jun 2014 20:36:16 GMT
@@ -197,6 +198,7 @@ public:
         nTargetSpacing = 90;  // 360 Seconds
         nLastPOWBlock = 50;
         nMaturity = 15;
+		nMaxMoneyOut = 21000000 * COIN;
         //! Modify the testnet genesis block so the timestamp is valid for a later start.
         genesis.nTime = 1508638280;
         genesis.nNonce = 1081421;

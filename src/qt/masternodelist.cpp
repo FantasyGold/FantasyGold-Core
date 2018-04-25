@@ -16,7 +16,6 @@
 #include <QTimer>
 
 CCriticalSection cs_masternodes;
-
 MasternodeList::MasternodeList(QWidget* parent) : QWidget(parent),
                                                   ui(new Ui::MasternodeList),
                                                   clientModel(0),
@@ -222,9 +221,10 @@ void MasternodeList::updateMyNodeList(bool fForce)
 
         CTxIn txin = CTxIn(uint256S(mne.getTxHash()), uint32_t(nIndex));
         CMasternode* pmn = mnodeman.Find(txin);
-
-        updateMyMasternodeInfo(QString::fromStdString(mne.getAlias()), QString::fromStdString(mne.getIp()), pmn);
-    }
+		if (pmn != NULL){
+        	updateMyMasternodeInfo(QString::fromStdString(mne.getAlias()), QString::fromStdString(mne.getIp()), pmn);
+			}
+		}
     ui->tableWidgetMasternodes->setSortingEnabled(true);
 
     // reset "timer"
