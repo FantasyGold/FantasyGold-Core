@@ -111,7 +111,7 @@ protected:
     int nMasternodeCountDrift;
     int nMaturity;
 	int nModifierUpdateBlock;
-	CAmount MaxMoneyOut() const { return nMaxMoneyOut; }
+	CAmount nMaxMoneyOut;
     int nMinerThreads;
     std::vector<CDNSSeedData> vSeeds;
     std::vector<unsigned char> base58Prefixes[MAX_BASE58_TYPES];
