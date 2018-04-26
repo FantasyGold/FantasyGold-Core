@@ -113,7 +113,6 @@ public:
     int CountEnabled(int protocolVersion = -1);
 	void CountNetworks(int protocolVersion, int& ipv4, int& ipv6, int& onion);
 	void DsegUpdate(CNode* pnode);
-    void DsegUpdate(CNode* pnode);
 
     /// Find an entry
     CMasternode* Find(const CScript& payee);
