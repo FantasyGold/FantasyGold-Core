@@ -101,6 +101,9 @@ private:
     QAction* signMessageAction;
     QAction* verifyMessageAction;
     QAction* bip38ToolAction;
+	QAction* multisigCreateAction;
+	QAction* multisigSpendAction;
+	QAction* multisigSignAction;
     QAction* aboutAction;
     QAction* receiveCoinsAction;
     QAction* optionsAction;
@@ -212,8 +215,13 @@ private slots:
     void gotoVerifyMessageTab(QString addr = "");
     /** Show MultiSend Dialog */
     void gotoMultiSendDialog();
-
-    /** Show BIP 38 tool - default to Encryption tab */
+	
+	/** Show MultiSig Dialog */
+    void gotoMultisigCreate();
+    void gotoMultisigSpend();
+    void gotoMultisigSign();
+    
+	/** Show BIP 38 tool - default to Encryption tab */
     void gotoBip38Tool();
 
     /** Show open dialog */
