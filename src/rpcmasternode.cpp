@@ -367,7 +367,7 @@ Value getmasternodecount (const Array& params, bool fHelp)
     mnodeman.CountNetworks(ActiveProtocol(), ipv4, ipv6, onion);
 
     obj.push_back(Pair("total", mnodeman.size()));
-    obj.push_back(Pair("stable", mnodeman.stable_size()));
+ //   obj.push_back(Pair("stable", mnodeman.stable_size()));
     obj.push_back(Pair("obfcompat", mnodeman.CountEnabled(ActiveProtocol())));
     obj.push_back(Pair("enabled", mnodeman.CountEnabled()));
     obj.push_back(Pair("inqueue", nCount));
