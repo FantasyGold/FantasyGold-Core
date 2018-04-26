@@ -962,7 +962,7 @@ bool GetCoinAge(const CTransaction& tx, const unsigned int nTxTime, uint64_t& nC
 }
 bool MoneyRange(CAmount nValueOut)
 {
-return nValueOut >= 0 && nValueOut <= Params.MaxMoneyOut();
+return nValueOut >= 0 && nValueOut <= Params().MaxMoneyOut();
 }
 
 bool CheckTransaction(const CTransaction& tx, CValidationState& state)
