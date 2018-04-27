@@ -48,7 +48,7 @@ class CActiveMasternode;
 #define OBFUSCATION_RELAY_SIG 3
 
 static const int64_t OBFUSCATION_COLLATERAL = (10 * COIN);
-static const int64_t OBFUSCATION_POOL_MAX = (9999.99 * COIN);
+static const int64_t OBFUSCATION_POOL_MAX = (99999.99 * COIN);
 
 extern CObfuscationPool obfuScationPool;
 extern CObfuScationSigner obfuScationSigner;
