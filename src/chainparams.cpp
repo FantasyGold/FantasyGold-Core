@@ -142,7 +142,7 @@ public:
 		vSeeds.clear();
 		vFixedSeeds.clear();
         vSeeds.push_back(CDNSSeedData("ec2-18-219-73-66.us-east-2.compute.amazonaws.com", "ec2-18-219-73-66.us-east-2.compute.amazonaws.com"));
-    //	vSeeds.push_back(CDNSSeedData("fantasygoldcrypto.com", "seed-05-fremont-ca.fantasygoldcrypto.com"));
+    	vSeeds.push_back(CDNSSeedData("ec2-18-188-129-68.us-east-2.compute.amazonaws.com", "ec2-18-188-129-68.us-east-2.compute.amazonaws.com"));
 	//	vSeeds.push_back(CDNSSeedData("fantasygoldcrypto.com", "seed-06-newark-nj.fantasygoldcrypto.com"));
     //	vSeeds.push_back(CDNSSeedData("fantasygoldcrypto.com", "seed04.fantasygoldcrypto.com"));
 		
