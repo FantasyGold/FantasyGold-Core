@@ -637,7 +637,7 @@ CMasternode* CMasternodeMan::GetMasternodeByRank(int nRank, int64_t nBlockHeight
         if (fOnlyActive) {
             mn.Check();
             if (!mn.IsEnabled()){
-				vecMasternodeScores.push_back(make_pair(9999, mn));
+				//vecMasternodeScores.push_back(make_pair(9999, mn));
 				continue;
 			}
         }
