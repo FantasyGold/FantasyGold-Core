@@ -135,9 +135,9 @@ public:
     }
 
     friend bool operator<(const CInv& a, const CInv& b);
-	bool IsMasterNodeType() const;
-    bool IsKnownType() const;
-    const char* GetCommand() const;
+	bool IsKnownType() const;
+    bool IsMasterNodeType() const;
+	const char* GetCommand() const;
     std::string ToString() const;
 
     // TODO: make private (improves encapsulation)

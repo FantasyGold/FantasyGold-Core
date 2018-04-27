@@ -63,9 +63,9 @@ bool Solver(const CScript& scriptPubKey, txnouttype& typeRet, vector<vector<unsi
 // provably prunable, data carrying output.
 	// so long as script passes the IsUnspendable() test and all but the first
 	//byte passes the IsPushOnly() test, we don't care exactly what is in the script.
-	if (scriptPubKey.size() >= 1 && scriptPubKey[0] == OP_RETURN && scriptPubKey.IsPushOnly(scriptPubKey.begin()+1)){
-		typeRet = TX_NULL_DATA;
-		return true;
+	if (scriptPubKey.size() >= 1 && scriptPubKey[0] == OP_RETURN && scriptPubKey.IsPushOnly(scriptPubKey.begin()+1)) {
+		 typeRet = TX_NULL_DATA;
+		 return true;
 	}
     // Scan templates
     const CScript& script1 = scriptPubKey;

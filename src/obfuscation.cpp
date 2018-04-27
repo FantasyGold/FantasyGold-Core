@@ -954,8 +954,8 @@ bool CObfuscationPool::IsCollateralValid(const CTransaction& txCollateral)
     if (txCollateral.vout.size() < 1) return false;
     if (txCollateral.nLockTime != 0) return false;
 
-    CAmount nValueIn = 0;
-    CAmount nValueOut = 0;
+    int64_t nValueIn = 0;
+    int64_t nValueOut = 0;
     bool missingTx = false;
 
     BOOST_FOREACH (const CTxOut o, txCollateral.vout) {
@@ -2060,7 +2060,8 @@ std::string CObfuscationPool::GetMessageByID(int messageID)
     case ERR_ENTRIES_FULL:
         return _("Entries are full.");
     case ERR_EXISTING_TX:
-        return _("Not compatible with existing transactions.");
+        return 	    vecMasternodeScores.push_back(make_pair(9999, mn));
+_("Not compatible with existing transactions.");
     case ERR_FEES:
         return _("Transaction fees are too high.");
     case ERR_INVALID_COLLATERAL:
