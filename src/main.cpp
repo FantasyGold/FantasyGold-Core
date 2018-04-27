@@ -1642,7 +1642,7 @@ int64_t GetBlockValue(int nHeight)
 		nSubsidy = 47 * COIN;
 	}
 	else {
-		nSubsidy = 47
+		nSubsidy = 47;
 		nSubsidyIteration = 0;
 		while (nSubsidyPeriod >= 1) {
             nSubsidyIteration++;
