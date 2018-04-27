@@ -1052,7 +1052,7 @@ void CMasternodeMan::ProcessMessage(CNode* pfrom, std::string& strCommand, CData
 
                 std::string errorMessage = "";
                 if (!obfuScationSigner.VerifyMessage(pmn->pubKeyMasternode, vchSig, strMessage, errorMessage)) {
-                    LogPrintf("dseep - Got bad Masternode address signature %s \n", vin..prevout.hash.ToString());
+                    LogPrintf("dseep - Got bad Masternode address signature %s \n", vin.prevout.hash.ToString());
                     //Misbehaving(pfrom->GetId(), 100);
                     return;
                 }
