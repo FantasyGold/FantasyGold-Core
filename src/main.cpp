@@ -1610,8 +1610,7 @@ int64_t GetBlockValue(int nHeight)
 //This bit of code is what calculates the block value and calculates what is traditionally referred to as halving.
 // in Fantasy Gold, we have referred to this as the SubsidyDecrease
 {
-	int64_t nSubsidy = 0;
-	int64_t nSubsidyDecreasePeriod = 86400, nSubsidyPeriod, nSubsidyDecreasePercent = .125, nSubsidyIteration;
+	int64_t nSubsidyDecreasePeriod = 86400, nSubsidyPeriod, nSubsidyDecreasePercent = .25, nSubsidyIteration, nSubsidy = 0;
 	// nSubsidyDecreasePercent = .125; // initialized above Subsidy Decrease Percentage Per Period
 	// nSubsidyDecreasePeriod = 86400; // initialized above Number of Blocks in the desired time period for the reward to decrease.
 	/*//this could also be obtained by using the desired time period in days (90) * 24 hours * 60 minutes * 60 seconds ) / blocktime (90) = 86,400
@@ -1622,7 +1621,7 @@ int64_t GetBlockValue(int nHeight)
 	// as well as the amount of blocks in seconds.*/
 	nSubsidyPeriod = floor (nHeight/nSubsidyDecreasePeriod); //This calculates which period of subsidy decrease the current block is in, if this is 0 then the reward is 50
 	if (Params().NetworkID() == CBaseChainParams::TESTNET) {
-		nSubsidy = 50 * COIN;
+		nSubsidy = 47 * COIN;
 		int64_t nDecreasePeriodTestnet, nSubsidyPeriodTestnet;
 		nDecreasePeriodTestnet = 100;
 		nSubsidyPeriodTestnet = floor(nHeight/nDecreasePeriodTestnet);
@@ -1634,14 +1633,16 @@ int64_t GetBlockValue(int nHeight)
 				break;
 			}
 		} 
+	return nSubsidy;
 	}
 	if (nHeight == 0) {
 		nSubsidy = 4750000 * COIN;
 	}
 	else if (nHeight > 1 && nHeight < 86400) {
-		nSubsidy = 50 * COIN;
+		nSubsidy = 47 * COIN;
 	}
 	else {
+		nSubsidy = 47
 		nSubsidyIteration = 0;
 		while (nSubsidyPeriod >= 1) {
             nSubsidyIteration++;

@@ -167,7 +167,7 @@ public:
         nPoolMaxTransactions = 3;
 		strSporkKey = "04f797a49391edf1488c226700a96fa93d225a3645a57edc3f66fa402cedb34bd6853635c98c72dfbc3eb5b2eb230a06e3c4f6ef008b71e28b1d815a4606b077c3";
         //FIXME
-        strObfuscationPoolDummyAddress = "bDiJwVuKv9dcKBN4KCfX6UmXbkpqLfzGyf";
+        strObfuscationPoolDummyAddress = "fDiJwVuKv9dcKBN4KCfX6UmXbkpqLfzGyf";
         nStartMasternodePayments = 1511092620; //Wed, 25 Jun 2014 20:36:16 GMT
     }
     const Checkpoints::CCheckpointData& Checkpoints() const
