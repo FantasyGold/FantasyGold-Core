@@ -1,37 +1,43 @@
-diff -dur old/qtbase/src/plugins/platforms/windows/qwindowscontext.h new/qtbase/src/plugins/platforms/windows/qwindowscontext.h
---- old/qtbase/src/plugins/platforms/windows/qwindowscontext.h
-+++ new/qtbase/src/plugins/platforms/windows/qwindowscontext.h
-@@ -136,10 +136,18 @@
-     inline void init();
+--- old/qtbase/src/plugins/platforms/windows/qwindowscontext.cpp
++++ new/qtbase/src/plugins/platforms/windows/qwindowscontext.cpp
+@@ -77,7 +77,7 @@
+ #include <stdlib.h>
+ #include <stdio.h>
+ #include <windowsx.h>
+-#ifndef Q_OS_WINCE
++#if !defined(Q_OS_WINCE) && (!defined(USE___UUIDOF) || (defined(USE___UUIDOF) && USE___UUIDOF == 1))
+ #  include <comdef.h>
+ #endif
  
-     typedef HRESULT (WINAPI *SHCreateItemFromParsingName)(PCWSTR, IBindCtx *, const GUID&, void **);
-+#if defined(Q_CC_MINGW) && (!defined(__MINGW64_VERSION_MAJOR) || __MINGW64_VERSION_MAJOR < 3)
-+    typedef HRESULT (WINAPI *SHGetKnownFolderIDList)(const GUID &, DWORD, HANDLE, ITEMIDLIST **);
-+#else
-     typedef HRESULT (WINAPI *SHGetKnownFolderIDList)(const GUID &, DWORD, HANDLE, PIDLIST_ABSOLUTE *);
-+#endif
-     typedef HRESULT (WINAPI *SHGetStockIconInfo)(int , int , _SHSTOCKICONINFO *);
-     typedef HRESULT (WINAPI *SHGetImageList)(int, REFIID , void **);
-+#if defined(Q_CC_MINGW) && (!defined(__MINGW64_VERSION_MAJOR) || __MINGW64_VERSION_MAJOR < 3)
-+    typedef HRESULT (WINAPI *SHCreateItemFromIDList)(const ITEMIDLIST *, REFIID, void **);
-+#else
-     typedef HRESULT (WINAPI *SHCreateItemFromIDList)(PCIDLIST_ABSOLUTE, REFIID, void **);
-+#endif
+@@ -814,7 +814,7 @@
+                           HWND_MESSAGE, NULL, static_cast<HINSTANCE>(GetModuleHandle(0)), NULL);
+ }
  
-     SHCreateItemFromParsingName sHCreateItemFromParsingName;
-     SHGetKnownFolderIDList sHGetKnownFolderIDList;
-diff -dur old/qtbase/src/plugins/platforms/windows/qwindowsdialoghelpers.cpp new/qtbase/src/plugins/platforms/windows/qwindowsdialoghelpers.cpp
---- old/qtbase/src/plugins/platforms/windows/qwindowsdialoghelpers.cpp
-+++ new/qtbase/src/plugins/platforms/windows/qwindowsdialoghelpers.cpp
-@@ -1016,7 +1016,11 @@
-             qWarning() << __FUNCTION__ << ": Invalid CLSID: " << url.path();
-             return Q_NULLPTR;
-         }
-+#if defined(Q_CC_MINGW) && (!defined(__MINGW64_VERSION_MAJOR) || __MINGW64_VERSION_MAJOR < 3)
-+        ITEMIDLIST *idList;
-+#else
-         PIDLIST_ABSOLUTE idList;
-+#endif
-         HRESULT hr = QWindowsContext::shell32dll.sHGetKnownFolderIDList(uuid, 0, 0, &idList);
-         if (FAILED(hr)) {
-             qErrnoWarning("%s: SHGetKnownFolderIDList(%s)) failed", __FUNCTION__, qPrintable(url.toString()));
+-#ifndef Q_OS_WINCE
++#if !defined(Q_OS_WINCE) && (!defined(USE___UUIDOF) || (defined(USE___UUIDOF) && USE___UUIDOF == 1))
+ // Re-engineered from the inline function _com_error::ErrorMessage().
+ // We cannot use it directly since it uses swprintf_s(), which is not
+ // present in the MSVCRT.DLL found on Windows XP (QTBUG-35617).
+@@ -833,7 +833,7 @@
+          return QString::asprintf("IDispatch error #%u", uint(wCode));
+      return QString::asprintf("Unknown error 0x0%x", uint(comError.Error()));
+ }
+-#endif // !Q_OS_WINCE
++#endif // !defined(Q_OS_WINCE) && (!defined(USE___UUIDOF) || (defined(USE___UUIDOF) && USE___UUIDOF == 1))
+ 
+ /*!
+     \brief Common COM error strings.
+@@ -901,12 +901,12 @@
+     default:
+         break;
+     }
+-#ifndef Q_OS_WINCE
++#if !defined(Q_OS_WINCE) && (!defined(USE___UUIDOF) || (defined(USE___UUIDOF) && USE___UUIDOF == 1))
+     _com_error error(hr);
+     result += QByteArrayLiteral(" (");
+     result += errorMessageFromComError(error);
+     result += ')';
+-#endif // !Q_OS_WINCE
++#endif // !defined(Q_OS_WINCE) && (!defined(USE___UUIDOF) || (defined(USE___UUIDOF) && USE___UUIDOF == 1))
+     return result;
+ }
