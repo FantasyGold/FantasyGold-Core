@@ -141,8 +141,13 @@ public:
 
 		vSeeds.clear();
 		vFixedSeeds.clear();
-        vSeeds.push_back(CDNSSeedData("ec2-18-219-73-66.us-east-2.compute.amazonaws.com", "ec2-18-219-73-66.us-east-2.compute.amazonaws.com"));
-    	vSeeds.push_back(CDNSSeedData("ec2-18-188-129-68.us-east-2.compute.amazonaws.com", "ec2-18-188-129-68.us-east-2.compute.amazonaws.com"));
+		vSeeds.push_back(CDNSSeedData("ec2-18-188-230-37.us-east-2.compute.amazonaws.com", "ec2-18-188-230-37.us-east-2.compute.amazonaws.com"));
+		vSeeds.push_back(CDNSSeedData("ec2-18-216-52-206.us-east-2.compute.amazonaws.com", "ec2-18-216-52-206.us-east-2.compute.amazonaws.com"));
+		vSeeds.push_back(CDNSSeedData("ec2-18-191-6-184.us-east-2.compute.amazonaws.com", "ec2-18-191-6-184.us-east-2.compute.amazonaws.com"));
+		vSeeds.push_back(CDNSSeedData("ec2-18-218-59-204.us-east-2.compute.amazonaws.com", "ec2-18-218-59-204.us-east-2.compute.amazonaws.com"));
+        vSeeds.push_back(CDNSSeedData("ec2-18-222-88-20.us-east-2.compute.amazonaws.com", "ec2-18-222-88-20.us-east-2.compute.amazonaws.com"));
+    	vSeeds.push_back(CDNSSeedData("ec2-18-218-69-84.us-east-2.compute.amazonaws.com", "ec2-18-218-69-84.us-east-2.compute.amazonaws.com"));
+		vSeeds.push_back(CDNSSeedData("ec2-18-191-15-127.us-east-2.compute.amazonaws.com", "ec2-18-191-15-127.us-east-2.compute.amazonaws.com"));
 	//	vSeeds.push_back(CDNSSeedData("fantasygoldcrypto.com", "seed-06-newark-nj.fantasygoldcrypto.com"));
     //	vSeeds.push_back(CDNSSeedData("fantasygoldcrypto.com", "seed04.fantasygoldcrypto.com"));
 		
