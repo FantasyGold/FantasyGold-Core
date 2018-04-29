@@ -5,6 +5,7 @@ $(package)_suffix=opensource-src-$($(package)_version).tar.gz
 $(package)_file_name=qtbase-$($(package)_suffix)
 $(package)_sha256_hash=95f83e532d23b3ddbde7973f380ecae1bac13230340557276f75f2e37984e410
 $(package)_dependencies=openssl zlib
+$(package)_cxxflags=-std=c++11
 $(package)_linux_dependencies=freetype fontconfig libxcb libX11 xproto libXext
 $(package)_build_subdir=qtbase
 $(package)_qt_libs=corelib network widgets gui plugins testlib
@@ -24,7 +25,7 @@ define $(package)_set_vars
 $(package)_config_opts_release = -release
 $(package)_config_opts_debug = -debug
 $(package)_config_opts += -bindir $(build_prefix)/bin
-$(package)_config_opts += -c++std c++11
+$(package)_config_opts += -c++11
 $(package)_config_opts += -confirm-license
 $(package)_config_opts += -dbus-runtime
 $(package)_config_opts += -hostprefix $(build_prefix)
@@ -154,7 +155,7 @@ sed -i.old "s|QMAKE_CXXFLAGS          = |!host_build: QMAKE_CXXFLAGS            
 endef
 
 define $(package)_config_cmds
-  export PKG_CONFIG_SYSROOT_DIR=/ && \
+
   export PKG_CONFIG_LIBDIR=$(host_prefix)/lib/pkgconfig && \
   export PKG_CONFIG_PATH=$(host_prefix)/share/pkgconfig  && \
   ./configure $($(package)_config_opts) && \
