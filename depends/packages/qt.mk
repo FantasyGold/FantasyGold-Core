@@ -155,7 +155,6 @@ sed -i.old "s|QMAKE_CXXFLAGS          = |!host_build: QMAKE_CXXFLAGS            
 endef
 
 define $(package)_config_cmds
-
   export PKG_CONFIG_LIBDIR=$(host_prefix)/lib/pkgconfig && \
   export PKG_CONFIG_PATH=$(host_prefix)/share/pkgconfig  && \
   ./configure $($(package)_config_opts) && \
