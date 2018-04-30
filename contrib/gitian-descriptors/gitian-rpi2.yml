@@ -1,5 +1,5 @@
 ---
-name: "fantasygold-rpi2-2.1.7"
+name: "fantasygold-rpi2-1.0.0"
 enable_cache: true
 suites:
 - "trusty"
