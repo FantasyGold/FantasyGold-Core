@@ -22,8 +22,8 @@ packages:
 - "ca-certificates"
 - "python"
 remotes:
-- "url": "https://github.com/fantasygold-project/fantasygold.git"
-  "dir": "fantasygold"
+- "url": "https://github.com/FantasyGold/FantasyGold-Core.git"
+  "dir": "FantasyGold-Core"
 files: []
 script: |
   WRAP_DIR=$HOME/wrapped

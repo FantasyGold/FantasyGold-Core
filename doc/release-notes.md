@@ -1,13 +1,13 @@
 FantasyGold Core version 2.2.1 is now available from:
 
-  <https://github.com/fantasygold-project/fantasygold/releases>
+  <fantasygold/releases>
 
 This is a new minor version release, including various bug fixes and
 performance improvements, as well as updated translations.
 
 Please report bugs using the issue tracker at github:
 
-  <https://github.com/fantasygold-project/fantasygold/issues>
+  <fantasygold/issues>
 
 Compatibility
 ==============

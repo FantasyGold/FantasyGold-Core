@@ -1225,9 +1225,9 @@ Proszę sprawdzić adres i spróbować ponownie</translation>
     </message>
     <message>
         <source>Language missing or translation incomplete? Help contributing translations here:
-https://www.transifex.com/fantasygold-project/fantasygold-project-translations</source>
+https://www.transifex.com/FantasyGold/FantasyGold-Core.git-project-translations</source>
         <translation>Brakuje języka bądź nieukończona pełnego tłumaczenia? Pomóż w tłumaczeniu tutaj:
-https://www.transifex.com/fantasygold-project/fantasygold-project-translations </translation>
+https://www.transifex.com/FantasyGold/FantasyGold-Core.git-project-translations </translation>
     </message>
     <message>
         <source>Connect to the FantasyGold network through a SOCKS5 proxy.</source>

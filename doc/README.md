@@ -41,7 +41,7 @@ The following are developer notes on how to build FantasyGold on your native pla
 
 Development
 ---------------------
-The FantasyGold repo's [root README](https://github.com/FantasyGold-Project/FantasyGold/blob/master/README.md) contains relevant information on the development process and automated testing.
+The FantasyGold repo's [root README](FantasyGold/blob/master/README.md) contains relevant information on the development process and automated testing.
 
 - [Developer Notes](developer-notes.md)
 - [Multiwallet Qt Development](multiwallet-qt.md)

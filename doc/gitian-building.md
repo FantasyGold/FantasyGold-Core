@@ -281,7 +281,7 @@ Clone the git repositories for fantasygold and gitian and then checkout the fant
 
 ```bash
 git clone https://github.com/devrandom/gitian-builder.git
-git clone https://github.com/fantasygold-crypto/fantasygold.git
+git clone https://github.com/fantasygold-crypto/FantasyGold-Core.git
 cd fantasygold
 git checkout v${VERSION}
 cd ..
@@ -377,7 +377,7 @@ and inputs.
 
 For example:
 ```bash
-URL=https://github.com/crowning-/fantasygold.git
+URL=https://github.com/crowning-/FantasyGold-Core.git
 COMMIT=b616fb8ef0d49a919b72b0388b091aaec5849b96
 ./bin/gbuild --commit fantasygold=${COMMIT} --url fantasygold=${URL} ../fantasygold/contrib/gitian-descriptors/gitian-linux.yml
 ./bin/gbuild --commit fantasygold=${COMMIT} --url fantasygold=${URL} ../fantasygold/contrib/gitian-descriptors/gitian-win.yml

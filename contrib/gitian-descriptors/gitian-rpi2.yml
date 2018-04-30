@@ -20,8 +20,8 @@ packages:
 - "python"
 reference_datetime: "2015-06-01 00:00:00"
 remotes:
-- "url": "https://github.com/fantasygold-project/fantasygold.git"
-  "dir": "fantasygold"
+- "url": "https://github.com/FantasyGold/FantasyGold-Core.git"
+  "dir": "FantasyGold-Core"
 files:
 - "raspberrypi-tools.tar.gz"
 script: |
