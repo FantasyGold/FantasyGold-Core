@@ -1,4 +1,4 @@
-prefix=/home/silence/devfsg/Fangold/fcgtest/win/FantasyGold/depends/x86_64-w64-mingw32
+prefix=/usr/local
 exec_prefix=${prefix}
 libdir=${exec_prefix}/lib
 includedir=${prefix}/include
