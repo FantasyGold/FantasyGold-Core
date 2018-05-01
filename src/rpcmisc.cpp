@@ -180,7 +180,7 @@ Value mnsync(const Array& params, bool fHelp)
 	if (strMode == "debug") {
 		Object obj;
 		obj.push_back(Pair("IsBlockchainSynced", masternodeSync.IsBlockchainSynced()));
-		masternodeSync.IsBlockchainSynced() = true;
+		//masternodeSync.IsBlockchainSynced() = true;
 		obj.push_back(Pair("IsBlockchainSynced", masternodeSync.IsBlockchainSynced()));
 		return obj;
 	}
