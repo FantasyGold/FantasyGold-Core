@@ -123,11 +123,11 @@ Value mnsync(const Array& params, bool fHelp)
 
     if (fHelp || params.size() != 1 || (strMode != "status" && strMode != "reset")) {
         throw runtime_error(
-            "mnsync \"status|reset\"\n"
+            "mnsync \"status|reset|debug\"\n"
             "\nReturns the sync status or resets sync.\n"
 
             "\nArguments:\n"
-            "1. \"mode\"    (string, required) either 'status' or 'reset'\n"
+            "1. \"mode\"    (string, required) either 'status' or 'reset' or 'debug'\n"
 
             "\nResult ('status' mode):\n"
             "{\n"
@@ -177,7 +177,13 @@ Value mnsync(const Array& params, bool fHelp)
 
         return obj;
     }
-
+	if (strMode == "debug") {
+		Object obj;
+		obj.push_back(Pair("IsBlockchainSynced", masternodeSync.IsBlockchainSynced()));
+		masternodeSync.IsBlockchainSynced() = true;
+		obj.push_back(Pair("IsBlockchainSynced", masternodeSync.IsBlockchainSynced()));
+		return obj;
+	}
     if (strMode == "reset") {
         masternodeSync.Reset();
         return "success";
