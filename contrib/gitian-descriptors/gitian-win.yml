@@ -1,5 +1,5 @@
 ---
-name: "fantasygold-win-2.2"
+name: "fantasygold-win-1.0.1.0"
 enable_cache: true
 suites:
 - "trusty"
