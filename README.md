@@ -50,7 +50,7 @@ Fantasy Gold is currently in use on the following sites
             RPC Port
          </td>
          <td>
-            57804
+            57814
          </td>
       </tr>
       <tr>
@@ -58,7 +58,7 @@ Fantasy Gold is currently in use on the following sites
             P2P Port
          </td>
          <td>
-            57806
+            57810
          </td>
       </tr>
       <tr>

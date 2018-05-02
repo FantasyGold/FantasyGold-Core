@@ -203,10 +203,10 @@ QT_TRANSLATE_NOOP("fantasygold-core", ""
 QT_TRANSLATE_NOOP("fantasygold-core", ""
 "You must specify a masternodeprivkey in the configuration. Please see "
 "documentation for help."),
-QT_TRANSLATE_NOOP("fantasygold-core", "(57806 could be used only on mainnet)"),
+QT_TRANSLATE_NOOP("fantasygold-core", "(57810 could be used only on mainnet)"),
 QT_TRANSLATE_NOOP("fantasygold-core", "(default: %s)"),
 QT_TRANSLATE_NOOP("fantasygold-core", "(default: 1)"),
-QT_TRANSLATE_NOOP("fantasygold-core", "(must be 57806 for mainnet)"),
+QT_TRANSLATE_NOOP("fantasygold-core", "(must be 57810 for mainnet)"),
 QT_TRANSLATE_NOOP("fantasygold-core", "<category> can be:\n"),
 QT_TRANSLATE_NOOP("fantasygold-core", "Accept command line and JSON-RPC commands"),
 QT_TRANSLATE_NOOP("fantasygold-core", "Accept connections from outside (default: 1 if no -proxy or -connect)"),

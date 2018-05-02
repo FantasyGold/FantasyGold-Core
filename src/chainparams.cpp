@@ -68,12 +68,13 @@ static void convertSeed6(std::vector<CAddress>& vSeedsOut, const SeedSpec6* data
 // + Contains no strange transactions
 static Checkpoints::MapCheckpoints mapCheckpoints =
     boost::assign::map_list_of(500, uint256("0x00000035cda7787e7f6c5d1dddf08344675dbe4f380d44f8e40fb9271140ad27"));
+	boost::assign::map_list_of(750, uint256("0x0000000004526e78914301cb0a008801a9219ed07c659860404bfafc6f983701"));
 static const Checkpoints::CCheckpointData dataMainNet = {
     &mapCheckpoints,
-    1525055839,// * UNIX timestamp of last checkpoint block
-    500,    // * total number of transactions between genesis and last checkpoint
+    1525119213,// * UNIX timestamp of last checkpoint block
+    750,    // * total number of transactions between genesis and last checkpoint
                 //   (the tx=... number in the SetBestChain debug.log lines)
-    2000        // * estimated number of transactions per day after checkpoint
+    10        // * estimated number of transactions per day after checkpoint
 };
 static Checkpoints::MapCheckpoints mapCheckpointsTestnet =
     boost::assign::map_list_of(0, uint256("0x001"));
@@ -107,7 +108,7 @@ public:
         pchMessageStart[3] = 0x42;
 
 		vAlertPubKey = ParseHex("04d16502d4e8269b2231cf6835302862c537e7c82c4514f0ee070c8649df663dbb3e19b2e24722cbb0e4c624330a4a4df404a43614487a0a8dca26cfe78dbdcd65");
-        nDefaultPort = 57806;
+        nDefaultPort = 57810;
         bnProofOfWorkLimit = ~uint256(0) >> 20; // FantasyGold starting difficulty is 1 / 2^12
         nSubsidyHalvingInterval = 210000;
         nMaxReorganizationDepth = 100;
