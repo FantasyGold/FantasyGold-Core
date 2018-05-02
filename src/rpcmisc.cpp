@@ -177,13 +177,6 @@ Value mnsync(const Array& params, bool fHelp)
 
         return obj;
     }
-	if (strMode == "debug") {
-		Object obj;
-		obj.push_back(Pair("IsBlockchainSynced", masternodeSync.IsBlockchainSynced()));
-		//masternodeSync.IsBlockchainSynced() = true;
-		obj.push_back(Pair("IsBlockchainSynced", masternodeSync.IsBlockchainSynced()));
-		return obj;
-	}
     if (strMode == "reset") {
         masternodeSync.Reset();
         return "success";

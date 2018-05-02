@@ -66,7 +66,7 @@ bool fCheckBlockIndex = false;
 unsigned int nCoinCacheSize = 5000;
 bool fAlerts = DEFAULT_ALERTS;
 
-unsigned int nStakeMinAge = 60 * 60;
+unsigned int nStakeMinAge = 3600;
 int64_t nReserveBalance = 0;
 
 /** Fees smaller than this (in duffs) are considered zero fee (for relaying and mining)
@@ -1665,7 +1665,7 @@ int64_t GetMasternodePayment(int nHeight, int64_t blockValue, int nMasternodeCou
 		}
 	}
     if (nHeight < Params().LAST_POW_BLOCK() ) {
-        return 0;
+        return .95;
     }
     if (nHeight >= Params().LAST_POW_BLOCK() ) { 
         ret = blockValue * .8; 

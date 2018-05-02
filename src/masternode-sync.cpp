@@ -52,8 +52,8 @@ bool CMasternodeSync::IsBlockchainSynced()
     CBlockIndex* pindex = chainActive.Tip();
     if (pindex == NULL) return false;
 
-
-    if (pindex->nTime + 60 * 60 * 60 < GetTime())
+// if last block is more than 2 hours old resync
+    if (pindex->nTime + 7200 < GetTime())
         return false;
 
     fBlockchainSynced = true;
