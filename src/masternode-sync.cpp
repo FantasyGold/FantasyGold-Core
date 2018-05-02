@@ -53,8 +53,8 @@ bool CMasternodeSync::IsBlockchainSynced()
     if (pindex == NULL) return false;
 
 // if last block is more than 2 hours old resync
-    if (pindex->nTime + 7200 < GetTime())
-        return false;
+//    if (pindex->nTime + 7200 < GetTime())
+   //     return false;
 
     fBlockchainSynced = true;
 
