@@ -91,7 +91,7 @@ public:
         pchMessageStart[2] = 0x4D;
         pchMessageStart[3] = 0x42;
 
-		vAlertPubKey = ParseHex("04d16502d4e8269b2231cf6835302862c537e7c82c4514f0ee070c8649df663dbb3e19b2e24722cbb0e4c624330a4a4df404a43614487a0a8dca26cfe78dbdcd65");
+		vAlertPubKey = ParseHex("048a8a673e322e02cae3b27a95b93551abb29772906923641d572e2e9dc5e3c2707ec37122a16d5563e883b673eec7f6e5894c54e281a5f18518b0f173471229ad");
         nDefaultPort = 57810;
         bnProofOfWorkLimit = ~uint256(0) >> 20; // FantasyGold starting difficulty is 1 / 2^12
         nMaxReorganizationDepth = 100;
@@ -157,8 +157,7 @@ public:
         fTestnetToBeDeprecatedFieldRPC = false;
         fHeadersFirstSyncingActive = false;
         nPoolMaxTransactions = 3;
-		strSporkKey = "04f797a49391edf1488c226700a96fa93d225a3645a57edc3f66fa402cedb34bd6853635c98c72dfbc3eb5b2eb230a06e3c4f6ef008b71e28b1d815a4606b077c3";
-        //FIXME
+		strSporkKey = "04d8bc8901ec5b46c8e23d94a4ed2d69d127c4aa79311a28058bb6ab3c87505cefbb4ff9161c285dcf34cf846d2c4eda945d5331902195f8a064bdf6053d0d6767";
         strObfuscationPoolDummyAddress = "fDiJwVuKv9dcKBN4KCfX6UmXbkpqLfzGyf";
         nStartMasternodePayments = 1511092620; //Wed, 25 Jun 2014 20:36:16 GMT
     }
@@ -183,7 +182,7 @@ public:
         pchMessageStart[2] = 0x35;
         pchMessageStart[3] = 0x64;
 
-		vAlertPubKey = ParseHex("0493fb4b869faa6ce0e38a9808d0a8ca91d263ca236876cf34a44d7eca68cc771adc3566713412877ec146ce8736fc464967d9c4c2ba774d1855d0362861ec5825");
+		vAlertPubKey = ParseHex("04a1c011a5c59b09f6ac5ca2acaa1827c3c9dde95e01c1383c2159d2f769ef97d7a14526c7c0bae6391d66baa16bdbb255679811f30c42e377f364ad202c3461dd");
         nDefaultPort = 58806;
         nMinerThreads = 0;
         nTargetTimespan = 90; // 90 Seconds
@@ -227,7 +226,7 @@ public:
         fMineBlocksOnDemand = false;
         fTestnetToBeDeprecatedFieldRPC = true;
         nPoolMaxTransactions = 2;
-        strSporkKey = "043b3c416f009f4bbc8f414d4728259674f9d2db948a486b57034a8b9cce73f62a8b23b7eaee1f3e5f23faa5fbab6e0389007a2c35d4f00ab33531063b96dec1d1";
+        strSporkKey = "04d45e7b9bd690618bbf1275990c42db1d15f6c059bdafcd0362f30e64e134fdfdbbbe17e0ad4d6cd17c5d8eae7163cbaf8518b8c45039062c8283c1bc4de67890";
         strObfuscationPoolDummyAddress = "FQfdVa57fUXHEU7zboSbyGeBkS63gpowW3";
         nStartMasternodePayments = 1420837558; //Fri, 09 Jan 2015 21:05:58 GMT
     }
