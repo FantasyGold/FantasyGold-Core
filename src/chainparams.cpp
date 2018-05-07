@@ -98,7 +98,7 @@ public:
         nMinerThreads = 0;
         nTargetTimespan = 90; // FantasyGold: 1.5 minutes
         nTargetSpacing = 90;  // FantasyGold: 6 Minutes
-        nLastPOWBlock = 86400;
+        nLastPOWBlock = 43200;
         nMaturity = 66;
         nModifierUpdateBlock = 1;
 		nMaxMoneyOut = 21000000 * COIN;
