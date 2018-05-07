@@ -378,6 +378,7 @@ std::string HelpMessage(HelpMessageMode mode)
     strUsage += HelpMessageOpt("-txconfirmtarget=<n>", strprintf(_("If paytxfee is not set, include enough fee so transactions begin confirmation on average within n blocks (default: %u)"), 1));
     strUsage += HelpMessageOpt("-maxtxfee=<amt>", strprintf(_("Maximum total fees to use in a single wallet transaction, setting too low may abort large transactions (default: %s)"),
         FormatMoney(maxTxFee)));
+	strUsage += HelpMessageOpt("-usehd", _("Use hierarchical deterministic key generation (HD) after bip32. Only has effect during wallet creation/first start") + " " + strprintf(_("(default: %u)"), DEFAULT_USE_HD_WALLET));
     strUsage += HelpMessageOpt("-upgradewallet", _("Upgrade wallet to latest format") + " " + _("on startup"));
     strUsage += HelpMessageOpt("-wallet=<file>", _("Specify wallet file (within data directory)") + " " + strprintf(_("(default: %s)"), "wallet.dat"));
     strUsage += HelpMessageOpt("-walletnotify=<cmd>", _("Execute command when a wallet transaction changes (%s in cmd is replaced by TxID)"));
@@ -1373,7 +1374,13 @@ bool AppInit2(boost::thread_group& threadGroup)
         if (fFirstRun) {
             // Create new keyUser and set as default key
             RandAddSeedPerfmon();
-
+			if (GetBoolArg("-usehd", DEFAULT_USE_HD_WALLET) && !pwalletMain->IsHDEnabled()) {
+			               // generate a new master key
+			                CPubKey masterPubKey = pwalletMain->GenerateNewHDMasterKey();
+			                if (!pwalletMain->SetHDMasterKey(masterPubKey))
+			                    throw std::runtime_error(std::string(__func__) + ": Storing master key failed");
+			            }
+			
             CPubKey newDefaultKey;
             if (pwalletMain->GetKeyFromPool(newDefaultKey)) {
                 pwalletMain->SetDefaultKey(newDefaultKey);
@@ -1383,7 +1390,13 @@ bool AppInit2(boost::thread_group& threadGroup)
 
             pwalletMain->SetBestChain(chainActive.GetLocator());
         }
-
+		else if (mapArgs.count("-usehd")) {
+		            bool useHD = GetBoolArg("-usehd", DEFAULT_USE_HD_WALLET);
+		           if (pwalletMain->IsHDEnabled() && !useHD)
+		                return InitError(strprintf(_("Error loading %s: You can't disable HD on a already existing HD wallet"), strWalletFile));
+		            if (!pwalletMain->IsHDEnabled() && useHD)
+		                return InitError(strprintf(_("Error loading %s: You can't enable HD on a already existing non-HD wallet"), strWalletFile));
+		        }
         LogPrintf("%s", strErrors.str());
         LogPrintf(" wallet      %15dms\n", GetTimeMillis() - nStart);
 

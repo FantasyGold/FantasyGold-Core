@@ -27,14 +27,17 @@
 class CKeyID : public uint160
 {
 public:
-    CKeyID() : uint160(0) {}
+    CKeyID() : uint160() {}
     CKeyID(const uint160& in) : uint160(in) {}
 };
+
+typedef uint256 ChainCode;
 
 /** An encapsulated public key. */
 class CPubKey
 {
 private:
+
     /**
      * Just store the serialized data.
      * Its length can very cheaply be computed from the first byte.
@@ -174,6 +177,11 @@ public:
      */
     bool Verify(const uint256& hash, const std::vector<unsigned char>& vchSig) const;
 
+    /**
+     * Check whether a signature is normalized (lower-S).
+     */
+    static bool CheckLowS(const std::vector<unsigned char>& vchSig);
+
     //! Recover a public key from a compact signature.
     bool RecoverCompact(const uint256& hash, const std::vector<unsigned char>& vchSig);
 
@@ -181,36 +189,60 @@ public:
     bool Decompress();
 
     //! Derive BIP32 child pubkey.
-    bool Derive(CPubKey& pubkeyChild, unsigned char ccChild[32], unsigned int nChild, const unsigned char cc[32]) const;
-
-    std::vector<unsigned char> Raw() const
-    {
-        return std::vector<unsigned char>(vch, vch + size());
-    }
-
-    std::string GetHex()
-    {
-        std::string my_std_string(reinterpret_cast<const char*>(vch), 65);
-        return my_std_string;
-    }
+    bool Derive(CPubKey& pubkeyChild, ChainCode &ccChild, unsigned int nChild, const ChainCode& cc) const;
 };
 
 struct CExtPubKey {
     unsigned char nDepth;
     unsigned char vchFingerprint[4];
     unsigned int nChild;
-    unsigned char vchChainCode[32];
+    ChainCode chaincode;
     CPubKey pubkey;
 
     friend bool operator==(const CExtPubKey& a, const CExtPubKey& b)
     {
         return a.nDepth == b.nDepth && memcmp(&a.vchFingerprint[0], &b.vchFingerprint[0], 4) == 0 && a.nChild == b.nChild &&
-               memcmp(&a.vchChainCode[0], &b.vchChainCode[0], 32) == 0 && a.pubkey == b.pubkey;
+               a.chaincode == b.chaincode && a.pubkey == b.pubkey;
     }
 
     void Encode(unsigned char code[74]) const;
     void Decode(const unsigned char code[74]);
     bool Derive(CExtPubKey& out, unsigned int nChild) const;
+
+    unsigned int GetSerializeSize(int nType, int nVersion) const
+    {
+        return 74+1; //add one byte for the size (compact int)
+    }
+    template <typename Stream>
+    void Serialize(Stream& s, int nType, int nVersion) const
+    {
+        unsigned int len = 74;
+        ::WriteCompactSize(s, len);
+        unsigned char code[74];
+        Encode(code);
+        s.write((const char *)&code[0], len);
+    }
+    template <typename Stream>
+    void Unserialize(Stream& s, int nType, int nVersion)
+    {
+        unsigned int len = ::ReadCompactSize(s);
+        unsigned char code[74];
+        if (len != 74)
+            throw std::runtime_error("Invalid extended key size\n");
+        s.read((char *)&code[0], len);
+        Decode(code);
+    }
+};
+
+/** Users of this module must hold an ECCVerifyHandle. The constructor and
+ *  destructor of these are not allowed to run in parallel, though. */
+class ECCVerifyHandle
+{
+    static int refcount;
+
+public:
+    ECCVerifyHandle();
+    ~ECCVerifyHandle();
 };
 
 #endif // BITCOIN_PUBKEY_H
