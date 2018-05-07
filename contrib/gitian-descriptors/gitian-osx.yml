@@ -1,5 +1,5 @@
 ---
-name: "fantasygold-osx-1.0.1.0"
+name: "fantasygold-osx-1.2"
 enable_cache: true
 suites:
 - "trusty"

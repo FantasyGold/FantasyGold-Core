@@ -9,6 +9,7 @@ $(package)_patches=sorted_list.patch
 define $(package)_preprocess_cmds
   patch -p1 < $($(package)_patch_dir)/sorted_list.patch
 endef
+
 define $(package)_build_cmds
     python setup.py build
 endef

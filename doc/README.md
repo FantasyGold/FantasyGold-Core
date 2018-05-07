@@ -26,10 +26,9 @@ Drag FantasyGold-Qt to your applications folder, and then run FantasyGold-Qt.
 
 ### Need Help?
 
-* See the documentation at the [FantasyGold Wiki](https://en.bitcoin.it/wiki/Main_Page) ***TODO***
+* See the documentation at the [FantasyGold Wiki](https://github.com/FantasyGold/FantasyGold/wiki)
 for help and more information.
-* Ask for help on [BitcoinTalk](https://bitcointalk.org/index.php?topic=1262920.0) or on the [FantasyGold Forum](http://forum.fantasygold.com/).
-* Join one of our Slack groups [FantasyGold Slack Groups](https://fantasygold.com/slack-logins/).
+* Ask for help on [BitcoinTalk](FIXME Add official BCT URL on ANN) or on the [FantasyGold Discord](https://discord.gg/D6mj3gR).
 
 Building
 ---------------------
@@ -41,7 +40,7 @@ The following are developer notes on how to build FantasyGold on your native pla
 
 Development
 ---------------------
-The FantasyGold repo's [root README](FantasyGold/blob/master/README.md) contains relevant information on the development process and automated testing.
+The FantasyGold repo's [root README](https://github.com/FantasyGold/FantasyGold/blob/master/README.md) contains relevant information on the development process and automated testing.
 
 - [Developer Notes](developer-notes.md)
 - [Multiwallet Qt Development](multiwallet-qt.md)

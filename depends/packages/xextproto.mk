@@ -8,6 +8,7 @@ $(package)_patches=fix_aarch64_build.patch
 define $(package)_preprocess_cmds
   patch -p1 < $($(package)_patch_dir)/fix_aarch64_build.patch
 endef
+
 define $(package)_set_vars
 $(package)_config_opts=--disable-shared
 endef

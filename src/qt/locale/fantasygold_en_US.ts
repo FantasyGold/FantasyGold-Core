@@ -1544,32 +1544,32 @@ Please check the address and try again.</translation>
         <translation>Please select a privacy level.</translation>
     </message>
     <message>
-        <source>Use 2 separate masternodes to mix funds up to 5000 FGC</source>
-        <translation>Use 2 separate masternodes to mix funds up to 5000 FGC</translation>
+        <source>Use 2 separate masternodes to mix funds up to 10000 FGC</source>
+        <translation>Use 2 separate masternodes to mix funds up to 10000 FGC</translation>
     </message>
     <message>
-        <source>Use 8 separate masternodes to mix funds up to 5000 FGC</source>
-        <translation>Use 8 separate masternodes to mix funds up to 5000 FGC</translation>
+        <source>Use 8 separate masternodes to mix funds up to 10000 FGC</source>
+        <translation>Use 8 separate masternodes to mix funds up to 10000 FGC</translation>
     </message>
     <message>
         <source>Use 16 separate masternodes</source>
         <translation>Use 16 separate masternodes</translation>
     </message>
     <message>
-        <source>This option is the quickest and will cost about ~0.025 FGCto anonymize 5000 FGC</source>
-        <translation>This option is the quickest and will cost about ~0.025 FGCto anonymize 5000 FGC</translation>
+        <source>This option is the quickest and will cost about ~0.025 FGC to anonymize 10000 FGC</source>
+        <translation>This option is the quickest and will cost about ~0.025 FGC to anonymize 10000 FGC</translation>
     </message>
     <message>
-        <source>This option is moderately fast and will cost about 0.05 FGCto anonymize 5000 FGC</source>
-        <translation>This option is moderately fast and will cost about 0.05 FGCto anonymize 5000 FGC</translation>
+        <source>This option is moderately fast and will cost about 0.05 FGC to anonymize 10000 FGC</source>
+        <translation>This option is moderately fast and will cost about 0.05 FGC to anonymize 10000 FGC</translation>
     </message>
     <message>
         <source>This is the slowest and most secure option. Using maximum anonymity will cost</source>
         <translation>This is the slowest and most secure option. Using maximum anonymity will cost</translation>
     </message>
     <message>
-        <source>0.1 FGCper 5000 FGCyou anonymize.</source>
-        <translation>0.1 FGCper 5000 FGCyou anonymize.</translation>
+        <source>0.1 FGC per 10000 FGC you anonymize.</source>
+        <translation>0.1 FGC per 10000 FGC you anonymize.</translation>
     </message>
     <message>
         <source>Obfuscation Configuration</source>
@@ -1719,9 +1719,9 @@ Please check the address and try again.</translation>
     </message>
     <message>
         <source>Language missing or translation incomplete? Help contributing translations here:
-https://www.transifex.com/FantasyGold/FantasyGold-Core.git-project-translations</source>
+https://www.transifex.com/fantasygold-project/fantasygold-project-translations</source>
         <translation>Language missing or translation incomplete? Help contributing translations here:
-https://www.transifex.com/FantasyGold/FantasyGold-Core.git-project-translations</translation>
+https://www.transifex.com/fantasygold-project/fantasygold-project-translations</translation>
     </message>
     <message>
         <source>Map port using &amp;UPnP</source>
@@ -4114,12 +4114,12 @@ for example: alertnotify=echo %%s | mail -s "FantasyGold Alert" admin@foo.com
         <translation>Unable to locate enough Obfuscation denominated funds for this transaction.</translation>
     </message>
     <message>
-        <source>Unable to locate enough Obfuscation non-denominated funds for this transaction that are not equal 5000 FGC.</source>
-        <translation>Unable to locate enough Obfuscation non-denominated funds for this transaction that are not equal 5000 FGC.</translation>
+        <source>Unable to locate enough Obfuscation non-denominated funds for this transaction that are not equal 10000 FGC.</source>
+        <translation>Unable to locate enough Obfuscation non-denominated funds for this transaction that are not equal 10000 FGC.</translation>
     </message>
     <message>
-        <source>Unable to locate enough funds for this transaction that are not equal 5000 FGC.</source>
-        <translation>Unable to locate enough funds for this transaction that are not equal 5000 FGC.</translation>
+        <source>Unable to locate enough funds for this transaction that are not equal 10000 FGC.</source>
+        <translation>Unable to locate enough funds for this transaction that are not equal 10000 FGC.</translation>
     </message>
     <message>
         <source>Use separate SOCKS5 proxy to reach peers via Tor hidden services (default: %s)</source>
@@ -4166,8 +4166,8 @@ for example: alertnotify=echo %%s | mail -s "FantasyGold Alert" admin@foo.com
         <translation>You must specify a masternodeprivkey in the configuration. Please see documentation for help.</translation>
     </message>
     <message>
-        <source>(51472 could be used only on mainnet)</source>
-        <translation>(51472 could be used only on mainnet)</translation>
+        <source>(57810 could be used only on mainnet)</source>
+        <translation>(57810 could be used only on mainnet)</translation>
     </message>
     <message>
         <source>(default: %s)</source>
@@ -4178,8 +4178,8 @@ for example: alertnotify=echo %%s | mail -s "FantasyGold Alert" admin@foo.com
         <translation>(default: 1)</translation>
     </message>
     <message>
-        <source>(must be 51472 for mainnet)</source>
-        <translation>(must be 51472 for mainnet)</translation>
+        <source>(must be 57810 for mainnet)</source>
+        <translation>(must be 57810 for mainnet)</translation>
     </message>
     <message>
         <source>Accept command line and JSON-RPC commands</source>

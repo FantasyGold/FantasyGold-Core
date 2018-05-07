@@ -16,6 +16,7 @@
 #include <QTimer>
 
 CCriticalSection cs_masternodes;
+
 MasternodeList::MasternodeList(QWidget* parent) : QWidget(parent),
                                                   ui(new Ui::MasternodeList),
                                                   clientModel(0),
@@ -48,14 +49,12 @@ MasternodeList::MasternodeList(QWidget* parent) : QWidget(parent),
     connect(startAliasAction, SIGNAL(triggered()), this, SLOT(on_startButton_clicked()));
 
     timer = new QTimer(this);
-  
     connect(timer, SIGNAL(timeout()), this, SLOT(updateMyNodeList()));
     timer->start(1000);
 
     // Fill MN list
     fFilterUpdated = true;
     nTimeFilterUpdated = GetTime();
- 
 }
 
 MasternodeList::~MasternodeList()
@@ -66,7 +65,6 @@ MasternodeList::~MasternodeList()
 void MasternodeList::setClientModel(ClientModel* model)
 {
     this->clientModel = model;
-    
 }
 
 void MasternodeList::setWalletModel(WalletModel* model)
@@ -213,14 +211,13 @@ void MasternodeList::updateMyNodeList(bool fForce)
         CTxIn txin = CTxIn(uint256S(mne.getTxHash()), uint32_t(nIndex));
         CMasternode* pmn = mnodeman.Find(txin);
 		updateMyMasternodeInfo(QString::fromStdString(mne.getAlias()), QString::fromStdString(mne.getIp()), pmn);		
+
 		}
     ui->tableWidgetMyMasternodes->setSortingEnabled(true);
 
     // reset "timer"
     ui->secondsLabel->setText("0");
 }
-
-
 
 void MasternodeList::on_startButton_clicked()
 {

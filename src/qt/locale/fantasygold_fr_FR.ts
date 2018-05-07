@@ -1038,32 +1038,32 @@ Veuillez vérifier l'adresse et réessayer.</translation>
         <translation>Veuillez sélectionner un niveau de confidentialité.</translation>
     </message>
     <message>
-        <source>Use 2 separate masternodes to mix funds up to 5000 FGC</source>
-        <translation>Utiliser 2 masternodes différentes pour mélanger les fonds jusqu'a 5000 FGC</translation>
+        <source>Use 2 separate masternodes to mix funds up to 10000 FGC</source>
+        <translation>Utiliser 2 masternodes différentes pour mélanger les fonds jusqu'a 10000 FGC</translation>
     </message>
     <message>
-        <source>Use 8 separate masternodes to mix funds up to 5000 FGC</source>
-        <translation>Utiliser 8 masternodes différentes pour mélanger les fonds jusqu'a 5000 FGC</translation>
+        <source>Use 8 separate masternodes to mix funds up to 10000 FGC</source>
+        <translation>Utiliser 8 masternodes différentes pour mélanger les fonds jusqu'a 10000 FGC</translation>
     </message>
     <message>
         <source>Use 16 separate masternodes</source>
         <translation>Utiliser 16 masternodes différentes</translation>
     </message>
     <message>
-        <source>This option is the quickest and will cost about ~0.025 FGCto anonymize 5000 FGC</source>
-        <translation>Cette option est la plus rapide, et coutera ~0.025 FGCpour anonymiser 5000 FGC</translation>
+        <source>This option is the quickest and will cost about ~0.025 FGC to anonymize 10000 FGC</source>
+        <translation>Cette option est la plus rapide, et coutera ~0.025 FGC pour anonymiser 10000 FGC</translation>
     </message>
     <message>
-        <source>This option is moderately fast and will cost about 0.05 FGCto anonymize 5000 FGC</source>
-        <translation>Cette option est moyennement rapide, et coutera 0.05 FGCpour anonymiser 5000 FGC</translation>
+        <source>This option is moderately fast and will cost about 0.05 FGC to anonymize 10000 FGC</source>
+        <translation>Cette option est moyennement rapide, et coutera 0.05 FGC pour anonymiser 10000 FGC</translation>
     </message>
     <message>
         <source>This is the slowest and most secure option. Using maximum anonymity will cost</source>
         <translation>Il s'agit de l'option la plus lente est la plus sécurisé. Utiliser l'anonymat maximum coutera</translation>
     </message>
     <message>
-        <source>0.1 FGCper 5000 FGCyou anonymize.</source>
-        <translation>0.1 FGCpar 5000 FGCvous anonymisez.</translation>
+        <source>0.1 FGC per 10000 FGC you anonymize.</source>
+        <translation>0.1 FGC par 10000 FGC vous anonymisez.</translation>
     </message>
     </context>
 <context>

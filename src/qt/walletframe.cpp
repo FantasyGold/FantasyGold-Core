@@ -182,6 +182,7 @@ void WalletFrame::gotoMultisigDialog(int index)
         walletView->gotoMultisigDialog(index);
     }
 }
+
 void WalletFrame::encryptWallet(bool status)
 {
     WalletView* walletView = currentWalletView();

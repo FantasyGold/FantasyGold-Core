@@ -50,6 +50,7 @@ int atoi(const std::string& str);
  * @returns true if the entire string could be parsed as valid integer,
  *   false if not the entire string could be parsed or when overflow or underflow occurred.
  */
+
 bool ParseInt32(const std::string& str, int32_t *out);
 
 /**

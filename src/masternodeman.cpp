@@ -221,6 +221,7 @@ void CMasternodeMan::AskForMN(CNode* pnode, CTxIn& vin)
         int64_t t = (*i).second;
         if (GetTime() < t) return; // we've asked recently
     }
+
     // ask for the mnb info once from the node that sent mnp
 	LogPrint("masternode", "CMasternodeMan::AskForMN - Asking node for missing entry, vin: %s\n", vin.prevout.hash.ToString());
     pnode->PushMessage("dseg", vin);
@@ -345,6 +346,35 @@ void CMasternodeMan::Clear()
     nDsqCount = 0;
 }
 
+int CMasternodeMan::stable_size ()
+{
+	int nStable_size = 0;
+	int nMinProtocol = ActiveProtocol();
+	int64_t nMasternode_Min_Age = GetSporkValue(SPORK_16_MN_WINNER_MINIMUM_AGE);
+	int64_t nMasternode_Age = 0;
+
+	BOOST_FOREACH (CMasternode& mn, vMasternodes) {
+		if (mn.protocolVersion < nMinProtocol) {
+			continue; // Skip obsolete versions
+		}
+
+		if (IsSporkActive (SPORK_8_MASTERNODE_PAYMENT_ENFORCEMENT)) {
+			nMasternode_Age = GetAdjustedTime() - mn.sigTime;
+
+			if ((nMasternode_Age) < nMasternode_Min_Age) {
+				continue; // Skip masternodes younger than (default) 8000 sec (MUST be > MASTERNODE_REMOVAL_SECONDS)
+			}
+		}
+
+		mn.Check ();
+		if (!mn.IsEnabled ())
+			continue; // Skip not-enabled masternodes
+
+		nStable_size++;
+	}
+	return nStable_size;
+}
+
 int CMasternodeMan::CountEnabled(int protocolVersion)
 {
     int i = 0;
@@ -358,9 +388,11 @@ int CMasternodeMan::CountEnabled(int protocolVersion)
 
     return i;
 }
+
 void CMasternodeMan::CountNetworks(int protocolVersion, int& ipv4, int& ipv6, int& onion)
 {
     protocolVersion = protocolVersion == -1 ? masternodePayments.GetMinMasternodePaymentsProto() : protocolVersion;
+
     BOOST_FOREACH (CMasternode& mn, vMasternodes) {
         mn.Check();
         std::string strHost;
@@ -381,6 +413,7 @@ void CMasternodeMan::CountNetworks(int protocolVersion, int& ipv4, int& ipv6, in
 	   }
 	}
 }
+
 void CMasternodeMan::DsegUpdate(CNode* pnode)
 {
     LOCK(cs);
@@ -561,6 +594,8 @@ CMasternode* CMasternodeMan::GetCurrentMasterNode(int mod, int64_t nBlockHeight,
 int CMasternodeMan::GetMasternodeRank(const CTxIn& vin, int64_t nBlockHeight, int minProtocol, bool fOnlyActive)
 {
     std::vector<pair<int64_t, CTxIn> > vecMasternodeScores;
+    int64_t nMasternode_Min_Age = GetSporkValue(SPORK_16_MN_WINNER_MINIMUM_AGE);
+    int64_t nMasternode_Age = 0;
 
     //make sure we know about this block
     uint256 hash = 0;
@@ -568,10 +603,27 @@ int CMasternodeMan::GetMasternodeRank(const CTxIn& vin, int64_t nBlockHeight, in
 
     // scan for winner
     BOOST_FOREACH (CMasternode& mn, vMasternodes) {
-        if (mn.protocolVersion < minProtocol) continue;
+	  if (mn.protocolVersion < minProtocol) {
+		  if (fDebug) {
+			   LogPrintf("Skipping Masternode with obsolete version %d\n", mn.protocolVersion);
+      }
+		  continue;
+	}
+	if (IsSporkActive(SPORK_8_MASTERNODE_PAYMENT_ENFORCEMENT)) {
+		nMasternode_Age = GetAdjustedTime() - mn.sigTime;
+
+		if ((nMasternode_Age) < nMasternode_Min_Age) {
+			if (fDebug) {
+				LogPrintf("Skipping just activated Masternode. Age: %ld\n", nMasternode_Age);
+			}
+			continue;
+		}
+	}
+
         if (fOnlyActive) {
             mn.Check();
             if (!mn.IsEnabled()) continue;
+
         }
         uint256 n = mn.CalculateScore(1, nBlockHeight);
         int64_t n2 = n.GetCompact(false);
@@ -607,6 +659,7 @@ std::vector<pair<int, CMasternode> > CMasternodeMan::GetMasternodeRanks(int64_t 
 
         if (mn.protocolVersion < minProtocol) continue;
         if (!mn.IsEnabled()) {
+	    vecMasternodeScores.push_back(make_pair(9999, mn));
             continue;
         }
 
@@ -636,10 +689,7 @@ CMasternode* CMasternodeMan::GetMasternodeByRank(int nRank, int64_t nBlockHeight
         if (mn.protocolVersion < minProtocol) continue;
         if (fOnlyActive) {
             mn.Check();
-            if (!mn.IsEnabled()){
-				//vecMasternodeScores.push_back(make_pair(9999, mn));
-				continue;
-			}
+            if (!mn.IsEnabled()) continue;
         }
 
         uint256 n = mn.CalculateScore(1, nBlockHeight);
@@ -719,7 +769,6 @@ void CMasternodeMan::ProcessMessage(CNode* pfrom, std::string& strCommand, CData
             masternodeSync.AddedMasternodeList(mnb.GetHash());
         } else {
             LogPrintf("mnb - Rejected Masternode entry %s\n", mnb.vin.prevout.hash.ToString());
-
             if (nDoS > 0)
                 Misbehaving(pfrom->GetId(), nDoS);
         }
@@ -728,7 +777,6 @@ void CMasternodeMan::ProcessMessage(CNode* pfrom, std::string& strCommand, CData
     else if (strCommand == "mnp") { //Masternode Ping
         CMasternodePing mnp;
         vRecv >> mnp;
-
         LogPrint("masternode", "mnp - Masternode ping, vin: %s\n", mnp.vin.prevout.hash.ToString());
 
         if (mapSeenMasternodePing.count(mnp.GetHash())) return; //seen
@@ -774,7 +822,10 @@ void CMasternodeMan::ProcessMessage(CNode* pfrom, std::string& strCommand, CData
                 mAskedUsForMasternodeList[pfrom->addr] = askAgain;
             }
         } //else, asking for a specific node which is ok
+
+
         int nInvCount = 0;
+
         BOOST_FOREACH (CMasternode& mn, vMasternodes) {
             if (mn.addr.IsRFC1918()) continue; //local network
 
@@ -930,7 +981,6 @@ void CMasternodeMan::ProcessMessage(CNode* pfrom, std::string& strCommand, CData
             return;
         }
 
-
         LogPrint("masternode", "dsee - Got NEW OLD Masternode entry %s\n", vin.prevout.hash.ToString());
 
         // make sure it's still unspent
@@ -963,7 +1013,7 @@ void CMasternodeMan::ProcessMessage(CNode* pfrom, std::string& strCommand, CData
             GetTransaction(vin.prevout.hash, tx2, hashBlock, true);
             BlockMap::iterator mi = mapBlockIndex.find(hashBlock);
             if (mi != mapBlockIndex.end() && (*mi).second) {
-                CBlockIndex* pMNIndex = (*mi).second;                                                        // block for 10,000 FGC tx -> 1 confirmation
+                CBlockIndex* pMNIndex = (*mi).second;                                                        // block for 10000 FGC tx -> 1 confirmation
                 CBlockIndex* pConfIndex = chainActive[pMNIndex->nHeight + MASTERNODE_MIN_CONFIRMATIONS - 1]; // block where tx got MASTERNODE_MIN_CONFIRMATIONS
                 if (pConfIndex->GetBlockTime() > sigTime) {
                     LogPrintf("mnb - Bad sigTime %d for Masternode %s (%i conf block is at %d)\n",

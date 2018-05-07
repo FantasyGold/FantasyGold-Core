@@ -80,6 +80,7 @@ BITCOIN_CORE_H = \
   allocators.h \
   amount.h \
   base58.h \
+  bignum.h \
   bip38.h \
   bloom.h \
   chain.h \
@@ -181,7 +182,7 @@ obj/build.h: FORCE
 libbitcoin_util_a-clientversion.$(OBJEXT): obj/build.h
 
 # server: shared between fantasygoldd and fantasygold-qt
-libbitcoin_server_a_CPPFLAGS = $(BITCOIN_INCLUDES) $(MINIUPNPC_CPPFLAGS)
+libbitcoin_server_a_CPPFLAGS = $(BITCOIN_INCLUDES) $(MINIUPNPC_CPPFLAGS) $(EVENT_CFLAGS) $(EVENT_PTHREADS_CFLAGS)
 libbitcoin_server_a_SOURCES = \
   addrman.cpp \
   alert.cpp \
@@ -270,7 +271,6 @@ crypto_libbitcoin_crypto_a_SOURCES = \
   crypto/keccak.c \
   crypto/skein.c \
   crypto/common.h \
-  crypto/sha2.c \
   crypto/sha256.h \
   crypto/sha512.h \
   crypto/hmac_sha256.h \
@@ -384,7 +384,7 @@ if TARGET_WINDOWS
 fantasygoldd_SOURCES += fantasygoldd-res.rc
 endif
 
-fantasygoldd_LDADD += $(BOOST_LIBS) $(BDB_LIBS) $(SSL_LIBS) $(CRYPTO_LIBS) $(MINIUPNPC_LIBS)
+fantasygoldd_LDADD += $(BOOST_LIBS) $(BDB_LIBS) $(SSL_LIBS) $(CRYPTO_LIBS) $(MINIUPNPC_LIBS) $(EVENT_PTHREADS_LIBS) $(EVENT_LIBS)
 fantasygoldd_CPPFLAGS = $(BITCOIN_INCLUDES)
 fantasygoldd_LDFLAGS = $(RELDFLAGS) $(AM_LDFLAGS) $(LIBTOOL_APP_LDFLAGS)
 
@@ -395,7 +395,8 @@ fantasygold_cli_LDADD = \
   $(LIBBITCOIN_UTIL) \
   $(BOOST_LIBS) \
   $(SSL_LIBS) \
-  $(CRYPTO_LIBS)
+  $(CRYPTO_LIBS) \
+  $(EVENT_LIBS)
 
 fantasygold_cli_SOURCES = \
   fantasygold-cli.cpp

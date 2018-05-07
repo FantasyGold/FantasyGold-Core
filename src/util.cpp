@@ -335,6 +335,7 @@ void ParseParameters(int argc, const char* const argv[])
         mapArgs[str] = strValue;
         mapMultiArgs[str].push_back(strValue);
     }
+
   }
 
 std::string GetArg(const std::string& strArg, const std::string& strDefault)
@@ -521,6 +522,7 @@ void ReadConfigFile(map<string, string>& mapSettingsRet,
 		if (mapSettingsRet.count(strKey) == 0)
 			mapSettingsRet[strKey] = strValue;
 		mapMultiSettingsRet[strKey].push_back(strValue);
+
     }
     // If datadir is changed in .conf file:
     ClearDatadirCache();

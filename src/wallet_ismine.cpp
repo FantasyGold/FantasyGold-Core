@@ -10,6 +10,7 @@
 #include "script/script.h"
 #include "script/standard.h"
 #include "util.h"
+
 #include <boost/foreach.hpp>
 
 using namespace std;
@@ -39,6 +40,7 @@ isminetype IsMine(const CKeyStore& keystore, const CScript& scriptPubKey)
 		    return ISMINE_WATCH_ONLY;
 	   if(keystore.HaveMultiSig(scriptPubKey))
 		    return ISMINE_MULTISIG;
+
     vector<valtype> vSolutions;
     txnouttype whichType;
     if(!Solver(scriptPubKey, whichType, vSolutions)) {
@@ -46,6 +48,7 @@ isminetype IsMine(const CKeyStore& keystore, const CScript& scriptPubKey)
             return ISMINE_WATCH_ONLY;
 		if(keystore.HaveMultiSig(scriptPubKey))
 			    return ISMINE_MULTISIG;
+
         return ISMINE_NO;
     }
 
@@ -91,5 +94,6 @@ isminetype IsMine(const CKeyStore& keystore, const CScript& scriptPubKey)
         return ISMINE_WATCH_ONLY;
 	if(keystore.HaveMultiSig(scriptPubKey))
 		return ISMINE_MULTISIG;
+
     return ISMINE_NO;
 }

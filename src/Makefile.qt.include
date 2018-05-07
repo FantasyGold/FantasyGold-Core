@@ -3,18 +3,29 @@ EXTRA_LIBRARIES += qt/libbitcoinqt.a
 
 # fantasygold qt core #
 QT_TS = \
+  qt/locale/fantasygold_bg.ts \
   qt/locale/fantasygold_ca.ts \
+  qt/locale/fantasygold_cs.ts \
   qt/locale/fantasygold_da.ts \
   qt/locale/fantasygold_de.ts \
   qt/locale/fantasygold_en.ts \
   qt/locale/fantasygold_en_US.ts \
   qt/locale/fantasygold_es.ts \
+  qt/locale/fantasygold_fi.ts \
   qt/locale/fantasygold_fr_FR.ts \
   qt/locale/fantasygold_it.ts \
   qt/locale/fantasygold_ja.ts \
+  qt/locale/fantasygold_ko_KR.ts \
+  qt/locale/fantasygold_nl.ts \
+  qt/locale/fantasygold_pl.ts \
   qt/locale/fantasygold_pt.ts \
+  qt/locale/fantasygold_pt_BR.ts \
   qt/locale/fantasygold_ro_RO.ts \
   qt/locale/fantasygold_ru.ts \
+  qt/locale/fantasygold_sk.ts \
+  qt/locale/fantasygold_sv.ts \
+  qt/locale/fantasygold_uk.ts \
+  qt/locale/fantasygold_zh_CN.ts \
   qt/locale/fantasygold_zh_TW.ts
 
 QT_FORMS_UI = \
@@ -356,7 +367,9 @@ if ENABLE_ZMQ
 qt_fantasygold_qt_LDADD += $(LIBBITCOIN_ZMQ) $(ZMQ_LIBS)
 endif
 qt_fantasygold_qt_LDADD += $(LIBBITCOIN_CLI) $(LIBBITCOIN_COMMON) $(LIBBITCOIN_UTIL) $(LIBBITCOIN_CRYPTO) $(LIBBITCOIN_UNIVALUE) $(LIBLEVELDB) $(LIBMEMENV) \
-  $(BOOST_LIBS) $(QT_LIBS) $(QT_DBUS_LIBS) $(QR_LIBS) $(PROTOBUF_LIBS) $(BDB_LIBS) $(SSL_LIBS) $(CRYPTO_LIBS) $(MINIUPNPC_LIBS) $(LIBSECP256K1)
+  $(BOOST_LIBS) $(QT_LIBS) $(QT_DBUS_LIBS) $(QR_LIBS) $(PROTOBUF_LIBS) $(BDB_LIBS) $(SSL_LIBS) $(CRYPTO_LIBS) $(MINIUPNPC_LIBS) $(LIBSECP256K1) \
+  $(EVENT_PTHREADS_LIBS) $(EVENT_LIBS)
+
 qt_fantasygold_qt_LDFLAGS = $(RELDFLAGS) $(AM_LDFLAGS) $(QT_LDFLAGS) $(LIBTOOL_APP_LDFLAGS)
 qt_fantasygold_qt_LIBTOOLFLAGS = --tag CXX
 

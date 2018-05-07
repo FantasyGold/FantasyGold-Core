@@ -17,6 +17,7 @@
 #include <QTreeWidgetItem>
 
 class WalletModel;
+
 class MultisigDialog;
 class CCoinControl;
 class CTxMemPool;
@@ -36,6 +37,8 @@ public:
 
     void setModel(WalletModel* model);
  void updateDialogLabels();
+
+
     // static because also called from sendcoinsdialog
     static void updateLabels(WalletModel*, QDialog*);
     static QString getPriorityLabel(double dPriority, double mempoolEstimatePriority);
@@ -50,6 +53,7 @@ private:
     int sortColumn;
     Qt::SortOrder sortOrder;
 	bool fMultisigEnabled;
+
     QMenu* contextMenu;
     QTreeWidgetItem* contextMenuItem;
     QAction* copyTransactionHashAction;

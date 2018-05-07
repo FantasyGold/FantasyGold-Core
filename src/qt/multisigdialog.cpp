@@ -1,6 +1,5 @@
 // Copyright (c) 2015-2017 The PIVX developers
-// Copyright (c) 2017-2018 The Bulwark developers
-// Copyright (c) 2018 The Fantasy Gold Developers
+// Copyright (c) 2018 The Bulwark developers  // Copyright (c) 2018 The FantasyGold Core Developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -369,7 +368,7 @@ bool MultisigDialog::createMultisigTransaction(vector<CTxIn> vUserIn, vector<CTx
         }
 
         if(totalIn < totalOut){
-            throw runtime_error("Not enough PIV provided as input to complete transaction (including fee).");
+            throw runtime_error("Not enough FGC provided as input to complete transaction (including fee).");
         }
 
         //calculate change amount
@@ -434,7 +433,7 @@ bool MultisigDialog::createMultisigTransaction(vector<CTxIn> vUserIn, vector<CTx
            tx.vout.at(changeIndex).nValue -= fee;
            feeStringRet = strprintf("%d",((double)fee)/COIN).c_str();
         }else{
-            throw runtime_error("Not enough PIV provided to cover fee");
+            throw runtime_error("Not enough FGC provided to cover fee");
         }
 
         //clear junk from script sigs
@@ -1023,3 +1022,4 @@ void MultisigDialog::on_addPrivKeyButton_clicked()
 
     ui->keyList->addWidget(keyFrame);
 }
+

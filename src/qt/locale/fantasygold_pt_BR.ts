@@ -1460,32 +1460,32 @@ Favor verificar o endereço e tente novamente.</translation>
         <translation>Favor selecionar o nível de privacidade.</translation>
     </message>
     <message>
-        <source>Use 2 separate masternodes to mix funds up to 5000 FGC</source>
-        <translation>Use 2 masternodes separados para embaralhar fundos até 5000 FGC</translation>
+        <source>Use 2 separate masternodes to mix funds up to 10000 FGC</source>
+        <translation>Use 2 masternodes separados para embaralhar fundos até 10000 FGC</translation>
     </message>
     <message>
-        <source>Use 8 separate masternodes to mix funds up to 5000 FGC</source>
-        <translation>Use 8 masternodes separados para embaralhar fundos até 5000 FGC</translation>
+        <source>Use 8 separate masternodes to mix funds up to 10000 FGC</source>
+        <translation>Use 8 masternodes separados para embaralhar fundos até 10000 FGC</translation>
     </message>
     <message>
         <source>Use 16 separate masternodes</source>
         <translation>Use 16 masternodes separados</translation>
     </message>
     <message>
-        <source>This option is the quickest and will cost about ~0.025 FGCto anonymize 5000 FGC</source>
-        <translation>Está opção é a mais rápida e vai custar em torno de ~0.025 FGCpara anonimizar 5000 FGC</translation>
+        <source>This option is the quickest and will cost about ~0.025 FGC to anonymize 10000 FGC</source>
+        <translation>Está opção é a mais rápida e vai custar em torno de ~0.025 FGC para anonimizar 10000 FGC</translation>
     </message>
     <message>
-        <source>This option is moderately fast and will cost about 0.05 FGCto anonymize 5000 FGC</source>
-        <translation>Está opção moderamente rápida e vai custar em torno de ~0.05 FGCpara anonimizar 5000 FGC</translation>
+        <source>This option is moderately fast and will cost about 0.05 FGC to anonymize 10000 FGC</source>
+        <translation>Está opção moderamente rápida e vai custar em torno de ~0.05 FGC para anonimizar 10000 FGC</translation>
     </message>
     <message>
         <source>This is the slowest and most secure option. Using maximum anonymity will cost</source>
         <translation>Esta é a opção mais lenta e mais segura. Usando a anonimização máxima vai custar</translation>
     </message>
     <message>
-        <source>0.1 FGCper 5000 FGCyou anonymize.</source>
-        <translation>0.1 FGCpor 5000 FGCque deixar anônima.</translation>
+        <source>0.1 FGC per 10000 FGC you anonymize.</source>
+        <translation>0.1 FGC por 10000 FGC que deixar anônima.</translation>
     </message>
     <message>
         <source>Obfuscation Configuration</source>
@@ -1611,9 +1611,9 @@ Favor verificar o endereço e tente novamente.</translation>
     </message>
     <message>
         <source>Language missing or translation incomplete? Help contributing translations here:
-https://www.transifex.com/FantasyGold/FantasyGold-Core.git-project-translations</source>
+https://www.transifex.com/fantasygold-project/fantasygold-project-translations</source>
         <translation>Linguagem não encontrada ou tradução incompleta? Ajude contribuido com traduções aqui:
-https://www.transifex.com/FantasyGold/FantasyGold-Core.git-project-translations</translation>
+https://www.transifex.com/fantasygold-project/fantasygold-project-translations</translation>
     </message>
     <message>
         <source>Connect to the FantasyGold network through a SOCKS5 proxy.</source>
@@ -3506,8 +3506,8 @@ https://www.transifex.com/FantasyGold/FantasyGold-Core.git-project-translations<
         <translation>SwiftTX requer inputs com pelo menos 6 confirmações, você precisar aguardar alguns minutos e tentar novamente.</translation>
     </message>
     <message>
-        <source>Unable to locate enough funds for this transaction that are not equal 5000 FGC.</source>
-        <translation>Incapaz de localizar fundos para esta transação que não são iguais a 5000 FGC.</translation>
+        <source>Unable to locate enough funds for this transaction that are not equal 10000 FGC.</source>
+        <translation>Incapaz de localizar fundos para esta transação que não são iguais a 10000 FGC.</translation>
     </message>
     <message>
         <source>Use separate SOCKS5 proxy to reach peers via Tor hidden services (default: %s)</source>
@@ -3538,8 +3538,8 @@ https://www.transifex.com/FantasyGold/FantasyGold-Core.git-project-translations<
         <translation>Você deve especificar uma masternodeprivkey na configuração. Favor verificar o manual para obter ajuda.</translation>
     </message>
     <message>
-        <source>(51472 could be used only on mainnet)</source>
-        <translation>(51472 could be used only on mainnet)</translation>
+        <source>(57810 could be used only on mainnet)</source>
+        <translation>(57810 could be used only on mainnet)</translation>
     </message>
     <message>
         <source>(default: %s)</source>
@@ -3550,8 +3550,8 @@ https://www.transifex.com/FantasyGold/FantasyGold-Core.git-project-translations<
         <translation>(padrão: 1)</translation>
     </message>
     <message>
-        <source>(must be 51472 for mainnet)</source>
-        <translation>(deve ser 51472 para mainnet)</translation>
+        <source>(must be 57810 for mainnet)</source>
+        <translation>(deve ser 57810 para mainnet)</translation>
     </message>
     <message>
         <source>Accept connections from outside (default: 1 if no -proxy or -connect)</source>

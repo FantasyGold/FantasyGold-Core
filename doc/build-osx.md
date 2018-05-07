@@ -44,7 +44,7 @@ Instructions: Homebrew
 
 1. Clone the github tree to get the source code and go into the directory.
 
-        git clone FantasyGold-Core.git
+        git clone https://github.com/FantasyGold/FantasyGold-Core.git
         cd FantasyGold
 
 2.  Build fantasygoldd:

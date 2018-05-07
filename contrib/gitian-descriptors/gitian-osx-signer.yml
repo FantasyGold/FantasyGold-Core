@@ -7,7 +7,7 @@ architectures:
 packages:
 - "faketime"
 remotes:
-- "url": "fantasygold-detached-sigs.git"
+- "url": "https://github.com/FantasyGold/fantasygold-detached-sigs.git"
   "dir": "signature"
 files:
 - "fantasygold-osx-unsigned.tar.gz"

@@ -264,12 +264,15 @@ void WalletView::gotoMultiSendDialog()
     multiSendDialog->setModel(walletModel);
     multiSendDialog->show();
 }
+
 void WalletView::gotoMultisigDialog(int index)
 {
     MultisigDialog* multisig = new MultisigDialog(this);
     multisig->setModel(walletModel);
     multisig->showTab(index);
 }
+
+
 bool WalletView::handlePaymentRequest(const SendCoinsRecipient& recipient)
 {
     return sendCoinsPage->handlePaymentRequest(recipient);

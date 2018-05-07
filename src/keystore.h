@@ -108,6 +108,7 @@ public:
     virtual bool RemoveWatchOnly(const CScript& dest);
     virtual bool HaveWatchOnly(const CScript& dest) const;
     virtual bool HaveWatchOnly() const;
+    
 	virtual bool AddMultiSig(const CScript& dest);
 	virtual bool RemoveMultiSig(const CScript& dest);
 	virtual bool HaveMultiSig(const CScript& dest) const;

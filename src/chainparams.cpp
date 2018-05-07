@@ -5,46 +5,31 @@
 // Copyright (c) 2017-2018 The FantasyGold developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
+
 #include "chainparams.h"
+
 #include "random.h"
 #include "util.h"
 #include "utilstrencodings.h"
+
 #include <assert.h>
+
 #include <boost/assign/list_of.hpp>
+
 using namespace std;
 using namespace boost::assign;
+
 struct SeedSpec6 {
     uint8_t addr[16];
     uint16_t port;
 };
+
 #include "chainparamsseeds.h"
+
 /**
  * Main network
  */
 
-void MineGenesis(CBlock genesis){
-    // This will figure out a valid hash and Nonce if you're creating a different genesis block:
-    uint256 newhash = genesis.GetHash();
-    uint256 besthash;
-    int64_t nStart = GetTime();
-    uint256 hashTarget = ~uint256(0) >> 20;
-    printf("Target: %s\n", hashTarget.GetHex().c_str());
-    memset(&besthash,0xFF,32);
-    while (newhash > hashTarget) {
-        ++genesis.nNonce;
-        if (genesis.nNonce == 0){
-            printf("NONCE WRAPPED, incrementing time");
-            ++genesis.nTime;
-        }
-        newhash = genesis.GetHash();
-        if(newhash < besthash){
-            besthash=newhash;
-            printf("New best: %s\n", newhash.GetHex().c_str());
-        }
-    }
-    printf("Found Genesis, Nonce: %ld, Hash: %s\n", genesis.nNonce, genesis.GetHash().GetHex().c_str());
-    printf("Gensis Hash Merkle: %s\n", genesis.hashMerkleRoot.ToString().c_str());
-}
 //! Convert the pnSeeds6 array into usable address objects.
 static void convertSeed6(std::vector<CAddress>& vSeedsOut, const SeedSpec6* data, unsigned int count)
 {
@@ -109,7 +94,6 @@ public:
 		vAlertPubKey = ParseHex("04d16502d4e8269b2231cf6835302862c537e7c82c4514f0ee070c8649df663dbb3e19b2e24722cbb0e4c624330a4a4df404a43614487a0a8dca26cfe78dbdcd65");
         nDefaultPort = 57810;
         bnProofOfWorkLimit = ~uint256(0) >> 20; // FantasyGold starting difficulty is 1 / 2^12
-        nSubsidyHalvingInterval = 210000;
         nMaxReorganizationDepth = 100;
         nMinerThreads = 0;
         nTargetTimespan = 90; // FantasyGold: 1.5 minutes
@@ -118,6 +102,9 @@ public:
         nMaturity = 66;
         nModifierUpdateBlock = 1;
 		nMaxMoneyOut = 21000000 * COIN;
+       	nEnforceBlockUpgradeMajority = 750;
+        nRejectBlockOutdatedMajority = 950;
+        nToCheckBlockUpgradeMajority = 1000;
         const char* pszTimestamp = "FORBES AUG 20 2013 The $70 Billion Fantasy Football Market";
         CMutableTransaction txNew;
         txNew.vin.resize(1);
@@ -204,6 +191,9 @@ public:
         nLastPOWBlock = 28800;
         nMaturity = 15;
 		nMaxMoneyOut = 21000000 * COIN;
+        nEnforceBlockUpgradeMajority = 51;
+        nRejectBlockOutdatedMajority = 75;
+        nToCheckBlockUpgradeMajority = 100;
         //! Modify the testnet genesis block so the timestamp is valid for a later start.
         genesis.nTime = 1508638280;
         genesis.nNonce = 1081421;
@@ -262,7 +252,6 @@ public:
         pchMessageStart[1] = 0xcf;
         pchMessageStart[2] = 0x7e;
         pchMessageStart[3] = 0xac;
-        nSubsidyHalvingInterval = 150;
         nMinerThreads = 1;
         nTargetTimespan = 24 * 60 * 60; // FantasyGold: 1 day
         nTargetSpacing = 1 * 60;        // FantasyGold: 1 minutes
@@ -315,10 +304,12 @@ public:
         return dataMainNet;
     }
     //! Published setters to allow changing values in unit test cases
-    virtual void setSubsidyHalvingInterval(int anSubsidyHalvingInterval) { nSubsidyHalvingInterval = anSubsidyHalvingInterval; }
     virtual void setDefaultConsistencyChecks(bool afDefaultConsistencyChecks) { fDefaultConsistencyChecks = afDefaultConsistencyChecks; }
     virtual void setAllowMinDifficultyBlocks(bool afAllowMinDifficultyBlocks) { fAllowMinDifficultyBlocks = afAllowMinDifficultyBlocks; }
     virtual void setSkipProofOfWorkCheck(bool afSkipProofOfWorkCheck) { fSkipProofOfWorkCheck = afSkipProofOfWorkCheck; }
+    virtual void setEnforceBlockUpgradeMajority(int anEnforceBlockUpgradeMajority) { nEnforceBlockUpgradeMajority = anEnforceBlockUpgradeMajority; }
+    virtual void setRejectBlockOutdatedMajority(int anRejectBlockOutdatedMajority) { nRejectBlockOutdatedMajority = anRejectBlockOutdatedMajority; }
+    virtual void setToCheckBlockUpgradeMajority(int anToCheckBlockUpgradeMajority) { nToCheckBlockUpgradeMajority = anToCheckBlockUpgradeMajority; }
 };
 static CUnitTestParams unitTestParams;
 static CChainParams* pCurrentParams = 0;

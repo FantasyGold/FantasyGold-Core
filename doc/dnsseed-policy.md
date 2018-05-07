@@ -46,7 +46,7 @@ related to the DNS seed operation.
 If these expectations cannot be satisfied the operator should
 discontinue providing services and contact the active FantasyGold
 Core development team as well as posting on the
-[FantasyGold Forum](https://forum.fantasygold.com).
+[FantasyGold Discord](https://discord.gg/D6mj3gR).
 
 Behavior outside of these expectations may be reasonable in some
 situations but should be discussed in public in advance.

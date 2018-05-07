@@ -259,10 +259,12 @@ bool CScript::IsPushOnly(const_iterator pc) const
     }
     return true;
 }
+
 bool CScript::IsPushOnly() const
 {
 	return this->IsPushOnly(begin());
 }
+
 std::string CScript::ToString() const
 {
     std::string str;

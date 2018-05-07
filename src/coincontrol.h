@@ -72,6 +72,7 @@ public:
     {
         vOutpoints.assign(setSelected.begin(), setSelected.end());
     }
+
 	unsigned int QuantitySelected()
     {
         return setSelected.size();
@@ -82,6 +83,7 @@ public:
 	        this->setSelected.clear();
 	        this->setSelected = setSelected;
 	    }
+
 private:
     std::set<COutPoint> setSelected;
 };

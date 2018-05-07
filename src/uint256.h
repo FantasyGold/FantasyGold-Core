@@ -42,6 +42,8 @@ public:
         for (int i = 0; i < WIDTH; i++)
             pn[i] = b.pn[i];
     }
+
+
 bool IsNull() const
 {
 	for (int i = 0; i < WIDTH; i++)
@@ -49,10 +51,13 @@ bool IsNull() const
 			return false;
 	return true;
 }
+
 void SetNull()
 {
 	memset(pn, 0, sizeof(pn));
 }
+
+
     base_uint& operator=(const base_uint& b)
     {
         for (int i = 0; i < WIDTH; i++)

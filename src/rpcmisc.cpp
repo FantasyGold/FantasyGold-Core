@@ -123,11 +123,11 @@ Value mnsync(const Array& params, bool fHelp)
 
     if (fHelp || params.size() != 1 || (strMode != "status" && strMode != "reset")) {
         throw runtime_error(
-            "mnsync \"status|reset|debug\"\n"
+            "mnsync \"status|reset\"\n"
             "\nReturns the sync status or resets sync.\n"
 
             "\nArguments:\n"
-            "1. \"mode\"    (string, required) either 'status' or 'reset' or 'debug'\n"
+            "1. \"mode\"    (string, required) either 'status' or 'reset'\n"
 
             "\nResult ('status' mode):\n"
             "{\n"
@@ -177,6 +177,7 @@ Value mnsync(const Array& params, bool fHelp)
 
         return obj;
     }
+
     if (strMode == "reset") {
         masternodeSync.Reset();
         return "success";

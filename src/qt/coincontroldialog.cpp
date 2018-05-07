@@ -1,7 +1,7 @@
 // Copyright (c) 2011-2014 The Bitcoin developers
 // Copyright (c) 2014-2015 The Dash developers
-// // Copyright (c) 2015-2017 The Bulwark developers
-// Copyright (c) 2017-2018 The FantasyGold developers
+// Copyright (c) 2015-2017 The PIVX developers
+// Copyright (c) 2018 The Bulwark developers  // Copyright (c) 2018 The FantasyGold Core Developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -20,6 +20,7 @@
 #include "obfuscation.h"
 #include "wallet.h"
 #include "multisigdialog.h"
+
 #include <boost/assign/list_of.hpp> // for 'map_list_of()'
 
 #include <QApplication>
@@ -37,12 +38,15 @@ using namespace std;
 QList<CAmount> CoinControlDialog::payAmounts;
 int CoinControlDialog::nSplitBlockDummy;
 CCoinControl* CoinControlDialog::coinControl = new CCoinControl();
+
 CoinControlDialog::CoinControlDialog(QWidget* parent, bool fMultisigEnabled) : QDialog(parent),
 ui(new Ui::CoinControlDialog),
 model(0)
 {
     ui->setupUi(this);
 this->fMultisigEnabled = fMultisigEnabled;
+
+
     /* Open CSS when configured */
     this->setStyleSheet(GUIUtil::loadStyleSheet());
 
@@ -210,6 +214,7 @@ void CoinControlDialog::buttonSelectAllClicked()
     if (state == Qt::Unchecked)
         coinControl->UnSelectAll(); // just to be sure
     CoinControlDialog::updateLabels(model, this);
+    updateDialogLabels();
 }
 
 // Toggle lock state
@@ -221,8 +226,10 @@ void CoinControlDialog::buttonToggleLockClicked()
         ui->treeWidget->setEnabled(false);
         for (int i = 0; i < ui->treeWidget->topLevelItemCount(); i++) {
             item = ui->treeWidget->topLevelItem(i);
+
 			if (item->text(COLUMN_TYPE) == "MultiSig")
 				 continue;
+
             COutPoint outpt(uint256(item->text(COLUMN_TXHASH).toStdString()), item->text(COLUMN_VOUT_INDEX).toUInt());
             if (model->isLockedCoin(uint256(item->text(COLUMN_TXHASH).toStdString()), item->text(COLUMN_VOUT_INDEX).toUInt())) {
                 model->unlockCoin(outpt);
@@ -501,6 +508,7 @@ void CoinControlDialog::updateLabelLocked()
     } else
         ui->labelLocked->setVisible(false);
 }
+
 void CoinControlDialog::updateDialogLabels()
 {
 
@@ -536,6 +544,7 @@ void CoinControlDialog::updateDialogLabels()
 
     multisigDialog->updateCoinControl(nAmount, nQuantity);
 }
+
 void CoinControlDialog::updateLabels(WalletModel* model, QDialog* dialog)
 {
     if (!model)
@@ -805,6 +814,7 @@ void CoinControlDialog::updateView()
                 itemOutput = new QTreeWidgetItem(ui->treeWidget);
             itemOutput->setFlags(flgCheckbox);
             itemOutput->setCheckState(COLUMN_CHECKBOX, Qt::Unchecked);
+
 			//MultiSig
             if (fMultiSigUTXO) {
                 itemOutput->setText(COLUMN_TYPE, "MultiSig");

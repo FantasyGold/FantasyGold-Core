@@ -418,12 +418,14 @@ void BitcoinGUI::createActions(const NetworkStyle* networkStyle)
     usedSendingAddressesAction->setStatusTip(tr("Show the list of used sending addresses and labels"));
     usedReceivingAddressesAction = new QAction(QIcon(":/icons/address-book"), tr("&Receiving addresses..."), this);
     usedReceivingAddressesAction->setStatusTip(tr("Show the list of used receiving addresses and labels"));
+
 	multisigCreateAction = new QAction(QIcon(":/icons/address-book"), tr("&Multisignature creation..."), this);
 	multisigCreateAction->setStatusTip(tr("Create a new multisignature address and add it to this wallet"));
 	multisigSpendAction = new QAction(QIcon(":/icons/send"), tr("&Multisignature spending..."), this);
 	multisigSpendAction->setStatusTip(tr("Spend from a multisignature address"));
 	multisigSignAction = new QAction(QIcon(":/icons/editpaste"), tr("&Multisignature signing..."), this);
 	multisigSignAction->setStatusTip(tr("Sign with a multisignature address"));
+
     openAction = new QAction(QApplication::style()->standardIcon(QStyle::SP_FileIcon), tr("Open &URI..."), this);
     openAction->setStatusTip(tr("Open a FantasyGold: URI or payment request"));
     openBlockExplorerAction = new QAction(QIcon(":/icons/explorer"), tr("&Blockchain explorer"), this);
@@ -785,6 +787,7 @@ void BitcoinGUI::gotoVerifyMessageTab(QString addr)
 {
     if (walletFrame) walletFrame->gotoVerifyMessageTab(addr);
 }
+
 void BitcoinGUI::gotoMultisigCreate()
 {
     if(walletFrame) walletFrame->gotoMultisigDialog(0);
@@ -799,6 +802,7 @@ void BitcoinGUI::gotoMultisigSign()
 {
     if(walletFrame) walletFrame->gotoMultisigDialog(2);
 }
+
 void BitcoinGUI::gotoBip38Tool()
 {
     if (walletFrame) walletFrame->gotoBip38Tool();

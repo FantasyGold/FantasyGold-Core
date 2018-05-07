@@ -175,7 +175,6 @@ void PrepareShutdown()
     RenameThread("fantasygold-shutoff");
     mempool.AddTransactionsUpdated(1);
     StopRPCThreads();
-	ShutdownRPCMining();
 
 #ifdef ENABLE_WALLET
     if (pwalletMain)
@@ -508,7 +507,9 @@ std::string LicenseInfo()
            "\n" +
            FormatParagraph(strprintf(_("Copyright (C) 2014-%i The Dash Core Developers"), COPYRIGHT_YEAR)) + "\n" +
            "\n" +
-           FormatParagraph(strprintf(_("Copyright (C) 2015-%i The FantasyGold Core Developers"), COPYRIGHT_YEAR)) + "\n" +
+           FormatParagraph(strprintf(_("Copyright (C) 2015-%i The PIVX Core Developers"), COPYRIGHT_YEAR)) + "\n" +
+           "\n" +
+	   FormatParagraph(strprintf(_("Copyright (C) 2017-%i The FantasyGold Core Developers"), COPYRIGHT_YEAR)) + "\n" +
            "\n" +
            FormatParagraph(_("This is experimental software.")) + "\n" +
            "\n" +
@@ -680,7 +681,7 @@ bool AppInit2(boost::thread_group& threadGroup)
     sigaction(SIGHUP, &sa_hup, NULL);
 
 #if defined(__SVR4) && defined(__sun)
-    // ignore SIGPIPE on solaris
+    // ignore SIGPIPE on Solaris
     signal(SIGPIPE, SIG_IGN);
 #endif
 #endif
@@ -1260,7 +1261,7 @@ bool AppInit2(boost::thread_group& threadGroup)
                 }
 
                 uiInterface.InitMessage(_("Verifying blocks..."));
-                if (!CVerifyDB().VerifyDB(pcoinsdbview, GetArg("-checklevel", 3),
+                if (!CVerifyDB().VerifyDB(pcoinsdbview, GetArg("-checklevel", 4),
                         GetArg("-checkblocks", 500))) {
                     strLoadError = _("Corrupted block database detected");
                     break;
@@ -1643,7 +1644,6 @@ bool AppInit2(boost::thread_group& threadGroup)
 #endif
 
     // ********************************************************* Step 12: finished
-	InitRPCMining();
     SetRPCWarmupFinished();
     uiInterface.InitMessage(_("Done loading"));
 

@@ -1544,32 +1544,32 @@ Por favor compruebe la dirección e inténtelo de nuevo.</translation>
         <translation>Por favor selecciones un nivel de privacidad.</translation>
     </message>
     <message>
-        <source>Use 2 separate masternodes to mix funds up to 5000 FGC</source>
-        <translation>Use 2 nodos maestros diferentes para mezclar los fondos hasta los 5000 FGC</translation>
+        <source>Use 2 separate masternodes to mix funds up to 10000 FGC</source>
+        <translation>Use 2 nodos maestros diferentes para mezclar los fondos hasta los 10000 FGC</translation>
     </message>
     <message>
-        <source>Use 8 separate masternodes to mix funds up to 5000 FGC</source>
-        <translation>Use 8 nodos maestros diferentes para mezclar fondos hasta los 5000 FGC</translation>
+        <source>Use 8 separate masternodes to mix funds up to 10000 FGC</source>
+        <translation>Use 8 nodos maestros diferentes para mezclar fondos hasta los 10000 FGC</translation>
     </message>
     <message>
         <source>Use 16 separate masternodes</source>
         <translation>Use 16 nodos maestros diferentes</translation>
     </message>
     <message>
-        <source>This option is the quickest and will cost about ~0.025 FGCto anonymize 5000 FGC</source>
-        <translation>Esta opción es la más rápida y costará alrededor de ~0.025 FGCpara anonimizar 5000 FGC</translation>
+        <source>This option is the quickest and will cost about ~0.025 FGC to anonymize 10000 FGC</source>
+        <translation>Esta opción es la más rápida y costará alrededor de ~0.025 FGC para anonimizar 10000 FGC</translation>
     </message>
     <message>
-        <source>This option is moderately fast and will cost about 0.05 FGCto anonymize 5000 FGC</source>
-        <translation>Esta opción es moderadamente rápida y costará cerca de 0.05 FGCpara anonimizar 5000 FGC.</translation>
+        <source>This option is moderately fast and will cost about 0.05 FGC to anonymize 10000 FGC</source>
+        <translation>Esta opción es moderadamente rápida y costará cerca de 0.05 FGC para anonimizar 10000 FGC.</translation>
     </message>
     <message>
         <source>This is the slowest and most secure option. Using maximum anonymity will cost</source>
         <translation>Esta es la opción más lenta pero más segura. Usar el máximo anonimato costará</translation>
     </message>
     <message>
-        <source>0.1 FGCper 5000 FGCyou anonymize.</source>
-        <translation>0.1 FGCpor 5000 FGCque anonimizas.</translation>
+        <source>0.1 FGC per 10000 FGC you anonymize.</source>
+        <translation>0.1 FGC por 10000 FGC que anonimizas.</translation>
     </message>
     <message>
         <source>Obfuscation Configuration</source>
@@ -1719,9 +1719,9 @@ Por favor compruebe la dirección e inténtelo de nuevo.</translation>
     </message>
     <message>
         <source>Language missing or translation incomplete? Help contributing translations here:
-https://www.transifex.com/FantasyGold/FantasyGold-Core.git-project-translations</source>
+https://www.transifex.com/fantasygold-project/fantasygold-project-translations</source>
         <translation>¿Falta su lenguaje o la traducción está incompleta? Contribuya con las traducciones aquí:
-https://www.transifex.com/FantasyGold/FantasyGold-Core.git-project-translations</translation>
+https://www.transifex.com/fantasygold-project/fantasygold-project-translations</translation>
     </message>
     <message>
         <source>Map port using &amp;UPnP</source>
@@ -4115,12 +4115,12 @@ por ejemplo: alertnotify=echo %%s | mail -s "FantasyGold Alert" admin@foo.com
         <translation>Imposible localizar suficientes fondos denominados de Ofuscación para esta transacción.</translation>
     </message>
     <message>
-        <source>Unable to locate enough Obfuscation non-denominated funds for this transaction that are not equal 5000 FGC.</source>
-        <translation>Imposible localizar suficientes fondos no-denominados de Ofuscación para esta transacción que no es igual a 5000 FGC.</translation>
+        <source>Unable to locate enough Obfuscation non-denominated funds for this transaction that are not equal 10000 FGC.</source>
+        <translation>Imposible localizar suficientes fondos no-denominados de Ofuscación para esta transacción que no es igual a 10000 FGC.</translation>
     </message>
     <message>
-        <source>Unable to locate enough funds for this transaction that are not equal 5000 FGC.</source>
-        <translation>Imposible localizar fondos suficientes para esta transacción que no es igual a 5000 FGC.</translation>
+        <source>Unable to locate enough funds for this transaction that are not equal 10000 FGC.</source>
+        <translation>Imposible localizar fondos suficientes para esta transacción que no es igual a 10000 FGC.</translation>
     </message>
     <message>
         <source>Use separate SOCKS5 proxy to reach peers via Tor hidden services (default: %s)</source>
@@ -4167,8 +4167,8 @@ por ejemplo: alertnotify=echo %%s | mail -s "FantasyGold Alert" admin@foo.com
         <translation>Debes especificar un masternodeprivkey en la configuración. Por favor mira la documentación por ayuda.</translation>
     </message>
     <message>
-        <source>(51472 could be used only on mainnet)</source>
-        <translation>(51472 puede ser utilizado solo en mainnet)</translation>
+        <source>(57810 could be used only on mainnet)</source>
+        <translation>(57810 puede ser utilizado solo en mainnet)</translation>
     </message>
     <message>
         <source>(default: %s)</source>
@@ -4179,8 +4179,8 @@ por ejemplo: alertnotify=echo %%s | mail -s "FantasyGold Alert" admin@foo.com
         <translation>(predeterminado: 1)</translation>
     </message>
     <message>
-        <source>(must be 51472 for mainnet)</source>
-        <translation>(debe ser 51472 para un mainnet)</translation>
+        <source>(must be 57810 for mainnet)</source>
+        <translation>(debe ser 57810 para un mainnet)</translation>
     </message>
     <message>
         <source>Accept command line and JSON-RPC commands</source>

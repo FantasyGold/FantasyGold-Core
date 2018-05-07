@@ -129,6 +129,7 @@ bool CWalletDB::EraseWatchOnly(const CScript& dest)
     nWalletDBUpdated++;
     return Erase(std::make_pair(std::string("watchs"), dest));
 }
+
 bool CWalletDB::WriteMultiSig(const CScript& dest)
 {
     nWalletDBUpdated++;
@@ -140,6 +141,7 @@ bool CWalletDB::EraseMultiSig(const CScript& dest)
     nWalletDBUpdated++;
     return Erase(std::make_pair(std::string("multisig"), dest));
 }
+
 bool CWalletDB::WriteBestBlock(const CBlockLocator& locator)
 {
     nWalletDBUpdated++;
