@@ -146,6 +146,8 @@ Fantasy Gold is currently in use on the following sites
 
 # Block Rewards and Circulation 
 
+POW will be in effect until block 43,200 - The block reward is 90% to masternodes and 10% to miners. 
+
 <table>
    <tbody>
       <tr>
