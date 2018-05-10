@@ -187,7 +187,7 @@ Fantasy Gold is currently in use on the following sites
             <p>47</p>
          </td>
          <td>
-            <p>2-86400</p>
+            <p>2-43200</p>
          </td>
          <td>
             <p>20%</p>
