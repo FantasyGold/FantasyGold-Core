@@ -206,7 +206,7 @@ POW will be in effect until block 43,200 - The block reward is 90% to masternode
             <p>35.25</p>
          </td>
          <td>
-            <p>43200-172800</p>
+            <p>43201-172800</p>
          </td>
          <td>
             <p>20%</p>
