@@ -198,7 +198,7 @@ POW will be in effect until block 43,200 - The block reward is 90% to masternode
             <p>90%</p>
          </td>
          <td>
-            <p>8810800</p>
+            <p>6780400</p>
          </td>
       </tr>
       <tr>
@@ -215,7 +215,7 @@ POW will be in effect until block 43,200 - The block reward is 90% to masternode
             <p>80%</p>
          </td>
          <td>
-            <p>11856400</p>
+            <p>11348800</p>
          </td>
       </tr>
       <tr>
@@ -232,7 +232,7 @@ POW will be in effect until block 43,200 - The block reward is 90% to masternode
             <p>80%</p>
          </td>
          <td>
-            <p>14140600</p>
+            <p>13633000</p>
          </td>
       </tr>
       <tr>
@@ -249,7 +249,7 @@ POW will be in effect until block 43,200 - The block reward is 90% to masternode
             <p>80%</p>
          </td>
          <td>
-            <p>15853750</p>
+            <p>15346147.8</p>
          </td>
       </tr>
       <tr>
@@ -266,7 +266,7 @@ POW will be in effect until block 43,200 - The block reward is 90% to masternode
             <p>80%</p>
          </td>
          <td>
-            <p>17138612</p>
+            <p>16631010.9</p>
          </td>
       </tr>
       <tr>
@@ -283,7 +283,7 @@ POW will be in effect until block 43,200 - The block reward is 90% to masternode
             <p>80%</p>
          </td>
          <td>
-            <p>18102258</p>
+            <p>17594656</p>
          </td>
       </tr>
       <tr>
@@ -300,7 +300,24 @@ POW will be in effect until block 43,200 - The block reward is 90% to masternode
             <p>80%</p>
          </td>
          <td>
-            <p>18824993</p>
+            <p>18317391.1</p>
+         </td>
+      </tr>
+      <tr>
+         <td>
+            <p>8.36499</p>
+         </td>
+         <td>
+            <p>604801-925495</p>
+         </td>
+         <td>
+            <p>20%</p>
+         </td>
+         <td>
+            <p>80%</p>
+         </td>
+         <td>
+            <p>20999993.2</p>
          </td>
       </tr>
    </tbody>
