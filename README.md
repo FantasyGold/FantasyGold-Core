@@ -193,7 +193,7 @@ Block 1 (4,750,000 FGC) was used to swap team and community held DFSCoin to FGC 
 						<td style=min-width:50px>14140600</td>
 					</tr>
 					<tr>
-						<td style=min-width:50px>19.828099999999999</td>
+						<td style=min-width:50px>19.8280</td>
 						<td style=min-width:50px>259201 - 345600</td>
 						<td style=min-width:50px>20</td>
 						<td style=min-width:50px>80</td>
@@ -214,105 +214,105 @@ Block 1 (4,750,000 FGC) was used to swap team and community held DFSCoin to FGC 
 						<td style=min-width:50px>18102258</td>
 					</tr>
 					<tr>
-						<td style=min-width:50px>8.3649900000000006</td>
+						<td style=min-width:50px>8.3649</td>
 						<td style=min-width:50px>518401 - 604800</td>
 						<td style=min-width:50px>20</td>
 						<td style=min-width:50px>80</td>
 						<td style=min-width:50px>18824993</td>
 					</tr>
 					<tr>
-						<td style=min-width:50px>6.2737400000000001</td>
+						<td style=min-width:50px>6.2737</td>
 						<td style=min-width:50px>604801 - 691200</td>
 						<td style=min-width:50px>20</td>
 						<td style=min-width:50px>80</td>
 						<td style=min-width:50px>19367044</td>
 					</tr>
 					<tr>
-						<td style=min-width:50px>4.7053099999999999</td>
+						<td style=min-width:50px>4.7053</td>
 						<td style=min-width:50px>691201 - 777600</td>
 						<td style=min-width:50px>20</td>
 						<td style=min-width:50px>80</td>
 						<td style=min-width:50px>19773582</td>
 					</tr>
 					<tr>
-						<td style=min-width:50px>3.5289799999999998</td>
+						<td style=min-width:50px>3.5289</td>
 						<td style=min-width:50px>777601 - 864000</td>
 						<td style=min-width:50px>20</td>
 						<td style=min-width:50px>80</td>
 						<td style=min-width:50px>20078485</td>
 					</tr>
 					<tr>
-						<td style=min-width:50px>2.6467399999999999</td>
+						<td style=min-width:50px>2.6467</td>
 						<td style=min-width:50px>864001 - 950400</td>
 						<td style=min-width:50px>20</td>
 						<td style=min-width:50px>80</td>
 						<td style=min-width:50px>20307162</td>
 					</tr>
 					<tr>
-						<td style=min-width:50px>1.98505</td>
+						<td style=min-width:50px>1.9850</td>
 						<td style=min-width:50px>950401 - 1036800</td>
 						<td style=min-width:50px>20</td>
 						<td style=min-width:50px>80</td>
 						<td style=min-width:50px>20478670</td>
 					</tr>
 					<tr>
-						<td style=min-width:50px>1.4887900000000001</td>
+						<td style=min-width:50px>1.4887</td>
 						<td style=min-width:50px>1036801 - 1123200</td>
 						<td style=min-width:50px>20</td>
 						<td style=min-width:50px>80</td>
 						<td style=min-width:50px>20607301</td>
 					</tr>
 					<tr>
-						<td style=min-width:50px>1.11659</td>
+						<td style=min-width:50px>1.1165</td>
 						<td style=min-width:50px>1123201 - 1209600</td>
 						<td style=min-width:50px>20</td>
 						<td style=min-width:50px>80</td>
 						<td style=min-width:50px>20703774</td>
 					</tr>
 					<tr>
-						<td style=min-width:50px>0.83744399999999997</td>
+						<td style=min-width:50px>0.8374</td>
 						<td style=min-width:50px>1209601 - 1296000</td>
 						<td style=min-width:50px>20</td>
 						<td style=min-width:50px>80</td>
 						<td style=min-width:50px>20776129</td>
 					</tr>
 					<tr>
-						<td style=min-width:50px>0.62808299999999995</td>
+						<td style=min-width:50px>0.6280</td>
 						<td style=min-width:50px>1296001 - 1382400</td>
 						<td style=min-width:50px>20</td>
 						<td style=min-width:50px>80</td>
 						<td style=min-width:50px>20830395</td>
 					</tr>
 					<tr>
-						<td style=min-width:50px>0.47106199999999998</td>
+						<td style=min-width:50px>0.4710</td>
 						<td style=min-width:50px>1382401 - 1468800</td>
 						<td style=min-width:50px>20</td>
 						<td style=min-width:50px>80</td>
 						<td style=min-width:50px>20871094</td>
 					</tr>
 					<tr>
-						<td style=min-width:50px>0.35329700000000003</td>
+						<td style=min-width:50px>0.3532</td>
 						<td style=min-width:50px>1468801 - 1555200</td>
 						<td style=min-width:50px>20</td>
 						<td style=min-width:50px>80</td>
 						<td style=min-width:50px>20901618</td>
 					</tr>
 					<tr>
-						<td style=min-width:50px>0.26497199999999999</td>
+						<td style=min-width:50px>0.2649</td>
 						<td style=min-width:50px>1555201 - 1641600</td>
 						<td style=min-width:50px>20</td>
 						<td style=min-width:50px>80</td>
 						<td style=min-width:50px>20924511</td>
 					</tr>
 					<tr>
-						<td style=min-width:50px>0.19872899999999999</td>
+						<td style=min-width:50px>0.1987</td>
 						<td style=min-width:50px>1641601 - 1728000</td>
 						<td style=min-width:50px>20</td>
 						<td style=min-width:50px>80</td>
 						<td style=min-width:50px>20941681</td>
 					</tr>
 					<tr>
-						<td style=min-width:50px>0.14904700000000001</td>
+						<td style=min-width:50px>0.1490</td>
 						<td style=min-width:50px>1728001 - 1814400</td>
 						<td style=min-width:50px>20</td>
 						<td style=min-width:50px>80</td>
