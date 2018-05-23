@@ -261,7 +261,7 @@ Block 1 (4,750,000 FGC) was used to swap team and community held DFSCoin to FGC 
 						<td style=min-width:50px>20954558</td>
 					</tr>
 					<tr>
-						<td style=min-width:50px>The Block Reward for block number 1728000 is 0.149047 </td>
+						<td style=min-width:50px>The Block Reward for block number 1728001 is 0.149047 </td>
 						<td style=min-width:50px></td>
 						<td style=min-width:50px></td>
 					</tr>
