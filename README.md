@@ -147,8 +147,7 @@ Fantasy Gold is currently in use on the following sites
 # Block Rewards and Circulation 
 
 POW will be in effect until block 43,200 - The block reward is 90% to masternodes and 10% to miners. 
-
-	<table>
+Block 1 (4,750,000 FGC) was used to swap team and community held DFSCoin to FGC at a rate of 10 DFS to 1 FGC
    <tbody>
 				<table cellspacing=0 border=1>
 					<tr>
