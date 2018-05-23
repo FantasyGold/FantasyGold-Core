@@ -148,11 +148,8 @@ Fantasy Gold is currently in use on the following sites
 
 POW will be in effect until block 43,200 - The block reward is 90% to masternodes and 10% to miners. 
 
-	<body>
-			<b>
-				<u>Sheet Name</u> :- Sheet1
-			</b>
-			<hr>
+	<table>
+   <tbody>
 				<table cellspacing=0 border=1>
 					<tr>
 						<td style=min-width:50px>Blocks </td>
@@ -274,8 +271,5 @@ POW will be in effect until block 43,200 - The block reward is 90% to masternode
 						<td style=min-width:50px></td>
 						<td style=min-width:50px></td>
 					</tr>
-				</table>
-				<hr>
-				</body>
-
-
+				   </tbody>
+                                   </table>
