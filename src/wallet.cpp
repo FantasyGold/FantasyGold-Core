@@ -25,6 +25,7 @@
 
 #include <boost/algorithm/string/replace.hpp>
 #include <boost/thread.hpp>
+#include <algorithm>
 
 
 using namespace std;
