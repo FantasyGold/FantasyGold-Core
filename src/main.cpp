@@ -963,6 +963,7 @@ bool GetCoinAge(const CTransaction& tx, const unsigned int nTxTime, uint64_t& nC
     nCoinAge = bnCoinDay.GetCompact();
     return true;
 }
+
 bool MoneyRange(CAmount nValueOut)
 {
 return nValueOut >= 0 && nValueOut <= Params().MaxMoneyOut();
@@ -1614,7 +1615,8 @@ int64_t GetBlockValue(int nHeight)
 //This bit of code is what calculates the block value and calculates what is traditionally referred to as halving.
 // in Fantasy Gold, we have referred to this as the SubsidyDecrease
 {
-	int64_t nSubsidyDecreasePeriod = 86400, nSubsidyPeriod, nSubsidyDecreasePercent = .25, nSubsidyIteration, nSubsidy = 0;
+	int64_t nSubsidyDecreasePeriod = 86400, nSubsidyPeriod, nSubsidyIteration;
+	double nSubsidyDecreasePercent = .25, nSubsidy = 0;
 	// nSubsidyDecreasePercent = .125; // initialized above Subsidy Decrease Percentage Per Period
 	// nSubsidyDecreasePeriod = 86400; // initialized above Number of Blocks in the desired time period for the reward to decrease.
 	/*//this could also be obtained by using the desired time period in days (90) * 24 hours * 60 minutes * 60 seconds ) / blocktime (90) = 86,400
@@ -1661,7 +1663,7 @@ int64_t GetBlockValue(int nHeight)
 
 int64_t GetMasternodePayment(int nHeight, int64_t blockValue, int nMasternodeCount)
 {
-    int64_t ret = 0;
+	double ret = 0;
     
     if (Params().NetworkID() == CBaseChainParams::TESTNET) {
 		if (nHeight < 200) {
