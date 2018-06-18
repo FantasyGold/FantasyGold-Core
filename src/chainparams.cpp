@@ -128,16 +128,30 @@ public:
 
 		vSeeds.clear();
 		vFixedSeeds.clear();
-		vSeeds.push_back(CDNSSeedData("ec2-18-188-230-37.us-east-2.compute.amazonaws.com", "ec2-18-188-230-37.us-east-2.compute.amazonaws.com"));
-		vSeeds.push_back(CDNSSeedData("ec2-18-216-52-206.us-east-2.compute.amazonaws.com", "ec2-18-216-52-206.us-east-2.compute.amazonaws.com"));
-		vSeeds.push_back(CDNSSeedData("ec2-18-191-6-184.us-east-2.compute.amazonaws.com", "ec2-18-191-6-184.us-east-2.compute.amazonaws.com"));
-		vSeeds.push_back(CDNSSeedData("ec2-18-218-59-204.us-east-2.compute.amazonaws.com", "ec2-18-218-59-204.us-east-2.compute.amazonaws.com"));
-        vSeeds.push_back(CDNSSeedData("ec2-18-222-88-20.us-east-2.compute.amazonaws.com", "ec2-18-222-88-20.us-east-2.compute.amazonaws.com"));
-    	vSeeds.push_back(CDNSSeedData("ec2-18-218-69-84.us-east-2.compute.amazonaws.com", "ec2-18-218-69-84.us-east-2.compute.amazonaws.com"));
-		vSeeds.push_back(CDNSSeedData("ec2-18-191-15-127.us-east-2.compute.amazonaws.com", "ec2-18-191-15-127.us-east-2.compute.amazonaws.com"));
-	//	vSeeds.push_back(CDNSSeedData("fantasygoldcrypto.com", "seed-06-newark-nj.fantasygoldcrypto.com"));
-    //	vSeeds.push_back(CDNSSeedData("fantasygoldcrypto.com", "seed04.fantasygoldcrypto.com"));
-		
+		vSeeds.push_back(CDNSSeedData("seed-england-london.fantasygold.network", "seed-england-london.fantasygold.network"));
+		vSeeds.push_back(CDNSSeedData("seed-eu-frankfurt.fantasygold.network", "seed-eu-frankfurt.fantasygold.network"));
+		vSeeds.push_back(CDNSSeedData("seed-eu-ireland.fantasygold.network", "seed-eu-ireland.fantasygold.network"));
+		vSeeds.push_back(CDNSSeedData("seed-eu-london.fantasygold.network", "seed-eu-london.fantasygold.network"));
+		vSeeds.push_back(CDNSSeedData("seed-eu-paris.fantasygold.network", "seed-eu-paris.fantasygold.network"));
+		vSeeds.push_back(CDNSSeedData("seed-south-america-saopaulo.fantasygold.network", "seed-south-america-saopaulo.fantasygold.network"));
+		vSeeds.push_back(CDNSSeedData("seed-us-1.fantasygold.network", "seed-us-1.fantasygold.network"));
+		vSeeds.push_back(CDNSSeedData("seed-us-2.fantasygold.network", "seed-us-2.fantasygold.network"));
+		vSeeds.push_back(CDNSSeedData("seed-us-3.fantasygold.network", "seed-us-3.fantasygold.network"));
+		vSeeds.push_back(CDNSSeedData("seed-us-4.fantasygold.network", "seed-us-4.fantasygold.network"));
+		vSeeds.push_back(CDNSSeedData("seed-us-5.fantasygold.network", "seed-us-5.fantasygold.network"));
+		vSeeds.push_back(CDNSSeedData("seed-us-6.fantasygold.network", "seed-us-67.fantasygold.network"));
+		vSeeds.push_back(CDNSSeedData("seed-us-7.fantasygold.network", "seed-us-7.fantasygold.network"));
+		vSeeds.push_back(CDNSSeedData("seed-us-central-dallas.fantasygold.network", "seed-us-central-dallas.fantasygold.network"));
+		vSeeds.push_back(CDNSSeedData("seed-us-east-atlanta.fantasygold.network", "seed-us-east-atlanta.fantasygold.network"));
+		vSeeds.push_back(CDNSSeedData("seed-us-east-newark.fantasygold.network", "seed-us-east-newark.fantasygold.network"));
+		vSeeds.push_back(CDNSSeedData("seed-us-west-fremont.fantasygold.network", "seed-us-west-fremont.fantasygold.network"));
+		vSeeds.push_back(CDNSSeedData("seed-asia-mumbai.fantasygold.network", "seed-asia-mumbai.fantasygold.network"));
+		vSeeds.push_back(CDNSSeedData("seed-asia-singapore.fantasygold.network", "seed-asia-singapore.fantasygold.network"));
+		vSeeds.push_back(CDNSSeedData("seed-asia-seoul.fantasygold.network", "seed-asia-seoul.fantasygold.network"));
+		vSeeds.push_back(CDNSSeedData("seed-asia-tokyo.fantasygold.network", "seed-asia-tokyo.fantasygold.network"));
+		vSeeds.push_back(CDNSSeedData("seed-australia-sydney.fantasygold.network", "seed-australia-sydney.fantasygold.network"));
+		vSeeds.push_back(CDNSSeedData("seed-canada-central.fantasygold.network", "seed-canada-central.fantasygold.network"));
+		vSeeds.push_back(CDNSSeedData("seed-denmark-frankfurt.fantasygold.network", "seed-denmark-frankfurt.fantasygold.network"));
 		
         base58Prefixes[PUBKEY_ADDRESS] = std::vector<unsigned char>(1, 35); // f
         base58Prefixes[SCRIPT_ADDRESS] = std::vector<unsigned char>(1, 18); 
