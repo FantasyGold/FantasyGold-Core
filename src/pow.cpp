@@ -57,10 +57,11 @@ unsigned int static DarkGravityWave(const CBlockIndex* pindexLast)
 
         // For first 20 blocks return limit to avoid high 
         // difficulty from TH/s PoW.
-        if (pindexLast->nHeight <= (nLastPOWBlock + 20)) {
+	    /// The blocks never had these difficuties. 
+        /*if (pindexLast->nHeight <= (nLastPOWBlock + 20)) {
             bnTargetLimit = (~uint256(0) >> 12);
             return bnTargetLimit.GetCompact();
-        }
+        }*/
 
         return bnNew.GetCompact();
     }
