@@ -14,7 +14,6 @@
 #include <QKeyEvent>
 #include <QMessageBox>
 #include <set>
-#include "qtmaterialflatbutton.h"
 
 extern double GetDifficulty(const CBlockIndex* blockindex = NULL);
 
@@ -176,7 +175,7 @@ const CBlockIndex* getexplorerBlockIndex(int64_t height)
 
 std::string getexplorerBlockHash(int64_t Height)
 {
-    std::string genesisblockhash = "0000038e1c384db1d29ea1b0c22ce2b6cee52666e0bafb07cf62e343fe46552b";
+    std::string genesisblockhash = "0000041e482b9b9691d98eefb48473405c0b8ec31b76df3797c74a78680ef818";
     CBlockIndex* pindexBest = mapBlockIndex[chainActive.Tip()->GetBlockHash()];
     if ((Height < 0) || (Height > pindexBest->nHeight)) {
         return genesisblockhash;

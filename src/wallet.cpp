@@ -25,7 +25,6 @@
 
 #include <boost/algorithm/string/replace.hpp>
 #include <boost/thread.hpp>
-#include <algorithm>
 
 
 using namespace std;
@@ -3382,7 +3381,7 @@ void CWallet::AutoCombineDust()
         CAmount nTotalRewardsValue = 0;
         BOOST_FOREACH (const COutput& out, vCoins) {
             //no coins should get this far if they dont have proper maturity, this is double checking
-            if (out.tx->IsCoinStake() && out.tx->GetDepthInMainChain() < Params().COINBASE_MATURITY() + 1)
+            if (out.tx->IsCoinStake() && out.tx->GetDepthInMainChain() < COINBASE_MATURITY + 1)
                 continue;
 
             if (out.Value() > nAutoCombineThreshold * COIN)
@@ -3456,7 +3455,7 @@ bool CWallet::MultiSend()
 
         COutPoint outpoint(out.tx->GetHash(), out.i);
         bool sendMSonMNReward = fMultiSendMasternodeReward && outpoint.IsMasternodeReward(out.tx);
-        bool sendMSOnStake = fMultiSendStake && out.tx->IsCoinStake() && !sendMSonMNReward && !outpoint.IsMasternodeReward(out.tx); //output is either mnreward or stake reward, not both
+        bool sendMSOnStake = fMultiSendStake && out.tx->IsCoinStake() && !sendMSonMNReward; //output is either mnreward or stake reward, not both
 
         if (!(sendMSOnStake || sendMSonMNReward))
             continue;
@@ -3468,24 +3467,13 @@ bool CWallet::MultiSend()
         }
 
         //Disabled Addresses won't send MultiSend transactions
-		bool isDisabled = false;
         if (vDisabledAddresses.size() > 0) {
             for (unsigned int i = 0; i < vDisabledAddresses.size(); i++) {
                 if (vDisabledAddresses[i] == CBitcoinAddress(destMyAddress).ToString()) {
-					isDisabled = true;
-                }
+                    LogPrintf("Multisend: disabled address preventing multisend\n");
+                    return false;
                 }
             }
-	std::vector<std::pair<std::string, int>> vMultiSendAddressEntry;
-	bool isConfigured = false;
-		for (unsigned int i = 0; i < vMultiSend.size(); i++) {
-			if (CBitcoinAddress(destMyAddress).ToString() == vMultiSend[i].first && !vMultiSend[i].second.empty()) {
-				vMultiSendAddressEntry = vMultiSend[i].second;
-				isConfigured = true;
-			}
-		}
-		if (!isConfigured || isDisabled) {
-			continue;
         }
 
         // create new coin control, populate it with the selected utxo, create sending vector
@@ -3500,14 +3488,13 @@ bool CWallet::MultiSend()
         CAmount nFeeRet = 0;
         vector<pair<CScript, CAmount> > vecSend;
 
-        // loop through multisendaddressentry vector and add amounts and addresses to the sending vector
+        // loop through multisend vector and add amounts and addresses to the sending vector
         const isminefilter filter = ISMINE_SPENDABLE;
         CAmount nAmount = 0;
-	
-        for (unsigned int i = 0; i < vMultiSendAddressEntry.size(); i++) {
-            // MultiSendAddressEntry vector is a pair of 1)Address as a std::string 2) Percent of stake to send as an int
-            nAmount = ((out.tx->GetCredit(filter) - out.tx->GetDebit(filter)) * vMultiSendAddressEntry[i].second) / 100;
-            CBitcoinAddress strAddSend(vMultiSendAddressEntry[i].first);
+        for (unsigned int i = 0; i < vMultiSend.size(); i++) {
+            // MultiSend vector is a pair of 1)Address as a std::string 2) Percent of stake to send as an int
+            nAmount = ((out.tx->GetCredit(filter) - out.tx->GetDebit(filter)) * vMultiSend[i].second) / 100;
+            CBitcoinAddress strAddSend(vMultiSend[i].first);
             CScript scriptPubKey;
             scriptPubKey = GetScriptForDestination(strAddSend.Get());
             vecSend.push_back(make_pair(scriptPubKey, nAmount));
@@ -3556,19 +3543,6 @@ bool CWallet::MultiSend()
     }
 
     return true;
-}
-
-bool CWallet::isMSAddressEnabled(std::string address)
-{
-	return !(std::find(vDisabledAddresses.begin(), vDisabledAddresses.end(), address) != vDisabledAddresses.end());
-}
-
-int CWallet::indexOfMSAddress(std::string address)
-{
-	for (unsigned int i = 0; i < vMultiSend.size(); i++) {
-		if (vMultiSend[i].first == address)return i;
-	}
-	return -1;
 }
 
 CKeyPool::CKeyPool()

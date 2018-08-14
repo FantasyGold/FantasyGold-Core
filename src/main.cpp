@@ -963,7 +963,6 @@ bool GetCoinAge(const CTransaction& tx, const unsigned int nTxTime, uint64_t& nC
     nCoinAge = bnCoinDay.GetCompact();
     return true;
 }
-
 bool MoneyRange(CAmount nValueOut)
 {
 return nValueOut >= 0 && nValueOut <= Params().MaxMoneyOut();
@@ -1611,59 +1610,104 @@ double ConvertBitsToDouble(unsigned int nBits)
 
     return dDiff;
 } 
+
 int64_t GetBlockValue(int nHeight) 
-//This bit of code is what calculates the block value and calculates what is traditionally referred to as halving.
-// in Fantasy Gold, we have referred to this as the SubsidyDecrease
+
 {
-	int64_t nSubsidyDecreasePeriod = 86400, nSubsidyPeriod, nSubsidyIteration;
-	double nSubsidyDecreasePercent = .25, nSubsidy = 0;
-	// nSubsidyDecreasePercent = .125; // initialized above Subsidy Decrease Percentage Per Period
-	// nSubsidyDecreasePeriod = 86400; // initialized above Number of Blocks in the desired time period for the reward to decrease.
-	/*//this could also be obtained by using the desired time period in days (90) * 24 hours * 60 minutes * 60 seconds ) / blocktime (90) = 86,400
-	//in fact maybe we should initialize the variables in chainparams... using something like the following:
-	// Params().nRewardDecrease.days Params().nTargetSpacing Params().nRewardDecrease.percentperperiod 
-	// nDecreasePeriod = (Params().nRewardDecrease.Days * 24 * 60 * 60) / Params().nTargetSpacing
-	// in this codebase this is unnecessary because our decrease period is 90 days and our block spacing is 90 days thus 86400 is the amount of blocks in days
-	// as well as the amount of blocks in seconds.*/
-	nSubsidyPeriod = floor (nHeight/nSubsidyDecreasePeriod); //This calculates which period of subsidy decrease the current block is in, if this is 0 then the reward is 50
-	if (Params().NetworkID() == CBaseChainParams::TESTNET) {
-		nSubsidy = 47 * COIN;
-		int64_t nDecreasePeriodTestnet, nSubsidyPeriodTestnet;
-		nDecreasePeriodTestnet = 100;
-		nSubsidyPeriodTestnet = floor(nHeight/nDecreasePeriodTestnet);
-		nSubsidyIteration = 0;
-		while (nSubsidyPeriodTestnet >= 1) {
-			nSubsidyIteration++;
-			nSubsidy = (nSubsidy - (nSubsidyDecreasePercent * nSubsidy) * COIN);
-			if ( nSubsidyIteration == nSubsidyPeriodTestnet) {
-				break;
-			}
-		} 
-	return nSubsidy;
-	}
+    // For testnest we will have a static schedule of payment.
+    if (Params().NetworkID() == CBaseChainParams::TESTNET) {
+        int newHeight = nHeight + 1;
+        CAmount reward = 10 * COIN;
+        // Add premine to account for short PoW duration
+        // on testnet and the need for coin maturity for PoS.
+		// Verify change in block rewards at height change.
+        if (newHeight == 1)
+            reward = 100000 * COIN;
+        else if (newHeight >= 2 && newHeight <= 50)
+            reward = 500 * COIN;
+        else if (newHeight >= 51 && newHeight <= 100)
+            reward = 250 * COIN;
+        else if (newHeight >= 101 && newHeight <= 300)
+            reward = 125 * COIN;
+        else if (newHeight >= 301 && newHeight <= 900)
+            reward = 100 * COIN; 
+        else if (newHeight >= 901 && newHeight <= 1200)
+            reward = 50 * COIN;
+        else if (newHeight >= 1201 && newHeight <= 2000)
+            reward = 25 * COIN;
+        
+        return reward;
+
+	} 
+	
+	int64_t nSubsidy = 0;
+	
+	// Year 0	
 	if (nHeight == 0) {
 		nSubsidy = 4750000 * COIN;
-	}
-	else if (nHeight > 1 && nHeight < 86400) {
+	} else if (nHeight <= 86400 && nHeight > 1) { 
 		nSubsidy = 47 * COIN;
-	}
-	else {
-		nSubsidy = 47;
-		nSubsidyIteration = 0;
-		while (nSubsidyPeriod >= 1) {
-            nSubsidyIteration++;
-			nSubsidy = (nSubsidy - (nSubsidyDecreasePercent * nSubsidy) * COIN);
-            if ( nSubsidyIteration == nSubsidyPeriod) {
-				break;
-			}
-		}
-	}
+	
+	} else if (nHeight <= 172800 && nHeight >= 86401) { // Keep reward schedule.
+        nSubsidy = 35.25 * COIN;
+    } else if (nHeight <= 259199 && nHeight > 172801) {
+        nSubsidy = 26.4375 * COIN;
+    } else if (nHeight <= 345599 && nHeight >= 259200) {
+        nSubsidy = 19.8280 * COIN;
+
+    // Year 1
+    } else if (nHeight <= 431999 && nHeight >= 345600) {
+        nSubsidy = 14.8711 * COIN;
+    } else if (nHeight <= 518399 && nHeight >= 432000) {
+        nSubsidy = 11.1533 * COIN;
+    } else if (nHeight <= 604799 && nHeight >= 518400) {
+        nSubsidy = 8.3649 * COIN;
+    } else if (nHeight <= 691199 && nHeight >= 604800) {
+        nSubsidy = 6.2737 * COIN;
+
+    // Year 2
+    } else if (nHeight <= 777599 && nHeight >= 691200) {
+        nSubsidy = 4.7053 * COIN;
+    } else if (nHeight <= 863999 && nHeight >= 777600) {
+        nSubsidy = 3.5289 * COIN;
+    } else if (nHeight <= 950399 && nHeight >= 864000) {
+        nSubsidy = 2.6467 * COIN;
+    } else if (nHeight <= 1036799 && nHeight >= 950400) {
+        nSubsidy = 1.9850 * COIN;
+
+    // Year 3
+    } else if (nHeight <= 1123199 && nHeight >= 1036800) {
+        nSubsidy = 1.4887 * COIN;
+    } else if (nHeight <= 1209599 && nHeight >= 1123200) {
+        nSubsidy = 1.1165 * COIN;
+    } else if (nHeight <= 1295999 && nHeight >= 1209600) {
+        nSubsidy = 0.8374 * COIN;
+    } else if (nHeight <= 1382399 && nHeight >= 1296000) {
+        nSubsidy = 0.6280 * COIN;
+
+    // Year 4
+    } else if (nHeight <= 1468799 && nHeight >= 1382400) {
+        nSubsidy = 0.4710 * COIN;
+    } else if (nHeight <= 1555199 && nHeight >= 1468800) {
+        nSubsidy = 0.3532 * COIN;
+    } else if (nHeight <= 1641599 && nHeight >= 1555200) {
+        nSubsidy = 0.2649 * COIN;
+    } else if (nHeight <= 1727999 && nHeight >= 1641600) {
+        nSubsidy = 0.1987 * COIN;
+    } else if (nHeight > 1728000) {
+        nSubsidy = 0.1490 * COIN;
+    } else {
+        nSubsidy = 0 * COIN;
+    }
+
+  
+
 	return nSubsidy;
 }
 
 int64_t GetMasternodePayment(int nHeight, int64_t blockValue, int nMasternodeCount)
 {
-	double ret = 0;
+    int64_t ret = 0;
     
     if (Params().NetworkID() == CBaseChainParams::TESTNET) {
 		if (nHeight < 200) {
@@ -5819,3 +5863,4 @@ public:
         mapOrphanTransactionsByPrev.clear();
     }
 } instance_of_cmaincleanup;
+

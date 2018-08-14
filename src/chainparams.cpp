@@ -152,7 +152,7 @@ public:
 		vSeeds.push_back(CDNSSeedData("seed-australia-sydney.fantasygold.network", "seed-australia-sydney.fantasygold.network"));
 		vSeeds.push_back(CDNSSeedData("seed-canada-central.fantasygold.network", "seed-canada-central.fantasygold.network"));
 		vSeeds.push_back(CDNSSeedData("seed-denmark-frankfurt.fantasygold.network", "seed-denmark-frankfurt.fantasygold.network"));
-		
+				
         base58Prefixes[PUBKEY_ADDRESS] = std::vector<unsigned char>(1, 35); // f
         base58Prefixes[SCRIPT_ADDRESS] = std::vector<unsigned char>(1, 18); 
         base58Prefixes[SECRET_KEY] = std::vector<unsigned char>(1, 212);
@@ -201,7 +201,7 @@ public:
         nMinerThreads = 0;
         nTargetTimespan = 90; // 90 Seconds
         nTargetSpacing = 90;  // 360 Seconds
-        nLastPOWBlock = 28800;
+        nLastPOWBlock = 800;
         nMaturity = 15;
 		nMaxMoneyOut = 21000000 * COIN;
         nEnforceBlockUpgradeMajority = 51;

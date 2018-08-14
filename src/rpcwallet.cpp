@@ -2081,11 +2081,9 @@ Array printMultiSend()
     ret.push_back("MultiSend Addresses to Send To:");
 
     Object vMS;
-	for (unsigned int j = 0; j < pwalletMain->vMultiSend.size(); j++) {
-		for (unsigned int i = 0; i < pwalletMain->vMultiSend[j].second.size(); i++) {
-			vMS.push_back(Pair("Address " + boost::lexical_cast<std::string>(i), pwalletMain->vMultiSend[1].second[i].first));
-			vMS.push_back(Pair("Percent", pwalletMain->vMultiSend[i].second[i].second));
-		}
+    for (unsigned int i = 0; i < pwalletMain->vMultiSend.size(); i++) {
+        vMS.push_back(Pair("Address " + boost::lexical_cast<std::string>(i), pwalletMain->vMultiSend[i].first));
+        vMS.push_back(Pair("Percent", pwalletMain->vMultiSend[i].second));
     }
 
     ret.push_back(vMS);
@@ -2124,8 +2122,8 @@ Array printAddresses()
 unsigned int sumMultiSend()
 {
     unsigned int sum = 0;
-    for (unsigned int i = 0; i < pwalletMain->vMultiSend[0].second.size(); i++)
-        sum += pwalletMain->vMultiSend[i].second[i].second;
+    for (unsigned int i = 0; i < pwalletMain->vMultiSend.size(); i++)
+        sum += pwalletMain->vMultiSend[i].second;
     return sum;
 }
 
@@ -2239,7 +2237,7 @@ Value multisend(const Array& params, bool fHelp)
     }
 
     //if no commands are used
-    if (fHelp || params.size() > 3)
+    if (fHelp || params.size() != 2)
         throw runtime_error(
             "multisend <command>\n"
             "****************************************************************\n"
@@ -2248,7 +2246,7 @@ Value multisend(const Array& params, bool fHelp)
             "The MultiSend transaction is sent when the staked coins mature (100 confirmations)\n"
             "****************************************************************\n"
             "TO CREATE OR ADD TO THE MULTISEND VECTOR:\n"
-			"multisend <Address to send from> <FantasyGold Address> <percent>\n"
+            "multisend <Fantasy Gold Address> <percent>\n"
             "This will add a new address to the MultiSend vector\n"
             "Percent is a whole number 1 to 100.\n"
             "****************************************************************\n"
@@ -2265,16 +2263,14 @@ Value multisend(const Array& params, bool fHelp)
 
     //if the user is entering a new MultiSend item
     string strAddress = params[0].get_str();
-	string strSendAddress = params[1].get_str();
     CBitcoinAddress address(strAddress);
-	CBitcoinAddress sendAddress(strSendAddress);
-    if (!(address.IsValid() || sendAddress.IsValid()))
+    if (!address.IsValid())
         throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, "Invalid FGC address");
-    if (boost::lexical_cast<int>(params[2].get_str()) < 0)
+    if (boost::lexical_cast<int>(params[1].get_str()) < 0)
         throw JSONRPCError(RPC_INVALID_PARAMETER, "Invalid parameter, expected valid percentage");
     if (pwalletMain->IsLocked())
         throw JSONRPCError(RPC_WALLET_UNLOCK_NEEDED, "Error: Please enter the wallet passphrase with walletpassphrase first.");
-    unsigned int nPercent = boost::lexical_cast<unsigned int>(params[2].get_str());
+    unsigned int nPercent = boost::lexical_cast<unsigned int>(params[1].get_str());
 
     LOCK(pwalletMain->cs_wallet);
     {
@@ -2287,7 +2283,7 @@ Value multisend(const Array& params, bool fHelp)
         //MultiSend can only send 100% of your stake
         if (nPercent + sumMultiSend() > 100)
             throw JSONRPCError(RPC_INVALID_PARAMETER, "Failed to add to MultiSend vector, the sum of your MultiSend is greater than 100%");
-		/*
+
         for (unsigned int i = 0; i < pwalletMain->vMultiSend.size(); i++) {
             if (pwalletMain->vMultiSend[i].first == strAddress)
                 throw JSONRPCError(RPC_INVALID_PARAMETER, "Failed to add to MultiSend vector, cannot use the same address twice");
@@ -2304,7 +2300,6 @@ Value multisend(const Array& params, bool fHelp)
             if (!walletdb.WriteMultiSend(pwalletMain->vMultiSend))
                 throw JSONRPCError(RPC_DATABASE_ERROR, "walletdb WriteMultiSend failed!");
         }
-		*/
     }
     return printMultiSend();
 }
