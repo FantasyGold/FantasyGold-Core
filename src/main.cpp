@@ -1650,7 +1650,7 @@ int64_t GetBlockValue(int nHeight)
 	
 	} else if (nHeight <= 172800 && nHeight >= 86401) { // Keep reward schedule.
         nSubsidy = 35.25 * COIN;
-    } else if (nHeight <= 259199 && nHeight > 172801) {
+    } else if (nHeight <= 259199 && nHeight >= 172801) {
         nSubsidy = 26.4375 * COIN;
     } else if (nHeight <= 345599 && nHeight >= 259200) {
         nSubsidy = 19.8280 * COIN;
