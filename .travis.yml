@@ -80,4 +80,3 @@ deploy:
      - $HOST.tar.gz
   on:
     repo: FantasyGold/FantasyGold-Core
-    
