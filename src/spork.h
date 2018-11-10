@@ -60,7 +60,8 @@ using namespace boost;
                                                                    // misconfigured new nodes in the list. 
                                                                    // Set this to zero to emulate classic behaviour
 #define SPORK_17_NEW_PROTOCOL_ENFORCEMENT_3_DEFAULT 4070908800    //OFF
-
+#define SPORK_18_NEW_PROTOCOL_ENFORCEMENT_4_DEFAULT 4070908800
+ 
 class CSporkMessage;
 class CSporkManager;
 
