@@ -1,4 +1,5 @@
 // Copyright (c) 2014-2015 The Dash developers
+// Copyright (c) 2015-2017 The PIVX developers
 // // Copyright (c) 2015-2017 The Bulwark developers
 // Copyright (c) 2017-2018 The FantasyGold developers
 // Distributed under the MIT/X11 software license, see the accompanying
@@ -112,9 +113,9 @@ public:
 
     int CountEnabled(int protocolVersion = -1);
 
-	void CountNetworks(int protocolVersion, int& ipv4, int& ipv6, int& onion);
+    void CountNetworks(int protocolVersion, int& ipv4, int& ipv6, int& onion);
 
-	void DsegUpdate(CNode* pnode);
+    void DsegUpdate(CNode* pnode);
 
     /// Find an entry
     CMasternode* Find(const CScript& payee);

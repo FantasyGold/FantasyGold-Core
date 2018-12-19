@@ -6,6 +6,7 @@
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
+#include "libzerocoin/Params.h"
 #include "chainparams.h"
 
 #include "random.h"
@@ -46,6 +47,7 @@ static void convertSeed6(std::vector<CAddress>& vSeedsOut, const SeedSpec6* data
         vSeedsOut.push_back(addr);
     }
 }
+
 //   What makes a good checkpoint block?
 // + Is surrounded by blocks with reasonable timestamps
 //   (no blocks before with a timestamp after, none after with
@@ -60,6 +62,7 @@ static const Checkpoints::CCheckpointData dataMainNet = {
                 //   (the tx=... number in the SetBestChain debug.log lines)
     10        // * estimated number of transactions per day after checkpoint
 };
+
 static Checkpoints::MapCheckpoints mapCheckpointsTestnet =
     boost::assign::map_list_of(0, uint256("0x001"));
 static const Checkpoints::CCheckpointData dataTestnet = {
@@ -67,6 +70,7 @@ static const Checkpoints::CCheckpointData dataTestnet = {
     1509884281,
     0,
     250};
+
 static Checkpoints::MapCheckpoints mapCheckpointsRegtest =
     boost::assign::map_list_of(0, uint256("0x001"));
 static const Checkpoints::CCheckpointData dataRegtest = {
@@ -74,6 +78,16 @@ static const Checkpoints::CCheckpointData dataRegtest = {
     1454124731,
     0,
     100};
+
+libzerocoin::ZerocoinParams* CChainParams::Zerocoin_Params() const
+{
+    assert(this);
+    static CBigNum bnTrustedModulus(zerocoinModulus);
+    static libzerocoin::ZerocoinParams ZCParams = libzerocoin::ZerocoinParams(bnTrustedModulus);
+
+    return &ZCParams;
+}
+
 class CMainParams : public CChainParams
 {
 public:
@@ -83,8 +97,8 @@ public:
         strNetworkID = "main";
         /**
          * The message start string is designed to be unlikely to occur in normal data.
-         * The characters are rarely used upper ASCII, not valid as UTF-8, and produce a large 4-byte int at any alignment.
-         * a large 4-byte int at any alignment. here
+         * The characters are rarely used upper ASCII, not valid as UTF-8, and produce
+         * a large 4-byte int at any alignment.
          */
         pchMessageStart[0] = 0x54;
         pchMessageStart[1] = 0x49;
@@ -152,7 +166,7 @@ public:
 		vSeeds.push_back(CDNSSeedData("seed-australia-sydney.fantasygold.network", "seed-australia-sydney.fantasygold.network"));
 		vSeeds.push_back(CDNSSeedData("seed-canada-central.fantasygold.network", "seed-canada-central.fantasygold.network"));
 		vSeeds.push_back(CDNSSeedData("seed-denmark-frankfurt.fantasygold.network", "seed-denmark-frankfurt.fantasygold.network"));
-		
+				
         base58Prefixes[PUBKEY_ADDRESS] = std::vector<unsigned char>(1, 35); // f
         base58Prefixes[SCRIPT_ADDRESS] = std::vector<unsigned char>(1, 18); 
         base58Prefixes[SECRET_KEY] = std::vector<unsigned char>(1, 212);
@@ -170,17 +184,41 @@ public:
         fSkipProofOfWorkCheck = false;
         fTestnetToBeDeprecatedFieldRPC = false;
         fHeadersFirstSyncingActive = false;
-        nPoolMaxTransactions = 3;
-		strSporkKey = "04d8bc8901ec5b46c8e23d94a4ed2d69d127c4aa79311a28058bb6ab3c87505cefbb4ff9161c285dcf34cf846d2c4eda945d5331902195f8a064bdf6053d0d6767";
+
+	    nPoolMaxTransactions = 3;
+        strSporkKey = "04d8bc8901ec5b46c8e23d94a4ed2d69d127c4aa79311a28058bb6ab3c87505cefbb4ff9161c285dcf34cf846d2c4eda945d5331902195f8a064bdf6053d0d6767";
         strObfuscationPoolDummyAddress = "fDiJwVuKv9dcKBN4KCfX6UmXbkpqLfzGyf";
-        nStartMasternodePayments = 1511092620; //November 19, 2017 11:57:00 AM
+        nStartMasternodePayments = 1511092620; //November 19, 2017 11:57:00 AM 
+
+        /** Zerocoin */
+        zerocoinModulus = "b2275261dcaa303374af30576c5f676c8c2f1596aae7814f932f08839d442a5b2f7eaac75ffe9481321cbaae1c48703eff"
+            "384222885cf9e07e3996fa36d25f0866a7f3834c2457b253b0bbbd0ec23036fcc6c84886cce4d6bcc917ce7fb40d3ffcc12984db02e55e4e"
+            "ccd205f7a239fe48ab27ea1124efa0a545ae434876b0b934ebcc54b03375c78bdbb1cde74c8e42048839e191f3986436f757c11d36b60942"
+            "f6b88f40acbcd4b36d82890e05b6e508192873dee5be51352e7215fbca7dfe30daac0efd8435426313557b1d193be3fa3be8c3c81f5501e0"
+            "52478afcfc1bd1f06ff429ecae3b682faa26bda5bb530fe1eca4d630fadc3b5d15e3d1feeeb161812894d3f17f497bb321c224f5419e30d2"
+            "b79511979fa41d24bc78c0aa18e12dc668b164841ce56bc8de5b7386cff2bb314b11094a4ad5661a7fd7b517181f8a999e61ddadc6936262"
+            "80b2692bc5b62bd328eb0b4c7d48b98942b0e6037add6568897f41adb825482057ae6224531047eef0cfd8f5510eb64e0610d83a1c7181";
+        nMaxZerocoinSpendsPerTransaction = 7; // Assume about 20kb each
+        nMinZerocoinMintFee = 1 * CENT; //high fee required for zerocoin mints
+        nMintRequiredConfirmations = 20; //the maximum amount of confirmations until accumulated in 19
+        nRequiredAccumulation = 1;
+        nDefaultSecurityLevel = 100; //full security level for accumulators
+        nZerocoinHeaderVersion = 4; //Block headers must be this version once zerocoin is active
+        nBudget_Fee_Confirmations = 6; // Number of confirmations for the finalization fee
+
+        /** Staking Requirements */
+        nStakeMinStartProtocol = 70850; // Starting protocol version (ActiveProtocol())
+        nStakeMinConfirmations = 475; // Required number of confirmations
+        nStakeMinAmount = 100 * COIN; // Minimum required staking amount
     }
+
     const Checkpoints::CCheckpointData& Checkpoints() const
     {
-        return dataMainNet;
+        return data;
     }
 };
 static CMainParams mainParams;
+
 /**
  * Testnet (v3)
  */
@@ -201,12 +239,15 @@ public:
         nMinerThreads = 0;
         nTargetTimespan = 90; // 90 Seconds
         nTargetSpacing = 90;  // 360 Seconds
-        nLastPOWBlock = 28800;
+        nLastPOWBlock = 800;
         nMaturity = 15;
 		nMaxMoneyOut = 21000000 * COIN;
         nEnforceBlockUpgradeMajority = 51;
         nRejectBlockOutdatedMajority = 75;
         nToCheckBlockUpgradeMajority = 100;
+        nMasternodeCountDrift = 4;
+        nModifierUpdateBlock = 51197; //approx Mon, 17 Apr 2017 04:00:00 GMT
+
         //! Modify the testnet genesis block so the timestamp is valid for a later start.
         genesis.nTime = 1508638280;
         genesis.nNonce = 1081421;
@@ -234,15 +275,23 @@ public:
         convertSeed6(vFixedSeeds, pnSeed6_test, ARRAYLEN(pnSeed6_test));
         fRequireRPCPassword = true;
         fMiningRequiresPeers = false;
-        fAllowMinDifficultyBlocks = false;
+        fAllowMinDifficultyBlocks = true;
         fDefaultConsistencyChecks = false;
         fRequireStandard = false;
         fMineBlocksOnDemand = false;
         fTestnetToBeDeprecatedFieldRPC = true;
+
         nPoolMaxTransactions = 2;
         strSporkKey = "04d45e7b9bd690618bbf1275990c42db1d15f6c059bdafcd0362f30e64e134fdfdbbbe17e0ad4d6cd17c5d8eae7163cbaf8518b8c45039062c8283c1bc4de67890";
         strObfuscationPoolDummyAddress = "FQfdVa57fUXHEU7zboSbyGeBkS63gpowW3";
         nStartMasternodePayments = 1511092620; //November 19, 2017 11:57:00 AM
+        nBudget_Fee_Confirmations = 3; // Number of confirmations for the finalization fee. We have to make this very short
+                                       // here because we only have a 8 block finalization window on testnet
+
+        /** Staking Requirements */
+        nStakeMinStartProtocol = 70850; // Starting protocol version (ActiveProtocol())
+        nStakeMinConfirmations = 30; // Required number of confirmations
+        nStakeMinAmount = 500 * COIN; // Minimum required staking amount
     }
     const Checkpoints::CCheckpointData& Checkpoints() const
     {
@@ -250,6 +299,7 @@ public:
     }
 };
 static CTestNetParams testNetParams;
+
 /**
  * Regression test
  */
@@ -292,6 +342,7 @@ public:
     }
 };
 static CRegTestParams regTestParams;
+
 /**
  * Unit test
  */
@@ -305,17 +356,19 @@ public:
         nDefaultPort = 60806;
         vFixedSeeds.clear(); //! Unit test mode doesn't have any fixed seeds.
         vSeeds.clear();      //! Unit test mode doesn't have any DNS seeds.
-        fRequireRPCPassword = false;
+
         fMiningRequiresPeers = false;
         fDefaultConsistencyChecks = true;
         fAllowMinDifficultyBlocks = false;
-        fMineBlocksOnDemand = false;
+        fMineBlocksOnDemand = true;
     }
+
     const Checkpoints::CCheckpointData& Checkpoints() const
     {
         // UnitTest share the same checkpoints as MAIN
-        return dataMainNet;
+        return data;
     }
+
     //! Published setters to allow changing values in unit test cases
     virtual void setDefaultConsistencyChecks(bool afDefaultConsistencyChecks) { fDefaultConsistencyChecks = afDefaultConsistencyChecks; }
     virtual void setAllowMinDifficultyBlocks(bool afAllowMinDifficultyBlocks) { fAllowMinDifficultyBlocks = afAllowMinDifficultyBlocks; }
@@ -325,18 +378,23 @@ public:
     virtual void setToCheckBlockUpgradeMajority(int anToCheckBlockUpgradeMajority) { nToCheckBlockUpgradeMajority = anToCheckBlockUpgradeMajority; }
 };
 static CUnitTestParams unitTestParams;
+
+
 static CChainParams* pCurrentParams = 0;
+
 CModifiableParams* ModifiableParams()
 {
     assert(pCurrentParams);
     assert(pCurrentParams == &unitTestParams);
     return (CModifiableParams*)&unitTestParams;
 }
+
 const CChainParams& Params()
 {
     assert(pCurrentParams);
     return *pCurrentParams;
 }
+
 CChainParams& Params(CBaseChainParams::Network network)
 {
     switch (network) {
@@ -353,16 +411,19 @@ CChainParams& Params(CBaseChainParams::Network network)
         return mainParams;
     }
 }
+
 void SelectParams(CBaseChainParams::Network network)
 {
     SelectBaseParams(network);
     pCurrentParams = &Params(network);
 }
+
 bool SelectParamsFromCommandLine()
 {
     CBaseChainParams::Network network = NetworkIdFromCommandLine();
     if (network == CBaseChainParams::MAX_NETWORK_TYPES)
         return false;
+
     SelectParams(network);
     return true;
 }

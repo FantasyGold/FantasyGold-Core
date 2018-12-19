@@ -116,8 +116,8 @@
       <widget class="QtMaterialFlatButton" name="closeButton" native="true">
 	  <property name="text" stdset="0">
          <string>Close</string>
-       </property>
-      </widget>
+        </property>
+		</widget>
      </item>
     </layout>
    </item>

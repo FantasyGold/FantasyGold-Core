@@ -43,7 +43,9 @@ public:
         ThreadsScriptVerif,  // int
         DatabaseCache,       // int
         SpendZeroConfChange, // bool
-        ObfuscationRounds,   // int
+		ShowOrphans,         // bool
+        ZeromintPercentage,  // int
+        ZeromintPrefDenom,   // int
         AnonymizeFantasyGoldAmount, //int
         ShowMasternodesTab,  // bool
         Listen,              // bool
@@ -80,6 +82,7 @@ private:
     QString language;
     int nDisplayUnit;
     QString strThirdPartyTxUrls;
+	bool fShowOrphans;
     bool fCoinControlFeatures;
     /* settings that were overriden by command-line */
     QString strOverriddenByCommandLine;
@@ -89,7 +92,8 @@ private:
 
 signals:
     void displayUnitChanged(int unit);
-    void obfuscationRoundsChanged(int);
+    void zeromintPercentageChanged(int);
+    void preferredDenomChanged(int);
     void anonymizeFantasyGoldAmountChanged(int);
     void coinControlFeaturesChanged(bool);
 };

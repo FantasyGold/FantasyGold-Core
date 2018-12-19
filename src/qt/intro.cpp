@@ -169,7 +169,7 @@ bool Intro::pickDataDirectory()
         while (true) {
             if (!intro.exec()) {
                 /* Cancel clicked */
-               return false;
+		return false;
             }
             dataDir = intro.getDataDirectory();
             try {
@@ -190,7 +190,7 @@ bool Intro::pickDataDirectory()
      */
     if (dataDir != getDefaultDataDirectory())
         SoftSetArg("-datadir", GUIUtil::qstringToBoostPath(dataDir).string()); // use OS locale for path setting
-	return true;
+    return true;
 }
 
 void Intro::setStatus(int status, const QString& message, quint64 bytesAvailable)

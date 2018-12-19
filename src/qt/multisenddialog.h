@@ -13,7 +13,7 @@ class MultiSendDialog : public QDialog
 {
     Q_OBJECT
     void updateStatus();
-    void updateCheckBoxes();
+	void updateCheckBoxes();	
 
 private:
 	Ui::MultiSendDialog* ui;

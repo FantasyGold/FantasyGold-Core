@@ -192,7 +192,7 @@ class BlockDataCopier:
 		while self.blkCountOut < len(self.blkindex):
 			if not self.inF:
 				fname = self.inFileName(self.inFn)
-				print("Input file" + fname)
+				print("Input file " + fname)
 				try:
 					self.inF = open(fname, "rb")
 				except IOError:

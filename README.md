@@ -146,177 +146,160 @@ Fantasy Gold is currently in use on the following sites
 
 # Block Rewards and Circulation 
 
-POW will be in effect until block 43,200 - The block reward is 90% to masternodes and 10% to miners. At Block 43,201 FantasyGold will start its POS phase where block rewards will be 80% to masternodes and 20% to staking wallets.  
-Block 1 (4,750,000 FGC) was used to swap team and community held DFSCoin to FGC at a rate of 10 DFS to 1 FGC
+<table>
    <tbody>
-				<table cellspacing=0 border=1>
-					<tr>
-						<td style=min-width:50px>Subsidy</td>
-						<td style=min-width:50px>Blocks</td>
-						<td style=min-width:50px>POS</td>
-						<td style=min-width:50px>MN</td>
-						<td style=min-width:50px>Circulation</td>
-					</tr>
-					<tr>
-						<td style=min-width:50px>4750000</td>
-						<td style=min-width:50px>1</td>
-						<td style=min-width:50px>NA</td>
-						<td style=min-width:50px>NA</td>
-						<td style=min-width:50px>4750000</td>
-					</tr>
-					<tr>
-						<td style=min-width:50px>47</td>
-						<td style=min-width:50px>2 - 43200</td>
-						<td style=min-width:50px>NA</td>
-						<td style=min-width:50px>90</td>
-						<td style=min-width:50px>6780353</td>
-					</tr>
-					<tr>
-						<td style=min-width:50px>47</td>
-						<td style=min-width:50px>43201-86400</td>
-						<td style=min-width:50px>20</td>
-						<td style=min-width:50px>80</td>
-						<td style=min-width:50px>8810800</td>
-					</tr>
-					<tr>
-						<td style=min-width:50px>35.25</td>
-						<td style=min-width:50px>86401 - 172800</td>
-						<td style=min-width:50px>20</td>
-						<td style=min-width:50px>80</td>
-						<td style=min-width:50px>11856400</td>
-					</tr>
-					<tr>
-						<td style=min-width:50px>26.4375</td>
-						<td style=min-width:50px>172801 - 259200</td>
-						<td style=min-width:50px>20</td>
-						<td style=min-width:50px>80</td>
-						<td style=min-width:50px>14140600</td>
-					</tr>
-					<tr>
-						<td style=min-width:50px>19.8280</td>
-						<td style=min-width:50px>259201 - 345600</td>
-						<td style=min-width:50px>20</td>
-						<td style=min-width:50px>80</td>
-						<td style=min-width:50px>15853750</td>
-					</tr>
-					<tr>
-						<td style=min-width:50px>14.8711</td>
-						<td style=min-width:50px>345601 - 432000</td>
-						<td style=min-width:50px>20</td>
-						<td style=min-width:50px>80</td>
-						<td style=min-width:50px>17138612</td>
-					</tr>
-					<tr>
-						<td style=min-width:50px>11.1533</td>
-						<td style=min-width:50px>432001 - 518400</td>
-						<td style=min-width:50px>20</td>
-						<td style=min-width:50px>80</td>
-						<td style=min-width:50px>18102258</td>
-					</tr>
-					<tr>
-						<td style=min-width:50px>8.3649</td>
-						<td style=min-width:50px>518401 - 604800</td>
-						<td style=min-width:50px>20</td>
-						<td style=min-width:50px>80</td>
-						<td style=min-width:50px>18824993</td>
-					</tr>
-					<tr>
-						<td style=min-width:50px>6.2737</td>
-						<td style=min-width:50px>604801 - 691200</td>
-						<td style=min-width:50px>20</td>
-						<td style=min-width:50px>80</td>
-						<td style=min-width:50px>19367044</td>
-					</tr>
-					<tr>
-						<td style=min-width:50px>4.7053</td>
-						<td style=min-width:50px>691201 - 777600</td>
-						<td style=min-width:50px>20</td>
-						<td style=min-width:50px>80</td>
-						<td style=min-width:50px>19773582</td>
-					</tr>
-					<tr>
-						<td style=min-width:50px>3.5289</td>
-						<td style=min-width:50px>777601 - 864000</td>
-						<td style=min-width:50px>20</td>
-						<td style=min-width:50px>80</td>
-						<td style=min-width:50px>20078485</td>
-					</tr>
-					<tr>
-						<td style=min-width:50px>2.6467</td>
-						<td style=min-width:50px>864001 - 950400</td>
-						<td style=min-width:50px>20</td>
-						<td style=min-width:50px>80</td>
-						<td style=min-width:50px>20307162</td>
-					</tr>
-					<tr>
-						<td style=min-width:50px>1.9850</td>
-						<td style=min-width:50px>950401 - 1036800</td>
-						<td style=min-width:50px>20</td>
-						<td style=min-width:50px>80</td>
-						<td style=min-width:50px>20478670</td>
-					</tr>
-					<tr>
-						<td style=min-width:50px>1.4887</td>
-						<td style=min-width:50px>1036801 - 1123200</td>
-						<td style=min-width:50px>20</td>
-						<td style=min-width:50px>80</td>
-						<td style=min-width:50px>20607301</td>
-					</tr>
-					<tr>
-						<td style=min-width:50px>1.1165</td>
-						<td style=min-width:50px>1123201 - 1209600</td>
-						<td style=min-width:50px>20</td>
-						<td style=min-width:50px>80</td>
-						<td style=min-width:50px>20703774</td>
-					</tr>
-					<tr>
-						<td style=min-width:50px>0.8374</td>
-						<td style=min-width:50px>1209601 - 1296000</td>
-						<td style=min-width:50px>20</td>
-						<td style=min-width:50px>80</td>
-						<td style=min-width:50px>20776129</td>
-					</tr>
-					<tr>
-						<td style=min-width:50px>0.6280</td>
-						<td style=min-width:50px>1296001 - 1382400</td>
-						<td style=min-width:50px>20</td>
-						<td style=min-width:50px>80</td>
-						<td style=min-width:50px>20830395</td>
-					</tr>
-					<tr>
-						<td style=min-width:50px>0.4710</td>
-						<td style=min-width:50px>1382401 - 1468800</td>
-						<td style=min-width:50px>20</td>
-						<td style=min-width:50px>80</td>
-						<td style=min-width:50px>20871094</td>
-					</tr>
-					<tr>
-						<td style=min-width:50px>0.3532</td>
-						<td style=min-width:50px>1468801 - 1555200</td>
-						<td style=min-width:50px>20</td>
-						<td style=min-width:50px>80</td>
-						<td style=min-width:50px>20901618</td>
-					</tr>
-					<tr>
-						<td style=min-width:50px>0.2649</td>
-						<td style=min-width:50px>1555201 - 1641600</td>
-						<td style=min-width:50px>20</td>
-						<td style=min-width:50px>80</td>
-						<td style=min-width:50px>20924511</td>
-					</tr>
-					<tr>
-						<td style=min-width:50px>0.1987</td>
-						<td style=min-width:50px>1641601 - 1728000</td>
-						<td style=min-width:50px>20</td>
-						<td style=min-width:50px>80</td>
-						<td style=min-width:50px>20941681</td>
-					</tr>
-					<tr>
-						<td style=min-width:50px>0.1490</td>
-						<td style=min-width:50px>1728001 - 1814400</td>
-						<td style=min-width:50px>20</td>
-						<td style=min-width:50px>80</td>
-						<td style=min-width:50px>20954558</td>
-					</tr>
-				   </tbody>
-                                   </table>
+      <tr>
+         <td>
+            <p>Subsidy</p>
+         </td>
+         <td>
+            <p>Block</p>
+         </td>
+         <td>
+            <p>PoS</p>
+         </td>
+         <td>
+            <p>MN</p>
+         </td>
+         <td>
+            <p>Circulation</p>
+         </td>
+      </tr>
+      <tr>
+         <td>
+            <p>4750000</p>
+         </td>
+         <td>
+            <p>1</p>
+         </td>
+         <td>
+            <p>NA</p>
+         </td>
+         <td>
+            <p>NA</p>
+         </td>
+         <td>
+            <p>4750000</p>
+         </td>
+      </tr>
+      <tr>
+         <td>
+            <p>47</p>
+         </td>
+         <td>
+            <p>2-86400</p>
+         </td>
+         <td>
+            <p>20%</p>
+         </td>
+         <td>
+            <p>80%</p>
+         </td>
+         <td>
+            <p>8810800</p>
+         </td>
+      </tr>
+      <tr>
+         <td>
+            <p>35.25</p>
+         </td>
+         <td>
+            <p>86401-172800</p>
+         </td>
+         <td>
+            <p>20%</p>
+         </td>
+         <td>
+            <p>80%</p>
+         </td>
+         <td>
+            <p>11856400</p>
+         </td>
+      </tr>
+      <tr>
+         <td>
+            <p>26.4375</p>
+         </td>
+         <td>
+            <p>172801-259200</p>
+         </td>
+         <td>
+            <p>20%</p>
+         </td>
+         <td>
+            <p>80%</p>
+         </td>
+         <td>
+            <p>14140600</p>
+         </td>
+      </tr>
+      <tr>
+         <td>
+            <p>19.8281</p>
+         </td>
+         <td>
+            <p>259201-345600</p>
+         </td>
+         <td>
+            <p>20%</p>
+         </td>
+         <td>
+            <p>80%</p>
+         </td>
+         <td>
+            <p>15853750</p>
+         </td>
+      </tr>
+      <tr>
+         <td>
+            <p>14.8711</p>
+         </td>
+         <td>
+            <p>345601-432000</p>
+         </td>
+         <td>
+            <p>20%</p>
+         </td>
+         <td>
+            <p>80%</p>
+         </td>
+         <td>
+            <p>17138612</p>
+         </td>
+      </tr>
+      <tr>
+         <td>
+            <p>11.1533</p>
+         </td>
+         <td>
+            <p>432001-518400</p>
+         </td>
+         <td>
+            <p>20%</p>
+         </td>
+         <td>
+            <p>80%</p>
+         </td>
+         <td>
+            <p>18102258</p>
+         </td>
+      </tr>
+      <tr>
+         <td>
+            <p>8.36499</p>
+         </td>
+         <td>
+            <p>518400-604800</p>
+         </td>
+         <td>
+            <p>20%</p>
+         </td>
+         <td>
+            <p>80%</p>
+         </td>
+         <td>
+            <p>18824993</p>
+         </td>
+      </tr>
+   </tbody>
+</table>

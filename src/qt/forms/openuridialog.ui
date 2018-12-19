@@ -13,7 +13,7 @@
   <property name="windowTitle">
    <string>Open URI</string>
   </property>
-    <widget class="QLabel" name="label_2">
+  <widget class="QLabel" name="label_2">
    <property name="geometry">
     <rect>
      <x>9</x>
@@ -22,10 +22,10 @@
      <height>16</height>
     </rect>
    </property>
-     <property name="text">
-      <string>Open payment request from URI or file</string>
-     </property>
-    </widget>
+   <property name="text">
+    <string>Open payment request from URI or file</string>
+   </property>
+  </widget>
   <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
     <rect>
@@ -35,24 +35,24 @@
      <height>31</height>
     </rect>
    </property>
-    <layout class="QHBoxLayout" name="horizontalLayout">
-     <item>
-      <widget class="QLabel" name="label">
+   <layout class="QHBoxLayout" name="horizontalLayout">
+    <item>
+     <widget class="QLabel" name="label">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
         <horstretch>0</horstretch>
         <verstretch>0</verstretch>
        </sizepolicy>
       </property>
-       <property name="text">
-        <string>URI:</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QValidatedLineEdit" name="uriEdit"/>
-     </item>
-     <item>
+      <property name="text">
+       <string>URI:</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QValidatedLineEdit" name="uriEdit"/>
+    </item>
+    <item>
      <widget class="QtMaterialFlatButton" name="selectFileButton" native="true">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
@@ -60,18 +60,18 @@
         <verstretch>0</verstretch>
        </sizepolicy>
       </property>
-       <property name="toolTip">
-        <string>Select payment request file</string>
-       </property>
+      <property name="toolTip">
+       <string>Select payment request file</string>
+      </property>
       <property name="text" stdset="0">
-        <string notr="true">...</string>
-       </property>
+       <string notr="true">...</string>
+      </property>
       <property name="autoDefault" stdset="0">
-        <bool>false</bool>
-       </property>
-      </widget>
-     </item>
-    </layout>
+       <bool>false</bool>
+      </property>
+     </widget>
+    </item>
+   </layout>
   </widget>
   <widget class="QWidget" name="horizontalLayoutWidget">
    <property name="geometry">
@@ -83,20 +83,20 @@
     </rect>
    </property>
    <layout class="QHBoxLayout" name="horizontalLayout_2">
-   <item>
+    <item>
      <spacer name="horizontalSpacer">
-     <property name="orientation">
+      <property name="orientation">
        <enum>Qt::Horizontal</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
+      </property>
+      <property name="sizeHint" stdset="0">
+       <size>
         <width>40</width>
         <height>20</height>
-      </size>
-     </property>
-    </spacer>
-   </item>
-   <item>
+       </size>
+      </property>
+     </spacer>
+    </item>
+    <item>
      <widget class="QtMaterialFlatButton" name="acceptButton" native="true">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
@@ -122,14 +122,14 @@
       </property>
       <property name="toolTip">
        <string>Try to manually submit a Obfuscation request.</string>
-     </property>
+      </property>
       <property name="text" stdset="0">
        <string>Cancel</string>
-     </property>
-    </widget>
-   </item>
-  </layout>
- </widget>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
  </widget>
  <customwidgets>
   <customwidget>

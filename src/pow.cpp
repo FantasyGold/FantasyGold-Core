@@ -1,5 +1,6 @@
 // Copyright (c) 2009-2010 Satoshi Nakamoto
 // Copyright (c) 2009-2014 The Bitcoin developers
+// Copyright (c) 2015-2017 The PIVX developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -11,6 +12,7 @@
 #include "primitives/block.h"
 #include "uint256.h"
 #include "util.h"
+#include "spork.h"
 
 #include <math.h>
 
@@ -30,9 +32,23 @@ unsigned int static DarkGravityWave(const CBlockIndex* pindexLast)
     if (BlockLastSolved == NULL || BlockLastSolved->nHeight == 0 || BlockLastSolved->nHeight < PastBlocksMin) {
         return Params().ProofOfWorkLimit().GetCompact();
     }
+
+    // Change starting PoS block according to active spork
+    // for PoW rollback.
     int nLastPOWBlock = Params().LAST_POW_BLOCK();
-    if (pindexLast->nHeight > Params().LAST_POW_BLOCK()) {
+    if (IsSporkActive(SPORK_19_POW_ROLLBACK))
+        nLastPOWBlock = Params().LAST_POW_BLOCK_OLD();
+
+    if (pindexLast->nHeight >= nLastPOWBlock) {
         uint256 bnTargetLimit = (~uint256(0) >> 24);
+        
+        // For first 20 blocks return limit to avoid high 
+        // difficulty from TH/s PoW.
+        if (pindexLast->nHeight <= (nLastPOWBlock + 20)) {
+            bnTargetLimit = (~uint256(0) >> 12);
+            return bnTargetLimit.GetCompact();
+        }
+        
         int64_t nTargetSpacing = 90;
         int64_t nTargetTimespan = 60 * 30; //1800
 
@@ -54,13 +70,6 @@ unsigned int static DarkGravityWave(const CBlockIndex* pindexLast)
 
         if (bnNew <= 0 || bnNew > bnTargetLimit)
             bnNew = bnTargetLimit;
-
-        // For first 20 blocks return limit to avoid high 
-        // difficulty from TH/s PoW.
-        if (pindexLast->nHeight <= (nLastPOWBlock + 20)) {
-            bnTargetLimit = (~uint256(0) >> 12);
-            return bnTargetLimit.GetCompact();
-        }
 
         return bnNew.GetCompact();
     }
@@ -95,7 +104,7 @@ unsigned int static DarkGravityWave(const CBlockIndex* pindexLast)
 
     uint256 bnNew(PastDifficultyAverage);
 
-    int64_t _nTargetTimespan = CountBlocks * Params().TargetSpacing();
+    int64_t _nTargetTimespan = CountBlocks * (pindexLast->nHeight > 250 ? Params().TargetSpacing() : Params().TargetSpacingSlowLaunch());
 
     if (nActualTimespan < _nTargetTimespan / 3)
         nActualTimespan = _nTargetTimespan / 3;

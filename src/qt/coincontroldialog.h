@@ -36,7 +36,7 @@ public:
     ~CoinControlDialog();
 
     void setModel(WalletModel* model);
- void updateDialogLabels();
+    void updateDialogLabels();
 
 
     // static because also called from sendcoinsdialog
@@ -52,7 +52,7 @@ private:
     WalletModel* model;
     int sortColumn;
     Qt::SortOrder sortOrder;
-	bool fMultisigEnabled;
+    bool fMultisigEnabled;
 
     QMenu* contextMenu;
     QTreeWidgetItem* contextMenuItem;
@@ -69,8 +69,7 @@ private:
         COLUMN_AMOUNT,
         COLUMN_LABEL,
         COLUMN_ADDRESS,
-		COLUMN_TYPE,
-        COLUMN_OBFUSCATION_ROUNDS,
+        COLUMN_TYPE,
         COLUMN_DATE,
         COLUMN_CONFIRMATIONS,
         COLUMN_PRIORITY,

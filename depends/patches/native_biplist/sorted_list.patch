@@ -26,4 +26,4 @@
 +                for key, value in sorted(iteritems(obj)):
                      keys.append(key)
                      values.append(value)
-                 for key in keys: 
+                 for key in keys:

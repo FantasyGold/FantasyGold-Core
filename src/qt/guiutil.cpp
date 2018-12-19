@@ -255,6 +255,19 @@ void copyEntryData(QAbstractItemView* view, int column, int role)
     }
 }
 
+QString getEntryData(QAbstractItemView *view, int column, int role)
+{
+	if (!view || !view->selectionModel())
+		return QString();
+	QModelIndexList selection = view->selectionModel()->selectedRows(column);
+
+	if (!selection.isEmpty()) {
+		// Return first item
+		return (selection.at(0).data(role).toString());
+	}
+	return QString();
+}
+
 QString getSaveFileName(QWidget* parent, const QString& caption, const QString& dir, const QString& filter, QString* selectedSuffixOut)
 {
     QString selectedFilter;
@@ -893,10 +906,10 @@ QString formatServicesStr(quint64 mask)
         uint64_t check = 1 << i;
         if (mask & check) {
             switch (check) {
-				case NODE_BLOOM:
-				case NODE_BLOOM_WITHOUT_MN:
-					strList.append(QObject::tr("BLOOM"));
-					break;
+	    case NODE_BLOOM:
+	    case NODE_BLOOM_WITHOUT_MN:
+		    strList.append(QObject::tr("BLOOM"));
+		    break;
             case NODE_NETWORK:
                 strList.append(QObject::tr("NETWORK"));
                 break;

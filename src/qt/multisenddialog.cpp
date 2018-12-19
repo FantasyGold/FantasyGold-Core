@@ -43,13 +43,13 @@ void MultiSendDialog::setModel(WalletModel* model)
 
 void MultiSendDialog::updateCheckBoxes()
 {
-    ui->multiSendStakeCheckBox->setChecked(pwalletMain->fMultiSendStake);
-    ui->multiSendMasternodeCheckBox->setChecked(pwalletMain->fMultiSendMasternodeReward);
+	ui->multiSendStakeCheckBox->setChecked(pwalletMain->fMultiSendStake);
+	ui->multiSendMasternodeCheckBox->setChecked(pwalletMain->fMultiSendMasternodeReward);
 	updateStatus();
 }
 
 void MultiSendDialog::updateStatus()
-{
+{   
 	if (pwalletMain->fMultiSendStake && pwalletMain->fMultiSendMasternodeReward) {
 		ui->multiSendStatusLabel->setText(QStringLiteral("Enabled for Staking and Masternodes"));
 	}
@@ -58,11 +58,11 @@ void MultiSendDialog::updateStatus()
 	}
 	else if (pwalletMain->fMultiSendMasternodeReward) {
 		ui->multiSendStatusLabel->setText(QStringLiteral("Enabled for Masternodes"));
-    }
+	}
 	else {
 		ui->multiSendStatusLabel->setText(QStringLiteral("Disabled"));
-}
-
+	}
+	
 }
 
 void MultiSendDialog::on_addressBookButton_clicked()
@@ -73,16 +73,16 @@ void MultiSendDialog::on_addressBookButton_clicked()
 		if (dlg.exec()) {
 			if (pwalletMain->indexOfMSAddress(dlg.getReturnValue().toStdString()) == -1) {
 				addAddress(dlg.getReturnValue().toStdString(), false);
-    }
+			}
 			else {
 				QMessageBox::warning(this, tr("MultiSend Status"),
 					tr("Address is already contained in MultiSend Vector"),
 					QMessageBox::Ok, QMessageBox::Ok);
-    }
-    }
-    }
+			}
+		}
+	}
 
-    }
+}
 
 void MultiSendDialog::addAddress(std::string address, bool onLoad) {
 	if (!onLoad){
@@ -164,20 +164,20 @@ void MultiSendDialog::deleteFrame() {
 
 		QFrame* frame = qobject_cast<QFrame*>(buttonWidget->parentWidget());
 		if (!frame)return;
-    CWalletDB walletdb(pwalletMain->strWalletFile);
+		CWalletDB walletdb(pwalletMain->strWalletFile);
 		walletdb.EraseMultiSend(pwalletMain->vMultiSend);
 		QLabel* lbl = frame->findChild<QLabel*>("addressLabel");
 		std::string address = lbl->text().toStdString();
 		for (unsigned int i = 0; i < pwalletMain->vMultiSend.size(); i++) {
 			if (pwalletMain->vMultiSend[i].first==address) {
-            pwalletMain->vMultiSend.erase(pwalletMain->vMultiSend.begin() + i);
+				pwalletMain->vMultiSend.erase(pwalletMain->vMultiSend.begin() + i);
 				break;
-        }
-    }
+			}
+		}
 		walletdb.WriteMultiSend(pwalletMain->vMultiSend);
 
 		delete frame;
-
+	
 }
 
 void MultiSendDialog::on_activateButton_clicked()

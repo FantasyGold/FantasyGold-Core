@@ -11,6 +11,7 @@
 #include "sync.h"
 #include "wallet.h"
 #include "walletmodel.h"
+#include "qtmaterialflatbutton.h"
 
 #include <QMessageBox>
 #include <QTimer>
@@ -33,6 +34,7 @@ MasternodeList::MasternodeList(QWidget* parent) : QWidget(parent),
     int columnActiveWidth = 130;
     int columnLastSeenWidth = 130;
 
+    ui->tableWidgetMyMasternodes->setAlternatingRowColors(true);
     ui->tableWidgetMyMasternodes->setColumnWidth(0, columnAliasWidth);
     ui->tableWidgetMyMasternodes->setColumnWidth(1, columnAddressWidth);
     ui->tableWidgetMyMasternodes->setColumnWidth(2, columnProtocolWidth);
@@ -202,7 +204,7 @@ void MasternodeList::updateMyNodeList(bool fForce)
     if (nSecondsTillUpdate > 0 && !fForce) return;
     nTimeMyListUpdated = GetTime();
 
-	ui->tableWidgetMyMasternodes->setSortingEnabled(false);
+    ui->tableWidgetMyMasternodes->setSortingEnabled(false);
     BOOST_FOREACH (CMasternodeConfig::CMasternodeEntry mne, masternodeConfig.getEntries()) {
         int nIndex;
         if(!mne.castOutputIndex(nIndex))
@@ -210,9 +212,9 @@ void MasternodeList::updateMyNodeList(bool fForce)
 
         CTxIn txin = CTxIn(uint256S(mne.getTxHash()), uint32_t(nIndex));
         CMasternode* pmn = mnodeman.Find(txin);
-		updateMyMasternodeInfo(QString::fromStdString(mne.getAlias()), QString::fromStdString(mne.getIp()), pmn);		
+	updateMyMasternodeInfo(QString::fromStdString(mne.getAlias()), QString::fromStdString(mne.getIp()), pmn);
 
-		}
+    }
     ui->tableWidgetMyMasternodes->setSortingEnabled(true);
 
     // reset "timer"

@@ -1,9 +1,11 @@
 // Copyright (c) 2014-2015 The Dash developers
+// Copyright (c) 2015-2017 The PIVX developers
 // Copyright (c) 2015-2017 The Bulwark developers
 // Copyright (c) 2017-2018 The FantasyGold developers
 
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
+
 #ifndef MASTERNODE_BUDGET_H
 #define MASTERNODE_BUDGET_H
 
@@ -491,10 +493,10 @@ public:
 
     bool IsEstablished()
     {
-        //Proposals must be at least a day old to make it into a budget
+        // Proposals must be at least a day old to make it into a budget
         if (Params().NetworkID() == CBaseChainParams::MAIN) return (nTime < GetTime() - (60 * 60 * 24));
 
-        //for testing purposes - 5 hours
+        //for testing purposes - 4 hours
         return (nTime < GetTime() - (60 * 5));
     }
 

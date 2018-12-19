@@ -35,20 +35,20 @@ using namespace std;
 #define GLOBAL extern
 #endif
 
-GLOBAL sph_blake512_context     z_blake;
-GLOBAL sph_groestl512_context   z_groestl;
-GLOBAL sph_jh512_context        z_jh;
-GLOBAL sph_keccak512_context    z_keccak;
-GLOBAL sph_skein512_context     z_skein;
+GLOBAL sph_blake512_context z_blake;
+GLOBAL sph_groestl512_context z_groestl;
+GLOBAL sph_jh512_context z_jh;
+GLOBAL sph_keccak512_context z_keccak;
+GLOBAL sph_skein512_context z_skein;
 
 #define fillz()					\
 	do { 					\
-            sph_blake512_init(&z_blake); \
-            sph_groestl512_init(&z_groestl); \
-            sph_jh512_init(&z_jh); \
-            sph_keccak512_init(&z_keccak); \
-            sph_skein512_init(&z_skein); \
-} while (0)
+            sph_blake512_init(&z_blake); 	\
+            sph_groestl512_init(&z_groestl); 	\
+            sph_jh512_init(&z_jh); 		\
+            sph_keccak512_init(&z_keccak); 	\
+            sph_skein512_init(&z_skein); 	\
+	} while (0)
 
 #define ZBLAKE (memcpy(&ctx_blake, &z_blake, sizeof(z_blake)))
 #define ZGROESTL (memcpy(&ctx_groestl, &z_groestl, sizeof(z_groestl)))

@@ -99,7 +99,7 @@ void QtMaterialTheme::setColor(const QString &key, Material::Color color)
         QColor("#e1f5fe"), QColor("#b3e5fc"), QColor("#81d4fa"), QColor("#4fc3f7"),
         QColor("#29b6f6"), QColor("#03a9f4"), QColor("#039be5"), QColor("#0288d1"),
         QColor("#0277bd"), QColor("#01579b"), QColor("#80d8ff"), QColor("#40c4ff"),
-        QColor("#00b0ff"), QColor("#e0c469"), QColor("#e0f7fa"), QColor("#b2ebf2"),
+        QColor("#00b0ff"), QColor("#0091ea"), QColor("#e0f7fa"), QColor("#b2ebf2"),
         QColor("#80deea"), QColor("#4dd0e1"), QColor("#26c6da"), QColor("#00bcd4"),
         QColor("#00acc1"), QColor("#0097a7"), QColor("#00838f"), QColor("#006064"),
         QColor("#84ffff"), QColor("#18ffff"), QColor("#00e5ff"), QColor("#00b8d4"),

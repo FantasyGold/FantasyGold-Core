@@ -17,7 +17,7 @@ osx=true
 SIGNER=
 VERSION=
 commit=false
-url=https://github.com/FantasyGold/FantasyGold-Core
+url=https://github.com/FantasyGold/FantasyGold-Core.git
 proc=2
 mem=2000
 lxc=true
@@ -39,7 +39,7 @@ version		Version number, commit, or branch to build. If building a commit or bra
 
 Options:
 -c|--commit	Indicate that the version argument is for a commit or branch
--u|--url	Specify the URL of the repository. Default is https://github.com/FantasyGold/FantasyGold-Core
+-u|--url	Specify the URL of the repository. Default is https://github.com/FantasyGold/FantasyGold-Core.git
 -v|--verify 	Verify the gitian build
 -b|--build	Do a gitian build
 -s|--sign	Make signed binaries for Windows and Mac OSX

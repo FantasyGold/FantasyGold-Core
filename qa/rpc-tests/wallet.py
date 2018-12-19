@@ -42,30 +42,30 @@ class WalletTest (BitcoinTestFramework):
         self.nodes[0].setgenerate(True, 1)
 
         self.sync_all()
-        self.nodes[1].setgenerate(True, 101)
+        self.nodes[1].setgenerate(True, 32)
         self.sync_all()
 
-        assert_equal(self.nodes[0].getbalance(), 50)
-        assert_equal(self.nodes[1].getbalance(), 50)
+        assert_equal(self.nodes[0].getbalance(), 60001)
+        assert_equal(self.nodes[1].getbalance(), 4250)
         assert_equal(self.nodes[2].getbalance(), 0)
 
         # Send 21 BTC from 0 to 2 using sendtoaddress call.
         # Second transaction will be child of first, and will require a fee
-        self.nodes[0].sendtoaddress(self.nodes[2].getnewaddress(), 11)
-        self.nodes[0].sendtoaddress(self.nodes[2].getnewaddress(), 10)
+        self.nodes[0].sendtoaddress(self.nodes[2].getnewaddress(), 351)
+        self.nodes[0].sendtoaddress(self.nodes[2].getnewaddress(), 350)
 
         # Have node0 mine a block, thus he will collect his own fee. 
         self.nodes[0].setgenerate(True, 1)
         self.sync_all()
 
         # Have node1 generate 100 blocks (so node0 can recover the fee)
-        self.nodes[1].setgenerate(True, 100)
+        self.nodes[1].setgenerate(True, 16)
         self.sync_all()
 
         # node0 should end up with 100 btc in block rewards plus fees, but
         # minus the 21 plus fees sent to node2
-        assert_equal(self.nodes[0].getbalance(), 100-21)
-        assert_equal(self.nodes[2].getbalance(), 21)
+        assert_greater_than(self.nodes[0].getbalance(), 59549)
+        assert_equal(self.nodes[2].getbalance(), 701)
 
         # Node0 should have two unspent outputs.
         # Create a couple of transactions to send them to node2, submit them through 
@@ -92,8 +92,8 @@ class WalletTest (BitcoinTestFramework):
         self.sync_all()
 
         assert_equal(self.nodes[0].getbalance(), 0)
-        assert_equal(self.nodes[2].getbalance(), 100)
-        assert_equal(self.nodes[2].getbalance("from1"), 100-21)
+        assert_greater_than(self.nodes[2].getbalance(), 60250)
+        assert_greater_than(self.nodes[2].getbalance("from1"), 59549)
 
 
 if __name__ == '__main__':

@@ -79,7 +79,6 @@ void OptionsModel::Init()
     if (!settings.contains("nAnonymizeFantasyGoldAmount"))
         settings.setValue("nAnonymizeFantasyGoldAmount", 1000);
 
-    nObfuscationRounds = settings.value("nObfuscationRounds").toLongLong();
     nAnonymizeFantasyGoldAmount = settings.value("nAnonymizeFantasyGoldAmount").toLongLong();
 
     if (!settings.contains("fShowMasternodesTab"))
@@ -107,9 +106,12 @@ void OptionsModel::Init()
 // Wallet
 #ifdef ENABLE_WALLET
     if (!settings.contains("bSpendZeroConfChange"))
-        settings.setValue("bSpendZeroConfChange", true);
+        settings.setValue("bSpendZeroConfChange", false);
     if (!SoftSetBoolArg("-spendzeroconfchange", settings.value("bSpendZeroConfChange").toBool()))
         addOverriddenOption("-spendzeroconfchange");
+	if (!settings.contains("fShowOrphans"))
+		settings.setValue("fShowOrphans", false);
+	fShowOrphans = settings.value("fShowOrphans").toBool();
 #endif
 
     // Network
@@ -145,8 +147,10 @@ void OptionsModel::Init()
     if (!SoftSetArg("-lang", settings.value("language").toString().toStdString()))
         addOverriddenOption("-lang");
 
-    if (settings.contains("nObfuscationRounds"))
-        SoftSetArg("-obfuscationrounds", settings.value("nObfuscationRounds").toString().toStdString());
+    if (settings.contains("nZeromintPercentage"))
+        SoftSetArg("-zeromintpercentage", settings.value("nZeromintPercentage").toString().toStdString());
+    if (settings.contains("nPreferredDenom"))
+        SoftSetArg("-preferredDenom", settings.value("nPreferredDenom").toString().toStdString());
     if (settings.contains("nAnonymizeFantasyGoldAmount"))
         SoftSetArg("-anonymizefantasygoldamount", settings.value("nAnonymizeFantasyGoldAmount").toString().toStdString());
 
@@ -209,6 +213,8 @@ QVariant OptionsModel::data(const QModelIndex& index, int role) const
             return settings.value("bSpendZeroConfChange");
         case ShowMasternodesTab:
             return settings.value("fShowMasternodesTab");
+		case ShowOrphans:
+			return settings.value("fShowOrphans");
 #endif
         case DisplayUnit:
             return nDisplayUnit;
@@ -226,8 +232,10 @@ QVariant OptionsModel::data(const QModelIndex& index, int role) const
             return settings.value("nDatabaseCache");
         case ThreadsScriptVerif:
             return settings.value("nThreadsScriptVerif");
-        case ObfuscationRounds:
-            return QVariant(nObfuscationRounds);
+        case ZeromintPercentage:
+            return QVariant(nZeromintPercentage);
+        case ZeromintPrefDenom:
+            return QVariant(nPreferredDenom);
         case AnonymizeFantasyGoldAmount:
             return QVariant(nAnonymizeFantasyGoldAmount);
         case Listen:
@@ -298,6 +306,11 @@ bool OptionsModel::setData(const QModelIndex& index, const QVariant& value, int 
                 setRestartRequired(true);
             }
             break;
+		case ShowOrphans:
+			if (settings.value("fShowOrphans") != value) {
+				settings.setValue("fShowOrphans", value);
+				setRestartRequired(true);
+			}
         case ShowMasternodesTab:
             if (settings.value("fShowMasternodesTab") != value) {
                 settings.setValue("fShowMasternodesTab", value);
@@ -333,11 +346,17 @@ bool OptionsModel::setData(const QModelIndex& index, const QVariant& value, int 
                 setRestartRequired(true);
             }
             break;
-        case ObfuscationRounds:
-            nObfuscationRounds = value.toInt();
-            settings.setValue("nObfuscationRounds", nObfuscationRounds);
-            emit obfuscationRoundsChanged(nObfuscationRounds);
+        case ZeromintPercentage:
+            nZeromintPercentage = value.toInt();
+            settings.setValue("nZeromintPercentage", nZeromintPercentage);
+            emit zeromintPercentageChanged(nZeromintPercentage);
             break;
+        case ZeromintPrefDenom:
+            nPreferredDenom = value.toInt();
+            settings.setValue("nPreferredDenom", nPreferredDenom);
+            emit preferredDenomChanged(nPreferredDenom);
+            break;
+
         case AnonymizeFantasyGoldAmount:
             nAnonymizeFantasyGoldAmount = value.toInt();
             settings.setValue("nAnonymizeFantasyGoldAmount", nAnonymizeFantasyGoldAmount);
@@ -394,8 +413,8 @@ bool OptionsModel::getProxySettings(QNetworkProxy& proxy) const
     proxyType curProxy;
     if (GetProxy(NET_IPV4, curProxy)) {
         proxy.setType(QNetworkProxy::Socks5Proxy);
-        proxy.setHostName(QString::fromStdString(curProxy.ToStringIP()));
-        proxy.setPort(curProxy.GetPort());
+        proxy.setHostName(QString::fromStdString(curProxy.proxy.ToStringIP()));
+        proxy.setPort(curProxy.proxy.GetPort());
 
         return true;
     } else

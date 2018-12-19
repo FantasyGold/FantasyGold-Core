@@ -17,6 +17,7 @@
 #include "main.h"
 #include "primitives/block.h"
 #include "primitives/transaction.h"
+#include "primitives/zerocoin.h"
 #include "ui_interface.h"
 #include "util.h"
 #include "validationinterface.h"
@@ -39,6 +40,7 @@ extern CFeeRate payTxFee;
 extern CAmount maxTxFee;
 extern unsigned int nTxConfirmTarget;
 extern bool bSpendZeroConfChange;
+extern bool bdisableSystemnotifications;
 extern bool fSendFreeTransactions;
 extern bool fPayAtLeastCustomFee;
 
@@ -52,6 +54,10 @@ static const CAmount DEFAULT_TRANSACTION_MAXFEE = 1 * COIN;
 static const CAmount nHighTransactionMaxFeeWarning = 100 * nHighTransactionFeeWarning;
 //! Largest (in bytes) free transaction we're willing to create
 static const unsigned int MAX_FREE_TRANSACTION_CREATE_SIZE = 1000;
+
+// Zerocoin denomination which creates exactly one of each denominations:
+// 1666 = 1*1000 + 1*500 + 1*100 + 1*50 + 1*10 + 1*5 + 1
+static const int ZQ_1666 = 1666;
 
 class CAccountingEntry;
 class CCoinControl;
@@ -75,7 +81,28 @@ enum AvailableCoinsType {
     ONLY_DENOMINATED = 2,
     ONLY_NOT10000IFMN = 3,
     ONLY_NONDENOMINATED_NOT10000IFMN = 4, // ONLY_NONDENOMINATED and not 10000 FGC at the same time
-    ONLY_10000 = 5                        // find masternode outputs including locked ones (use with caution)
+    ONLY_10000 = 5,                        // find masternode outputs including locked ones (use with caution)
+    STAKABLE_COINS = 6                          // UTXO's that are valid for staking
+};
+
+// Possible states for zFGC send
+enum ZerocoinSpendStatus {
+    ZFGC_SPEND_OKAY = 0,                            // No error
+    ZFGC_SPEND_ERROR = 1,                           // Unspecified class of errors, more details are (hopefully) in the returning text
+    ZFGC_WALLET_LOCKED = 2,                         // Wallet was locked
+    ZFGC_COMMIT_FAILED = 3,                         // Commit failed, reset status
+    ZFGC_ERASE_SPENDS_FAILED = 4,                   // Erasing spends during reset failed
+    ZFGC_ERASE_NEW_MINTS_FAILED = 5,                // Erasing new mints during reset failed
+    ZFGC_TRX_FUNDS_PROBLEMS = 6,                    // Everything related to available funds
+    ZFGC_TRX_CREATE = 7,                            // Everything related to create the transaction
+    ZFGC_TRX_CHANGE = 8,                            // Everything related to transaction change
+    ZFGC_TXMINT_GENERAL = 9,                        // General errors in MintToTxIn
+    ZFGC_INVALID_COIN = 10,                         // Selected mint coin is not valid
+    ZFGC_FAILED_ACCUMULATOR_INITIALIZATION = 11,    // Failed to initialize witness
+    ZFGC_INVALID_WITNESS = 12,                      // Spend coin transaction did not verify
+    ZFGC_BAD_SERIALIZATION = 13,                    // Transaction verification failed
+    ZFGC_SPENT_USED_ZFGC = 14,                      // Coin has already been spend
+    ZFGC_TX_TOO_LARGE = 15                          // The transaction is larger than the max tx size
 };
 
 struct CompactTallyItem {
@@ -126,7 +153,7 @@ public:
     StringMap destdata;
 };
 
-/** 
+/**
  * A CWallet is an extension of a keystore, which also maintains a set of transactions and balances,
  * and provides the ability to create new transactions.
  */
@@ -172,6 +199,21 @@ public:
 
     bool SelectCoinsCollateral(std::vector<CTxIn>& setCoinsRet, CAmount& nValueRet) const;
 
+    // Zerocoin additions
+    bool CreateZerocoinMintTransaction(const CAmount nValue, CMutableTransaction& txNew, vector<CZerocoinMint>& vMints, CReserveKey* reservekey, int64_t& nFeeRet, std::string& strFailReason, const CCoinControl* coinControl = NULL, const bool isZCSpendChange = false);
+    bool CreateZerocoinSpendTransaction(CAmount nValue, int nSecurityLevel, CWalletTx& wtxNew, CReserveKey& reserveKey, CZerocoinSpendReceipt& receipt, vector<CZerocoinMint>& vSelectedMints, vector<CZerocoinMint>& vNewMints, bool fMintChange,  bool fMinimizeChange, CBitcoinAddress* address = NULL);
+    bool MintToTxIn(CZerocoinMint zerocoinSelected, int nSecurityLevel, const uint256& hashTxOut, CTxIn& newTxIn, CZerocoinSpendReceipt& receipt);
+    std::string MintZerocoin(CAmount nValue, CWalletTx& wtxNew, vector<CZerocoinMint>& vMints, const CCoinControl* coinControl = NULL);
+    bool SpendZerocoin(CAmount nValue, int nSecurityLevel, CWalletTx& wtxNew, CZerocoinSpendReceipt& receipt, vector<CZerocoinMint>& vMintsSelected, bool fMintChange, bool fMinimizeChange, CBitcoinAddress* addressTo = NULL);
+    std::string ResetMintZerocoin(bool fExtendedSearch);
+    std::string ResetSpentZerocoin();
+    void ReconsiderZerocoins(std::list<CZerocoinMint>& listMintsRestored);
+    void ZFGCBackupWallet();
+
+    /** Zerocin entry changed.
+    * @note called with lock cs_wallet held.
+    */
+    boost::signals2::signal<void(CWallet* wallet, const std::string& pubCoin, const std::string& isUsed, ChangeType status)> NotifyZerocoinChanged;
     /*
      * Main wallet lock.
      * This lock protects all the fields added by CWallet
@@ -184,6 +226,7 @@ public:
     bool fFileBacked;
     bool fWalletUnlockAnonymizeOnly;
     std::string strWalletFile;
+    bool fBackupMints;
 
     std::set<int64_t> setKeyPool;
     std::map<CKeyID, CKeyMetadata> mapKeyMetadata;
@@ -241,6 +284,7 @@ public:
         nLastResend = 0;
         nTimeFirstKey = 0;
         fWalletUnlockAnonymizeOnly = false;
+        fBackupMints = false;
 
         // Stake Settings
         nHashDrift = 45;
@@ -262,6 +306,21 @@ public:
         nAutoCombineThreshold = 0;
     }
 
+    int getZeromintPercentage()
+    {
+        return nZeromintPercentage;
+    }
+
+    bool isZeromintEnabled()
+    {
+        return fEnableZeromint;
+    }
+
+    void setZFGCAutoBackups(bool fEnabled)
+    {
+        fBackupMints = fEnabled;
+    }
+    
     bool isMultiSendEnabled()
     {
         return fMultiSendMasternodeReward || fMultiSendStake;
@@ -313,7 +372,7 @@ public:
     void ListLockedCoins(std::vector<COutPoint>& vOutpts);
     CAmount GetTotalValue(std::vector<CTxIn> vCoins);
 
-    // keystore implementation
+    //  keystore implementation
     // Generate a new key
     CPubKey GenerateNewKey();
 
@@ -354,7 +413,7 @@ public:
     //! Adds a watch-only address to the store, without saving it to disk (used by LoadWallet)
     bool LoadWatchOnly(const CScript& dest);
 
-//! Adds a MultiSig address to the store, and saves it to disk.
+    //! Adds a MultiSig address to the store, and saves it to disk.
     bool AddMultiSig(const CScript& dest);
     bool RemoveMultiSig(const CScript& dest);
     //! Adds a MultiSig address to the store, without saving it to disk (used by LoadWallet)
@@ -366,7 +425,7 @@ public:
 
     void GetKeyBirthTimes(std::map<CKeyID, int64_t>& mapKeyBirth) const;
 
-    /** 
+    /**
      * Increment the next transaction order id
      * @return next transaction order id
      */
@@ -391,6 +450,12 @@ public:
     void ReacceptWalletTransactions();
     void ResendWalletTransactions();
     CAmount GetBalance() const;
+    CAmount GetZerocoinBalance(bool fMatureOnly) const;
+    CAmount GetUnconfirmedZerocoinBalance() const;
+    CAmount GetImmatureZerocoinBalance() const;
+    CAmount GetLockedCoins() const;
+    CAmount GetUnlockedCoins() const;
+    std::map<libzerocoin::CoinDenomination, CAmount> GetMyZerocoinDistribution() const;
     CAmount GetUnconfirmedBalance() const;
     CAmount GetImmatureBalance() const;
     CAmount GetAnonymizableBalance() const;
@@ -401,6 +466,7 @@ public:
     CAmount GetWatchOnlyBalance() const;
     CAmount GetUnconfirmedWatchOnlyBalance() const;
     CAmount GetImmatureWatchOnlyBalance() const;
+    bool CreateTransaction(CScript scriptPubKey, int64_t nValue, CWalletTx& wtxNew, CReserveKey& reservekey, int64_t& nFeeRet, std::string& strFailReason, const CCoinControl* coinControl);
     bool CreateTransaction(const std::vector<std::pair<CScript, CAmount> >& vecSend,
         CWalletTx& wtxNew,
         CReserveKey& reservekey,
@@ -421,6 +487,7 @@ public:
 	bool isMSAddressEnabled(std::string address);
 	int indexOfMSAddress(std::string address);
     void AutoCombineDust();
+    void AutoZeromint();
 
     static CFeeRate minTxFee;
     static CAmount GetMinimumFee(unsigned int nTxBytes, unsigned int nConfirmTarget, const CTxMemPool& pool);
@@ -450,7 +517,7 @@ public:
     bool IsDenominated(const CTxIn& txin) const;
     bool IsDenominated(const CTransaction& tx) const;
 
-    bool IsDenominatedAmount(int64_t nInputAmount) const;
+    bool IsDenominatedAmount(CAmount nInputAmount) const;
 
     isminetype IsMine(const CTxIn& txin) const;
     CAmount GetDebit(const CTxIn& txin, const isminefilter& filter) const;
@@ -458,6 +525,7 @@ public:
     {
         return ::IsMine(*this, txout.scriptPubKey);
     }
+    bool IsMyZerocoinSpend(const CBigNum& bnSerial) const;
     CAmount GetCredit(const CTxOut& txout, const isminefilter& filter) const
     {
         if (!MoneyRange(txout.nValue))
@@ -558,13 +626,13 @@ public:
     //! Get wallet transactions that conflict with given transaction (spend same outputs)
     std::set<uint256> GetConflicts(const uint256& txid) const;
 
-    /** 
+    /**
      * Address book entry changed.
      * @note called with lock cs_wallet held.
      */
     boost::signals2::signal<void(CWallet* wallet, const CTxDestination& address, const std::string& label, bool isMine, const std::string& purpose, ChangeType status)> NotifyAddressBookChanged;
 
-    /** 
+    /**
      * Wallet transaction added, removed or updated.
      * @note called with lock cs_wallet held.
      */
@@ -576,7 +644,7 @@ public:
     /** Watch-only address added */
     boost::signals2::signal<void(bool fHaveWatchOnly)> NotifyWatchonlyChanged;
 
-	/** MultiSig address added */
+    /** MultiSig address added */
     boost::signals2::signal<void(bool fHaveMultiSig)> NotifyMultiSigChanged;
 };
 
@@ -702,7 +770,7 @@ public:
     bool IsTransactionLockTimedOut() const;
 };
 
-/** 
+/**
  * A transaction with a bunch of additional info that only the owner cares about.
  * It includes any unrecorded transactions needed to link it back to the block chain.
  */
@@ -994,7 +1062,7 @@ public:
             if (fMasterNode && vout[i].nValue == 10000 * COIN) continue; // do not count MN-like outputs
 
             const int rounds = pwallet->GetInputObfuscationRounds(vin);
-            if (rounds >= -2 && rounds < nObfuscationRounds) {
+            if (rounds >= -2 && rounds < nZeromintPercentage) {
                 nCredit += pwallet->GetCredit(txout, ISMINE_SPENDABLE);
                 if (!MoneyRange(nCredit))
                     throw std::runtime_error("CWalletTx::GetAnonamizableCredit() : value out of range");
@@ -1027,7 +1095,7 @@ public:
             if (pwallet->IsSpent(hashTx, i) || !pwallet->IsDenominated(vin)) continue;
 
             const int rounds = pwallet->GetInputObfuscationRounds(vin);
-            if (rounds >= nObfuscationRounds) {
+            if (rounds >= nZeromintPercentage) {
                 nCredit += pwallet->GetCredit(txout, ISMINE_SPENDABLE);
                 if (!MoneyRange(nCredit))
                     throw std::runtime_error("CWalletTx::GetAnonymizedCredit() : value out of range");
@@ -1036,6 +1104,67 @@ public:
 
         nAnonymizedCreditCached = nCredit;
         fAnonymizedCreditCached = true;
+        return nCredit;
+    }
+
+    // Return sum of unlocked coins
+    CAmount GetUnlockedCredit() const
+    {
+        if (pwallet == 0)
+            return 0;
+
+        // Must wait until coinbase is safely deep enough in the chain before valuing it
+        if (IsCoinBase() && GetBlocksToMaturity() > 0)
+            return 0;
+
+        CAmount nCredit = 0;
+        uint256 hashTx = GetHash();
+        for (unsigned int i = 0; i < vout.size(); i++) {
+            const CTxOut& txout = vout[i];
+
+            if (pwallet->IsSpent(hashTx, i) || pwallet->IsLockedCoin(hashTx, i)) continue;
+            if (fMasterNode && vout[i].nValue == 10000 * COIN) continue; // do not count MN-like outputs
+
+            nCredit += pwallet->GetCredit(txout, ISMINE_SPENDABLE);
+            if (!MoneyRange(nCredit))
+                throw std::runtime_error("CWalletTx::GetUnlockedCredit() : value out of range");
+        }
+
+        return nCredit;
+    }
+
+        // Return sum of unlocked coins
+    CAmount GetLockedCredit() const
+    {
+        if (pwallet == 0)
+            return 0;
+
+        // Must wait until coinbase is safely deep enough in the chain before valuing it
+        if (IsCoinBase() && GetBlocksToMaturity() > 0)
+            return 0;
+
+        CAmount nCredit = 0;
+        uint256 hashTx = GetHash();
+        for (unsigned int i = 0; i < vout.size(); i++) {
+            const CTxOut& txout = vout[i];
+
+            // Skip spent coins
+            if (pwallet->IsSpent(hashTx, i)) continue;
+
+            // Add locked coins
+            if (pwallet->IsLockedCoin(hashTx, i)) {
+                nCredit += pwallet->GetCredit(txout, ISMINE_SPENDABLE);
+            }
+
+            // Add masternode collaterals which are handled likc locked coins
+            if (fMasterNode && vout[i].nValue == 10000 * COIN) {
+                nCredit += pwallet->GetCredit(txout, ISMINE_SPENDABLE);
+            }
+
+            if (!MoneyRange(nCredit))
+                throw std::runtime_error("CWalletTx::GetLockedCredit() : value out of range");
+        }
+
         return nCredit;
     }
 
@@ -1176,6 +1305,7 @@ public:
     bool WriteToDisk();
 
     int64_t GetTxTime() const;
+    int64_t GetComputedTxTime() const;
     int GetRequestCount() const;
 
     void RelayWalletTransaction(std::string strCommand = "tx");
@@ -1248,7 +1378,7 @@ public:
 };
 
 
-/** 
+/**
  * Account information.
  * Stored in wallet with key "acc"+string account name.
  */

@@ -36,9 +36,9 @@ class BitcoinRPC:
 
 	def execute(self, obj):
 		try:
-		self.conn.request('POST', '/', json.dumps(obj),
-			{ 'Authorization' : self.authhdr,
-			  'Content-type' : 'application/json' })
+			self.conn.request('POST', '/', json.dumps(obj),
+				{ 'Authorization' : self.authhdr,
+				  'Content-type' : 'application/json' })
 		except ConnectionRefusedError:
 			print('RPC connection refused. Check RPC settings and the server status.',
 			      file=sys.stderr)

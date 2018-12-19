@@ -30,6 +30,7 @@ const char* GetTxnOutputType(txnouttype t)
     case TX_SCRIPTHASH: return "scripthash";
     case TX_MULTISIG: return "multisig";
     case TX_NULL_DATA: return "nulldata";
+    case TX_ZEROCOINMINT: return "zerocoinmint";
     }
     return NULL;
 }
@@ -51,7 +52,7 @@ bool Solver(const CScript& scriptPubKey, txnouttype& typeRet, vector<vector<unsi
 
         // Sender provides N pubkeys, receivers provides M signatures
         mTemplates.insert(make_pair(TX_MULTISIG, CScript() << OP_SMALLINTEGER << OP_PUBKEYS << OP_SMALLINTEGER << OP_CHECKMULTISIG));
-     }
+    }
 
     // Shortcut for pay-to-script-hash, which are more constrained than the other types:
     // it is always OP_HASH160 20 [20 byte hash] OP_EQUAL
@@ -63,15 +64,24 @@ bool Solver(const CScript& scriptPubKey, txnouttype& typeRet, vector<vector<unsi
         return true;
     }
 
+    // Zerocoin
+    if (scriptPubKey.IsZerocoinMint()){
+        typeRet = TX_ZEROCOINMINT;
+        if(scriptPubKey.size() > 150) return false;
+        vector<unsigned char> hashBytes(scriptPubKey.begin()+2, scriptPubKey.end());
+        vSolutionsRet.push_back(hashBytes);
+        return true;
+    }
+
     // Provably prunable, data-carrying output
     //
     // So long as script passes the IsUnspendable() test and all but the first
     // byte passes the IsPushOnly() test we don't care what exactly is in the
     // script.
-	if (scriptPubKey.size() >= 1 && scriptPubKey[0] == OP_RETURN && scriptPubKey.IsPushOnly(scriptPubKey.begin()+1)) {
-		 typeRet = TX_NULL_DATA;
-		 return true;
-	}
+    if (scriptPubKey.size() >= 1 && scriptPubKey[0] == OP_RETURN && scriptPubKey.IsPushOnly(scriptPubKey.begin()+1)) {
+        typeRet = TX_NULL_DATA;
+        return true;
+    }
 
     // Scan templates
     const CScript& script1 = scriptPubKey;
@@ -164,6 +174,7 @@ int ScriptSigArgsExpected(txnouttype t, const std::vector<std::vector<unsigned c
     {
     case TX_NONSTANDARD:
     case TX_NULL_DATA:
+    case TX_ZEROCOINMINT:
         return -1;
     case TX_PUBKEY:
         return 1;
