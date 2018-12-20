@@ -104,7 +104,6 @@ public:
         pchMessageStart[1] = 0x49;
         pchMessageStart[2] = 0x4D;
         pchMessageStart[3] = 0x42;
-
 		vAlertPubKey = ParseHex("048a8a673e322e02cae3b27a95b93551abb29772906923641d572e2e9dc5e3c2707ec37122a16d5563e883b673eec7f6e5894c54e281a5f18518b0f173471229ad");
         nDefaultPort = 57810;
         bnProofOfWorkLimit = ~uint256(0) >> 20; // FantasyGold starting difficulty is 1 / 2^12
@@ -113,7 +112,10 @@ public:
         nTargetTimespan = 90; // FantasyGold: 1.5 minutes
         nTargetSpacing = 90;  // FantasyGold: 6 Minutes
         nLastPOWBlock = 43200;
-        nMaturity = 66;
+        nLastPOWBlockOld = 345600;
+        nLastSeeSawBlock = 200000; // last block for seesaw rewards
+        nMaturity = 66; //99 Minutes
+        nMasternodeCountDrift = 4;
         nModifierUpdateBlock = 1;
 		nMaxMoneyOut = 21000000 * COIN;
        	nEnforceBlockUpgradeMajority = 750;
@@ -135,7 +137,6 @@ public:
         genesis.nNonce = 1015505; 
 		//MineGenesis(genesis);
 		hashGenesisBlock = genesis.GetHash();
-
 		assert(hashGenesisBlock == uint256("0x000006b85859195cd62b57d137bba5871588d8f05cecc5fa21673e4c894e8997"));
 	    assert(genesis.hashMerkleRoot == uint256("0x57efb4ec57bf3c7424a679cc41bec99026d6e6b90a91f26cda0b8d5249559502"));
 
@@ -175,7 +176,7 @@ public:
         //  BIP44 coin type is 'TBD'
         base58Prefixes[EXT_COIN_TYPE] = boost::assign::list_of(0x13)(0x00)(0x00)(0x80).convert_to_container<std::vector<unsigned char> >();
         convertSeed6(vFixedSeeds, pnSeed6_main, ARRAYLEN(pnSeed6_main));
-        fRequireRPCPassword = true;
+        
         fMiningRequiresPeers = true;
         fAllowMinDifficultyBlocks = false;
         fDefaultConsistencyChecks = false;
@@ -237,9 +238,11 @@ public:
 		vAlertPubKey = ParseHex("04a1c011a5c59b09f6ac5ca2acaa1827c3c9dde95e01c1383c2159d2f769ef97d7a14526c7c0bae6391d66baa16bdbb255679811f30c42e377f364ad202c3461dd");
         nDefaultPort = 58806;
         nMinerThreads = 0;
-        nTargetTimespan = 90; // 90 Seconds
-        nTargetSpacing = 90;  // 360 Seconds
-        nLastPOWBlock = 800;
+        nTargetTimespan = 1 * 15; // 30 Seconds
+        nTargetSpacing = 1 * 15;  // 30 Seconds
+        nLastPOWBlock = 200;
+        nLastPOWBlockOld = 500;
+        nLastSeeSawBlock = 200;
         nMaturity = 15;
 		nMaxMoneyOut = 21000000 * COIN;
         nEnforceBlockUpgradeMajority = 51;
@@ -273,7 +276,7 @@ public:
         // Testnet fantasygold BIP44 coin type is '1' (All coin's testnet default)
         base58Prefixes[EXT_COIN_TYPE] = boost::assign::list_of(0x01)(0x00)(0x00)(0x80).convert_to_container<std::vector<unsigned char> >();
         convertSeed6(vFixedSeeds, pnSeed6_test, ARRAYLEN(pnSeed6_test));
-        fRequireRPCPassword = true;
+        
         fMiningRequiresPeers = false;
         fAllowMinDifficultyBlocks = true;
         fDefaultConsistencyChecks = false;
@@ -328,7 +331,7 @@ public:
     	assert(hashGenesisBlock == uint256("00000469c51791d203c00e59b9b1fde736b5f4c16c7e54ab1b87aefe3bd05a9c"));
         vFixedSeeds.clear(); //! Testnet mode doesn't have any fixed seeds.
         vSeeds.clear();      //! Testnet mode doesn't have any DNS seeds.
-        fRequireRPCPassword = false;
+        
         fMiningRequiresPeers = false;
         fAllowMinDifficultyBlocks = true;
         fDefaultConsistencyChecks = true;
