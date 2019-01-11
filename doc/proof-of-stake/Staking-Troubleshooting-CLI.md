@@ -56,7 +56,7 @@ This is asking if your transaction is old enough to be staked. It takes 475 conf
 
 ## enoughcoins
 
-This is making sure you have more than 1 FGC in the wallet. If this is appearing false there are a wide number of potential problems. It's best to come ask us in [Discord](https://discord.me/) if you have issues with this.
+This is making sure you have more than 1 FGC in the wallet. If this is appearing false there are a wide number of potential problems. It's best to come ask us in [Discord](https://discord.me/fantasygoldcrypto) or [Telegram](https://t.me/fantasygoldcrypto) if you have issues with this.
 
 ## mnsync
 

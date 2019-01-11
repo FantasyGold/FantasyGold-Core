@@ -70,10 +70,10 @@ config file):
 ```
 
 The directory can be different of course, but (both) port numbers should be equal to
-your fantasygoldd's P2P listen port (57810 by default).
+your fantasygoldd's P2P listen port (57814 by default).
 
 ```
--externalip=X   You can tell FantasyGold about its publicly reachable address using
+-externalip=X   You can tell fantasygold about its publicly reachable address using
                 this option, and this can be a .onion address. Given the above
                 configuration, you can find your onion address in
                 /var/lib/tor/fantasygold-service/hostname. Onion addresses are given
@@ -106,7 +106,7 @@ specify:
 ./fantasygoldd ... -discover
 ```
 
-and open port 57810 on your firewall (or use -upnp).
+and open port 51472 on your firewall (or use -upnp).
 
 If you only want to use Tor to reach onion addresses, but not use it as a proxy
 for normal IPv4/IPv6 communication, use:

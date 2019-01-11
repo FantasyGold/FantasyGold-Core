@@ -1,6 +1,6 @@
 // Copyright (c) 2012-2014 The Bitcoin developers
 // Copyright (c) 2014-2015 The Dash developers
-// // Copyright (c) 2015-2017 The Bulwark developers
+// Copyright (c) 2015-2017 The PIVX developers
 // Copyright (c) 2017-2018 The FantasyGold developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
@@ -20,7 +20,7 @@ static const int INIT_PROTO_VERSION = 209;
 static const int GETHEADERS_VERSION = 70077;
 
 //! disconnect from peers older than this proto version
-static const int MIN_PEER_PROTO_VERSION_BEFORE_ENFORCEMENT = 70830;
+static const int MIN_PEER_PROTO_VERSION_BEFORE_ENFORCEMENT = 70840; 
 static const int MIN_PEER_PROTO_VERSION_AFTER_ENFORCEMENT15 = 70820;
 static const int MIN_PEER_PROTO_VERSION_AFTER_ENFORCEMENT17 = 70830;
 static const int MIN_PEER_PROTO_VERSION_AFTER_ENFORCEMENT18 = 70840;

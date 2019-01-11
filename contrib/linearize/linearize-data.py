@@ -117,7 +117,7 @@ class BlockDataCopier:
 			self.setFileTime = True
 		if settings['split_timestamp'] != 0:
 			self.timestampSplit = True
-        # Extents and cache for out-of-order blocks
+		# Extents and cache for out-of-order blocks
 		self.blockExtents = {}
 		self.outOfOrderData = {}
 		self.outOfOrderSize = 0 # running total size for items in outOfOrderData

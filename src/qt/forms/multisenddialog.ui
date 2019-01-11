@@ -26,7 +26,7 @@
     </rect>
    </property>
    <property name="text">
-    <string>Add FantasyGold Adresses at the bottom and configure the Multisend settings for each of them</string>
+    <string>Add a FantasyGold Adresses at the bottom and configure the Multisend settings for each of them</string>
    </property>
   </widget>
   <widget class="QScrollArea" name="addAddressScrollArea">

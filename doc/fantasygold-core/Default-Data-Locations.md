@@ -1,36 +1,36 @@
 # Default Data Locations
 
-The data directory is the location where Bulwark's data files are stored, including the wallet data file.
+The data directory is the location where FantasyGold's data files are stored, including the wallet data file.
 
 ## Windows
 
 Go to Start -> Run (or press WinKey+R) and run this:
 
- %APPDATA%\bulwark
+ %APPDATA%\fantasygold
 
-Bulwark's data folder will open. For most users, this is the following locations:
+FantasyGold's data folder will open. For most users, this is the following locations:
 
-C:\Documents and Settings\YourUserName\Application data\bulwark (XP)
+C:\Documents and Settings\YourUserName\Application data\fantasygold (XP)
 
- C:\Users\YourUserName\Appdata\Roaming\bulwark (Vista and 7)
+ C:\Users\YourUserName\Appdata\Roaming\fantasygold (Vista and 7)
 
 "AppData" and "Application data" are hidden by default.
 
-You can also store bulwark data files in any other drive or folder.
+You can also store fantasygold data files in any other drive or folder.
 
 If you have already downloaded the data then you will have to move the data to the new folder.
-If you want to store them in D:\bulwarkData then click on "Properties" of a shortcut to bulwark-qt.exe and
-add -datadir=D:\bulwarkData at the end as an example:
+If you want to store them in D:\fantasygoldData then click on "Properties" of a shortcut to fantasygold-qt.exe and
+add -datadir=D:\fantasygoldData at the end as an example:
 
- "C:\Program Files (x86)\bulwark\bulwark-qt.exe" -datadir=d:\bulwarkData
+ "C:\Program Files (x86)\fantasygold\fantasygold-qt.exe" -datadir=d:\fantasygoldData
 
-Start bulwark, now you will see all the files are created in the new data directory.
+Start fantasygold, now you will see all the files are created in the new data directory.
 
 ## Linux
 
-By default bulwark will put its data here:
+By default fantasygold will put its data here:
 
- ~/.bulwark/
+ ~/.fantasygold/
 
 You need to do a "ls -a" to see directories that start with a dot.
 
@@ -40,24 +40,24 @@ If that's not it, you can do a search like this:
 
 ## Mac
 
-By default bulwark will put its data here:
+By default fantasygold will put its data here:
 
- ~/Library/Application Support/bulwark/
+ ~/Library/Application Support/fantasygold/
 
 # Directory Contents
 
 ## Files
 
-An overview of these is in [https://github.com/bulwark-crypto/bulwark/blob/master/doc/files.md]([Wallet|wallet]]) in the bulwark Core documentation.
+An overview of these is in [https://github.com/FantasyGold/FantasyGold-Core/blob/master/doc/files.md]([Wallet|wallet]]) in the fantasygold Core documentation.
 
 * .lock
-    * bulwark data directory lock file
-* bulwark.conf [    *Contains [[Running-bulwark#bulwarkconf_Configuration_File|configuration options](optional])].
+    * fantasygold data directory lock file
+* fantasygold.conf [    *Contains [[Running-fantasygold#fantasygoldconf_Configuration_File|configuration options](optional])].
 * __db.''xxx''
     *Used by BDB
 * db.log
 * debug.log
-    *bulwark's verbose log file. Automatically trimmed from time to time.
+    *fantasygold's verbose log file. Automatically trimmed from time to time.
 * wallet.dat
     *Storage for keys, transactions, metadata, and options. <span style="color:red">Please be sure to make backups of this file.  It contains the keys necessary for spending your FGC.</span>
 * peers.dat
@@ -72,7 +72,7 @@ An overview of these is in [https://github.com/bulwark-crypto/bulwark/blob/maste
     * Stores data for masternode list
 * mnpayments.dat
     * Stores data for masternode payments
-The data, index and log files are used by Oracle [Berkeley DB](http://en.wikipedia.org/wiki/Berkeley_DB), the embedded key/value data store that bulwark uses.
+The data, index and log files are used by Oracle [Berkeley DB](http://en.wikipedia.org/wiki/Berkeley_DB), the embedded key/value data store that fantasygold uses.
 
 ## database subdirectory
 Contains BDB journaling files
@@ -111,7 +111,7 @@ This section may be of use to you if you wish to send a friend the blockchain, a
 *debug.log
     *May contain IP addresses and transaction ID's. It may be safely deleted.
 *database/ folder
-    *This should only exist when bulwark-qt is currently running. It contains information (BDB state) relating to your wallet.
+    *This should only exist when fantasygold-qt is currently running. It contains information (BDB state) relating to your wallet.
 *peers.dat
     *Unknown whether this contains personally identifiable data. It may be safely deleted.
 
@@ -119,7 +119,7 @@ Other files and folders (blocks, blocks/index, chainstate, sporks, zerocoin) may
 
 # Transferability
 
-The database files in the "blocks", "chainstate", "sporks", and "zerocoin" directories are cross-platform, and can be copied between different installations. These files, known collectively as a node's "block database", represent all of the information downloaded by a node during the syncing process. In other words, if you copy installation A's block database into installation B, installation B will then have the same syncing percentage as installation A. This is usually ''far'' faster than doing the normal initial sync over again. However, when you copy someone's database in this way, you are trusting them '''absolutely'''. bulwark Core treats its block database files as 100% accurate and trustworthy, whereas during the normal initial sync it treats each block offered by a peer as invalid until proven otherwise. If an attacker is able to modify your block database files, then they can do all sorts of evil things which could cause you to lose FGC. Therefore, you should only copy block databases from bulwark installations under your personal control, and only over a secure connection.
+The database files in the "blocks", "chainstate", "sporks", and "zerocoin" directories are cross-platform, and can be copied between different installations. These files, known collectively as a node's "block database", represent all of the information downloaded by a node during the syncing process. In other words, if you copy installation A's block database into installation B, installation B will then have the same syncing percentage as installation A. This is usually ''far'' faster than doing the normal initial sync over again. However, when you copy someone's database in this way, you are trusting them '''absolutely'''. fantasygold Core treats its block database files as 100% accurate and trustworthy, whereas during the normal initial sync it treats each block offered by a peer as invalid until proven otherwise. If an attacker is able to modify your block database files, then they can do all sorts of evil things which could cause you to lose FGC. Therefore, you should only copy block databases from fantasygold installations under your personal control, and only over a secure connection.
 
 Each node has a unique block database, and all of the files are highly connected. So if you copy just a few files from one installation's "blocks", "chainstate", "sporks", or "zerocoin" directories into another installation, this will almost certainly cause the second node to crash or get stuck at some random point in the future. If you want to copy a block database from one installation to another, you have to delete the old database and copy ''all'' of the files at once. Both nodes have to be shut down while copying.
 

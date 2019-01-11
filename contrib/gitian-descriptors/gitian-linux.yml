@@ -5,7 +5,7 @@ suites:
 - "trusty"
 architectures:
 - "amd64"
-packages: 
+packages:
 - "curl"
 - "g++-aarch64-linux-gnu"
 - "g++-4.8-aarch64-linux-gnu"
@@ -30,7 +30,7 @@ packages:
 reference_datetime: "2015-06-01 00:00:00"
 remotes:
 - "url": "https://github.com/FantasyGold/FantasyGold-Core.git"
-  "dir": "FantasyGold-Core"
+  "dir": "fantasygold"
 files: []
 script: |
 

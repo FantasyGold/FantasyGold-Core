@@ -1,7 +1,8 @@
 // Copyright (c) 2010 Satoshi Nakamoto
 // Copyright (c) 2009-2014 The Bitcoin developers
 // Copyright (c) 2014-2015 The Dash developers
-// Copyright (c) 2015-2017 The Fantasy Gold developers
+// Copyright (c) 2015-2017 The PIVX developers
+// Copyright (c) 2017-2018 The FantasyGold developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -242,10 +243,10 @@ UniValue stop(const UniValue& params, bool fHelp)
     if (fHelp || params.size() > 1)
         throw runtime_error(
             "stop\n"
-            "\nStop Fantasy Gold server.");
+            "\nStop FantasyGold server.");
     // Shutdown will take long enough that the response should get back
     StartShutdown();
-    return "Fantasy Gold server stopping";
+    return "FantasyGold server stopping";
 }
 
 
@@ -327,7 +328,7 @@ static const CRPCCommand vRPCCommands[] =
         {"hidden", "reconsiderblock", &reconsiderblock, true, true, false},
         {"hidden", "setmocktime", &setmocktime, true, false, false},
 
-        /* Fantasy Gold features */
+        /* Pivx features */
         {"fantasygold", "masternode", &masternode, true, true, false},
         {"fantasygold", "listmasternodes", &listmasternodes, true, true, false},
         {"fantasygold", "getmasternodecount", &getmasternodecount, true, true, false},

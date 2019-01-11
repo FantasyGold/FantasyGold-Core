@@ -309,7 +309,7 @@ void PrivacyDialog::on_pushButtonZFGCControl_clicked()
 
 void PrivacyDialog::setZFgcControlLabels(int64_t nAmount, int nQuantity)
 {
-    ui->labelzFgcSelected_int->setText(QString::number(nAmount));
+    ui->labelzFGCSelected_int->setText(QString::number(nAmount));
     ui->labelQuantitySelected_int->setText(QString::number(nQuantity));
 }
 

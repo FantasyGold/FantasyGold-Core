@@ -160,7 +160,7 @@
   <widget class="QStatusBar" name="statusbar"/>
  </widget>
  <resources>
-  <include location="../bitcoin.qrc"/>
+  <include location="../fantasygold.qrc"/>
  </resources>
  <connections/>
 </ui>

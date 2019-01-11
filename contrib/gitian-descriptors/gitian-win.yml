@@ -5,7 +5,7 @@ suites:
 - "trusty"
 architectures:
 - "amd64"
-packages: 
+packages:
 - "curl"
 - "g++"
 - "git-core"
@@ -23,7 +23,7 @@ packages:
 - "python"
 remotes:
 - "url": "https://github.com/FantasyGold/FantasyGold-Core.git"
-  "dir": "FantasyGold-Core"
+  "dir": "fantasygold"
 files: []
 script: |
   WRAP_DIR=$HOME/wrapped

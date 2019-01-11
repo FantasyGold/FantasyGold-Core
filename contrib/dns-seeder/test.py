@@ -2,11 +2,11 @@ import socket
 
 seeders = [
     'fgcseed.mempool.pw',
-    'fgcseed1.fantasygoldcrypto.com',
-    'fgcseed2.fantasygoldcrypto.com',
-    'fgcseed3.fantasygoldcrypto.com',
-    'fgcseed4.fantasygoldcrypto.com',
-    'fgcseed5.fantasygoldcrypto.com',
+    'fgcseed1.fantasygold.io',
+    'fgcseed2.fantasygold.io',
+    'fgcseed3.fantasygold.io',
+    'fgcseed4.fantasygold.io',
+    'fgcseed5.fantasygold.io',
     'fgcseed1.fantasygoldcrypto.site',
     'fgcseed2.fantasygoldcrypto.site',
     'fgcseed3.fantasygoldcrypto.site',

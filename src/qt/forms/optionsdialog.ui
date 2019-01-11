@@ -33,7 +33,7 @@
           <string>Automatically start FantasyGold after logging in to the system.</string>
          </property>
          <property name="text">
-          <string>&amp;Start FantasyGold on system login</string>
+          <string>Start FantasyGold on system login</string>
          </property>
         </widget>
        </item>
@@ -295,7 +295,7 @@
           <string>Connect to the FantasyGold network through a SOCKS5 proxy.</string>
          </property>
          <property name="text">
-          <string>&amp;Connect through SOCKS5 proxy (default proxy):</string>
+          <string>Connect through SOCKS5 proxy (default proxy):</string>
          </property>
         </widget>
        </item>

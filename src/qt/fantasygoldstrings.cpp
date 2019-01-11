@@ -9,6 +9,9 @@
 #define UNUSED
 #endif
 static const char UNUSED *fantasygold_strings[] = {
+QT_TRANSLATE_NOOP("fantasygold-core", " mints deleted\n"),
+QT_TRANSLATE_NOOP("fantasygold-core", " mints updated, "),
+QT_TRANSLATE_NOOP("fantasygold-core", " unconfirmed transactions removed\n"),
 QT_TRANSLATE_NOOP("fantasygold-core", ""
 "(1 = keep tx meta data e.g. account owner and payment request information, 2 "
 "= drop tx meta data)"),
@@ -184,9 +187,9 @@ QT_TRANSLATE_NOOP("fantasygold-core", ""
 "Unable to locate enough Obfuscation denominated funds for this transaction."),
 QT_TRANSLATE_NOOP("fantasygold-core", ""
 "Unable to locate enough Obfuscation non-denominated funds for this "
-"transaction that are not equal 10000 FGC."),
+"transaction that are not equal 5000 FGC."),
 QT_TRANSLATE_NOOP("fantasygold-core", ""
-"Unable to locate enough funds for this transaction that are not equal 10000 "
+"Unable to locate enough funds for this transaction that are not equal 5000 "
 "FGC."),
 QT_TRANSLATE_NOOP("fantasygold-core", ""
 "Use separate SOCKS5 proxy to reach peers via Tor hidden services (default: "
@@ -222,10 +225,10 @@ QT_TRANSLATE_NOOP("fantasygold-core", ""
 QT_TRANSLATE_NOOP("fantasygold-core", ""
 "You must specify a masternodeprivkey in the configuration. Please see "
 "documentation for help."),
-QT_TRANSLATE_NOOP("fantasygold-core", "(57810 could be used only on mainnet)"),
+QT_TRANSLATE_NOOP("fantasygold-core", "(51472 could be used only on mainnet)"),
 QT_TRANSLATE_NOOP("fantasygold-core", "(default: %s)"),
 QT_TRANSLATE_NOOP("fantasygold-core", "(default: 1)"),
-QT_TRANSLATE_NOOP("fantasygold-core", "(must be 57810 for mainnet)"),
+QT_TRANSLATE_NOOP("fantasygold-core", "(must be 51472 for mainnet)"),
 QT_TRANSLATE_NOOP("fantasygold-core", "<category> can be:"),
 QT_TRANSLATE_NOOP("fantasygold-core", "Accept command line and JSON-RPC commands"),
 QT_TRANSLATE_NOOP("fantasygold-core", "Accept connections from outside (default: 1 if no -proxy or -connect)"),
@@ -255,7 +258,6 @@ QT_TRANSLATE_NOOP("fantasygold-core", "Connect to a node to retrieve peer addres
 QT_TRANSLATE_NOOP("fantasygold-core", "Connection options:"),
 QT_TRANSLATE_NOOP("fantasygold-core", "Copyright (C) 2009-%i The Bitcoin Core Developers"),
 QT_TRANSLATE_NOOP("fantasygold-core", "Copyright (C) 2014-%i The Dash Core Developers"),
-QT_TRANSLATE_NOOP("fantasygold-core", "Copyright (C) 2015-%i The Bulwark Core Developers"),
 QT_TRANSLATE_NOOP("fantasygold-core", "Copyright (C) 2015-%i The FantasyGold Core Developers"),
 QT_TRANSLATE_NOOP("fantasygold-core", "Corrupted block database detected"),
 QT_TRANSLATE_NOOP("fantasygold-core", "Could not parse -rpcbind value %s as network address"),

@@ -1754,7 +1754,7 @@
       <string>Sell FGC</string>
      </property>
      <property name="icon" stdset="0">
-      <iconset resource="../fantasygold">
+      <iconset resource="../fantasygold.qrc">
        <normaloff>:/icons/bitcoin</normaloff>:/icons/bitcoin</iconset>
      </property>
     </widget>

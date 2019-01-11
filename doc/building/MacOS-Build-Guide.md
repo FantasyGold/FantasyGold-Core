@@ -66,7 +66,7 @@ And there you have your wallet - you can start it by running:
 
 If you want to start your wallet in the future, open Terminal.app and run this command:
 
-```~/Downloads/FantasyGold/src/qt/FantasyGold-qt```
+```~/Downloads/FantasyGold/src/qt/fantasygold-qt```
 
 ## FAQ
 

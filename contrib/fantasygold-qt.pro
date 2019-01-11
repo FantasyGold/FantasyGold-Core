@@ -143,7 +143,7 @@ HEADERS += src/activemasternode.h \
            src/crypto/sha512.h \
            src/crypto/sph_blake.h \
            src/crypto/sph_groestl.h \
-		   src/crypto/sph_jh.h \
+           src/crypto/sph_jh.h \
            src/crypto/sph_keccak.h \
            src/crypto/sph_skein.h \
            src/crypto/sph_types.h \
@@ -431,7 +431,7 @@ SOURCES += src/activemasternode.cpp \
            src/compat/strnlen.cpp \
            src/crypto/aes_helper.c \
            src/crypto/blake.c \
-		   src/crypto/hmac_sha256.cpp \
+           src/crypto/hmac_sha256.cpp \
            src/crypto/hmac_sha512.cpp \
            src/crypto/jh.c \
            src/crypto/keccak.c \

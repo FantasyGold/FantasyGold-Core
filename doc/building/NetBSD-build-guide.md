@@ -25,11 +25,11 @@ python27
 Download the source code:
 
 ```
-git clone https://github.com/FantasyGold-coin/FantasyGold-Core.git
+git clone https://github.com/fantasygold-coin/FantasyGold.git
 ```
 
 
-## Building FantasyGold Core
+## Building Bitcoin Core
 
 **Important**: Use `gmake` (the non-GNU `make` will exit with an error).
 

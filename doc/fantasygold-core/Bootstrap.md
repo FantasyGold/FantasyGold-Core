@@ -11,4 +11,4 @@
 
  **macOS**: Press `Command+Space` to open `Spotlight`, write `~/Library/Application Support/FantasyGold` and press Enter.
 
- **Linux**: Open `~/.FantasyGold/`
+ **Linux**: Open `~/.fantasygold/`

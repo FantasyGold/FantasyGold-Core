@@ -9,7 +9,7 @@ cache:
   directories:
   - depends/built
   - depends/sdk-sources
-  - "$HOME/.ccache"
+  - +ACIAJA-HOME/.ccache+ACI-
 addons:
   apt:
     sources:
@@ -26,7 +26,7 @@ addons:
     - libbz2-dev
     - libcap-dev
     - libdb4.8-dev
-    - libdb4.8++-dev
+    - libdb4.8dev
     - libevent-dev
     - libssl-dev
     - libtool
@@ -40,40 +40,40 @@ addons:
     - zlib1g-dev
 env:
   global:
-  - FANTASYGOLD_VERSION=2.0.0.0
-  - CCACHE_COMPRESS=1
-  - CCACHE_SIZE=500M
-  - CCACHE_TEMPDIR=/tmp/.ccache-temp
-  - MAKEJOBS="-s -j 2"
+  - FANTASYGOLD+AF8-VERSION+AD0-2.0.0.0
+  - CCACHE+AF8-COMPRESS+AD0-1
+  - CCACHE+AF8-SIZE+AD0-500M
+  - CCACHE+AF8-TEMPDIR+AD0-/tmp/.ccache-temp
+  - MAKEJOBS+AD0AIg--s -j 2+ACI-
 matrix:
   include:
   - name: Linux ARM 32 Bit
     addons:
       apt:
         packages:
-        - g++-arm-linux-gnueabihf
+        - garm-linux-gnueabihf
         - binutils-arm-linux-gnueabihf
     env:
-    - FANTASYGOLD_CONFIG="--enable-glibc-back-compat --with-gui=no"
-    - HOST=arm-linux-gnueabihf
-    - LABEL=ARM
+    - FANTASYGOLD+AF8-CONFIG+AD0AIg---enable-glibc-back-compat --with-gui+AD0-no+ACI-
+    - HOST+AD0-arm-linux-gnueabihf
+    - LABEL+AD0-ARM
     os: linux
   - name: Linux i686 32 Bit
     addons:
       apt:
         packages:
         - bc
-        - g++-multilib
+        - gmultilib
         - libprotobuf-dev
         - libqrencode-dev
         - python3-zmq
         - qtdeclarative5-dev
     env:
-    - FANTASYGOLD_CONFIG="--enable-zmq --enable-glibc-back-compat LDFLAGS=-static-libstdc++
-      --with-gui=qt5"
-    - HOST=i686-pc-linux-gnu
-    - LABEL=linux32
-    - PYZMQ=true
+    - FANTASYGOLD+AF8-CONFIG+AD0AIg---enable-zmq --enable-glibc-back-compat LDFLAGS+AD0--static-libstdc
+      --with-gui+AD0-qt5+ACI-
+    - HOST+AD0-i686-pc-linux-gnu
+    - LABEL+AD0-linux32
+    - PYZMQ+AD0-true
     os: linux
   - name: Linux x86 64 Bit
     addons:
@@ -85,18 +85,18 @@ matrix:
         - python3-zmq
         - qtdeclarative5-dev
     env:
-    - FANTASYGOLD_CONFIG="--enable-zmq --enable-glibc-back-compat LDFLAGS=-static-libstdc++
-      --with-gui=qt5"
-    - CPPFLAGS="-DDEBUG_LOCKORDER -DENABLE_DASH_DEBUG"
-    - HOST=x86_64-pc-linux-gnu
-    - LABEL=linux64
-    - PYZMQ=true
+    - FANTASYGOLD+AF8-CONFIG+AD0AIg---enable-zmq --enable-glibc-back-compat LDFLAGS+AD0--static-libstdc
+      --with-gui+AD0-qt5+ACI-
+    - CPPFLAGS+AD0AIg--DDEBUG+AF8-LOCKORDER -DENABLE+AF8-DASH+AF8-DEBUG+ACI-
+    - HOST+AD0-x86+AF8-64-pc-linux-gnu
+    - LABEL+AD0-linux64
+    - PYZMQ+AD0-true
     os: linux
   - name: Windows i686 32 Bit
     addons:
       apt:
         packages:
-        - g++-mingw-w64-i686 bc
+        - gmingw-w64-i686 bc
         - libprotobuf-dev
         - libqrencode-dev
         - linux-libc-dev:i386
@@ -104,16 +104,16 @@ matrix:
         - python3
         - qtdeclarative5-dev
     env:
-    - FANTASYGOLD_CONFIG="--with-gui=qt5"
-    - HOST=i686-w64-mingw32
-    - LABEL=win32
+    - FANTASYGOLD+AF8-CONFIG+AD0AIg---with-gui+AD0-qt5+ACI-
+    - HOST+AD0-i686-w64-mingw32
+    - LABEL+AD0-win32
     os: linux
   - name: Windows x86 64 Bit
     addons:
       apt:
         packages:
         - bc
-        - g++-mingw-w64-x86-64
+        - gmingw-w64-x86-64
         - libprotobuf-dev
         - libqrencode-dev
         - linux-libc-dev:i386
@@ -121,32 +121,32 @@ matrix:
         - python3
         - qtdeclarative5-dev
     env:
-    - FANTASYGOLD_CONFIG="--with-gui=qt5"
-    - HOST=x86_64-w64-mingw32
-    - LABEL=win64
+    - FANTASYGOLD+AF8-CONFIG+AD0AIg---with-gui+AD0-qt5+ACI-
+    - HOST+AD0-x86+AF8-64-w64-mingw32
+    - LABEL+AD0-win64
     os: linux
   - name: macOS x86 64 Bit
     env:
-    - HOST=x86_64-apple-darwin
-    - LABEL=macOS
+    - HOST+AD0-x86+AF8-64-apple-darwin
+    - LABEL+AD0-macOS
     os: osx
-    osx_image: xcode9.2
-before_install:
-- if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew update; fi
+    osx+AF8-image: xcode9.2
+before+AF8-install:
+- if +AFsAWw- +ACIAJA-TRAVIS+AF8-OS+AF8-NAME+ACI- +AD0APQ- +ACI-osx+ACI- +AF0AXQA7- then brew update+ADs- fi
 install:
-- if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew uninstall mercurial python; brew
-  bundle; brew link --overwrite --force boost@1.57; fi
-- if [ "$PYZMQ" = "true" ]; then pip install pyzmq --user ; fi
-before_script:
-- if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then unset CC CXX DISPLAY; fi
-- if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then export LDFLAGS=-L/usr/local/opt/openssl/lib;
-  export CPPFLAGS=-I/usr/local/opt/openssl/include; fi
-- GLOBAL_CONFIG="--enable-reduce-exports --enable-tests --prefix=$TRAVIS_BUILD_DIR/depends/$HOST"
+- if +AFsAWw- +ACIAJA-TRAVIS+AF8-OS+AF8-NAME+ACI- +AD0APQ- +ACI-osx+ACI- +AF0AXQA7- then brew uninstall mercurial python+ADs- brew
+  bundle+ADs- brew link --overwrite --force boost+AEA-1.57+ADs- fi
+- if +AFs- +ACIAJA-PYZMQ+ACI- +AD0- +ACI-true+ACI- +AF0AOw- then pip install pyzmq --user +ADs- fi
+before+AF8-script:
+- if +AFsAWw- +ACIAJA-TRAVIS+AF8-OS+AF8-NAME+ACI- +AD0APQ- +ACI-linux+ACI- +AF0AXQA7- then unset CC CXX DISPLAY+ADs- fi
+- if +AFsAWw- +ACIAJA-TRAVIS+AF8-OS+AF8-NAME+ACI- +AD0APQ- +ACI-osx+ACI- +AF0AXQA7- then export LDFLAGS+AD0--L/usr/local/opt/openssl/lib+ADs-
+  export CPPFLAGS+AD0--I/usr/local/opt/openssl/include+ADs- fi
+- GLOBAL+AF8-CONFIG+AD0AIg---enable-reduce-exports --enable-tests --prefix+AD0AJA-TRAVIS+AF8-BUILD+AF8-DIR/depends/+ACQ-HOST+ACI-
 script:
-- if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then make $MAKEJOBS -C depends HOST="$HOST";
-  depends/$HOST/native/bin/ccache --max-size=$CCACHE_SIZE; sh ./autogen.sh; ./configure
-  --cache-file=config.cache $GLOBAL_CONFIG $FANTASYGOLD_CONFIG; make; fi
-- if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then sh ./autogen.sh; ./configure --enable-reduce-exports;
-  make deploy; fi
-before_deploy:
+- if +AFsAWw- +ACIAJA-TRAVIS+AF8-OS+AF8-NAME+ACI- +AD0APQ- +ACI-linux+ACI- +AF0AXQA7- then make +ACQ-MAKEJOBS -C depends HOST+AD0AIgAk-HOST+ACIAOw-
+  depends/+ACQ-HOST/native/bin/ccache --max-size+AD0AJA-CCACHE+AF8-SIZE+ADs- sh ./autogen.sh+ADs- ./configure
+  --cache-file+AD0-config.cache +ACQ-GLOBAL+AF8-CONFIG +ACQ-FANTASYGOLD+AF8-CONFIG+ADs- make+ADs- fi
+- if +AFsAWw- +ACIAJA-TRAVIS+AF8-OS+AF8-NAME+ACI- +AD0APQ- +ACI-osx+ACI- +AF0AXQA7- then sh ./autogen.sh+ADs- ./configure --enable-reduce-exports+ADs-
+  make deploy+ADs- fi
+before+AF8-deploy:
 - true

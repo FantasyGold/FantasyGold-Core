@@ -39,10 +39,10 @@
 `fantasygold-cli getmasternodecount`
 \- Displays count of all masternodes
 
-`bash <( curl https://raw.githubusercontent.com/FantasyGold/FGC-MN-Install/master/refresh_node.sh )`
+`bash <( curl https://raw.githubusercontent.com/fantasygold-crypto/FantasyGold-MN-Install/master/refresh_node.sh )`
 
 Refreshes your node by clearing the chaindata
 
-`bash <( curl https://raw.githubusercontent.com/FantasyGold/FGC-MN-Install/master/update_node.sh )`
+`bash <( curl https://raw.githubusercontent.com/fantasygold-crypto/FantasyGold-MN-Install/master/update_node.sh )`
 
 Updates your node to the newest version

@@ -2,8 +2,6 @@
 // Copyright (c) 2009-2014 The Bitcoin developers
 // Copyright (c) 2014-2015 The Dash developers
 // Copyright (c) 2015-2017 The PIVX developers
-// Copyright (c) 2015-2017 The Bulwark developers
-// Copyright (c) 2017-2018 The Fantasy Gold Core Developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -2147,7 +2145,7 @@ int64_t GetBlockValue(int nHeight)
         CAmount reward = 10 * COIN;
         // Add premine to account for short PoW duration
         // on testnet and the need for coin maturity for PoS.
-		// Verify change in block rewards at height change.
+        // Verify change in block rewards at height change.
         if (newHeight == 1)
             reward = 100000 * COIN;
         else if (newHeight >= 2 && newHeight <= 50)
@@ -2165,24 +2163,24 @@ int64_t GetBlockValue(int nHeight)
         
         return reward;
 
-	} 
-	
-	int64_t nSubsidy = 0;
-	
-	// Year 0	
-	if (nHeight == 0) {
-		nSubsidy = 4750000 * COIN;
-	} else if (nHeight <= 86400 && nHeight > 1) { 
-		nSubsidy = 47 * COIN;
-	
-	} else if (nHeight <= 172800 && nHeight >= 86401) { // Keep reward schedule.
+    }
+
+    int64_t nSubsidy = 0;
+
+    // Year 0
+    if (nHeight == 0) {
+        nSubsidy = 4750000 * COIN;
+    } else if (nHeight <= 86400 && nHeight > 1) {
+        nSubsidy = 47 * COIN;
+
+    } else if (nHeight <= 172800 && nHeight >= 86401) { // Keep reward schedule.
         nSubsidy = 35.25 * COIN;
     } else if (nHeight <= 259199 && nHeight >= 172801) {
         nSubsidy = 26.4375 * COIN;
     } else if (nHeight <= 345599 && nHeight >= 259200) {
         nSubsidy = 19.8280 * COIN;
 
-    // Year 1
+        // Year 1
     } else if (nHeight <= 431999 && nHeight >= 345600) {
         nSubsidy = 14.8711 * COIN;
     } else if (nHeight <= 518399 && nHeight >= 432000) {
@@ -2192,7 +2190,7 @@ int64_t GetBlockValue(int nHeight)
     } else if (nHeight <= 691199 && nHeight >= 604800) {
         nSubsidy = 6.2737 * COIN;
 
-    // Year 2
+        // Year 2
     } else if (nHeight <= 777599 && nHeight >= 691200) {
         nSubsidy = 4.7053 * COIN;
     } else if (nHeight <= 863999 && nHeight >= 777600) {
@@ -2202,7 +2200,7 @@ int64_t GetBlockValue(int nHeight)
     } else if (nHeight <= 1036799 && nHeight >= 950400) {
         nSubsidy = 1.9850 * COIN;
 
-    // Year 3
+        // Year 3
     } else if (nHeight <= 1123199 && nHeight >= 1036800) {
         nSubsidy = 1.4887 * COIN;
     } else if (nHeight <= 1209599 && nHeight >= 1123200) {
@@ -2212,7 +2210,7 @@ int64_t GetBlockValue(int nHeight)
     } else if (nHeight <= 1382399 && nHeight >= 1296000) {
         nSubsidy = 0.6280 * COIN;
 
-    // Year 4
+        // Year 4
     } else if (nHeight <= 1468799 && nHeight >= 1382400) {
         nSubsidy = 0.4710 * COIN;
     } else if (nHeight <= 1555199 && nHeight >= 1468800) {
@@ -2226,9 +2224,8 @@ int64_t GetBlockValue(int nHeight)
     } else {
         nSubsidy = 0 * COIN;
     }
-
-  
-
+    
+}
 int64_t GetSeeSawReward(int64_t blockValue, int64_t nMoneySupply, int64_t mNodeCoins) {
     int64_t ret = 0;
 

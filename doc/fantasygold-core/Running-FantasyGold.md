@@ -15,7 +15,7 @@ To run with the standard GUI interface:
 
 # Command-line arguments
 
-These commands are accurate as of FantasyGold Core version '''v2.0.0'''.
+These commands are accurate as of fantasygold Core version '''v2.0.0'''.
 
 <table>
 <tbody><tr>

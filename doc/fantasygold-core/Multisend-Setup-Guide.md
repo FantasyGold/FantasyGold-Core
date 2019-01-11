@@ -13,11 +13,11 @@ After locating the MultiSend tool, click the address book icon to the right of w
 Then, you need to choose the address of either your masternode or staking address that is receiving the rewards. This will either be your masternode "Pubkey" listed on your masternode tab,
 or it could be any address you stake with when referring to staking. To select the address from the list, click it once and then click "CHOOSE".
 
-![FantasyGoldKnow ledgebase](https://kb.fantasygold.io/assets/images/MultisendScreenshot3.png "MultisendScreenshot3.png")
+![FantasyGold Knowledgebase](https://kb.fantasygold.io/assets/images/MultisendScreenshot3.png "MultisendScreenshot3.png")
 
 Now the address you chose should be visible, as in the screenshot below, before the next step tick "Send For Staking" and/or "Send for Masternodes" depending on what kind of rewards you want to be sending. Click "ACTIVATE".
 
-![FantasyGoldKnowledgebase](https://kb.fantasygold.io/assets/images/MultisendScreenshot4.png "MultisendScreenshot4.png")
+![FantasyGold Knowledgebase](https://kb.fantasygold.io/assets/images/MultisendScreenshot4.png "MultisendScreenshot4.png")
 
 You should now see the "MultiSend Status" change to "Enabled for Staking and Masternodes" as in the screenshot above. Next we want to configure where the awards sent to the address on-screen will be forwarded to,
 for this, we need to click "CONFIGURE" to bring up the screen shown below.

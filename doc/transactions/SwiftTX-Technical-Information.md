@@ -11,6 +11,9 @@ When a "Transaction Lock" occurs the hash of the related transaction is broadcas
 * `zmqpubrawtxlock`: publishes the raw transaction when locked via SwiftTX
 * `zmqpubhashtxlock`: publishes the transaction hash when locked via SwiftTX
 
+This mechanism has been integrated into Bitcore-Node-FantasyGold which allows for notification to be broadcast through Insight API in one of two ways:
+* WebSocket: [https://github.com/fantasygold-crypto/insight-api-fantasygold#web-socket-api](https://github.com/fantasygold-crypto/insight-api-fantasygold#web-socket-api)
+* API: [https://github.com/fantasygold-crypto/insight-api-fantasygold#swifttx-transactions](https://github.com/fantasygold-crypto/insight-api-fantasygold#swifttx-transactions)
 
 ### Command line option
 

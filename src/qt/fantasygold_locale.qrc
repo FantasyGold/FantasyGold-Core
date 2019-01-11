@@ -21,6 +21,7 @@
         <file alias="ru">locale/fantasygold_ru.qm</file>
         <file alias="sk">locale/fantasygold_sk.qm</file>
         <file alias="sv">locale/fantasygold_sv.qm</file>
+        <file alias="tr">locale/fantasygold_tr.qm</file>
         <file alias="uk">locale/fantasygold_uk.qm</file>
         <file alias="zh_CN">locale/fantasygold_zh_CN.qm</file>
         <file alias="zh_TW">locale/fantasygold_zh_TW.qm</file>
