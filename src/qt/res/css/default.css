@@ -33,15 +33,15 @@ QMenu::item:selected {
 QToolBar {
 	font-family: "Roboto";
 	QFont::Medium;
-	background-color: #0091ea;
-	border: 0px solid #333;
+	background-color: #111;
+	border: 0px solid #000;
 	padding: 1;
 	margin: 0;
 	width: 90px
 }
 QToolBar > QToolButton {
 	alignment: left;
-	background-color: #0091ea;
+	background-color: #111;
 	border: 0px solid #333;
 	border-left: 0px;
 	border-right: 0px;
@@ -55,18 +55,18 @@ QToolBar > QToolButton {
 	color: #fff
 }
 QToolBar > QToolButton:checked {
-	background-color: #003c8f;
+	background-color: #fff;
 	color: #fff
 }
 QToolBar > QToolButton:hover {
-	background-color: #5e92f3;
+	background-color: #e0c469;
 	color: #fff
 }
 QToolBar > QToolButton#ToolbarSpacer:hover:!selected {
-	background-color: #5e92f3;
+	background-color: #e0c469;
 }
 QToolBar > QToolButton:pressed {
-	background-color: #003c8f;
+	background-color: #a79047;
 	color: #fff
 }
 QMessageBox {
@@ -80,7 +80,7 @@ QProgressBar {
 	padding-right: 0px
 }
 QProgressBar::chunk {
-	background-color: #0091ea;
+	background-color: #111;
 	width: 20px
 }
 QLabel#progressBarLabel {
@@ -101,10 +101,10 @@ QTabBar {
 	color: #333
 }
 QTabBar::tab:hover:!selected {
-	background-color: #5e92f3
+	background-color:#dedbe5
 }
 QWidget {
-	selection-background-color: #0091ea;
+	selection-background-color: #111;
 	selection-color: #fff;
 	outline: 0;
 }
@@ -140,21 +140,21 @@ QTextEdit {
 	background-color: #f2f2f2
 }
 QValidatedLineEdit:!focus {
-	color: #0091ea;
+	color: #e0c469;
 	background-color: #e7e7e7
 }
 QLineEdit:!focus {
-	color: #0091ea;
+	color: #e0c469;
 	background-color: #e7e7e7
 }
 QTextEdit:!focus {
-	color: #0091ea;
+	color: #e0c469;
 	background-color: #e7e7e7
 }
 QValidatedLineEdit:disabled,
 QLineEdit:disabled,
 QTextEdit:disabled {
-	color: #0091ea;
+	color: #e0c469;
 	background-color: #f2f2f2
 }
 QPlainTextEdit {
@@ -164,9 +164,9 @@ QtMaterialFlatButton {
 	background-color: transparent;
 	border-width: 1px;
 	border-style: solid;
-	border-color: #0091ea;
+	border-color: #e0c469;
 	border-radius: 4px;
-	color: #0091ea;
+	color: #e0c469;
 	font-size: 12px;
 	font-weight: 700;
 	padding-left: 25px;
@@ -180,9 +180,9 @@ QtMaterialFlatButton:hover {
 	background-color: #e4e4e4
 }
 QtMaterialFlatButton:focus {} QtMaterialFlatButton:pressed {
-	background-color: #0091ea;
+	background-color: #e0c469;
 	border: 1px solid #000000;
-	background-color: #5e92f3
+	background-color: #a79047
 }
 QLabel#labelEncryptionIcon,
 QLabel#labelConnectionsIcon,
@@ -196,13 +196,13 @@ QtMaterialFlatButton#labelAutoMintIcon{
 	margin: 0px
 }
 QSpinBox::up-button:hover {
-	background-color: #5e92f3
+	background-color: #a79047
 }
 QSpinBox::down-button:hover {
-	background-color: #5e92f3
+	background-color: #a79047
 }
 QComboBox {
-	border: 1px solid #0091ea;
+	border: 1px solid #e0c469;
 	border-radius: 10px;
 	padding: 3px 5px 3px 5px;
 	background: #fcfcfc;
@@ -213,7 +213,7 @@ QComboBox:checked {
 	background: #f2f2f2
 }
 QComboBox:editable {
-	background: #0091ea;
+	background: #e0c469;
 	color: #616161;
 	border: 0px solid transparent
 }
@@ -263,7 +263,7 @@ QAbstractSpinBox {
 	background-color: #f2f2f2
 }
 QAbstractSpinBox:!focus {
-	color: #0091ea;
+	color: #e0c469;
 	background-color: #e7e7e7
 }
 QAbstractSpinBox::up-button {
@@ -303,7 +303,7 @@ QValueComboBox {
 	background-color: #f2f2f2
 }
 QValueComboBox:!focus {
-	color: #0091ea;
+	color: #e0c469;
 	background-color: #e7e7e7
 }
 QHeaderView {
@@ -312,7 +312,7 @@ QHeaderView {
 }
 QHeaderView::section {
 	qproperty-alignment: center;
-	background-color: #0091ea;
+	background-color: #e0c469;
 	color: #fff;
 	min-height: 25px;
 	font-weight: 700;
@@ -426,7 +426,7 @@ QDialog .QTabWidget QTabBar::tab:last {
 QDialog .QTabWidget QTabBar::tab:selected,
 QDialog .QTabWidget QTabBar::tab:hover {
 	background-color: #ffffff;
-	color: #0091ea;
+	color: #333;
 }
 QDialog .QTabWidget .QWidget {
 	background-color: #fff;
@@ -497,7 +497,7 @@ QFrame#frameObfuscation QProgressBar#obfuscationProgress {
 	padding-right: 0px
 }
 QFrame#frameObfuscation QProgressBar#obfuscationProgress::chunk {
-	background-color: #0091ea;
+	background-color: #e0c469;
 	width: 1px
 }
 QFrame#frameObfuscation QLabel#progressBarLabel {
@@ -554,7 +554,7 @@ QDialog#RPCConsole QWidget#tab_info QLabel#label_10 {
 	min-width: 180px
 }
 QDialog#RPCConsole QWidget#tab_peers QLabel#peerHeading {
-	color: #0091ea
+	color: #e0c469
 }
 QDialog#RPCConsole QTableView#peerWidget::item {
 	color: #333
@@ -576,7 +576,7 @@ QDialog#RPCConsole QtMaterialFlatButton#clearButton {
 	padding-right: 10px;
 }
 QDialog#RPCConsole .QGroupBox #line {
-	background-color: #0091ea
+	background-color: #e0c469
 }
 QDialog#RPCConsole .QGroupBox #line_2 {
 	background: #fff
@@ -599,7 +599,7 @@ QDialog#EditAddressDialog QLabel {
 	padding-right: 5px
 }
 QFrame[frameShape="4"] {
-	border: 1px solid #0091ea
+	border: 1px solid #e0c469
 }
 QLabel#labelOverviewHeaderLeft {
 	font-weight: 700;
@@ -952,9 +952,9 @@ QWidget#ReceiveCoinsDialog .QFrame#frame QtMaterialFlatButton {
 	background-color: transparent;
 	border-width: 1px;
 	border-style: solid;
-	border-color: #0091ea;
+	border-color: #e0c469;
 	border-radius: 4px;
-	color: #0091ea;
+	color: #e0c469;
 	padding-left: 10px;
 	padding-right: 10px
 }
@@ -969,7 +969,7 @@ QWidget#ReceiveCoinsDialog .QFrame#frame2 QtMaterialFlatButton:pressed {
 	border: 1px solid #9e9e9e
 }
 QWidget#ReceiveCoinsDialog .QFrame#frame .QLabel#label_6 {
-	color: #0091ea;
+	color: #e0c469;
 	font-weight: 700;
 	font-size: 14px
 }
@@ -998,7 +998,7 @@ QDialog#TransactionDescDialog QTextEdit {
 	border: 1px solid #d7d7d7
 }
 QWidget#PrivacyDialog .QFrame[frameShape="4"] {
-	border: 1px solid #003c8f
+	border: 1px solid #a79047
 }
 QWidget#PrivacyDialog .QFrame#frame_Content {
 	background-color: #f8f6f6
@@ -1021,11 +1021,11 @@ QCalendarView {
 	border: 1px solid #333
 }
 QCalendarWidget QWidget#qt_calendar_navigationbar {
-	background-color: #0091ea;
+	background-color: #e0c469;
 	font-weight: 700
 }
 QCalendarWidget QAbstractItemView {
-	alternate-background-color: #5e92f3;
+	alternate-background-color: #a79047;
 	background-color: #fff
 }
 QCalendarWidget QAbstractItemView:enabled {
