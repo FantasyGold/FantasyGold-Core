@@ -110,17 +110,8 @@ public:
     int64_t TargetSpacing() const {
         return nTargetSpacing;
     }
-    int64_t TargetSpacingSlowLaunch() const {
-        return nTargetSpacingSlowLaunch;
-    }
     int64_t Interval() const {
         return nTargetTimespan / nTargetSpacing;
-    }
-	int LAST_POW_BLOCK() const { 
-		return nLastPOWBlock; 
-	}
-    int RAMP_TO_BLOCK() const {
-        return nRampToBlock;
     }
     int COINBASE_MATURITY() const {
         return nMaturity;
@@ -230,7 +221,6 @@ protected:
     int64_t nTargetTimespan;
     int64_t nTargetSpacing;
     int nLastPOWBlock;
-    int nRampToBlock;
     int nMasternodeCountDrift;
     int nMaturity;
 	int nModifierUpdateBlock;

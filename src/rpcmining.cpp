@@ -321,7 +321,7 @@ static UniValue BIP22ValidationResult(const CValidationState& state) {
 }
 
 UniValue getblocktemplate(const UniValue& params, bool fHelp) {
-    int lastPoWBlock = IsSporkActive(SPORK_19_POW_ROLLBACK) ? Params().LAST_POW_BLOCK_OLD() : Params().LAST_POW_BLOCK();
+    int lastPoWBlock = Params().LAST_POW_BLOCK();
 
     if (fHelp || params.size() > 1)
         throw runtime_error(

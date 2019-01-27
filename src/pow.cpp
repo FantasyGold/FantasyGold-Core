@@ -35,22 +35,11 @@ unsigned int static DarkGravityWave(const CBlockIndex* pindexLast) {
     // Change starting PoS block according to active spork
     // for PoW rollback.
     int nLastPOWBlock = Params().LAST_POW_BLOCK();
-    if (IsSporkActive(SPORK_19_POW_ROLLBACK))
-        nLastPOWBlock = Params().LAST_POW_BLOCK_OLD();
-
+    
     if (pindexLast->nHeight >= nLastPOWBlock) {
         uint256 bnTargetLimit = (~uint256(0) >> 24);
-
-        // For first 20 blocks return limit to avoid high
-        // difficulty from TH/s PoW.
-        if (pindexLast->nHeight <= (nLastPOWBlock + 20)) {
-            bnTargetLimit = (~uint256(0) >> 12);
-            return bnTargetLimit.GetCompact();
-        }
-
-        int64_t nTargetSpacing = Params().TargetSpacing(); // mainnet vs testnet
-        int64_t nTargetTimespan = 60 * 30; //1800
-
+		int64_t nTargetSpacing = Params().TargetSpacing(); // mainnet vs testnet
+        int64_t nTargetTimespan = 1800; //1800
         int64_t nActualSpacing = 0;
         if (pindexLast->nHeight != 0)
             nActualSpacing = pindexLast->GetBlockTime() - pindexLast->pprev->GetBlockTime();
