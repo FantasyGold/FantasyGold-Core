@@ -870,7 +870,7 @@ CAmount CBudgetManager::GetTotalBudget(int nHeight) {
 		// this way the testnet and main can be defined in GetBudgetPaymentCycleBlocks().
 		// GetBudgetPaymentCycleBlocks could also return 0 if before block 345600 and we could get this function down to nothing but one line.
 		nSubsidy = GetBlockValue(nHeight) * GetBudgetPaymentCycleBlocks() * nBudgetBudget;
-
+	}
     // Amount of blocks in a months period of time (using 1.5 minutes per)
     return nSubsidy;
 }
