@@ -14,8 +14,7 @@ class TransactionFilterProxy;
 class TxViewDelegate;
 class WalletModel;
 
-namespace Ui
-{
+namespace Ui {
 class OverviewPage;
 }
 
@@ -24,27 +23,26 @@ class QModelIndex;
 QT_END_NAMESPACE
 
 /** Overview ("home") page widget */
-class OverviewPage : public QWidget
-{
+class OverviewPage : public QWidget {
     Q_OBJECT
 
-public:
+  public:
     explicit OverviewPage(QWidget* parent = 0);
     ~OverviewPage();
 
     void setClientModel(ClientModel* clientModel);
     void setWalletModel(WalletModel* walletModel);
     void showOutOfSyncWarning(bool fShow);
-    void updateObfuscationProgress();
 
-public slots:
-    void obfuScationStatus();
-    void setBalance(const CAmount& balance, const CAmount& unconfirmedBalance, const CAmount& immatureBalance, const CAmount& anonymizedBalance, const CAmount& watchOnlyBalance, const CAmount& watchUnconfBalance, const CAmount& watchImmatureBalance);
+  public slots:
+    void setBalance(const CAmount& balance, const CAmount& unconfirmedBalance, const CAmount& immatureBalance,
+                    const CAmount& zerocoinBalance, const CAmount& unconfirmedZerocoinBalance, const CAmount& immatureZerocoinBalance,
+                    const CAmount& watchOnlyBalance, const CAmount& watchUnconfBalance, const CAmount& watchImmatureBalance);
 
-signals:
+  signals:
     void transactionClicked(const QModelIndex& index);
 
-private:
+  private:
     QTimer* timer;
     Ui::OverviewPage* ui;
     ClientModel* clientModel;
@@ -52,19 +50,19 @@ private:
     CAmount currentBalance;
     CAmount currentUnconfirmedBalance;
     CAmount currentImmatureBalance;
-    CAmount currentAnonymizedBalance;
+    CAmount currentZerocoinBalance;
+    CAmount currentUnconfirmedZerocoinBalance;
+    CAmount currentimmatureZerocoinBalance;
     CAmount currentWatchOnlyBalance;
     CAmount currentWatchUnconfBalance;
     CAmount currentWatchImmatureBalance;
     int nDisplayUnit;
+    void getPercentage(CAmount nTotalBalance, CAmount nZerocoinBalance, QString& sFGCPercentage, QString& szFGCPercentage);
 
     TxViewDelegate* txdelegate;
     TransactionFilterProxy* filter;
 
-private slots:
-    void toggleObfuscation();
-    void obfuscationAuto();
-    void obfuscationReset();
+  private slots:
     void updateDisplayUnit();
     void handleTransactionClicked(const QModelIndex& index);
     void updateAlerts(const QString& warnings);

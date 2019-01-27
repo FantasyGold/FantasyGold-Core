@@ -10,11 +10,11 @@
         <translation>Stwórz nowy adres</translation>
     </message>
     <message>
-        <source>&amp;New</source>
+        <source>New</source>
         <translation>Nowy</translation>
     </message>
     <message>
-        <source>&amp;Copy</source>
+        <source>Copy</source>
         <translation>Kopiuj</translation>
     </message>
     <message>
@@ -22,15 +22,15 @@
         <translation>Usuń zaznaczony adres z listy</translation>
     </message>
     <message>
-        <source>&amp;Delete</source>
+        <source>Delete</source>
         <translation>Usuń</translation>
     </message>
     <message>
-        <source>&amp;Export</source>
+        <source>Export</source>
         <translation>Eksportuj</translation>
     </message>
     <message>
-        <source>C&amp;lose</source>
+        <source>Close</source>
         <translation>Zamknij</translation>
     </message>
     <message>
@@ -42,7 +42,7 @@
         <translation>Wybierz adres do otrzymania monet</translation>
     </message>
     <message>
-        <source>C&amp;hoose</source>
+        <source>Choose</source>
         <translation>Wybierz</translation>
     </message>
     <message>
@@ -54,16 +54,16 @@
         <translation>Adres odbiorczy</translation>
     </message>
     <message>
-        <source>&amp;Copy Address</source>
-        <translation>&amp;Kopiuj adres</translation>
+        <source>Copy Address</source>
+        <translation>Kopiuj adres</translation>
     </message>
     <message>
-        <source>Copy &amp;Label</source>
-        <translation>Kopiuj &amp;Zakładkę</translation>
+        <source>Copy Label</source>
+        <translation>Kopiuj Zakładkę</translation>
     </message>
     <message>
-        <source>&amp;Edit</source>
-        <translation>&amp;Edytuj</translation>
+        <source>Edit</source>
+        <translation>Edytuj</translation>
     </message>
     <message>
         <source>Export Address List</source>
@@ -108,10 +108,6 @@
         <translation>Powtórz nowe hasło</translation>
     </message>
     <message>
-        <source>For anonymization and staking only</source>
-        <translation>Tylko dla anonimizacji i stakingu</translation>
-    </message>
-    <message>
         <source>Encrypt wallet</source>
         <translation>Zakoduj portfel</translation>
     </message>
@@ -148,8 +144,8 @@
         <translation>Czy na pewno chcesz zakodować portfel?</translation>
     </message>
     <message>
-        <source>Warning: If you encrypt your wallet and lose your passphrase, you will &lt;b&gt;LOSE ALL OF YOUR FGC&lt;/b&gt;!</source>
-        <translation>Ostrzeżenie: Jeżeli zakodujesz portfel i stracisz do niego hasło , UTRACISZ WSZYSTKIE FGC!</translation>
+        <source>Warning: If you encrypt your wallet and lose your passphrase, you will &lt;b&gt;LOSE ALL OF YOUR FantasyGold&lt;/b&gt;!</source>
+        <translation>Ostrzeżenie: Jeżeli zakodujesz portfel i stracisz do niego hasło , UTRACISZ WSZYSTKIE FantasyGold!</translation>
     </message>
     <message>
         <source>Wallet encrypted</source>
@@ -189,13 +185,16 @@
     </message>
 </context>
 <context>
+    <name>BanTableModel</name>
+    </context>
+<context>
     <name>Bip38ToolDialog</name>
     <message>
         <source>BIP 38 Tool</source>
         <translation>Narzędzie BIP 38</translation>
     </message>
     <message>
-        <source>&amp;BIP 38 Encrypt</source>
+        <source>BIP 38 Encrypt</source>
         <translation>Zakoduj BIP 38</translation>
     </message>
     <message>
@@ -227,24 +226,16 @@
         <translation>Zakodowany klucz:</translation>
     </message>
     <message>
-        <source>Sign the message to prove you own this FantasyGold address</source>
-        <translation>Zatwierdź wiadomość, aby udowodnić, że podany adres FantasyGold jest w twoim posiadaniu</translation>
+        <source>Encrypt Key</source>
+        <translation>Kodowanie klucz</translation>
     </message>
     <message>
-        <source>Encrypt &amp;Key</source>
-        <translation>Kodowanie &amp;klucz</translation>
+        <source>Clear All</source>
+        <translation>Wyczyść Wszystko</translation>
     </message>
     <message>
-        <source>Clear &amp;All</source>
-        <translation>Wyczyść &amp;Wszystko</translation>
-    </message>
-    <message>
-        <source>&amp;BIP 38 Decrypt</source>
-        <translation>&amp;BIP 38 Zakoduj</translation>
-    </message>
-    <message>
-        <source>Reset all verify message fields</source>
-        <translation>Resetuj wszystkie zweryfikowane pola tekstowe</translation>
+        <source>BIP 38 Decrypt</source>
+        <translation>BIP 38 Zakoduj</translation>
     </message>
     <message>
         <source>Decrypted Key:</source>
@@ -326,31 +317,31 @@
         <translation>Node</translation>
     </message>
     <message>
-        <source>&amp;Overview</source>
-        <translation>&amp;Przegląd</translation>
+        <source>Overview</source>
+        <translation>Przegląd</translation>
     </message>
     <message>
         <source>Show general overview of wallet</source>
         <translation>Pokaż generalny przegląd portfela</translation>
     </message>
     <message>
-        <source>&amp;Send</source>
-        <translation>&amp;Wyślij</translation>
+        <source>Send</source>
+        <translation>Wyślij</translation>
     </message>
     <message>
-        <source>&amp;Receive</source>
-        <translation>&amp;Otrzymaj</translation>
+        <source>Receive</source>
+        <translation>Otrzymaj</translation>
     </message>
     <message>
-        <source>&amp;Transactions</source>
-        <translation>&amp;Transakcje</translation>
+        <source>Transactions</source>
+        <translation>Transakcje</translation>
     </message>
     <message>
         <source>Browse transaction history</source>
         <translation>Przeglądaj historię transakcji</translation>
     </message>
     <message>
-        <source>E&amp;xit</source>
+        <source>Exit</source>
         <translation>Wyjdź</translation>
     </message>
     <message>
@@ -358,87 +349,87 @@
         <translation>Wyjdź z aplikacji</translation>
     </message>
     <message>
-        <source>About &amp;Qt</source>
-        <translation>O &amp;Qt</translation>
+        <source>About Qt</source>
+        <translation>O Qt</translation>
     </message>
     <message>
         <source>Show information about Qt</source>
         <translation>Pokaż więcej informacji o Qt</translation>
     </message>
     <message>
-        <source>&amp;Options...</source>
-        <translation>&amp;Opcje</translation>
+        <source>Options...</source>
+        <translation>Opcje</translation>
     </message>
     <message>
-        <source>&amp;Show / Hide</source>
-        <translation>&amp;Pokaż/Ukryj</translation>
+        <source>Show / Hide</source>
+        <translation>Pokaż/Ukryj</translation>
     </message>
     <message>
         <source>Show or hide the main Window</source>
         <translation>Pokaż lub ukryj główne okno</translation>
     </message>
     <message>
-        <source>&amp;Encrypt Wallet...</source>
-        <translation>&amp;Zakoduj portfel</translation>
+        <source>Encrypt Wallet...</source>
+        <translation>Zakoduj portfel</translation>
     </message>
     <message>
         <source>Encrypt the private keys that belong to your wallet</source>
         <translation>Zakoduj prywatne klucze, które należą do twojego portfela</translation>
     </message>
     <message>
-        <source>&amp;Backup Wallet...</source>
-        <translation>&amp;Kopia zapasowa portfela</translation>
+        <source>Backup Wallet...</source>
+        <translation>Kopia zapasowa portfela</translation>
     </message>
     <message>
         <source>Backup wallet to another location</source>
-        <translation>&amp;Kopia zapasowa portfela z innej lokacji</translation>
+        <translation>Kopia zapasowa portfela z innej lokacji</translation>
     </message>
     <message>
-        <source>&amp;Change Passphrase...</source>
-        <translation>&amp;Zmień hasło</translation>
+        <source>Change Passphrase...</source>
+        <translation>Zmień hasło</translation>
     </message>
     <message>
         <source>Change the passphrase used for wallet encryption</source>
         <translation>Zmień hasło do zakodowania portfela</translation>
     </message>
     <message>
-        <source>&amp;Unlock Wallet...</source>
-        <translation>&amp;Odblokuj portfel</translation>
+        <source>Unlock Wallet...</source>
+        <translation>Odblokuj portfel</translation>
     </message>
     <message>
         <source>Unlock wallet</source>
         <translation>Odblokuj portfel</translation>
     </message>
     <message>
-        <source>&amp;Lock Wallet</source>
-        <translation>&amp;Zablokuj portfel</translation>
+        <source>Lock Wallet</source>
+        <translation>Zablokuj portfel</translation>
     </message>
     <message>
-        <source>Sign &amp;message...</source>
-        <translation>&amp;Zatwierdź wiadomość</translation>
+        <source>Sign message...</source>
+        <translation>Zatwierdź wiadomość</translation>
     </message>
     <message>
-        <source>&amp;Verify message...</source>
-        <translation>&amp;Zweryfikuj wiadomość</translation>
+        <source>Verify message...</source>
+        <translation>Zweryfikuj wiadomość</translation>
     </message>
     <message>
-        <source>&amp;Information</source>
-        <translation>&amp;Informacje</translation>
+        <source>Information</source>
+        <translation>Informacje</translation>
     </message>
     <message>
         <source>Show diagnostic information</source>
         <translation>Pokaż informacje diagnostyczne</translation>
     </message>
     <message>
-        <source>&amp;Debug console</source>
-        <translation>&amp;Konsola debugowania</translation>
+        <source>Debug console</source>
+        <translation>Konsola debugowania</translation>
     </message>
     <message>
         <source>Open debugging console</source>
         <translation>Otwórz konsolę debugowania</translation>
     </message>
     <message>
-        <source>&amp;Network Monitor</source>
+        <source>Network Monitor</source>
         <translation>Monitor sieci</translation>
     </message>
     <message>
@@ -446,16 +437,16 @@
         <translation>Pokaż monitor sieci</translation>
     </message>
     <message>
-        <source>&amp;Peers list</source>
-        <translation>&amp;Lista peersów</translation>
+        <source>Peers list</source>
+        <translation>Lista peersów</translation>
     </message>
     <message>
         <source>Show peers info</source>
         <translation>Pokaż informacje peersów</translation>
     </message>
     <message>
-        <source>Wallet &amp;Repair</source>
-        <translation>Portfel &amp;Napraw</translation>
+        <source>Wallet Repair</source>
+        <translation>Portfel Napraw</translation>
     </message>
     <message>
         <source>Show wallet repair options</source>
@@ -466,80 +457,80 @@
         <translation>Otwórz plik konfiguracji</translation>
     </message>
     <message>
-        <source>Show Automatic &amp;Backups</source>
-        <translation>Pokaż automatyczne &amp;Kopie zapasowe</translation>
+        <source>Show Automatic Backups</source>
+        <translation>Pokaż automatyczne Kopie zapasowe</translation>
     </message>
     <message>
         <source>Show automatically created wallet backups</source>
         <translation>Pokaż automatycznie stworzone kopie zapasowe portfela</translation>
     </message>
     <message>
-        <source>&amp;Sending addresses...</source>
-        <translation>&amp;Adres wysyłki</translation>
+        <source>Sending addresses...</source>
+        <translation>Adres wysyłki</translation>
     </message>
     <message>
         <source>Show the list of used sending addresses and labels</source>
         <translation>Pokaż listę używanych adresów i zakładek do wysyłania</translation>
     </message>
     <message>
-        <source>&amp;Receiving addresses...</source>
-        <translation>&amp;Adres odbiorczy</translation>
+        <source>Receiving addresses...</source>
+        <translation>Adres odbiorczy</translation>
     </message>
     <message>
         <source>Show the list of used receiving addresses and labels</source>
         <translation>Pokaż listę używanych adresów odbiorczych i zakładek</translation>
     </message>
     <message>
-        <source>Open &amp;URI...</source>
-        <translation>Otwórz &amp;URL</translation>
+        <source>Open URI...</source>
+        <translation>Otwórz URL</translation>
     </message>
     <message>
-        <source>&amp;Command-line options</source>
-        <translation>&amp;Opcje Command-line</translation>
+        <source>Command-line options</source>
+        <translation>Opcje Command-line</translation>
     </message>
     <message>
         <source>Synchronizing additional data: %p%</source>
         <translation>Synchronizacja dodatkowych danych %p%</translation>
     </message>
     <message>
-        <source>&amp;File</source>
-        <translation>&amp;Plik</translation>
+        <source>File</source>
+        <translation>Plik</translation>
     </message>
     <message>
-        <source>&amp;Settings</source>
-        <translation>&amp;Ustawienia</translation>
+        <source>Settings</source>
+        <translation>Ustawienia</translation>
     </message>
     <message>
-        <source>&amp;Tools</source>
-        <translation>&amp;Narzędzia</translation>
+        <source>Tools</source>
+        <translation>Narzędzia</translation>
     </message>
     <message>
-        <source>&amp;Help</source>
-        <translation>&amp;Pomoc</translation>
+        <source>Help</source>
+        <translation>Pomoc</translation>
     </message>
     <message>
         <source>FantasyGold Core</source>
-        <translation>&amp;Rdzeń bitcoin</translation>
+        <translation>Rdzeń FantasyGold</translation>
     </message>
     <message>
         <source>Send coins to a FantasyGold address</source>
         <translation>Wyślij monety do adresu FantasyGold</translation>
     </message>
     <message>
-        <source>Request payments (generates QR codes and fantasygold: URIs)</source>
-        <translation>Zarządaj płatności (generuje kod QR i fantasygold:URI)</translation>
+        <source>Request payments (generates QR codes and FantasyGold: URIs)</source>
+        <translation>Zarządaj płatności (generuje kod QR i FantasyGold:URI)</translation>
     </message>
     <message>
-        <source>&amp;Masternodes</source>
-        <translation>&amp;Masternodes</translation>
+        <source>Masternodes</source>
+        <translation>Masternodes</translation>
     </message>
     <message>
         <source>Browse masternodes</source>
         <translation>Przeglądaj masternodes</translation>
     </message>
     <message>
-        <source>&amp;About FantasyGold Core</source>
-        <translation>&amp;O rdzeniu bitcoina</translation>
+        <source>About FantasyGold Core</source>
+        <translation>O rdzeniu bitcoina</translation>
     </message>
     <message>
         <source>Show information about FantasyGold Core</source>
@@ -558,36 +549,36 @@
         <translation>Zweryfikuj wiadomości by upewnić się, że zostały zatwierdzone z podanego adresu FantasyGold</translation>
     </message>
     <message>
-        <source>&amp;BIP38 tool</source>
-        <translation>&amp;BIP 38 narzędzie</translation>
+        <source>BIP38 tool</source>
+        <translation>BIP 38 narzędzie</translation>
     </message>
     <message>
         <source>Encrypt and decrypt private keys using a passphrase</source>
         <translation>Zakoduj i odkoduj prywatne klucze używając hasła</translation>
     </message>
     <message>
-        <source>&amp;MultiSend</source>
-        <translation>&amp;MultiWysyłanie</translation>
+        <source>MultiSend</source>
+        <translation>MultiWysyłanie</translation>
     </message>
     <message>
         <source>MultiSend Settings</source>
         <translation>Opcje MultiWysyłania</translation>
     </message>
     <message>
-        <source>Open Wallet &amp;Configuration File</source>
-        <translation>Otwórz portfel &amp;Plik Konfiguracji</translation>
+        <source>Open Wallet Configuration File</source>
+        <translation>Otwórz portfel Plik Konfiguracji</translation>
     </message>
     <message>
-        <source>Open &amp;Masternode Configuration File</source>
-        <translation>Otwórz &amp;Plik konfiguracji Masternode</translation>
+        <source>Open Masternode Configuration File</source>
+        <translation>Otwórz Plik konfiguracji Masternode</translation>
     </message>
     <message>
         <source>Open a FantasyGold: URI or payment request</source>
         <translation>Otwórz FantasyGold: URI i żądanie zapłaty</translation>
     </message>
     <message>
-        <source>&amp;Blockchain explorer</source>
-        <translation>&amp;Eksplorer blockchain</translation>
+        <source>Blockchain explorer</source>
+        <translation>Eksplorer blockchain</translation>
     </message>
     <message>
         <source>Block explorer window</source>
@@ -688,10 +679,6 @@ MultiWysyłlka: %1</translation>
     <message>
         <source>Wallet is &lt;b&gt;encrypted&lt;/b&gt; and currently &lt;b&gt;unlocked&lt;/b&gt;</source>
         <translation>Portfel jest 1Zakodowany1 i obecnie 2Odblokowany2</translation>
-    </message>
-    <message>
-        <source>Wallet is &lt;b&gt;encrypted&lt;/b&gt; and currently &lt;b&gt;unlocked&lt;/b&gt; for anonimization and staking only</source>
-        <translation>Portfel jest 1Zakodowany1 i obecnie 2Odblokowany2 tylko dla anonimizacji i stakingu</translation>
     </message>
     <message>
         <source>Wallet is &lt;b&gt;encrypted&lt;/b&gt; and currently &lt;b&gt;locked&lt;/b&gt;</source>
@@ -847,10 +834,6 @@ MultiWysyłlka: %1</translation>
         <translation>Średnio-wysoki</translation>
     </message>
     <message>
-        <source>n/a</source>
-        <translation>n/a</translation>
-    </message>
-    <message>
         <source>medium</source>
         <translation>średni</translation>
     </message>
@@ -917,7 +900,7 @@ MultiWysyłlka: %1</translation>
     <name>HelpMessageDialog</name>
     <message>
         <source>FantasyGold Core</source>
-        <translation>&amp;Rdzeń bitcoin</translation>
+        <translation>Rdzeń FantasyGold</translation>
     </message>
     </context>
 <context>
@@ -932,7 +915,7 @@ MultiWysyłlka: %1</translation>
     </message>
     <message>
         <source>FantasyGold Core</source>
-        <translation>&amp;Rdzeń bitcoin</translation>
+        <translation>Rdzeń FantasyGold</translation>
     </message>
     <message>
         <source>Error</source>
@@ -948,10 +931,6 @@ MultiWysyłlka: %1</translation>
     <message>
         <source>Form</source>
         <translation>Forma</translation>
-    </message>
-    <message>
-        <source>My Masternodes</source>
-        <translation>Moje Masternode</translation>
     </message>
     <message>
         <source>Address</source>
@@ -978,24 +957,24 @@ MultiWysyłlka: %1</translation>
         <translation>Klucz publiczny</translation>
     </message>
     <message>
-        <source>S&amp;tart alias</source>
+        <source>Start alias</source>
         <translation>Start alias</translation>
     </message>
     <message>
-        <source>Start &amp;all</source>
-        <translation>Start &amp;Wszystkie</translation>
+        <source>Start all</source>
+        <translation>Start Wszystkie</translation>
     </message>
     <message>
-        <source>Start &amp;MISSING</source>
-        <translation>Start &amp;Brakujące</translation>
+        <source>Start MISSING</source>
+        <translation>Start Brakujące</translation>
     </message>
     <message>
-        <source>&amp;Update status</source>
-        <translation>&amp;Status aktualizacji</translation>
+        <source>Update status</source>
+        <translation>Status aktualizacji</translation>
     </message>
     <message>
         <source>Status will be updated automatically in (sec):</source>
-        <translation>Status będzie uaktualniany automatycznie w sekundach</translation>
+        <translation>Status będzie uaktualniany automatycznie (w sekundach)</translation>
     </message>
     <message>
         <source>0</source>
@@ -1105,6 +1084,10 @@ MultiWysyłlka: %1</translation>
         <translation>Podgląd MultiWysyłki</translation>
     </message>
     <message>
+        <source>(no label)</source>
+        <translation>(brak zakładki)</translation>
+    </message>
+    <message>
         <source>The entered address:
 </source>
         <translation>Wprowadzony adres:
@@ -1131,6 +1114,21 @@ Proszę sprawdzić adres i spróbować ponownie</translation>
 </translation>
     </message>
 </context>
+<context>
+    <name>MultisigDialog</name>
+    <message>
+        <source>Status:</source>
+        <translation>Status:</translation>
+    </message>
+    <message>
+        <source>0</source>
+        <translation>0</translation>
+    </message>
+    <message>
+        <source>Amount:</source>
+        <translation>Liczba:</translation>
+    </message>
+    </context>
 <context>
     <name>ObfuscationConfig</name>
     <message>
@@ -1168,19 +1166,19 @@ Proszę sprawdzić adres i spróbować ponownie</translation>
         <translation>Opcje</translation>
     </message>
     <message>
-        <source>&amp;Main</source>
-        <translation>&amp;Główne</translation>
+        <source>Main</source>
+        <translation>Główne</translation>
     </message>
     <message>
-        <source>Size of &amp;database cache</source>
-        <translation>Rozmiar &amp;bazy danych cache</translation>
+        <source>Size of database cache</source>
+        <translation>Rozmiar bazy danych cache</translation>
     </message>
     <message>
         <source>MB</source>
         <translation>MB</translation>
     </message>
     <message>
-        <source>W&amp;allet</source>
+        <source>Wallet</source>
         <translation>Portfel</translation>
     </message>
     <message>
@@ -1196,19 +1194,15 @@ Proszę sprawdzić adres i spróbować ponownie</translation>
         <translation>Automatycznie uruchom FantasyGold po zalogowaniu do systemu</translation>
     </message>
     <message>
-        <source>&amp;Start FantasyGold on system login</source>
-        <translation>&amp;Uruchom FantasyGold podczas logowania do systemu</translation>
-    </message>
-    <message>
-        <source>Amount of FantasyGold to keep anonymized</source>
-        <translation>Liczba FantasyGold do anonimizacji</translation>
+        <source>Start FantasyGold on system login</source>
+        <translation>Uruchom FantasyGold podczas logowania do systemu</translation>
     </message>
     <message>
         <source>Whether to show coin control features or not.</source>
         <translation>Czy pokazać cechy kontroli monety czy nie</translation>
     </message>
     <message>
-        <source>Enable coin &amp;control features</source>
+        <source>Enable coin control features</source>
         <translation>Włącz cechy kontroli monety</translation>
     </message>
     <message>
@@ -1216,8 +1210,8 @@ Proszę sprawdzić adres i spróbować ponownie</translation>
         <translation>Pokaż Masternode Tab</translation>
     </message>
     <message>
-        <source>&amp;Network</source>
-        <translation>&amp;Sieć</translation>
+        <source>Network</source>
+        <translation>Sieć</translation>
     </message>
     <message>
         <source>The user interface language can be set here. This setting will take effect after restarting FantasyGold.</source>
@@ -1225,49 +1219,49 @@ Proszę sprawdzić adres i spróbować ponownie</translation>
     </message>
     <message>
         <source>Language missing or translation incomplete? Help contributing translations here:
-https://www.transifex.com/FantasyGold/FantasyGold-Core.git-project-translations</source>
+https://www.transifex.com/FantasyGold-project/FantasyGold-project-translations</source>
         <translation>Brakuje języka bądź nieukończona pełnego tłumaczenia? Pomóż w tłumaczeniu tutaj:
-https://www.transifex.com/FantasyGold/FantasyGold-Core.git-project-translations </translation>
+https://www.transifex.com/FantasyGold-project/FantasyGold-project-translations </translation>
     </message>
     <message>
         <source>Connect to the FantasyGold network through a SOCKS5 proxy.</source>
         <translation>Połącz z siecią FantasyGold poprzez SOCKS5 proxy.</translation>
     </message>
     <message>
-        <source>Proxy &amp;IP:</source>
-        <translation>Proxy &amp;IP</translation>
+        <source>Proxy IP:</source>
+        <translation>Proxy IP</translation>
     </message>
     <message>
         <source>IP address of the proxy (e.g. IPv4: 127.0.0.1 / IPv6: ::1)</source>
         <translation>Adres IP proxy (np. IPv4: 127.0.0.1 / IPv6: ::1)</translation>
     </message>
     <message>
-        <source>&amp;Port:</source>
-        <translation>&amp;Port</translation>
+        <source>Port:</source>
+        <translation>Port</translation>
     </message>
     <message>
         <source>Port of the proxy (e.g. 9050)</source>
         <translation>Port proxy (np. 9050)</translation>
     </message>
     <message>
-        <source>&amp;Window</source>
-        <translation>&amp;Okno</translation>
+        <source>Window</source>
+        <translation>Okno</translation>
     </message>
     <message>
-        <source>&amp;Display</source>
-        <translation>&amp;Pokaz</translation>
+        <source>Display</source>
+        <translation>Pokaz</translation>
     </message>
     <message>
-        <source>User Interface &amp;language:</source>
-        <translation>Interfejs użytkownika &amp;Język.</translation>
+        <source>User Interface language:</source>
+        <translation>Interfejs użytkownika Język.</translation>
     </message>
     <message>
         <source>User Interface Theme:</source>
         <translation>Motyw interfejsu użytkownika:</translation>
     </message>
     <message>
-        <source>&amp;Unit to show amounts in:</source>
-        <translation>&amp;Pokaż wartości w:</translation>
+        <source>Unit to show amounts in:</source>
+        <translation>Pokaż wartości w:</translation>
     </message>
     <message>
         <source>Choose the default subdivision unit to show in the interface and when sending coins.</source>
@@ -1282,16 +1276,16 @@ https://www.transifex.com/FantasyGold/FantasyGold-Core.git-project-translations 
         <translation>Zresetuj wszystkie ustawienia by przywrócić ustawienia domyślne</translation>
     </message>
     <message>
-        <source>&amp;Reset Options</source>
-        <translation>&amp;Opcje resetowania</translation>
+        <source>Reset Options</source>
+        <translation>Opcje resetowania</translation>
     </message>
     <message>
-        <source>&amp;OK</source>
-        <translation>&amp;OK</translation>
+        <source>OK</source>
+        <translation>OK</translation>
     </message>
     <message>
-        <source>&amp;Cancel</source>
-        <translation>&amp;Anuluj</translation>
+        <source>Cancel</source>
+        <translation>Anuluj</translation>
     </message>
     <message>
         <source>default</source>
@@ -1321,7 +1315,7 @@ https://www.transifex.com/FantasyGold/FantasyGold-Core.git-project-translations 
         <source>The supplied proxy address is invalid.</source>
         <translation>Podany adres proxy jest nieprawidłowy</translation>
     </message>
-</context>
+    </context>
 <context>
     <name>OverviewPage</name>
     <message>
@@ -1345,16 +1339,8 @@ https://www.transifex.com/FantasyGold/FantasyGold-Core.git-project-translations 
         <translation>Niedojrzały</translation>
     </message>
     <message>
-        <source>Balances</source>
-        <translation>Balans</translation>
-    </message>
-    <message>
         <source>Total:</source>
         <translation>Całość:</translation>
-    </message>
-    <message>
-        <source>Your current total balance</source>
-        <translation>Twój całkowity bilans</translation>
     </message>
     <message>
         <source>Current total balance in watch-only addresses</source>
@@ -1369,62 +1355,14 @@ https://www.transifex.com/FantasyGold/FantasyGold-Core.git-project-translations 
         <translation>Możliwy do wysłania:</translation>
     </message>
     <message>
-        <source>Status:</source>
-        <translation>Status:</translation>
-    </message>
-    <message>
-        <source>0 FGC/ 0 Rounds</source>
-        <translation>0 OIVX / 0 Rund</translation>
-    </message>
-    <message>
-        <source>Enabled/Disabled</source>
-        <translation>Włączony/Wyłączony</translation>
-    </message>
-    <message>
-        <source>Completion:</source>
-        <translation>Ukończono:</translation>
-    </message>
-    <message>
-        <source>Amount and Rounds:</source>
-        <translation>Liczba i rundy:</translation>
-    </message>
-    <message>
-        <source>n/a</source>
-        <translation>n/a</translation>
-    </message>
-    <message>
         <source>Recent transactions</source>
         <translation>Ostatnie transakcje</translation>
-    </message>
-    <message>
-        <source>Try Mix</source>
-        <translation>Wypróbuj MIX</translation>
-    </message>
-    <message>
-        <source>Reset</source>
-        <translation>Resetuj</translation>
     </message>
     <message>
         <source>out of sync</source>
         <translation>Brak synchronizacji</translation>
     </message>
-    <message>
-        <source>Disabled</source>
-        <translation>Wyłączony</translation>
-    </message>
-    <message>
-        <source>Anonymized</source>
-        <translation>Zanonimizowany</translation>
-    </message>
-    <message>
-        <source>Enabled</source>
-        <translation>Włączony</translation>
-    </message>
-    <message>
-        <source>N/A</source>
-        <translation>N/A</translation>
-    </message>
-</context>
+    </context>
 <context>
     <name>PaymentServer</name>
     <message>
@@ -1448,9 +1386,76 @@ https://www.transifex.com/FantasyGold/FantasyGold-Core.git-project-translations 
     </message>
     <message>
         <source>Ping Time</source>
-        <translation>Czas Pingu</translation>
+        <translation>Czas PinguCzas pingu</translation>
     </message>
 </context>
+<context>
+    <name>PrivacyDialog</name>
+    <message>
+        <source>0</source>
+        <translation>0</translation>
+    </message>
+    <message>
+        <source>Reset</source>
+        <translation>Resetuj</translation>
+    </message>
+    <message>
+        <source>Amount:</source>
+        <translation>Liczba:</translation>
+    </message>
+    <message>
+        <source>Choose previously used address</source>
+        <translation>Wybierz poprzednio używany adres</translation>
+    </message>
+    <message>
+        <source>Alt+A</source>
+        <translation>Alt+A</translation>
+    </message>
+    <message>
+        <source>Paste address from clipboard</source>
+        <translation>Wklej adres ze schowka</translation>
+    </message>
+    <message>
+        <source>Alt+P</source>
+        <translation>Alt+P</translation>
+    </message>
+    <message>
+        <source>Priority:</source>
+        <translation>Priorytet:</translation>
+    </message>
+    <message>
+        <source>TextLabel</source>
+        <translation>TekstZakładka</translation>
+    </message>
+    <message>
+        <source>Fee:</source>
+        <translation>Opłata:</translation>
+    </message>
+    <message>
+        <source>no</source>
+        <translation>nie</translation>
+    </message>
+    <message>
+        <source>medium</source>
+        <translation>średni</translation>
+    </message>
+    <message>
+        <source>Change:</source>
+        <translation>Zmiana:</translation>
+    </message>
+    <message>
+        <source>out of sync</source>
+        <translation>Brak synchronizacji</translation>
+    </message>
+    <message>
+        <source>Copy quantity</source>
+        <translation>Kopiuj ilość</translation>
+    </message>
+    <message>
+        <source>Copy amount</source>
+        <translation>Kopiuj liczbę</translation>
+    </message>
+    </context>
 <context>
     <name>QObject</name>
     <message>
@@ -1501,12 +1506,12 @@ https://www.transifex.com/FantasyGold/FantasyGold-Core.git-project-translations 
 <context>
     <name>QRImageWidget</name>
     <message>
-        <source>&amp;Save Image...</source>
-        <translation>&amp;Zapisz obrazek</translation>
+        <source>Save Image...</source>
+        <translation>Zapisz obrazek</translation>
     </message>
     <message>
-        <source>&amp;Copy Image</source>
-        <translation>&amp;Kopiuj obrazek</translation>
+        <source>Copy Image</source>
+        <translation>Kopiuj obrazek</translation>
     </message>
     <message>
         <source>Save QR Code</source>
@@ -1524,8 +1529,8 @@ https://www.transifex.com/FantasyGold/FantasyGold-Core.git-project-translations 
         <translation>Okno narzędzi</translation>
     </message>
     <message>
-        <source>&amp;Information</source>
-        <translation>&amp;Informacje</translation>
+        <source>Information</source>
+        <translation>Informacje</translation>
     </message>
     <message>
         <source>General</source>
@@ -1544,8 +1549,8 @@ https://www.transifex.com/FantasyGold/FantasyGold-Core.git-project-translations 
         <translation>Liczba połączeń</translation>
     </message>
     <message>
-        <source>&amp;Open</source>
-        <translation>&amp;Otwórz</translation>
+        <source>Open</source>
+        <translation>Otwórz</translation>
     </message>
     <message>
         <source>Startup time</source>
@@ -1592,20 +1597,20 @@ https://www.transifex.com/FantasyGold/FantasyGold-Core.git-project-translations 
         <translation>Liczba Masternode</translation>
     </message>
     <message>
-        <source>&amp;Console</source>
-        <translation>&amp;Konsola</translation>
+        <source>Console</source>
+        <translation>Konsola</translation>
     </message>
     <message>
         <source>Clear console</source>
         <translation>Wyczyść konsolę</translation>
     </message>
     <message>
-        <source>&amp;Network Traffic</source>
-        <translation>&amp;Ruch sieci</translation>
+        <source>Network Traffic</source>
+        <translation>Ruch sieci</translation>
     </message>
     <message>
-        <source>&amp;Clear</source>
-        <translation>&amp;Wyczyść&amp;</translation>
+        <source>Clear</source>
+        <translation>Wyczyść</translation>
     </message>
     <message>
         <source>Totals</source>
@@ -1620,8 +1625,8 @@ https://www.transifex.com/FantasyGold/FantasyGold-Core.git-project-translations 
         <translation>Wysłano</translation>
     </message>
     <message>
-        <source>&amp;Peers</source>
-        <translation>&amp;Peers</translation>
+        <source>Peers</source>
+        <translation>Peers</translation>
     </message>
     <message>
         <source>Select a peer to view detailed information.</source>
@@ -1642,14 +1647,6 @@ https://www.transifex.com/FantasyGold/FantasyGold-Core.git-project-translations 
     <message>
         <source>Services</source>
         <translation>Usługi</translation>
-    </message>
-    <message>
-        <source>Starting Height</source>
-        <translation>Wysokość rozpoczęcia</translation>
-    </message>
-    <message>
-        <source>Sync Height</source>
-        <translation>Wysokość synchronizacji</translation>
     </message>
     <message>
         <source>Connection Time</source>
@@ -1673,11 +1670,11 @@ https://www.transifex.com/FantasyGold/FantasyGold-Core.git-project-translations 
     </message>
     <message>
         <source>Ping Time</source>
-        <translation>Czas Pingu</translation>
+        <translation>Czas PinguCzas pingu</translation>
     </message>
     <message>
-        <source>&amp;Wallet Repair</source>
-        <translation>&amp;Napraw portfel</translation>
+        <source>Wallet Repair</source>
+        <translation>Napraw portfel</translation>
     </message>
     <message>
         <source>Salvage wallet</source>
@@ -1739,12 +1736,12 @@ https://www.transifex.com/FantasyGold/FantasyGold-Core.git-project-translations 
         <source>Unknown</source>
         <translation>Nieznane</translation>
     </message>
-    </context>
+</context>
 <context>
     <name>ReceiveCoinsDialog</name>
     <message>
-        <source>&amp;Message:</source>
-        <translation>&amp;Wiadomość:</translation>
+        <source>Message:</source>
+        <translation>Wiadomość:</translation>
     </message>
     <message>
         <source>Copy label</source>
@@ -1758,8 +1755,8 @@ https://www.transifex.com/FantasyGold/FantasyGold-Core.git-project-translations 
 <context>
     <name>ReceiveRequestDialog</name>
     <message>
-        <source>&amp;Save Image...</source>
-        <translation>&amp;Zapisz obrazek</translation>
+        <source>Save Image...</source>
+        <translation>Zapisz obrazek</translation>
     </message>
     <message>
         <source>Address</source>
@@ -1824,8 +1821,8 @@ https://www.transifex.com/FantasyGold/FantasyGold-Core.git-project-translations 
         <translation>Zmiana:</translation>
     </message>
     <message>
-        <source>Clear &amp;All</source>
-        <translation>Wyczyść &amp;Wszystko</translation>
+        <source>Clear All</source>
+        <translation>Wyczyść Wszystko</translation>
     </message>
     <message>
         <source>Copy quantity</source>
@@ -1901,8 +1898,8 @@ https://www.transifex.com/FantasyGold/FantasyGold-Core.git-project-translations 
         <translation>Zatwierdź wiadomość, aby udowodnić, że podany adres FantasyGold jest w twoim posiadaniu</translation>
     </message>
     <message>
-        <source>Clear &amp;All</source>
-        <translation>Wyczyść &amp;Wszystko</translation>
+        <source>Clear All</source>
+        <translation>Wyczyść Wszystko</translation>
     </message>
     <message>
         <source>Reset all verify message fields</source>
@@ -1933,7 +1930,7 @@ https://www.transifex.com/FantasyGold/FantasyGold-Core.git-project-translations 
     <name>SplashScreen</name>
     <message>
         <source>FantasyGold Core</source>
-        <translation>&amp;Rdzeń bitcoin</translation>
+        <translation>Rdzeń FantasyGold</translation>
     </message>
     </context>
 <context>
@@ -2019,8 +2016,15 @@ https://www.transifex.com/FantasyGold/FantasyGold-Core.git-project-translations 
 <context>
     <name>WalletView</name>
     <message>
-        <source>&amp;Export</source>
+        <source>Export</source>
         <translation>Eksportuj</translation>
+    </message>
+    </context>
+<context>
+    <name>zFGCControlDialog</name>
+    <message>
+        <source>0</source>
+        <translation>0</translation>
     </message>
     </context>
 <context>

@@ -753,8 +753,7 @@ extern "C"{
 #if 0
 /* obsolete */
 static void
-skein_small_init(sph_skein_small_context *sc, const sph_u64 *iv)
-{
+skein_small_init(sph_skein_small_context *sc, const sph_u64 *iv) {
 	sc->h0 = iv[0];
 	sc->h1 = iv[1];
 	sc->h2 = iv[2];
@@ -765,8 +764,7 @@ skein_small_init(sph_skein_small_context *sc, const sph_u64 *iv)
 #endif
 
 static void
-skein_big_init(sph_skein_big_context *sc, const sph_u64 *iv)
-{
+skein_big_init(sph_skein_big_context *sc, const sph_u64 *iv) {
 	sc->h0 = iv[0];
 	sc->h1 = iv[1];
 	sc->h2 = iv[2];
@@ -782,8 +780,7 @@ skein_big_init(sph_skein_big_context *sc, const sph_u64 *iv)
 #if 0
 /* obsolete */
 static void
-skein_small_core(sph_skein_small_context *sc, const void *data, size_t len)
-{
+skein_small_core(sph_skein_small_context *sc, const void *data, size_t len) {
 	unsigned char *buf;
 	size_t ptr, clen;
 	unsigned first;
@@ -856,8 +853,7 @@ skein_small_core(sph_skein_small_context *sc, const void *data, size_t len)
 #endif
 
 static void
-skein_big_core(sph_skein_big_context *sc, const void *data, size_t len)
-{
+skein_big_core(sph_skein_big_context *sc, const void *data, size_t len) {
 	/*
 	 * The Skein "final bit" in the tweak is troublesome here,
 	 * because if the input has a length which is a multiple of the
@@ -909,8 +905,7 @@ skein_big_core(sph_skein_big_context *sc, const void *data, size_t len)
 /* obsolete */
 static void
 skein_small_close(sph_skein_small_context *sc, unsigned ub, unsigned n,
-	void *dst, size_t out_len)
-{
+                  void *dst, size_t out_len) {
 	unsigned char *buf;
 	size_t ptr;
 	unsigned et;
@@ -951,8 +946,7 @@ skein_small_close(sph_skein_small_context *sc, unsigned ub, unsigned n,
 
 static void
 skein_big_close(sph_skein_big_context *sc, unsigned ub, unsigned n,
-	void *dst, size_t out_len)
-{
+                void *dst, size_t out_len) {
 	unsigned char *buf;
 	size_t ptr;
 	unsigned et;
@@ -1073,58 +1067,50 @@ static const sph_u64 IV512[] = {
 /* obsolete */
 /* see sph_skein.h */
 void
-sph_skein224_init(void *cc)
-{
+sph_skein224_init(void *cc) {
 	skein_small_init(cc, IV224);
 }
 
 /* see sph_skein.h */
 void
-sph_skein224(void *cc, const void *data, size_t len)
-{
+sph_skein224(void *cc, const void *data, size_t len) {
 	skein_small_core(cc, data, len);
 }
 
 /* see sph_skein.h */
 void
-sph_skein224_close(void *cc, void *dst)
-{
+sph_skein224_close(void *cc, void *dst) {
 	sph_skein224_addbits_and_close(cc, 0, 0, dst);
 }
 
 /* see sph_skein.h */
 void
-sph_skein224_addbits_and_close(void *cc, unsigned ub, unsigned n, void *dst)
-{
+sph_skein224_addbits_and_close(void *cc, unsigned ub, unsigned n, void *dst) {
 	skein_small_close(cc, ub, n, dst, 28);
 	sph_skein224_init(cc);
 }
 
 /* see sph_skein.h */
 void
-sph_skein256_init(void *cc)
-{
+sph_skein256_init(void *cc) {
 	skein_small_init(cc, IV256);
 }
 
 /* see sph_skein.h */
 void
-sph_skein256(void *cc, const void *data, size_t len)
-{
+sph_skein256(void *cc, const void *data, size_t len) {
 	skein_small_core(cc, data, len);
 }
 
 /* see sph_skein.h */
 void
-sph_skein256_close(void *cc, void *dst)
-{
+sph_skein256_close(void *cc, void *dst) {
 	sph_skein256_addbits_and_close(cc, 0, 0, dst);
 }
 
 /* see sph_skein.h */
 void
-sph_skein256_addbits_and_close(void *cc, unsigned ub, unsigned n, void *dst)
-{
+sph_skein256_addbits_and_close(void *cc, unsigned ub, unsigned n, void *dst) {
 	skein_small_close(cc, ub, n, dst, 32);
 	sph_skein256_init(cc);
 }
@@ -1132,116 +1118,100 @@ sph_skein256_addbits_and_close(void *cc, unsigned ub, unsigned n, void *dst)
 
 /* see sph_skein.h */
 void
-sph_skein224_init(void *cc)
-{
+sph_skein224_init(void *cc) {
 	skein_big_init(cc, IV224);
 }
 
 /* see sph_skein.h */
 void
-sph_skein224(void *cc, const void *data, size_t len)
-{
+sph_skein224(void *cc, const void *data, size_t len) {
 	skein_big_core(cc, data, len);
 }
 
 /* see sph_skein.h */
 void
-sph_skein224_close(void *cc, void *dst)
-{
+sph_skein224_close(void *cc, void *dst) {
 	sph_skein224_addbits_and_close(cc, 0, 0, dst);
 }
 
 /* see sph_skein.h */
 void
-sph_skein224_addbits_and_close(void *cc, unsigned ub, unsigned n, void *dst)
-{
+sph_skein224_addbits_and_close(void *cc, unsigned ub, unsigned n, void *dst) {
 	skein_big_close(cc, ub, n, dst, 28);
 	sph_skein224_init(cc);
 }
 
 /* see sph_skein.h */
 void
-sph_skein256_init(void *cc)
-{
+sph_skein256_init(void *cc) {
 	skein_big_init(cc, IV256);
 }
 
 /* see sph_skein.h */
 void
-sph_skein256(void *cc, const void *data, size_t len)
-{
+sph_skein256(void *cc, const void *data, size_t len) {
 	skein_big_core(cc, data, len);
 }
 
 /* see sph_skein.h */
 void
-sph_skein256_close(void *cc, void *dst)
-{
+sph_skein256_close(void *cc, void *dst) {
 	sph_skein256_addbits_and_close(cc, 0, 0, dst);
 }
 
 /* see sph_skein.h */
 void
-sph_skein256_addbits_and_close(void *cc, unsigned ub, unsigned n, void *dst)
-{
+sph_skein256_addbits_and_close(void *cc, unsigned ub, unsigned n, void *dst) {
 	skein_big_close(cc, ub, n, dst, 32);
 	sph_skein256_init(cc);
 }
 
 /* see sph_skein.h */
 void
-sph_skein384_init(void *cc)
-{
+sph_skein384_init(void *cc) {
 	skein_big_init(cc, IV384);
 }
 
 /* see sph_skein.h */
 void
-sph_skein384(void *cc, const void *data, size_t len)
-{
+sph_skein384(void *cc, const void *data, size_t len) {
 	skein_big_core(cc, data, len);
 }
 
 /* see sph_skein.h */
 void
-sph_skein384_close(void *cc, void *dst)
-{
+sph_skein384_close(void *cc, void *dst) {
 	sph_skein384_addbits_and_close(cc, 0, 0, dst);
 }
 
 /* see sph_skein.h */
 void
-sph_skein384_addbits_and_close(void *cc, unsigned ub, unsigned n, void *dst)
-{
+sph_skein384_addbits_and_close(void *cc, unsigned ub, unsigned n, void *dst) {
 	skein_big_close(cc, ub, n, dst, 48);
 	sph_skein384_init(cc);
 }
 
 /* see sph_skein.h */
 void
-sph_skein512_init(void *cc)
-{
+sph_skein512_init(void *cc) {
 	skein_big_init(cc, IV512);
 }
 
 /* see sph_skein.h */
 void
-sph_skein512(void *cc, const void *data, size_t len)
-{
+sph_skein512(void *cc, const void *data, size_t len) {
 	skein_big_core(cc, data, len);
 }
 
 /* see sph_skein.h */
 void
-sph_skein512_close(void *cc, void *dst)
-{
+sph_skein512_close(void *cc, void *dst) {
 	sph_skein512_addbits_and_close(cc, 0, 0, dst);
 }
 
 /* see sph_skein.h */
 void
-sph_skein512_addbits_and_close(void *cc, unsigned ub, unsigned n, void *dst)
-{
+sph_skein512_addbits_and_close(void *cc, unsigned ub, unsigned n, void *dst) {
 	skein_big_close(cc, ub, n, dst, 64);
 	sph_skein512_init(cc);
 }

@@ -17,13 +17,15 @@
 #include "leveldb/options.h"
 #include "leveldb/status.h"
 
-namespace leveldb {
+namespace leveldb
+{
 
 class BlockBuilder;
 class BlockHandle;
 class WritableFile;
 
-class TableBuilder {
+class TableBuilder
+{
  public:
   // Create a builder that will store the contents of the table it is
   // building in *file.  Does not close the file.  It is up to the
@@ -75,7 +77,10 @@ class TableBuilder {
   uint64_t FileSize() const;
 
  private:
-  bool ok() const { return status().ok(); }
+    bool ok() const
+    {
+        return status().ok();
+    }
   void WriteBlock(BlockBuilder* block, BlockHandle* handle);
   void WriteRawBlock(const Slice& data, CompressionType, BlockHandle* handle);
 

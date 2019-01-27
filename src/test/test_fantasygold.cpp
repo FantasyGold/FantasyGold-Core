@@ -56,8 +56,7 @@ struct TestingSetup {
             threadGroup.create_thread(&ThreadScriptCheck);
         RegisterNodeSignals(GetNodeSignals());
     }
-    ~TestingSetup()
-    {
+    ~TestingSetup() {
         threadGroup.interrupt_all();
         threadGroup.join_all();
         UnregisterNodeSignals(GetNodeSignals());
@@ -77,17 +76,14 @@ struct TestingSetup {
 
 BOOST_GLOBAL_FIXTURE(TestingSetup);
 
-void Shutdown(void* parg)
-{
+void Shutdown(void* parg) {
   exit(0);
 }
 
-void StartShutdown()
-{
+void StartShutdown() {
   exit(0);
 }
 
-bool ShutdownRequested()
-{
+bool ShutdownRequested() {
   return false;
 }

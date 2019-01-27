@@ -1,8 +1,8 @@
-// Copyright (c) 2009-2010 Satoshi Nakamoto
-// Copyright (c) 2009-2012 The Bitcoin developers
-// Copyright (c) 2015-2016 The Dash developers
+// Copyright (c) 2014-2016 The Dash developers
+// Copyright (c) 2015-2017 The PIVX developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
+
 #ifndef ACTIVEMASTERNODE_H
 #define ACTIVEMASTERNODE_H
 
@@ -21,8 +21,7 @@
 #define ACTIVE_MASTERNODE_STARTED 4
 
 // Responsible for activating the Masternode and pinging the network
-class CActiveMasternode
-{
+class CActiveMasternode {
 private:
     // critical section to protect the inner data structures
     mutable CCriticalSection cs;
@@ -49,8 +48,7 @@ public:
     int status;
     std::string notCapableReason;
 
-    CActiveMasternode()
-    {
+    CActiveMasternode() {
         status = ACTIVE_MASTERNODE_INITIAL;
     }
 

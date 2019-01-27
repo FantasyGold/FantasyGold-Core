@@ -1,9 +1,10 @@
 // Copyright (c) 2014-2015 The Dash developers
-// // Copyright (c) 2015-2017 The Bulwark developers
+// Copyright (c) 2015-2017 The PIVX developers
 // Copyright (c) 2017-2018 The FantasyGold developers
 
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
+
 #ifndef MASTERNODE_SYNC_H
 #define MASTERNODE_SYNC_H
 
@@ -27,8 +28,7 @@ extern CMasternodeSync masternodeSync;
 // CMasternodeSync : Sync masternode assets in stages
 //
 
-class CMasternodeSync
-{
+class CMasternodeSync {
 public:
     std::map<uint256, int> mapSeenSyncMNB;
     std::map<uint256, int> mapSeenSyncMNW;
@@ -73,7 +73,9 @@ public:
     void Process();
     bool IsSynced();
     bool IsBlockchainSynced();
-    bool IsMasternodeListSynced() { return RequestedMasternodeAssets > MASTERNODE_SYNC_LIST; }
+    bool IsMasternodeListSynced() {
+        return RequestedMasternodeAssets > MASTERNODE_SYNC_LIST;
+    }
     void ClearFulfilledRequest();
 };
 

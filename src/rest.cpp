@@ -14,8 +14,9 @@
 
 #include <boost/algorithm/string.hpp>
 
+#include <univalue.h>
+
 using namespace std;
-using namespace json_spirit;
 
 enum RetFormat {
     RF_UNDEF,
@@ -34,26 +35,23 @@ static const struct {
     {RF_JSON, "json"},
 };
 
-class RestErr
-{
+class RestErr {
 public:
     enum HTTPStatusCode status;
     string message;
 };
 
-extern void TxToJSON(const CTransaction& tx, const uint256 hashBlock, Object& entry);
-extern Object blockToJSON(const CBlock& block, const CBlockIndex* blockindex, bool txDetails = false);
+extern void TxToJSON(const CTransaction& tx, const uint256 hashBlock, UniValue& entry);
+extern UniValue blockToJSON(const CBlock& block, const CBlockIndex* blockindex, bool txDetails = false);
 
-static RestErr RESTERR(enum HTTPStatusCode status, string message)
-{
+static RestErr RESTERR(enum HTTPStatusCode status, string message) {
     RestErr re;
     re.status = status;
     re.message = message;
     return re;
 }
 
-static enum RetFormat ParseDataFormat(vector<string>& params, const string strReq)
-{
+static enum RetFormat ParseDataFormat(vector<string>& params, const string strReq) {
     boost::split(params, strReq, boost::is_any_of("."));
     if (params.size() > 1) {
         for (unsigned int i = 0; i < ARRAYLEN(rf_names); i++)
@@ -64,8 +62,7 @@ static enum RetFormat ParseDataFormat(vector<string>& params, const string strRe
     return rf_names[0].rf;
 }
 
-static string AvailableDataFormatsString()
-{
+static string AvailableDataFormatsString() {
     string formats = "";
     for (unsigned int i = 0; i < ARRAYLEN(rf_names); i++)
         if (strlen(rf_names[i].name) > 0) {
@@ -80,8 +77,7 @@ static string AvailableDataFormatsString()
     return formats;
 }
 
-static bool ParseHashStr(const string& strReq, uint256& v)
-{
+static bool ParseHashStr(const string& strReq, uint256& v) {
     if (!IsHex(strReq) || (strReq.size() != 64))
         return false;
 
@@ -93,8 +89,7 @@ static bool rest_block(AcceptedConnection* conn,
     string& strReq,
     map<string, string>& mapHeaders,
     bool fRun,
-    bool showTxDetails)
-{
+                       bool showTxDetails) {
     vector<string> params;
     enum RetFormat rf = ParseDataFormat(params, strReq);
 
@@ -132,8 +127,8 @@ static bool rest_block(AcceptedConnection* conn,
     }
 
     case RF_JSON: {
-        Object objBlock = blockToJSON(block, pblockindex, showTxDetails);
-        string strJSON = write_string(Value(objBlock), false) + "\n";
+        UniValue objBlock = blockToJSON(block, pblockindex, showTxDetails);
+        string strJSON = objBlock.write() + "\n";
         conn->stream() << HTTPReply(HTTP_OK, strJSON, fRun) << std::flush;
         return true;
     }
@@ -150,24 +145,21 @@ static bool rest_block(AcceptedConnection* conn,
 static bool rest_block_extended(AcceptedConnection* conn,
     string& strReq,
     map<string, string>& mapHeaders,
-    bool fRun)
-{
+                                bool fRun) {
     return rest_block(conn, strReq, mapHeaders, fRun, true);
 }
 
 static bool rest_block_notxdetails(AcceptedConnection* conn,
     string& strReq,
     map<string, string>& mapHeaders,
-    bool fRun)
-{
+                                   bool fRun) {
     return rest_block(conn, strReq, mapHeaders, fRun, false);
 }
 
 static bool rest_tx(AcceptedConnection* conn,
     string& strReq,
     map<string, string>& mapHeaders,
-    bool fRun)
-{
+                    bool fRun) {
     vector<string> params;
     enum RetFormat rf = ParseDataFormat(params, strReq);
 
@@ -198,9 +190,9 @@ static bool rest_tx(AcceptedConnection* conn,
     }
 
     case RF_JSON: {
-        Object objTx;
+        UniValue objTx(UniValue::VOBJ);
         TxToJSON(tx, hashBlock, objTx);
-        string strJSON = write_string(Value(objTx), false) + "\n";
+        string strJSON = objTx.write() + "\n";
         conn->stream() << HTTPReply(HTTP_OK, strJSON, fRun) << std::flush;
         return true;
     }
@@ -229,8 +221,7 @@ static const struct {
 bool HTTPReq_REST(AcceptedConnection* conn,
     string& strURI,
     map<string, string>& mapHeaders,
-    bool fRun)
-{
+                  bool fRun) {
     try {
         std::string statusmessage;
         if (RPCIsInWarmup(&statusmessage))

@@ -1,15 +1,14 @@
-
-
 // Copyright (c) 2014-2015 The Dash developers
+// Copyright (c) 2015-2017 The PIVX developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
+
 #ifndef MASTERNODE_PAYMENTS_H
 #define MASTERNODE_PAYMENTS_H
 
 #include "key.h"
 #include "main.h"
 #include "masternode.h"
-#include <boost/lexical_cast.hpp>
 
 using namespace std;
 
@@ -36,8 +35,7 @@ void DumpMasternodePayments();
 
 /** Save Masternode Payment Data (mnpayments.dat)
  */
-class CMasternodePaymentDB
-{
+class CMasternodePaymentDB {
 private:
     boost::filesystem::path pathDB;
     std::string strMagicMessage;
@@ -58,20 +56,17 @@ public:
     ReadResult Read(CMasternodePayments& objToLoad, bool fDryRun = false);
 };
 
-class CMasternodePayee
-{
+class CMasternodePayee {
 public:
     CScript scriptPubKey;
     int nVotes;
 
-    CMasternodePayee()
-    {
+    CMasternodePayee() {
         scriptPubKey = CScript();
         nVotes = 0;
     }
 
-    CMasternodePayee(CScript payee, int nVotesIn)
-    {
+    CMasternodePayee(CScript payee, int nVotesIn) {
         scriptPubKey = payee;
         nVotes = nVotesIn;
     }
@@ -79,33 +74,28 @@ public:
     ADD_SERIALIZE_METHODS;
 
     template <typename Stream, typename Operation>
-    inline void SerializationOp(Stream& s, Operation ser_action, int nType, int nVersion)
-    {
+    inline void SerializationOp(Stream& s, Operation ser_action, int nType, int nVersion) {
         READWRITE(scriptPubKey);
         READWRITE(nVotes);
     }
 };
 
 // Keep track of votes for payees from masternodes
-class CMasternodeBlockPayees
-{
+class CMasternodeBlockPayees {
 public:
     int nBlockHeight;
     std::vector<CMasternodePayee> vecPayments;
 
-    CMasternodeBlockPayees()
-    {
+    CMasternodeBlockPayees() {
         nBlockHeight = 0;
         vecPayments.clear();
     }
-    CMasternodeBlockPayees(int nBlockHeightIn)
-    {
+    CMasternodeBlockPayees(int nBlockHeightIn) {
         nBlockHeight = nBlockHeightIn;
         vecPayments.clear();
     }
 
-    void AddPayee(CScript payeeIn, int nIncrement)
-    {
+    void AddPayee(CScript payeeIn, int nIncrement) {
         LOCK(cs_vecPayments);
 
         BOOST_FOREACH (CMasternodePayee& payee, vecPayments) {
@@ -119,8 +109,7 @@ public:
         vecPayments.push_back(c);
     }
 
-    bool GetPayee(CScript& payee)
-    {
+    bool GetPayee(CScript& payee) {
         LOCK(cs_vecPayments);
 
         int nVotes = -1;
@@ -134,8 +123,7 @@ public:
         return (nVotes > -1);
     }
 
-    bool HasPayeeWithVotes(CScript payee, int nVotesReq)
-    {
+    bool HasPayeeWithVotes(CScript payee, int nVotesReq) {
         LOCK(cs_vecPayments);
 
         BOOST_FOREACH (CMasternodePayee& p, vecPayments) {
@@ -151,16 +139,14 @@ public:
     ADD_SERIALIZE_METHODS;
 
     template <typename Stream, typename Operation>
-    inline void SerializationOp(Stream& s, Operation ser_action, int nType, int nVersion)
-    {
+    inline void SerializationOp(Stream& s, Operation ser_action, int nType, int nVersion) {
         READWRITE(nBlockHeight);
         READWRITE(vecPayments);
     }
 };
 
 // for storing the winning payments
-class CMasternodePaymentWinner
-{
+class CMasternodePaymentWinner {
 public:
     CTxIn vinMasternode;
 
@@ -168,22 +154,19 @@ public:
     CScript payee;
     std::vector<unsigned char> vchSig;
 
-    CMasternodePaymentWinner()
-    {
+    CMasternodePaymentWinner() {
         nBlockHeight = 0;
         vinMasternode = CTxIn();
         payee = CScript();
     }
 
-    CMasternodePaymentWinner(CTxIn vinIn)
-    {
+    CMasternodePaymentWinner(CTxIn vinIn) {
         nBlockHeight = 0;
         vinMasternode = vinIn;
         payee = CScript();
     }
 
-    uint256 GetHash()
-    {
+    uint256 GetHash() {
         CHashWriter ss(SER_GETHASH, PROTOCOL_VERSION);
         ss << payee;
         ss << nBlockHeight;
@@ -197,8 +180,7 @@ public:
     bool SignatureValid();
     void Relay();
 
-    void AddPayee(CScript payeeIn)
-    {
+    void AddPayee(CScript payeeIn) {
         payee = payeeIn;
     }
 
@@ -206,21 +188,19 @@ public:
     ADD_SERIALIZE_METHODS;
 
     template <typename Stream, typename Operation>
-    inline void SerializationOp(Stream& s, Operation ser_action, int nType, int nVersion)
-    {
+    inline void SerializationOp(Stream& s, Operation ser_action, int nType, int nVersion) {
         READWRITE(vinMasternode);
         READWRITE(nBlockHeight);
         READWRITE(payee);
         READWRITE(vchSig);
     }
 
-    std::string ToString()
-    {
+    std::string ToString() {
         std::string ret = "";
         ret += vinMasternode.ToString();
-        ret += ", " + boost::lexical_cast<std::string>(nBlockHeight);
+        ret += ", " + std::to_string(nBlockHeight);
         ret += ", " + payee.ToString();
-        ret += ", " + boost::lexical_cast<std::string>((int)vchSig.size());
+        ret += ", " + std::to_string((int)vchSig.size());
         return ret;
     }
 };
@@ -230,8 +210,7 @@ public:
 // Keeps track of who should get paid for which blocks
 //
 
-class CMasternodePayments
-{
+class CMasternodePayments {
 private:
     int nSyncedFromPeer;
     int nLastBlockHeight;
@@ -241,14 +220,12 @@ public:
     std::map<int, CMasternodeBlockPayees> mapMasternodeBlocks;
     std::map<uint256, int> mapMasternodesLastVote; //prevout.hash + prevout.n, nBlockHeight
 
-    CMasternodePayments()
-    {
+    CMasternodePayments() {
         nSyncedFromPeer = 0;
         nLastBlockHeight = 0;
     }
 
-    void Clear()
-    {
+    void Clear() {
         LOCK2(cs_mapMasternodeBlocks, cs_mapMasternodePayeeVotes);
         mapMasternodeBlocks.clear();
         mapMasternodePayeeVotes.clear();
@@ -265,8 +242,7 @@ public:
     bool IsTransactionValid(const CTransaction& txNew, int nBlockHeight);
     bool IsScheduled(CMasternode& mn, int nNotBlockHeight);
 
-    bool CanVote(COutPoint outMasternode, int nBlockHeight)
-    {
+    bool CanVote(COutPoint outMasternode, int nBlockHeight) {
         LOCK(cs_mapMasternodePayeeVotes);
 
         if (mapMasternodesLastVote.count(outMasternode.hash + outMasternode.n)) {
@@ -291,8 +267,7 @@ public:
     ADD_SERIALIZE_METHODS;
 
     template <typename Stream, typename Operation>
-    inline void SerializationOp(Stream& s, Operation ser_action, int nType, int nVersion)
-    {
+    inline void SerializationOp(Stream& s, Operation ser_action, int nType, int nVersion) {
         READWRITE(mapMasternodePayeeVotes);
         READWRITE(mapMasternodeBlocks);
     }

@@ -10,8 +10,7 @@
 
 /** STL-like map container that only keeps the N elements with the highest value. */
 template <typename K, typename V>
-class limitedmap
-{
+class limitedmap {
 public:
     typedef K key_type;
     typedef V mapped_type;
@@ -27,15 +26,28 @@ protected:
     size_type nMaxSize;
 
 public:
-    limitedmap(size_type nMaxSizeIn = 0) { nMaxSize = nMaxSizeIn; }
-    const_iterator begin() const { return map.begin(); }
-    const_iterator end() const { return map.end(); }
-    size_type size() const { return map.size(); }
-    bool empty() const { return map.empty(); }
-    const_iterator find(const key_type& k) const { return map.find(k); }
-    size_type count(const key_type& k) const { return map.count(k); }
-    void insert(const value_type& x)
-    {
+    limitedmap(size_type nMaxSizeIn = 0) {
+        nMaxSize = nMaxSizeIn;
+    }
+    const_iterator begin() const {
+        return map.begin();
+    }
+    const_iterator end() const {
+        return map.end();
+    }
+    size_type size() const {
+        return map.size();
+    }
+    bool empty() const {
+        return map.empty();
+    }
+    const_iterator find(const key_type& k) const {
+        return map.find(k);
+    }
+    size_type count(const key_type& k) const {
+        return map.count(k);
+    }
+    void insert(const value_type& x) {
         std::pair<iterator, bool> ret = map.insert(x);
         if (ret.second) {
             if (nMaxSize && map.size() == nMaxSize) {
@@ -46,8 +58,7 @@ public:
         }
         return;
     }
-    void erase(const key_type& k)
-    {
+    void erase(const key_type& k) {
         iterator itTarget = map.find(k);
         if (itTarget == map.end())
             return;
@@ -61,8 +72,7 @@ public:
         // Shouldn't ever get here
         assert(0);
     }
-    void update(const_iterator itIn, const mapped_type& v)
-    {
+    void update(const_iterator itIn, const mapped_type& v) {
         // TODO: When we switch to C++11, use map.erase(itIn, itIn) to get the non-const iterator.
         iterator itTarget = map.find(itIn->first);
         if (itTarget == map.end())
@@ -78,9 +88,10 @@ public:
         // Shouldn't ever get here
         assert(0);
     }
-    size_type max_size() const { return nMaxSize; }
-    size_type max_size(size_type s)
-    {
+    size_type max_size() const {
+        return nMaxSize;
+    }
+    size_type max_size(size_type s) {
         if (s)
             while (map.size() > s) {
                 map.erase(rmap.begin()->second);

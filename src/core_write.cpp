@@ -10,7 +10,7 @@
 #include "script/standard.h"
 #include "serialize.h"
 #include "streams.h"
-#include "univalue/univalue.h"
+#include <univalue.h>
 #include "util.h"
 #include "utilmoneystr.h"
 #include "utilstrencodings.h"
@@ -19,8 +19,7 @@
 
 using namespace std;
 
-string FormatScript(const CScript& script)
-{
+string FormatScript(const CScript& script) {
     string ret;
     CScript::const_iterator it = script.begin();
     opcodetype op;
@@ -54,8 +53,7 @@ string FormatScript(const CScript& script)
     return ret.substr(0, ret.size() - 1);
 }
 
-string EncodeHexTx(const CTransaction& tx)
-{
+string EncodeHexTx(const CTransaction& tx) {
     CDataStream ssTx(SER_NETWORK, PROTOCOL_VERSION);
     ssTx << tx;
     return HexStr(ssTx.begin(), ssTx.end());
@@ -63,8 +61,7 @@ string EncodeHexTx(const CTransaction& tx)
 
 void ScriptPubKeyToUniv(const CScript& scriptPubKey,
     UniValue& out,
-    bool fIncludeHex)
-{
+                        bool fIncludeHex) {
     txnouttype type;
     vector<CTxDestination> addresses;
     int nRequired;
@@ -82,13 +79,13 @@ void ScriptPubKeyToUniv(const CScript& scriptPubKey,
     out.pushKV("type", GetTxnOutputType(type));
 
     UniValue a(UniValue::VARR);
-    BOOST_FOREACH (const CTxDestination& addr, addresses)
+    BOOST_FOREACH(const CTxDestination& addr, addresses) {
         a.push_back(CBitcoinAddress(addr).ToString());
+    }
     out.pushKV("addresses", a);
 }
 
-void TxToUniv(const CTransaction& tx, const uint256& hashBlock, UniValue& entry)
-{
+void TxToUniv(const CTransaction& tx, const uint256& hashBlock, UniValue& entry) {
     entry.pushKV("txid", tx.GetHash().GetHex());
     entry.pushKV("version", tx.nVersion);
     entry.pushKV("locktime", (int64_t)tx.nLockTime);

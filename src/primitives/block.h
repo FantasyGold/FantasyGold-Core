@@ -1,5 +1,6 @@
 // Copyright (c) 2009-2010 Satoshi Nakamoto
 // Copyright (c) 2009-2013 The Bitcoin developers
+// Copyright (c) 2015-2017 The PIVX developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -12,7 +13,8 @@
 #include "uint256.h"
 
 /** The maximum allowed size for a serialized block, in bytes (network rule) */
-static const unsigned int MAX_BLOCK_SIZE = 1000000;
+static const unsigned int MAX_BLOCK_SIZE_CURRENT = 2000000;
+static const unsigned int MAX_BLOCK_SIZE_LEGACY = 1000000;
 
 /** Nodes collect new transactions into a block, hash them into a hash tree,
  * and scan through nonce values to make the block's hash satisfy proof-of-work
@@ -21,20 +23,19 @@ static const unsigned int MAX_BLOCK_SIZE = 1000000;
  * in the block is a special one that creates a new coin owned by the creator
  * of the block.
  */
-class CBlockHeader
-{
+class CBlockHeader {
 public:
     // header
-    static const int32_t CURRENT_VERSION=3;
+    static const int32_t CURRENT_VERSION=4;
     int32_t nVersion;
     uint256 hashPrevBlock;
     uint256 hashMerkleRoot;
     uint32_t nTime;
     uint32_t nBits;
     uint32_t nNonce;
+    uint256 nAccumulatorCheckpoint;
 
-    CBlockHeader()
-    {
+    CBlockHeader() {
         SetNull();
     }
 
@@ -49,34 +50,35 @@ public:
         READWRITE(nTime);
         READWRITE(nBits);
         READWRITE(nNonce);
+
+        //zerocoin active, header changes to include accumulator checksum
+        if(nVersion > 3)
+            READWRITE(nAccumulatorCheckpoint);
     }
 
-    void SetNull()
-    {
+    void SetNull() {
         nVersion = CBlockHeader::CURRENT_VERSION;
         hashPrevBlock.SetNull();
         hashMerkleRoot.SetNull();
         nTime = 0;
         nBits = 0;
         nNonce = 0;
+        nAccumulatorCheckpoint = 0;
     }
 
-    bool IsNull() const
-    {
+    bool IsNull() const {
         return (nBits == 0);
     }
 
     uint256 GetHash() const;
 
-    int64_t GetBlockTime() const
-    {
+    int64_t GetBlockTime() const {
         return (int64_t)nTime;
     }
 };
 
 
-class CBlock : public CBlockHeader
-{
+class CBlock : public CBlockHeader {
 public:
     // network and disk
     std::vector<CTransaction> vtx;
@@ -88,13 +90,11 @@ public:
     mutable CScript payee;
     mutable std::vector<uint256> vMerkleTree;
 
-    CBlock()
-    {
+    CBlock() {
         SetNull();
     }
 
-    CBlock(const CBlockHeader &header)
-    {
+    CBlock(const CBlockHeader &header) {
         SetNull();
         *((CBlockHeader*)this) = header;
     }
@@ -109,8 +109,7 @@ public:
 		READWRITE(vchBlockSig);
     }
 
-    void SetNull()
-    {
+    void SetNull() {
         CBlockHeader::SetNull();
         vtx.clear();
         vMerkleTree.clear();
@@ -118,8 +117,7 @@ public:
         vchBlockSig.clear();
     }
 
-    CBlockHeader GetBlockHeader() const
-    {
+    CBlockHeader GetBlockHeader() const {
         CBlockHeader block;
         block.nVersion       = nVersion;
         block.hashPrevBlock  = hashPrevBlock;
@@ -127,25 +125,23 @@ public:
         block.nTime          = nTime;
         block.nBits          = nBits;
         block.nNonce         = nNonce;
+        block.nAccumulatorCheckpoint = nAccumulatorCheckpoint;
         return block;
     }
 
     // ppcoin: two types of block: proof-of-work or proof-of-stake
-    bool IsProofOfStake() const
-    {
+    bool IsProofOfStake() const {
         return (vtx.size() > 1 && vtx[1].IsCoinStake());
     }
 
-    bool IsProofOfWork() const
-    {
+    bool IsProofOfWork() const {
         return !IsProofOfStake();
     }
 
     bool SignBlock(const CKeyStore& keystore);
     bool CheckBlockSignature() const;
 
-    std::pair<COutPoint, unsigned int> GetProofOfStake() const
-    {
+    std::pair<COutPoint, unsigned int> GetProofOfStake() const {
         return IsProofOfStake()? std::make_pair(vtx[1].vin[0].prevout, nTime) : std::make_pair(COutPoint(), (unsigned int)0);
     }
 
@@ -166,14 +162,12 @@ public:
  * other node doesn't have the same branch, it can find a recent common trunk.
  * The further back it is, the further before the fork it may be.
  */
-struct CBlockLocator
-{
+struct CBlockLocator {
     std::vector<uint256> vHave;
 
     CBlockLocator() {}
 
-    CBlockLocator(const std::vector<uint256>& vHaveIn)
-    {
+    CBlockLocator(const std::vector<uint256>& vHaveIn) {
         vHave = vHaveIn;
     }
 
@@ -186,13 +180,11 @@ struct CBlockLocator
         READWRITE(vHave);
     }
 
-    void SetNull()
-    {
+    void SetNull() {
         vHave.clear();
     }
 
-    bool IsNull()
-    {
+    bool IsNull() {
         return vHave.empty();
     }
 };

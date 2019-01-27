@@ -1,7 +1,7 @@
 // Copyright (c) 2010 Satoshi Nakamoto
 // Copyright (c) 2009-2014 The Bitcoin developers
 // Copyright (c) 2014-2015 The Dash developers
-// // Copyright (c) 2015-2017 The Bulwark developers
+// Copyright (c) 2015-2017 The PIVX developers
 // Copyright (c) 2017-2018 The FantasyGold developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
@@ -9,6 +9,7 @@
 #include "rpcprotocol.h"
 
 #include "clientversion.h"
+#include "random.h"
 #include "tinyformat.h"
 #include "util.h"
 #include "utilstrencodings.h"
@@ -16,8 +17,8 @@
 #include "version.h"
 
 #include <stdint.h>
+#include <fstream>
 
-#include "json/json_spirit_writer_template.h"
 #include <boost/algorithm/string.hpp>
 #include <boost/asio.hpp>
 #include <boost/asio/ssl.hpp>
@@ -28,10 +29,11 @@
 #include <boost/iostreams/stream.hpp>
 #include <boost/shared_ptr.hpp>
 
+#include <univalue.h>
+
 using namespace std;
 using namespace boost;
 using namespace boost::asio;
-using namespace json_spirit;
 
 //! Number of bytes to allocate and read at most at once in post data
 const size_t POST_READ_SIZE = 256 * 1024;
@@ -43,8 +45,7 @@ const size_t POST_READ_SIZE = 256 * 1024;
  * and to be compatible with other JSON-RPC implementations.
  */
 
-string HTTPPost(const string& strMsg, const map<string, string>& mapRequestHeaders)
-{
+string HTTPPost(const string& strMsg, const map<string, string>& mapRequestHeaders) {
     ostringstream s;
     s << "POST / HTTP/1.1\r\n"
       << "User-Agent: fantasygold-json-rpc/" << FormatFullVersion() << "\r\n"
@@ -53,21 +54,20 @@ string HTTPPost(const string& strMsg, const map<string, string>& mapRequestHeade
       << "Content-Length: " << strMsg.size() << "\r\n"
       << "Connection: close\r\n"
       << "Accept: application/json\r\n";
-    BOOST_FOREACH (const PAIRTYPE(string, string) & item, mapRequestHeaders)
+    BOOST_FOREACH(const PAIRTYPE(string, string) & item, mapRequestHeaders) {
         s << item.first << ": " << item.second << "\r\n";
+    }
     s << "\r\n"
       << strMsg;
 
     return s.str();
 }
 
-static string rfc1123Time()
-{
+static string rfc1123Time() {
     return DateTimeStrFormat("%a, %d %b %Y %H:%M:%S +0000", GetTime());
 }
 
-static const char* httpStatusDescription(int nStatus)
-{
+static const char* httpStatusDescription(int nStatus) {
     switch (nStatus) {
     case HTTP_OK:
         return "OK";
@@ -84,8 +84,7 @@ static const char* httpStatusDescription(int nStatus)
     }
 }
 
-string HTTPError(int nStatus, bool keepalive, bool headersOnly)
-{
+string HTTPError(int nStatus, bool keepalive, bool headersOnly) {
     if (nStatus == HTTP_UNAUTHORIZED)
         return strprintf("HTTP/1.0 401 Authorization Required\r\n"
                          "Date: %s\r\n"
@@ -109,8 +108,7 @@ string HTTPError(int nStatus, bool keepalive, bool headersOnly)
         headersOnly, "text/plain");
 }
 
-string HTTPReplyHeader(int nStatus, bool keepalive, size_t contentLength, const char* contentType)
-{
+string HTTPReplyHeader(int nStatus, bool keepalive, size_t contentLength, const char* contentType) {
     return strprintf(
         "HTTP/1.1 %d %s\r\n"
         "Date: %s\r\n"
@@ -128,8 +126,7 @@ string HTTPReplyHeader(int nStatus, bool keepalive, size_t contentLength, const 
         FormatFullVersion());
 }
 
-string HTTPReply(int nStatus, const string& strMsg, bool keepalive, bool headersOnly, const char* contentType)
-{
+string HTTPReply(int nStatus, const string& strMsg, bool keepalive, bool headersOnly, const char* contentType) {
     if (headersOnly) {
         return HTTPReplyHeader(nStatus, keepalive, 0, contentType);
     } else {
@@ -137,8 +134,7 @@ string HTTPReply(int nStatus, const string& strMsg, bool keepalive, bool headers
     }
 }
 
-bool ReadHTTPRequestLine(std::basic_istream<char>& stream, int& proto, string& http_method, string& http_uri)
-{
+bool ReadHTTPRequestLine(std::basic_istream<char>& stream, int& proto, string& http_method, string& http_uri) {
     string str;
     getline(stream, str);
 
@@ -171,8 +167,7 @@ bool ReadHTTPRequestLine(std::basic_istream<char>& stream, int& proto, string& h
     return true;
 }
 
-int ReadHTTPStatus(std::basic_istream<char>& stream, int& proto)
-{
+int ReadHTTPStatus(std::basic_istream<char>& stream, int& proto) {
     string str;
     getline(stream, str);
     //LogPrintf("ReadHTTPStatus - getline string: %s\n",str.c_str());
@@ -187,8 +182,7 @@ int ReadHTTPStatus(std::basic_istream<char>& stream, int& proto)
     return atoi(vWords[1].c_str());
 }
 
-int ReadHTTPHeaders(std::basic_istream<char>& stream, map<string, string>& mapHeadersRet)
-{
+int ReadHTTPHeaders(std::basic_istream<char>& stream, map<string, string>& mapHeadersRet) {
     int nLen = 0;
     while (true) {
         string str;
@@ -211,8 +205,7 @@ int ReadHTTPHeaders(std::basic_istream<char>& stream, map<string, string>& mapHe
 }
 
 
-int ReadHTTPMessage(std::basic_istream<char>& stream, map<string, string>& mapHeadersRet, string& strMessageRet, int nProto, size_t max_size)
-{
+int ReadHTTPMessage(std::basic_istream<char>& stream, map<string, string>& mapHeadersRet, string& strMessageRet, int nProto, size_t max_size) {
     mapHeadersRet.clear();
     strMessageRet = "";
 
@@ -258,20 +251,18 @@ int ReadHTTPMessage(std::basic_istream<char>& stream, map<string, string>& mapHe
  * http://www.codeproject.com/KB/recipes/JSON_Spirit.aspx
  */
 
-string JSONRPCRequest(const string& strMethod, const Array& params, const Value& id)
-{
-    Object request;
+string JSONRPCRequest(const string& strMethod, const UniValue& params, const UniValue& id) {
+    UniValue request(UniValue::VOBJ);
     request.push_back(Pair("method", strMethod));
     request.push_back(Pair("params", params));
     request.push_back(Pair("id", id));
-    return write_string(Value(request), false) + "\n";
+    return request.write() + "\n";
 }
 
-Object JSONRPCReplyObj(const Value& result, const Value& error, const Value& id)
-{
-    Object reply;
-    if (error.type() != null_type)
-        reply.push_back(Pair("result", Value::null));
+UniValue JSONRPCReplyObj(const UniValue& result, const UniValue& error, const UniValue& id) {
+    UniValue reply(UniValue::VOBJ);
+    if (!error.isNull())
+        reply.push_back(Pair("result", NullUniValue));
     else
         reply.push_back(Pair("result", result));
     reply.push_back(Pair("error", error));
@@ -279,16 +270,74 @@ Object JSONRPCReplyObj(const Value& result, const Value& error, const Value& id)
     return reply;
 }
 
-string JSONRPCReply(const Value& result, const Value& error, const Value& id)
-{
-    Object reply = JSONRPCReplyObj(result, error, id);
-    return write_string(Value(reply), false) + "\n";
+string JSONRPCReply(const UniValue& result, const UniValue& error, const UniValue& id) {
+    UniValue reply = JSONRPCReplyObj(result, error, id);
+    return reply.write() + "\n";
 }
 
-Object JSONRPCError(int code, const string& message)
-{
-    Object error;
+UniValue JSONRPCError(int code, const string& message) {
+    UniValue error(UniValue::VOBJ);
     error.push_back(Pair("code", code));
     error.push_back(Pair("message", message));
     return error;
+}
+
+/** Username used when cookie authentication is in use (arbitrary, only for
+ * recognizability in debugging/logging purposes)
+ */
+static const std::string COOKIEAUTH_USER = "__cookie__";
+/** Default name for auth cookie file */
+static const std::string COOKIEAUTH_FILE = ".cookie";
+
+boost::filesystem::path GetAuthCookieFile() {
+    boost::filesystem::path path(GetArg("-rpccookiefile", COOKIEAUTH_FILE));
+    if (!path.is_complete()) path = GetDataDir() / path;
+    return path;
+}
+
+bool GenerateAuthCookie(std::string *cookie_out) {
+    unsigned char rand_pwd[32];
+    GetRandBytes(rand_pwd, 32);
+    std::string cookie = COOKIEAUTH_USER + ":" + EncodeBase64(&rand_pwd[0],32);
+
+    /** the umask determines what permissions are used to create this file -
+     * these are set to 077 in init.cpp unless overridden with -sysperms.
+     */
+    std::ofstream file;
+    boost::filesystem::path filepath = GetAuthCookieFile();
+    file.open(filepath.string().c_str());
+    if (!file.is_open()) {
+        LogPrintf("Unable to open cookie authentication file %s for writing\n", filepath.string());
+        return false;
+    }
+    file << cookie;
+    file.close();
+    LogPrintf("Generated RPC authentication cookie %s\n", filepath.string());
+
+    if (cookie_out)
+        *cookie_out = cookie;
+    return true;
+}
+
+bool GetAuthCookie(std::string *cookie_out) {
+    std::ifstream file;
+    std::string cookie;
+    boost::filesystem::path filepath = GetAuthCookieFile();
+    file.open(filepath.string().c_str());
+    if (!file.is_open())
+        return false;
+    std::getline(file, cookie);
+    file.close();
+
+    if (cookie_out)
+        *cookie_out = cookie;
+    return true;
+}
+
+void DeleteAuthCookie() {
+    try {
+        boost::filesystem::remove(GetAuthCookieFile());
+    } catch (const boost::filesystem::filesystem_error& e) {
+        LogPrintf("%s: Unable to remove random auth cookie file: %s\n", __func__, e.what());
+    }
 }

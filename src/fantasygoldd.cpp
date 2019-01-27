@@ -2,7 +2,7 @@
 // Copyright (c) 2009-2014 The Bitcoin developers
 // Copyright (c) 2014-2015 The Dash developers
 // Copyright (c) 2015-2017 The PIVX developers
-// Copyright (c) 2018 The Bulwark developers  // Copyright (c) 2018 The FantasyGold Core Developers
+// Copyright (c) 2017-2018 The FantasyGold developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -25,7 +25,7 @@
  *
  * \section intro_sec Introduction
  *
- * This is the developer documentation of the reference client for an experimental new digital currency called FantasyGold (http://www.draftdaily.com),
+ * This is the developer documentation of the reference client for an experimental new digital currency called FantasyGold (http://www.fantasygold.com),
  * which enables instant payments to anyone, anywhere in the world. FantasyGold uses peer-to-peer technology to operate
  * with no central authority: managing transactions and issuing money are carried out collectively by the network.
  *
@@ -37,8 +37,7 @@
 
 static bool fDaemon;
 
-void DetectShutdownThread(boost::thread_group* threadGroup)
-{
+void DetectShutdownThread(boost::thread_group* threadGroup) {
     bool fShutdown = ShutdownRequested();
     // Tell the main threads to shutdown.
     while (!fShutdown) {
@@ -55,8 +54,7 @@ void DetectShutdownThread(boost::thread_group* threadGroup)
 //
 // Start
 //
-bool AppInit(int argc, char* argv[])
-{
+bool AppInit(int argc, char* argv[]) {
     boost::thread_group threadGroup;
     boost::thread* detectShutdownThread = NULL;
 
@@ -130,8 +128,7 @@ bool AppInit(int argc, char* argv[])
                 fprintf(stderr, "Error: fork() returned %d errno %d\n", pid, errno);
                 return false;
             }
-            if (pid > 0) // Parent process, pid is child process id
-            {
+            if (pid > 0) { // Parent process, pid is child process id
                 return true;
             }
             // Child process falls through to rest of initialization
@@ -171,8 +168,7 @@ bool AppInit(int argc, char* argv[])
     return fRet;
 }
 
-int main(int argc, char* argv[])
-{
+int main(int argc, char* argv[]) {
     SetupEnvironment();
 
     // Connect fantasygoldd signal handlers

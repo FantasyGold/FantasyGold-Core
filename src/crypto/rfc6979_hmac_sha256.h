@@ -11,8 +11,7 @@
 #include <stdlib.h>
 
 /** The RFC 6979 PRNG using HMAC-SHA256. */
-class RFC6979_HMAC_SHA256
-{
+class RFC6979_HMAC_SHA256 {
 private:
     unsigned char V[CHMAC_SHA256::OUTPUT_SIZE];
     unsigned char K[CHMAC_SHA256::OUTPUT_SIZE];

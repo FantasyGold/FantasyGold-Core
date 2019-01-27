@@ -11,11 +11,16 @@ QT_TS = \
   qt/locale/fantasygold_en.ts \
   qt/locale/fantasygold_en_US.ts \
   qt/locale/fantasygold_es.ts \
+  qt/locale/fantasygold_es_ES.ts \
   qt/locale/fantasygold_fi.ts \
   qt/locale/fantasygold_fr_FR.ts \
+  qt/locale/fantasygold_hi_IN.ts \
+  qt/locale/fantasygold_hr.ts \
+  qt/locale/fantasygold_hr_HR.ts \
   qt/locale/fantasygold_it.ts \
   qt/locale/fantasygold_ja.ts \
   qt/locale/fantasygold_ko_KR.ts \
+  qt/locale/fantasygold_lt_LT.ts \
   qt/locale/fantasygold_nl.ts \
   qt/locale/fantasygold_pl.ts \
   qt/locale/fantasygold_pt.ts \
@@ -24,12 +29,17 @@ QT_TS = \
   qt/locale/fantasygold_ru.ts \
   qt/locale/fantasygold_sk.ts \
   qt/locale/fantasygold_sv.ts \
+  qt/locale/fantasygold_tr.ts \
   qt/locale/fantasygold_uk.ts \
+  qt/locale/fantasygold_vi.ts \
   qt/locale/fantasygold_zh_CN.ts \
   qt/locale/fantasygold_zh_TW.ts
 
 QT_FORMS_UI = \
   qt/forms/addressbookpage.ui \
+  qt/forms/privkeypage.ui \
+  qt/forms/outputspage.ui \
+  qt/forms/configuremasternodepage.ui \
   qt/forms/askpassphrasedialog.ui \
   qt/forms/bip38tooldialog.ui \
   qt/forms/coincontroldialog.ui \
@@ -40,22 +50,30 @@ QT_FORMS_UI = \
   qt/forms/intro.ui \
   qt/forms/masternodelist.ui \
   qt/forms/multisenddialog.ui \
+  qt/forms/multisendconfigdialog.ui \
   qt/forms/multisigdialog.ui \
   qt/forms/openuridialog.ui \
   qt/forms/optionsdialog.ui \
   qt/forms/overviewpage.ui \
   qt/forms/receivecoinsdialog.ui \
+  qt/forms/privacydialog.ui \
+  qt/forms/proposaldialog.ui \
   qt/forms/receiverequestdialog.ui \
   qt/forms/rpcconsole.ui \
   qt/forms/sendcoinsdialog.ui \
   qt/forms/sendcoinsentry.ui \
   qt/forms/signverifymessagedialog.ui \
-  qt/forms/transactiondescdialog.ui
+  qt/forms/transactiondescdialog.ui \
+  qt/forms/zfgccontroldialog.ui
 
 QT_MOC_CPP = \
   qt/moc_addressbookpage.cpp \
+  qt/moc_privkeypage.cpp \
+  qt/moc_outputspage.cpp \
+  qt/moc_configuremasternodepage.cpp \
   qt/moc_addresstablemodel.cpp \
   qt/moc_askpassphrasedialog.cpp \
+  qt/moc_bantablemodel.cpp \
   qt/moc_bip38tooldialog.cpp \
   qt/moc_bitcoinaddressvalidator.cpp \
   qt/moc_bitcoinamountfield.cpp \
@@ -74,6 +92,7 @@ QT_MOC_CPP = \
   qt/moc_macnotificationhandler.cpp \
   qt/moc_masternodelist.cpp \
   qt/moc_multisenddialog.cpp \
+  qt/moc_multisendconfigdialog.cpp \
   qt/moc_multisigdialog.cpp \
   qt/moc_notificator.cpp \
   qt/moc_openuridialog.cpp \
@@ -82,9 +101,17 @@ QT_MOC_CPP = \
   qt/moc_overviewpage.cpp \
   qt/moc_peertablemodel.cpp \
   qt/moc_paymentserver.cpp \
+  qt/moc_columnalignedlayout.cpp \
+  qt/moc_proposaldialog.cpp \
+  qt/moc_proposalfilterproxy.cpp \
+  qt/moc_proposaltablemodel.cpp \
+  qt/moc_proposallist.cpp \
+  qt/moc_qtmaterialflatbutton.cpp \
+  qt/moc_qtmaterialflatbutton_internal.cpp \
   qt/moc_qvalidatedlineedit.cpp \
   qt/moc_qvaluecombobox.cpp \
   qt/moc_receivecoinsdialog.cpp \
+  qt/moc_privacydialog.cpp \
   qt/moc_receiverequestdialog.cpp \
   qt/moc_recentrequeststablemodel.cpp \
   qt/moc_rpcconsole.cpp \
@@ -101,7 +128,18 @@ QT_MOC_CPP = \
   qt/moc_utilitydialog.cpp \
   qt/moc_walletframe.cpp \
   qt/moc_walletmodel.cpp \
-  qt/moc_walletview.cpp
+  qt/moc_walletview.cpp \
+  qt/moc_zfgccontroldialog.cpp \
+  qt/moc_qtmaterialcheckable.cpp \
+  qt/moc_qtmaterialcheckable_internal.cpp \
+  qt/moc_qtmaterialoverlaywidget.cpp \
+  qt/moc_qtmaterialripple.cpp \
+  qt/moc_qtmaterialrippleoverlay.cpp \
+  qt/moc_qtmaterialstatetransition.cpp \
+  qt/moc_qtmaterialstyle.cpp \
+  qt/moc_qtmaterialtextfield.cpp \
+  qt/moc_qtmaterialtextfield_internal.cpp \
+  qt/moc_qtmaterialtheme.cpp
 
 BITCOIN_MM = \
   qt/macdockiconhandler.mm \
@@ -127,6 +165,7 @@ BITCOIN_QT_H = \
   qt/addressbookpage.h \
   qt/addresstablemodel.h \
   qt/askpassphrasedialog.h \
+  qt/bantablemodel.h \
   qt/bip38tooldialog.h \
   qt/bitcoinaddressvalidator.h \
   qt/bitcoinamountfield.h \
@@ -146,6 +185,7 @@ BITCOIN_QT_H = \
   qt/macnotificationhandler.h \
   qt/masternodelist.h \
   qt/multisenddialog.h \
+  qt/multisendconfigdialog.h \
   qt/multisigdialog.h \
   qt/networkstyle.h \
   qt/notificator.h \
@@ -155,16 +195,32 @@ BITCOIN_QT_H = \
   qt/overviewpage.h \
   qt/paymentrequestplus.h \
   qt/paymentserver.h \
+  qt/columnalignedlayout.h \
+  qt/proposaldialog.h \
+  qt/proposalfilterproxy.h \
+  qt/proposallist.h \
+  qt/proposalrecord.h \
+  qt/proposaltablemodel.h \
   qt/peertablemodel.h \
   qt/platformstyle.h \
+  qt/qtmaterialflatbutton.h \
+  qt/qtmaterialflatbutton_internal.h \
+  qt/qtmaterialtextfield.h \
+  qt/qtmaterialtextfield_internal.h \
+  qt/qtmaterialtextfield_p.h \
+  qt/qtmaterialflatbutton_p.h \
   qt/qvalidatedlineedit.h \
   qt/qvaluecombobox.h \
   qt/receivecoinsdialog.h \
+  qt/privacydialog.h \
   qt/receiverequestdialog.h \
   qt/recentrequeststablemodel.h \
   qt/rpcconsole.h \
   qt/sendcoinsdialog.h \
   qt/sendcoinsentry.h \
+  qt/privkeypage.h \
+  qt/outputspage.h \
+  qt/configuremasternodepage.h \
   qt/signverifymessagedialog.h \
   qt/splashscreen.h \
   qt/trafficgraphwidget.h \
@@ -179,9 +235,36 @@ BITCOIN_QT_H = \
   qt/walletmodel.h \
   qt/walletmodeltransaction.h \
   qt/walletview.h \
-  qt/winshutdownmonitor.h
+  qt/winshutdownmonitor.h \
+  qt/zfgccontroldialog.h \
+  qt/qtmaterialcheckable.h \
+  qt/qtmaterialcheckable_internal.h \
+  qt/qtmaterialcheckable_p.h \
+  qt/qtmaterialoverlaywidget.h \
+  qt/qtmaterialripple.h \
+  qt/qtmaterialrippleoverlay.h \
+  qt/qtmaterialstatetransition.h \
+  qt/qtmaterialstatetransitionevent.h \
+  qt/qtmaterialstyle.h \
+  qt/qtmaterialstyle_p.h \
+  qt/qtmaterialtheme.h \
+  qt/qtmaterialtheme_p.h
+
+RES_FONTS = \
+  qt/res/fonts/Roboto-Bold.ttf \
+  qt/res/fonts/Roboto-Medium.ttf 
 
 RES_ICONS = \
+  qt/res/icons/history_m.png \
+  qt/res/icons/send_m.png \
+  qt/res/icons/receive_m.png \
+  qt/res/icons/masternodes_m.png \
+  qt/res/icons/overview_m.png \
+  qt/res/icons/lock_open.png \
+  qt/res/icons/lock_closed.png \
+  qt/res/icons/open.png \
+  qt/res/icons/explorer.png \
+  qt/res/icons/information.png \
   qt/res/icons/add.png \
   qt/res/icons/address-book.png \
   qt/res/icons/bitcoin.ico \
@@ -215,10 +298,14 @@ RES_ICONS = \
   qt/res/icons/lock_closed.png \
   qt/res/icons/lock_open.png \
   qt/res/icons/masternodes.png \
+  qt/res/icons/onion.png \
   qt/res/icons/overview.png \
+  qt/res/icons/proposal.png \
   qt/res/icons/qrcode.png \
   qt/res/icons/quit.png \
   qt/res/icons/receive.png \
+  qt/res/icons/privacy.png \
+  qt/res/icons/privacy_m.png \
   qt/res/icons/remove.png \
   qt/res/icons/send.png \
   qt/res/icons/staking_active.png \
@@ -240,6 +327,7 @@ RES_ICONS = \
   qt/res/icons/unit_tufantasygold.png
 
 BITCOIN_QT_CPP = \
+  qt/bantablemodel.cpp \
   qt/bitcoinaddressvalidator.cpp \
   qt/bitcoinamountfield.cpp \
   qt/bitcoingui.cpp \
@@ -256,17 +344,33 @@ BITCOIN_QT_CPP = \
   qt/optionsmodel.cpp \
   qt/peertablemodel.cpp \
   qt/platformstyle.cpp \
+  qt/proposaldialog.cpp \
+  qt/qtmaterialflatbutton.cpp \
+  qt/qtmaterialflatbutton_internal.cpp \
   qt/qvalidatedlineedit.cpp \
   qt/qvaluecombobox.cpp \
   qt/rpcconsole.cpp \
   qt/splashscreen.cpp \
   qt/trafficgraphwidget.cpp \
   qt/utilitydialog.cpp \
-  qt/winshutdownmonitor.cpp
+  qt/winshutdownmonitor.cpp \
+  qt/qtmaterialcheckable.cpp \
+  qt/qtmaterialcheckable_internal.cpp \
+  qt/qtmaterialoverlaywidget.cpp \
+  qt/qtmaterialripple.cpp \
+  qt/qtmaterialrippleoverlay.cpp \
+  qt/qtmaterialstatetransition.cpp \
+  qt/qtmaterialstyle.cpp \
+  qt/qtmaterialtextfield.cpp \
+  qt/qtmaterialtextfield_internal.cpp \
+  qt/qtmaterialtheme.cpp
 
 if ENABLE_WALLET
 BITCOIN_QT_CPP += \
   qt/addressbookpage.cpp \
+  qt/privkeypage.cpp \
+  qt/outputspage.cpp \
+  qt/configuremasternodepage.cpp \
   qt/addresstablemodel.cpp \
   qt/askpassphrasedialog.cpp \
   qt/bip38tooldialog.cpp \
@@ -277,12 +381,20 @@ BITCOIN_QT_CPP += \
   qt/editaddressdialog.cpp \
   qt/masternodelist.cpp \
   qt/multisenddialog.cpp \
+  qt/multisendconfigdialog.cpp \
   qt/multisigdialog.cpp \
   qt/openuridialog.cpp \
   qt/overviewpage.cpp \
   qt/paymentrequestplus.cpp \
   qt/paymentserver.cpp \
+  qt/columnalignedlayout.cpp \
+  qt/proposaldialog.cpp \
+  qt/proposalfilterproxy.cpp \
+  qt/proposallist.cpp \
+  qt/proposalrecord.cpp \
+  qt/proposaltablemodel.cpp \
   qt/receivecoinsdialog.cpp \
+  qt/privacydialog.cpp \
   qt/receiverequestdialog.cpp \
   qt/recentrequeststablemodel.cpp \
   qt/sendcoinsdialog.cpp \
@@ -297,7 +409,8 @@ BITCOIN_QT_CPP += \
   qt/walletframe.cpp \
   qt/walletmodel.cpp \
   qt/walletmodeltransaction.cpp \
-  qt/walletview.cpp
+  qt/walletview.cpp \
+  qt/zfgccontroldialog.cpp
 
 endif
 
@@ -306,11 +419,13 @@ RES_IMAGES = \
   qt/res/images/splash.png \
   qt/res/images/splash_testnet.png \
   qt/res/images/fantasygold_logo_horizontal.png \
-  qt/res/images/downArrow.png \
+  qt/res/images/downArrow_dark.png \
+  qt/res/images/downArrow_small_dark.png \
   qt/res/images/downArrow_small.png \
+  qt/res/images/upArrow_small_dark.png \
   qt/res/images/upArrow_small.png \
-  qt/res/images/leftArrow_small.png \
-  qt/res/images/rightArrow_small.png \
+  qt/res/images/leftArrow_small_dark.png \
+  qt/res/images/rightArrow_small_dark.png \
   qt/res/images/qtreeview_selected.png \
   qt/res/images/walletFrame.png \
   qt/res/images/walletFrame_bg.png \
@@ -330,7 +445,7 @@ qt_libbitcoinqt_a_CPPFLAGS = $(BITCOIN_INCLUDES) $(BITCOIN_QT_INCLUDES) \
   $(QT_INCLUDES) $(QT_DBUS_INCLUDES) $(PROTOBUF_CFLAGS) $(QR_CFLAGS)
 
 qt_libbitcoinqt_a_SOURCES = $(BITCOIN_QT_CPP) $(BITCOIN_QT_H) $(QT_FORMS_UI) \
-  $(QT_QRC) $(QT_QRC_LOCALE) $(QT_TS) $(PROTOBUF_PROTO) $(RES_ICONS) $(RES_IMAGES) $(RES_CSS) $(RES_MOVIES)
+  $(QT_QRC) $(QT_QRC_LOCALE) $(QT_TS) $(PROTOBUF_PROTO) $(RES_ICONS) $(RES_IMAGES) $(RES_CSS) $(RES_MOVIES) $(RES_FONTS)
 
 nodist_qt_libbitcoinqt_a_SOURCES = $(QT_MOC_CPP) $(QT_MOC) $(PROTOBUF_CC) \
   $(PROTOBUF_H) $(QT_QRC_CPP) $(QT_QRC_LOCALE_CPP)
@@ -366,7 +481,7 @@ endif
 if ENABLE_ZMQ
 qt_fantasygold_qt_LDADD += $(LIBBITCOIN_ZMQ) $(ZMQ_LIBS)
 endif
-qt_fantasygold_qt_LDADD += $(LIBBITCOIN_CLI) $(LIBBITCOIN_COMMON) $(LIBBITCOIN_UTIL) $(LIBBITCOIN_CRYPTO) $(LIBBITCOIN_UNIVALUE) $(LIBLEVELDB) $(LIBMEMENV) \
+qt_fantasygold_qt_LDADD += $(LIBBITCOIN_CLI) $(LIBBITCOIN_COMMON) $(LIBBITCOIN_UTIL) $(LIBBITCOIN_CRYPTO) $(LIBUNIVALUE) $(LIBBITCOIN_ZEROCOIN) $(LIBLEVELDB) $(LIBMEMENV) \
   $(BOOST_LIBS) $(QT_LIBS) $(QT_DBUS_LIBS) $(QR_LIBS) $(PROTOBUF_LIBS) $(BDB_LIBS) $(SSL_LIBS) $(CRYPTO_LIBS) $(MINIUPNPC_LIBS) $(LIBSECP256K1) \
   $(EVENT_PTHREADS_LIBS) $(EVENT_LIBS)
 

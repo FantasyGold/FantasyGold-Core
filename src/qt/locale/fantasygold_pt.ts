@@ -3,14 +3,14 @@
     <name>AddressBookPage</name>
     <message>
         <source>Right-click to edit address or label</source>
-        <translation>Clique com o botão direito do mouse para editar o endereço ou a descrição</translation>
+        <translation>Clique com o botão direito do rato para editar o endereço ou a descrição</translation>
     </message>
     <message>
         <source>Create a new address</source>
         <translation>Criar novo endereço</translation>
     </message>
     <message>
-        <source>&amp;New</source>
+        <source>New</source>
         <translation>Novo</translation>
     </message>
     <message>
@@ -18,40 +18,40 @@
         <translation>Copiar o endereço selecionado para a área de transferência</translation>
     </message>
     <message>
-        <source>&amp;Copy</source>
-        <translation>&amp;Copiar</translation>
+        <source>Copy</source>
+        <translation>Copiar</translation>
     </message>
     <message>
         <source>Delete the currently selected address from the list</source>
-        <translation>Deletar da lista o endereço selecionado</translation>
+        <translation>Apagar o endereço selecionado da lista</translation>
     </message>
     <message>
-        <source>&amp;Delete</source>
-        <translation>&amp;Excluir</translation>
+        <source>Delete</source>
+        <translation>Apagar</translation>
     </message>
     <message>
         <source>Export the data in the current tab to a file</source>
         <translation>Exporta os dados da aba ativa para um arquivo</translation>
     </message>
     <message>
-        <source>&amp;Export</source>
-        <translation>&amp;Exportar</translation>
+        <source>Export</source>
+        <translation>Exportar</translation>
     </message>
     <message>
-        <source>C&amp;lose</source>
-        <translation>&amp;Fechar</translation>
+        <source>Close</source>
+        <translation>Fechar</translation>
     </message>
     <message>
         <source>Choose the address to send coins to</source>
-        <translation>Escolha o endereço para enviar moedas</translation>
+        <translation>Escolha o endereço para onde enviar moedas</translation>
     </message>
     <message>
         <source>Choose the address to receive coins with</source>
-        <translation>Escolha o endereço para receber moedas</translation>
+        <translation>Escolha o endereço onde receber moedas</translation>
     </message>
     <message>
-        <source>C&amp;hoose</source>
-        <translation>Escol&amp;her</translation>
+        <source>Choose</source>
+        <translation>Escolher</translation>
     </message>
     <message>
         <source>Sending addresses</source>
@@ -63,23 +63,23 @@
     </message>
     <message>
         <source>These are your FantasyGold addresses for sending payments. Always check the amount and the receiving address before sending coins.</source>
-        <translation>Esses são seus endereços FantasyGold para enviar pagamentos. Sempre confira a quantidade e os endereços de destino antes de enviar moedas.</translation>
+        <translation>Esses são seus endereços FantasyGold para onde enviar pagamentos. Confira sempre o montante e os endereços de destino antes de enviar moedas.</translation>
     </message>
     <message>
         <source>These are your FantasyGold addresses for receiving payments. It is recommended to use a new receiving address for each transaction.</source>
-        <translation>Esses são seus endereços FantasyGold para receber pagamentos. É recomendado usar um novo endereço para cada transação.</translation>
+        <translation>Esses são seus endereços FantasyGold onde receber pagamentos. Recomenda-se o uso de um novo endereço para cada transacção.</translation>
     </message>
     <message>
-        <source>&amp;Copy Address</source>
-        <translation>C&amp;opiar endereço</translation>
+        <source>Copy Address</source>
+        <translation>Copiar Endereço</translation>
     </message>
     <message>
-        <source>Copy &amp;Label</source>
-        <translation>Cop&amp;iar Descrição</translation>
+        <source>Copy Label</source>
+        <translation>Copiar Descrição</translation>
     </message>
     <message>
-        <source>&amp;Edit</source>
-        <translation>&amp;Editar</translation>
+        <source>Edit</source>
+        <translation>Editar</translation>
     </message>
     <message>
         <source>Export Address List</source>
@@ -117,11 +117,11 @@
     <name>AskPassphraseDialog</name>
     <message>
         <source>Passphrase Dialog</source>
-        <translation>Caixa de diálogo de Senha</translation>
+        <translation>Caixa de diálogo de senha</translation>
     </message>
     <message>
         <source>Enter passphrase</source>
-        <translation>Digite sua senha</translation>
+        <translation>Digite a sua senha</translation>
     </message>
     <message>
         <source>New passphrase</source>
@@ -129,15 +129,11 @@
     </message>
     <message>
         <source>Repeat new passphrase</source>
-        <translation>Repetir senha</translation>
+        <translation>Repetir nova senha</translation>
     </message>
     <message>
         <source>Serves to disable the trivial sendmoney when OS account compromised. Provides no real security.</source>
         <translation>Serve para desabilitar envio trivial de dinheiro quando a conta do SO for comprometida, mas não provê segurança real.</translation>
-    </message>
-    <message>
-        <source>For anonymization and staking only</source>
-        <translation>Apenas para anonimização e staking</translation>
     </message>
     <message>
         <source>Enter the new passphrase to the wallet.&lt;br/&gt;Please use a passphrase of &lt;b&gt;ten or more random characters&lt;/b&gt;, or &lt;b&gt;eight or more words&lt;/b&gt;.</source>
@@ -176,16 +172,16 @@
         <translation>Confirmar encriptação da carteira</translation>
     </message>
     <message>
-        <source>FantasyGold will close now to finish the encryption process. Remember that encrypting your wallet cannot fully protect your FGCs from being stolen by malware infecting your computer.</source>
-        <translation>FantasyGold encerrará para terminar o processo de encriptação. Lembre-se que encriptar sua carteira não protege completamente suas FGCs contra roubo por malware infectando seu computador.</translation>
+        <source>FantasyGold will close now to finish the encryption process. Remember that encrypting your wallet cannot fully protect your FGCS from being stolen by malware infecting your computer.</source>
+        <translation>FantasyGold encerrará para terminar o processo de encriptação. Lembre-se que encriptar sua carteira não protege completamente suas FantasyGolds contra roubo por malware infectando seu computador.</translation>
     </message>
     <message>
         <source>Are you sure you wish to encrypt your wallet?</source>
         <translation>Tem certeza que deseja encriptar sua carteira?</translation>
     </message>
     <message>
-        <source>Warning: If you encrypt your wallet and lose your passphrase, you will &lt;b&gt;LOSE ALL OF YOUR FGC&lt;/b&gt;!</source>
-        <translation>Atenção: Se você encriptar sua carteira e perder a senha, você &lt;B&gt;PERDERÁ TODA SUA FGC&lt;/b&gt;!</translation>
+        <source>Warning: If you encrypt your wallet and lose your passphrase, you will &lt;b&gt;LOSE ALL OF YOUR FantasyGold&lt;/b&gt;!</source>
+        <translation>Atenção: Se você encriptar sua carteira e perder a senha, você &lt;B&gt;PERDERÁ TODA SUA FantasyGold&lt;/b&gt;!</translation>
     </message>
     <message>
         <source>Wallet encrypted</source>
@@ -229,26 +225,21 @@
     </message>
 </context>
 <context>
+    <name>BanTableModel</name>
+    </context>
+<context>
     <name>Bip38ToolDialog</name>
     <message>
         <source>BIP 38 Tool</source>
         <translation>BIP 38</translation>
     </message>
     <message>
-        <source>&amp;BIP 38 Encrypt</source>
-        <translation>Encriptar com &amp;BIP 38</translation>
-    </message>
-    <message>
-        <source>Enter a FantasyGold Address that you would like to encrypt using BIP 38. Enter a passphrase in the middle box. Press encrypt to compute the encrypted private key.</source>
-        <translation>Digite um endereço FantasyGold que você gostaria de criptografar usando BIP 38. Digite uma frase secreta na caixa do meio. Pressione criptografar para calcular a chave privada criptografada.</translation>
+        <source>BIP 38 Encrypt</source>
+        <translation>Encriptar com BIP 38</translation>
     </message>
     <message>
         <source>Address:</source>
         <translation>Endereço:</translation>
-    </message>
-    <message>
-        <source>The FantasyGold address to sign the message with</source>
-        <translation>Um endereço FantasyGold para assinar a mensagem</translation>
     </message>
     <message>
         <source>Choose previously used address</source>
@@ -279,28 +270,16 @@
         <translation>Copiar a assinatura para a area de trabalho</translation>
     </message>
     <message>
-        <source>Sign the message to prove you own this FantasyGold address</source>
-        <translation>Assinar a Mensagem para provar que você e dono desse endereço FantasyGold.</translation>
-    </message>
-    <message>
-        <source>Encrypt &amp;Key</source>
+        <source>Encrypt Key</source>
         <translation>Criptografar Chave</translation>
     </message>
     <message>
-        <source>Reset all sign message fields</source>
-        <translation>Reiniciar todas os campos das mensagens assinadas</translation>
-    </message>
-    <message>
-        <source>Clear &amp;All</source>
+        <source>Clear All</source>
         <translation>Limpar todos</translation>
     </message>
     <message>
-        <source>&amp;BIP 38 Decrypt</source>
+        <source>BIP 38 Decrypt</source>
         <translation>Criptografia BIP 38</translation>
-    </message>
-    <message>
-        <source>The FantasyGold address the message was signed with</source>
-        <translation>O endereço FantasyGold que foi assinado com</translation>
     </message>
     <message>
         <source>Decrypted Key:</source>
@@ -334,19 +313,19 @@
         <translation>Nó</translation>
     </message>
     <message>
-        <source>&amp;Send</source>
-        <translation>&amp;Enviar</translation>
+        <source>Send</source>
+        <translation>Enviar</translation>
     </message>
     <message>
-        <source>&amp;Receive</source>
-        <translation>&amp;Receber</translation>
+        <source>Receive</source>
+        <translation>Receber</translation>
     </message>
     <message>
-        <source>&amp;Transactions</source>
-        <translation>&amp;Transações</translation>
+        <source>Transactions</source>
+        <translation>Transações</translation>
     </message>
     <message>
-        <source>&amp;Backup Wallet...</source>
+        <source>Backup Wallet...</source>
         <translation>Carteira de backup</translation>
     </message>
     <message>
@@ -405,6 +384,14 @@
         <source>Edit Address</source>
         <translation>Alterar endereço</translation>
     </message>
+    <message>
+        <source>Label</source>
+        <translation>Descrição</translation>
+    </message>
+    <message>
+        <source>Address</source>
+        <translation>Endereço</translation>
+    </message>
     </context>
 <context>
     <name>FreespaceChecker</name>
@@ -432,6 +419,17 @@
         <source>Address:</source>
         <translation>Endereço:</translation>
     </message>
+    <message>
+        <source>(no label)</source>
+        <translation>(Sem descrição)</translation>
+    </message>
+    </context>
+<context>
+    <name>MultisigDialog</name>
+    <message>
+        <source>Amount:</source>
+        <translation>Quantidade:</translation>
+    </message>
     </context>
 <context>
     <name>ObfuscationConfig</name>
@@ -450,6 +448,41 @@
     </context>
 <context>
     <name>PeerTableModel</name>
+    </context>
+<context>
+    <name>PrivacyDialog</name>
+    <message>
+        <source>Amount:</source>
+        <translation>Quantidade:</translation>
+    </message>
+    <message>
+        <source>Choose previously used address</source>
+        <translation>Escolha o endereço usado anteriormente.</translation>
+    </message>
+    <message>
+        <source>Alt+A</source>
+        <translation>Alt+A</translation>
+    </message>
+    <message>
+        <source>Paste address from clipboard</source>
+        <translation>Cole o endereço da areá de trabalho. </translation>
+    </message>
+    <message>
+        <source>Alt+P</source>
+        <translation>Alt+P</translation>
+    </message>
+    <message>
+        <source>Priority:</source>
+        <translation>Prioridade:</translation>
+    </message>
+    <message>
+        <source>Fee:</source>
+        <translation>Taxa:</translation>
+    </message>
+    <message>
+        <source>no</source>
+        <translation>não</translation>
+    </message>
     </context>
 <context>
     <name>QObject</name>
@@ -556,7 +589,7 @@
         <translation>Limpar todos os campos do formulário</translation>
     </message>
     <message>
-        <source>Clear &amp;All</source>
+        <source>Clear All</source>
         <translation>Limpar todos</translation>
     </message>
     <message>
@@ -677,7 +710,7 @@
         <translation>Reiniciar todas os campos das mensagens assinadas</translation>
     </message>
     <message>
-        <source>Clear &amp;All</source>
+        <source>Clear All</source>
         <translation>Limpar todos</translation>
     </message>
     <message>
@@ -855,8 +888,8 @@
 <context>
     <name>WalletView</name>
     <message>
-        <source>&amp;Export</source>
-        <translation>&amp;Exportar</translation>
+        <source>Export</source>
+        <translation>Exportar</translation>
     </message>
     <message>
         <source>Export the data in the current tab to a file</source>
@@ -868,14 +901,13 @@
     </message>
     </context>
 <context>
+    <name>zFGCControlDialog</name>
+    </context>
+<context>
     <name>fantasygold-core</name>
     <message>
         <source>Delete all wallet transactions and only recover those parts of the blockchain through -rescan on startup</source>
         <translation>Deletar todas as transações da carteira e somente recuperar aquelas partes do blockchain através de -rescan na inicialização</translation>
-    </message>
-    <message>
-        <source>Disable all FantasyGold specific functionality (Masternodes, Obfuscation, SwiftTX, Budgeting) (0-1, default: %u)</source>
-        <translation>Desabilitar todas as funcionacilidades específicas da FantasyGold (Masternodes, Ofuscação, SwiftTX, Budgeting) (0-1, default %u)</translation>
     </message>
     <message>
         <source>Connect through SOCKS5 proxy</source>
@@ -930,10 +962,6 @@
         <translation>Nenhum Masternode compatível encontrado.</translation>
     </message>
     <message>
-        <source>Obfuscation options:</source>
-        <translation>Opções de ofuscação:</translation>
-    </message>
-    <message>
         <source>Obfuscation request complete:</source>
         <translation>Requisição de ofuscação completa:</translation>
     </message>
@@ -976,14 +1004,6 @@
     <message>
         <source>Send transactions as zero-fee transactions if possible (default: %u)</source>
         <translation>Enviar transações como transações de taxa zero, se possível (padrão:%u)</translation>
-    </message>
-    <message>
-        <source>Server certificate file (default: %s)</source>
-        <translation>Arquivo de certificado do servidor (padrão:%s)</translation>
-    </message>
-    <message>
-        <source>Server private key (default: %s)</source>
-        <translation>Chave privada do servidor (padrão:%s)</translation>
     </message>
     <message>
         <source>Session not complete!</source>
@@ -1094,10 +1114,6 @@
         <translation>Enviado para masternode, esperando na fila %s</translation>
     </message>
     <message>
-        <source>SwiftTX options:</source>
-        <translation>Opções SwiftTX:</translation>
-    </message>
-    <message>
         <source>Synchronization failed</source>
         <translation>Sincronização falhou</translation>
     </message>
@@ -1196,14 +1212,6 @@
     <message>
         <source>Upgrade wallet to latest format</source>
         <translation>Atualizar a carteira para a ultimo formato</translation>
-    </message>
-    <message>
-        <source>Use N separate masternodes to anonymize funds  (2-8, default: %u)</source>
-        <translation>Use N masternodes separados para anonimizar fundos (2-8, padrão: %u)</translation>
-    </message>
-    <message>
-        <source>Use OpenSSL (https) for JSON-RPC connections</source>
-        <translation>Use o OpenSSL(https) para conexões JSON-RPC</translation>
     </message>
     <message>
         <source>Use UPnP to map the listening port (default: %u)</source>

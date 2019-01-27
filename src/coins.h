@@ -71,8 +71,7 @@
  *              * 8c988f1a4a4de2161e0f50aac7f17e7f9555caa4: address uint160
  *  - height = 120891
  */
-class CCoins
-{
+class CCoins {
 public:
     //! whether transaction is a coinbase
     bool fCoinBase;
@@ -88,8 +87,7 @@ public:
     //! as new tx version will probably only be introduced at certain heights
     int nVersion;
 
-    void FromTx(const CTransaction& tx, int nHeightIn)
-    {
+    void FromTx(const CTransaction& tx, int nHeightIn) {
         fCoinBase = tx.IsCoinBase();
         fCoinStake = tx.IsCoinStake();
         vout = tx.vout;
@@ -99,13 +97,11 @@ public:
     }
 
     //! construct a CCoins from a CTransaction, at a given height
-    CCoins(const CTransaction& tx, int nHeightIn)
-    {
+    CCoins(const CTransaction& tx, int nHeightIn) {
         FromTx(tx, nHeightIn);
     }
 
-    void Clear()
-    {
+    void Clear() {
         fCoinBase = false;
         fCoinStake = false;
         std::vector<CTxOut>().swap(vout);
@@ -117,16 +113,14 @@ public:
     CCoins() : fCoinBase(false), fCoinStake(false), vout(0), nHeight(0), nVersion(0) {}
 
     //!remove spent outputs at the end of vout
-    void Cleanup()
-    {
+    void Cleanup() {
         while (vout.size() > 0 && vout.back().IsNull())
             vout.pop_back();
         if (vout.empty())
             std::vector<CTxOut>().swap(vout);
     }
 
-    void ClearUnspendable()
-    {
+    void ClearUnspendable() {
         BOOST_FOREACH (CTxOut& txout, vout) {
             if (txout.scriptPubKey.IsUnspendable())
                 txout.SetNull();
@@ -134,8 +128,7 @@ public:
         Cleanup();
     }
 
-    void swap(CCoins& to)
-    {
+    void swap(CCoins& to) {
         std::swap(to.fCoinBase, fCoinBase);
         std::swap(to.fCoinStake, fCoinStake);
         to.vout.swap(vout);
@@ -144,8 +137,7 @@ public:
     }
 
     //! equality test
-    friend bool operator==(const CCoins& a, const CCoins& b)
-    {
+    friend bool operator==(const CCoins& a, const CCoins& b) {
         // Empty CCoins objects are always equal.
         if (a.IsPruned() && b.IsPruned())
             return true;
@@ -155,25 +147,21 @@ public:
                a.nVersion == b.nVersion &&
                a.vout == b.vout;
     }
-    friend bool operator!=(const CCoins& a, const CCoins& b)
-    {
+    friend bool operator!=(const CCoins& a, const CCoins& b) {
         return !(a == b);
     }
 
     void CalcMaskSize(unsigned int& nBytes, unsigned int& nNonzeroBytes) const;
 
-    bool IsCoinBase() const
-    {
+    bool IsCoinBase() const {
         return fCoinBase;
     }
 
-    bool IsCoinStake() const
-    {
+    bool IsCoinStake() const {
         return fCoinStake;
     }
 
-    unsigned int GetSerializeSize(int nType, int nVersion) const
-    {
+    unsigned int GetSerializeSize(int nType, int nVersion) const {
         unsigned int nSize = 0;
         unsigned int nMaskSize = 0, nMaskCode = 0;
         CalcMaskSize(nMaskSize, nMaskCode);
@@ -197,8 +185,7 @@ public:
     }
 
     template <typename Stream>
-    void Serialize(Stream& s, int nType, int nVersion) const
-    {
+    void Serialize(Stream& s, int nType, int nVersion) const {
         unsigned int nMaskSize = 0, nMaskCode = 0;
         CalcMaskSize(nMaskSize, nMaskCode);
         bool fFirst = vout.size() > 0 && !vout[0].IsNull();
@@ -227,8 +214,7 @@ public:
     }
 
     template <typename Stream>
-    void Unserialize(Stream& s, int nType, int nVersion)
-    {
+    void Unserialize(Stream& s, int nType, int nVersion) {
         unsigned int nCode = 0;
         // version
         ::Unserialize(s, VARINT(this->nVersion), nType, nVersion);
@@ -269,24 +255,21 @@ public:
     bool Spend(int nPos);
 
     //! check whether a particular output is still available
-    bool IsAvailable(unsigned int nPos) const
-    {
-        return (nPos < vout.size() && !vout[nPos].IsNull());
+    bool IsAvailable(unsigned int nPos) const {
+        return (nPos < vout.size() && !vout[nPos].IsNull() && !vout[nPos].scriptPubKey.IsZerocoinMint());
     }
 
     //! check whether the entire CCoins is spent
     //! note that only !IsPruned() CCoins can be serialized
-    bool IsPruned() const
-    {
-        BOOST_FOREACH (const CTxOut& out, vout)
-            if (!out.IsNull())
-                return false;
+    bool IsPruned() const {
+        BOOST_FOREACH(const CTxOut& out, vout) {
+            if (!out.IsNull()) return false;
+        }
         return true;
     }
 };
 
-class CCoinsKeyHasher
-{
+class CCoinsKeyHasher {
 private:
     uint256 salt;
 
@@ -298,8 +281,7 @@ public:
      * unordered_map will behave unpredictably if the custom hasher returns a
      * uint64_t, resulting in failures when syncing the chain (#4634).
      */
-    size_t operator()(const uint256& key) const
-    {
+    size_t operator()(const uint256& key) const {
         return key.GetHash(salt);
     }
 };
@@ -332,8 +314,7 @@ struct CCoinsStats {
 
 
 /** Abstract view on the open txout dataset. */
-class CCoinsView
-{
+class CCoinsView {
 public:
     //! Retrieve the CCoins (unspent transaction outputs) for a given txid
     virtual bool GetCoins(const uint256& txid, CCoins& coins) const;
@@ -358,8 +339,7 @@ public:
 
 
 /** CCoinsView backed by another CCoinsView */
-class CCoinsViewBacked : public CCoinsView
-{
+class CCoinsViewBacked : public CCoinsView {
 protected:
     CCoinsView* base;
 
@@ -393,23 +373,25 @@ static const unsigned int STANDARD_LOCKTIME_VERIFY_FLAGS = LOCKTIME_VERIFY_SEQUE
  *  cleanup code after the modification is finished, and keeping track of
  *  concurrent modifications. 
  */
-class CCoinsModifier
-{
+class CCoinsModifier {
 private:
     CCoinsViewCache& cache;
     CCoinsMap::iterator it;
     CCoinsModifier(CCoinsViewCache& cache_, CCoinsMap::iterator it_);
 
 public:
-    CCoins* operator->() { return &it->second.coins; }
-    CCoins& operator*() { return it->second.coins; }
+    CCoins* operator->() {
+        return &it->second.coins;
+    }
+    CCoins& operator*() {
+        return it->second.coins;
+    }
     ~CCoinsModifier();
     friend class CCoinsViewCache;
 };
 
 /** CCoinsView that adds a memory cache for transactions to another CCoinsView */
-class CCoinsViewCache : public CCoinsViewBacked
-{
+class CCoinsViewCache : public CCoinsViewBacked {
 protected:
     /* Whether this cache has an active modifier. */
     bool hasModifier;

@@ -12,8 +12,7 @@
 namespace {
 
 /** A class that deserializes a single CTransaction one time. */
-class TxInputStream
-{
+class TxInputStream {
 public:
     TxInputStream(int nTypeIn, int nVersionIn, const unsigned char *txTo, size_t txToLen) :
     m_type(nTypeIn),
@@ -22,8 +21,7 @@ public:
     m_remaining(txToLen)
     {}
 
-    TxInputStream& read(char* pch, size_t nSize)
-    {
+    TxInputStream& read(char* pch, size_t nSize) {
         if (nSize > m_remaining)
             throw std::ios_base::failure(std::string(__func__) + ": end of data");
 
@@ -40,8 +38,7 @@ public:
     }
 
     template<typename T>
-    TxInputStream& operator>>(T& obj)
-    {
+    TxInputStream& operator>>(T& obj) {
         ::Unserialize(*this, obj, m_type, m_version);
         return *this;
     }
@@ -53,8 +50,7 @@ private:
     size_t m_remaining;
 };
 
-inline int set_error(bitcoinconsensus_error* ret, bitcoinconsensus_error serror)
-{
+inline int set_error(bitcoinconsensus_error* ret, bitcoinconsensus_error serror) {
     if (ret)
         *ret = serror;
     return 0;
@@ -64,8 +60,7 @@ inline int set_error(bitcoinconsensus_error* ret, bitcoinconsensus_error serror)
 
 int bitcoinconsensus_verify_script(const unsigned char *scriptPubKey, unsigned int scriptPubKeyLen,
                                     const unsigned char *txTo        , unsigned int txToLen,
-                                    unsigned int nIn, unsigned int flags, bitcoinconsensus_error* err)
-{
+                                   unsigned int nIn, unsigned int flags, bitcoinconsensus_error* err) {
     try {
         TxInputStream stream(SER_NETWORK, PROTOCOL_VERSION, txTo, txToLen);
         CTransaction tx;
@@ -84,8 +79,7 @@ int bitcoinconsensus_verify_script(const unsigned char *scriptPubKey, unsigned i
     }
 }
 
-unsigned int bitcoinconsensus_version()
-{
+unsigned int bitcoinconsensus_version() {
     // Just use the API version for now
     return BITCOINCONSENSUS_API_VER;
 }

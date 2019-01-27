@@ -26,8 +26,7 @@
  * (4) size.
  * (4) checksum.
  */
-class CMessageHeader
-{
+class CMessageHeader {
 public:
     CMessageHeader();
     CMessageHeader(const char* pszCommand, unsigned int nMessageSizeIn);
@@ -38,8 +37,7 @@ public:
     ADD_SERIALIZE_METHODS;
 
     template <typename Stream, typename Operation>
-    inline void SerializationOp(Stream& s, Operation ser_action, int nType, int nVersion)
-    {
+    inline void SerializationOp(Stream& s, Operation ser_action, int nType, int nVersion) {
         READWRITE(FLATDATA(pchMessageStart));
         READWRITE(FLATDATA(pchCommand));
         READWRITE(nMessageSize);
@@ -83,8 +81,7 @@ NODE_BLOOM_WITHOUT_MN = (1 << 4),
 };
 
 /** A CService with information about it as peer */
-class CAddress : public CService
-{
+class CAddress : public CService {
 public:
     CAddress();
     explicit CAddress(CService ipIn, uint64_t nServicesIn = NODE_NETWORK);
@@ -94,8 +91,7 @@ public:
     ADD_SERIALIZE_METHODS;
 
     template <typename Stream, typename Operation>
-    inline void SerializationOp(Stream& s, Operation ser_action, int nType, int nVersion)
-    {
+    inline void SerializationOp(Stream& s, Operation ser_action, int nType, int nVersion) {
         if (ser_action.ForRead())
             Init();
         if (nType & SER_DISK)
@@ -119,8 +115,7 @@ public:
 };
 
 /** inv message data */
-class CInv
-{
+class CInv {
 public:
     CInv();
     CInv(int typeIn, const uint256& hashIn);
@@ -129,8 +124,7 @@ public:
     ADD_SERIALIZE_METHODS;
 
     template <typename Stream, typename Operation>
-    inline void SerializationOp(Stream& s, Operation ser_action, int nType, int nVersion)
-    {
+    inline void SerializationOp(Stream& s, Operation ser_action, int nType, int nVersion) {
         READWRITE(type);
         READWRITE(hash);
     }

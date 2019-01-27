@@ -10,7 +10,7 @@
         <translation>Vytvoriť novú adresu</translation>
     </message>
     <message>
-        <source>&amp;New</source>
+        <source>New</source>
         <translation>Nový</translation>
     </message>
     <message>
@@ -18,7 +18,7 @@
         <translation>Skopírovať označenú adresu do schránky</translation>
     </message>
     <message>
-        <source>&amp;Copy</source>
+        <source>Copy</source>
         <translation>Kopírovať</translation>
     </message>
     <message>
@@ -26,7 +26,7 @@
         <translation>Vymazať označenú adresu zo zoznamu</translation>
     </message>
     <message>
-        <source>&amp;Delete</source>
+        <source>Delete</source>
         <translation>Vymazať</translation>
     </message>
     <message>
@@ -34,11 +34,11 @@
         <translation>Exportovať údaje na aktuálnej karte do súboru</translation>
     </message>
     <message>
-        <source>&amp;Export</source>
+        <source>Export</source>
         <translation>Exportovať</translation>
     </message>
     <message>
-        <source>C&amp;lose</source>
+        <source>Close</source>
         <translation>Zatvoriť</translation>
     </message>
     <message>
@@ -50,7 +50,7 @@
         <translation>Vyberte adresu, na ktorej chcete mince prijať</translation>
     </message>
     <message>
-        <source>C&amp;hoose</source>
+        <source>Choose</source>
         <translation>Vybrať</translation>
     </message>
     <message>
@@ -70,15 +70,15 @@
         <translation>Toto sú vaše FantasyGold adresy na prijímanie platieb. Pre každú transakciu sa odporúča použiť novú prijímaciu adresu.</translation>
     </message>
     <message>
-        <source>&amp;Copy Address</source>
+        <source>Copy Address</source>
         <translation>Skopírovať adresu</translation>
     </message>
     <message>
-        <source>Copy &amp;Label</source>
+        <source>Copy Label</source>
         <translation>Skopírovať štítok</translation>
     </message>
     <message>
-        <source>&amp;Edit</source>
+        <source>Edit</source>
         <translation>Editovať</translation>
     </message>
     <message>
@@ -136,10 +136,6 @@
         <translation>Slúži na zakázanie obyčajného odoslania peňazí, v prípade, že bol OS účet kompromitovaný. Neposkytuje žiadnu skutočnú bezpečnosť.</translation>
     </message>
     <message>
-        <source>For anonymization and staking only</source>
-        <translation>Len pre anonymizáciu a staking</translation>
-    </message>
-    <message>
         <source>Enter the new passphrase to the wallet.&lt;br/&gt;Please use a passphrase of &lt;b&gt;ten or more random characters&lt;/b&gt;, or &lt;b&gt;eight or more words&lt;/b&gt;.</source>
         <translation>Zadajte novú prístupovú frázu do peňaženky. &lt;br/&gt; Použite prístupovú frázu &lt;b&gt;, ktorá má desať alebo viac náhodných znakov &lt;/ b&gt; alebo &lt;b&gt; osem alebo viac slov &lt;/ b&gt;.</translation>
     </message>
@@ -176,16 +172,16 @@
         <translation>Potvrďte šifrovanie peňaženky</translation>
     </message>
     <message>
-        <source>FantasyGold will close now to finish the encryption process. Remember that encrypting your wallet cannot fully protect your FGCs from being stolen by malware infecting your computer.</source>
-        <translation>FantasyGold sa teraz ukončí, aby dokončil proces šifrovania. Nezabudnite, že šifrovanie peňaženky nemôže úplne ochrániť vaše FGCpred odcudzením škodlivým softvérom, ktorý infikuje váš počítač.</translation>
+        <source>FantasyGold will close now to finish the encryption process. Remember that encrypting your wallet cannot fully protect your FGCS from being stolen by malware infecting your computer.</source>
+        <translation>FantasyGold sa teraz ukončí, aby dokončil proces šifrovania. Nezabudnite, že šifrovanie peňaženky nemôže úplne ochrániť vaše FantasyGold pred odcudzením škodlivým softvérom, ktorý infikuje váš počítač.</translation>
     </message>
     <message>
         <source>Are you sure you wish to encrypt your wallet?</source>
         <translation>Naozaj chcete zašifrovať svoju peňaženku?</translation>
     </message>
     <message>
-        <source>Warning: If you encrypt your wallet and lose your passphrase, you will &lt;b&gt;LOSE ALL OF YOUR FGC&lt;/b&gt;!</source>
-        <translation>Upozornenie: Ak zašifrujete svoju peňaženku a stratíte svoju prístupovú frázu, &lt;b&gt; PRÍDETE O VŠETKY FGC&lt;/ b&gt;!</translation>
+        <source>Warning: If you encrypt your wallet and lose your passphrase, you will &lt;b&gt;LOSE ALL OF YOUR FantasyGold&lt;/b&gt;!</source>
+        <translation>Upozornenie: Ak zašifrujete svoju peňaženku a stratíte svoju prístupovú frázu, &lt;b&gt; PRÍDETE O VŠETKY FantasyGold &lt;/ b&gt;!</translation>
     </message>
     <message>
         <source>Wallet encrypted</source>
@@ -229,26 +225,21 @@
     </message>
 </context>
 <context>
+    <name>BanTableModel</name>
+    </context>
+<context>
     <name>Bip38ToolDialog</name>
     <message>
         <source>BIP 38 Tool</source>
         <translation>BIP 38 Utilita</translation>
     </message>
     <message>
-        <source>&amp;BIP 38 Encrypt</source>
+        <source>BIP 38 Encrypt</source>
         <translation>BIP 38 Šifrovanie</translation>
-    </message>
-    <message>
-        <source>Enter a FantasyGold Address that you would like to encrypt using BIP 38. Enter a passphrase in the middle box. Press encrypt to compute the encrypted private key.</source>
-        <translation>Zadajte adresu FantasyGold, ktorú chcete zašifrovať pomocou BIP 38. Zadajte prístupovú frázu do stredného poľa. Stlačte šifrovanie na výpočet šifrovaného privátneho kľúča.</translation>
     </message>
     <message>
         <source>Address:</source>
         <translation>Adresa:</translation>
-    </message>
-    <message>
-        <source>The FantasyGold address to sign the message with</source>
-        <translation>Adresa FantasyGold, ktorou chcete správu podpísať</translation>
     </message>
     <message>
         <source>Choose previously used address</source>
@@ -279,23 +270,15 @@
         <translation>Skopírujte aktuálny podpis do schránky</translation>
     </message>
     <message>
-        <source>Sign the message to prove you own this FantasyGold address</source>
-        <translation>Podpíšte správu, aby ste preukázali, že ste vlastníkom tejto FantasyGold adresy</translation>
-    </message>
-    <message>
-        <source>Encrypt &amp;Key</source>
+        <source>Encrypt Key</source>
         <translation>Zašifrovať kľúč</translation>
     </message>
     <message>
-        <source>Reset all sign message fields</source>
-        <translation>Zmazať všetky polia správy</translation>
-    </message>
-    <message>
-        <source>Clear &amp;All</source>
+        <source>Clear All</source>
         <translation>Všetko zmazať</translation>
     </message>
     <message>
-        <source>&amp;BIP 38 Decrypt</source>
+        <source>BIP 38 Decrypt</source>
         <translation>BIP 38 dešifrovanie</translation>
     </message>
     <message>
@@ -303,20 +286,8 @@
         <translation>Zadajte súkromný kľúč zašifrovaný BIP 38. Zadajte prístupovú frázu do stredného poľa. Kliknite na Dešifrovať kľúč, ak chcete vypočítať privátny kľúč. Po dešifrovaní kľúča pridáte do peňaženky tento súkromný kľúč kliknutím na položku 'Importovať adresu'.</translation>
     </message>
     <message>
-        <source>The FantasyGold address the message was signed with</source>
-        <translation>FantasyGold adresa, ktorou bola správa podpísaná</translation>
-    </message>
-    <message>
-        <source>Verify the message to ensure it was signed with the specified FantasyGold address</source>
-        <translation>Skontrolujte správu, aby ste sa uistili, že bola podpísaná zadanou FantasyGold adresou</translation>
-    </message>
-    <message>
-        <source>Decrypt &amp;Key</source>
+        <source>Decrypt Key</source>
         <translation>Dešifrovať kľúč</translation>
-    </message>
-    <message>
-        <source>Reset all verify message fields</source>
-        <translation>Zmazať všetky polia verifikácie správy</translation>
     </message>
     <message>
         <source>Decrypted Key:</source>
@@ -402,7 +373,7 @@
         <translation>Uzol</translation>
     </message>
     <message>
-        <source>&amp;Overview</source>
+        <source>Overview</source>
         <translation>Prehľad</translation>
     </message>
     <message>
@@ -410,15 +381,15 @@
         <translation>Zobraziť všeobecný prehľad peňaženky</translation>
     </message>
     <message>
-        <source>&amp;Send</source>
+        <source>Send</source>
         <translation>Odoslať</translation>
     </message>
     <message>
-        <source>&amp;Receive</source>
+        <source>Receive</source>
         <translation>Prijať</translation>
     </message>
     <message>
-        <source>&amp;Transactions</source>
+        <source>Transactions</source>
         <translation>Transakcie</translation>
     </message>
     <message>
@@ -426,7 +397,7 @@
         <translation>Prezrieť históriu transakcií</translation>
     </message>
     <message>
-        <source>E&amp;xit</source>
+        <source>Exit</source>
         <translation>Koniec</translation>
     </message>
     <message>
@@ -434,7 +405,7 @@
         <translation>Ukončiť aplikáciu</translation>
     </message>
     <message>
-        <source>About &amp;Qt</source>
+        <source>About Qt</source>
         <translation>O aplikácii</translation>
     </message>
     <message>
@@ -442,11 +413,11 @@
         <translation>Zobraziť informácie o Qt</translation>
     </message>
     <message>
-        <source>&amp;Options...</source>
+        <source>Options...</source>
         <translation>Možnosti...</translation>
     </message>
     <message>
-        <source>&amp;Show / Hide</source>
+        <source>Show / Hide</source>
         <translation>Zobraziť / Skryť</translation>
     </message>
     <message>
@@ -454,7 +425,7 @@
         <translation>Zobraziť alebo skryť hlavné okno</translation>
     </message>
     <message>
-        <source>&amp;Encrypt Wallet...</source>
+        <source>Encrypt Wallet...</source>
         <translation>Šifrovať peňaženku...</translation>
     </message>
     <message>
@@ -462,7 +433,7 @@
         <translation>Šifrujte súkromné kľúče, ktoré patria Vašej peňaženke</translation>
     </message>
     <message>
-        <source>&amp;Backup Wallet...</source>
+        <source>Backup Wallet...</source>
         <translation>Zálohovať peňaženku...</translation>
     </message>
     <message>
@@ -470,7 +441,7 @@
         <translation>Zálohovať peňaženku na iné miesto</translation>
     </message>
     <message>
-        <source>&amp;Change Passphrase...</source>
+        <source>Change Passphrase...</source>
         <translation>Zmeniť prístupovú frázu...</translation>
     </message>
     <message>
@@ -478,7 +449,7 @@
         <translation>Zmeniť prístupovú frázu, ktorá bola použitá na šifrovanie peňaženky</translation>
     </message>
     <message>
-        <source>&amp;Unlock Wallet...</source>
+        <source>Unlock Wallet...</source>
         <translation>Odomknúť peňaženku...</translation>
     </message>
     <message>
@@ -486,19 +457,19 @@
         <translation>Odomknúť peňaženku</translation>
     </message>
     <message>
-        <source>&amp;Lock Wallet</source>
+        <source>Lock Wallet</source>
         <translation>Zamknúť peňaženku</translation>
     </message>
     <message>
-        <source>Sign &amp;message...</source>
+        <source>Sign message...</source>
         <translation>Podpísať správu...</translation>
     </message>
     <message>
-        <source>&amp;Verify message...</source>
+        <source>Verify message...</source>
         <translation>Overiť správu...</translation>
     </message>
     <message>
-        <source>&amp;Information</source>
+        <source>Information</source>
         <translation>Informácie</translation>
     </message>
     <message>
@@ -506,7 +477,7 @@
         <translation>Zobraziť diagnostické informácie</translation>
     </message>
     <message>
-        <source>&amp;Debug console</source>
+        <source>Debug console</source>
         <translation>Debugovacia konzola</translation>
     </message>
     <message>
@@ -514,7 +485,7 @@
         <translation>Otvoriť debugovaciu konzola</translation>
     </message>
     <message>
-        <source>&amp;Network Monitor</source>
+        <source>Network Monitor</source>
         <translation>Monitor siete</translation>
     </message>
     <message>
@@ -522,7 +493,7 @@
         <translation>Zobraziť monitor siete</translation>
     </message>
     <message>
-        <source>&amp;Peers list</source>
+        <source>Peers list</source>
         <translation>Zoznam uzlov</translation>
     </message>
     <message>
@@ -530,7 +501,7 @@
         <translation>Zobraziť informácie o uzloch</translation>
     </message>
     <message>
-        <source>Wallet &amp;Repair</source>
+        <source>Wallet Repair</source>
         <translation>Oprava peňaženky</translation>
     </message>
     <message>
@@ -542,7 +513,7 @@
         <translation>Otvoriť konfiguračný súbor</translation>
     </message>
     <message>
-        <source>Show Automatic &amp;Backups</source>
+        <source>Show Automatic Backups</source>
         <translation>Zobraziť automatické zálohy</translation>
     </message>
     <message>
@@ -550,7 +521,7 @@
         <translation>Zobraziť automaticky vytvorené zálohy peňaženky</translation>
     </message>
     <message>
-        <source>&amp;Sending addresses...</source>
+        <source>Sending addresses...</source>
         <translation>Odosielacie adresy</translation>
     </message>
     <message>
@@ -558,7 +529,7 @@
         <translation>Zobraziť zoznam použitých odosielajúcich adries a štítkov</translation>
     </message>
     <message>
-        <source>&amp;Receiving addresses...</source>
+        <source>Receiving addresses...</source>
         <translation>Prijímacie adresy...</translation>
     </message>
     <message>
@@ -566,11 +537,11 @@
         <translation>Zobraziť zoznam použitých odosielajúcich adries a štítkov</translation>
     </message>
     <message>
-        <source>Open &amp;URI...</source>
+        <source>Open URI...</source>
         <translation>Otvoriť URI...</translation>
     </message>
     <message>
-        <source>&amp;Command-line options</source>
+        <source>Command-line options</source>
         <translation>Možnosti príkazového riadku</translation>
     </message>
     <message>
@@ -578,19 +549,19 @@
         <translation>Synchronizácia dodatočných údajov: %p%</translation>
     </message>
     <message>
-        <source>&amp;File</source>
+        <source>File</source>
         <translation>Súbor</translation>
     </message>
     <message>
-        <source>&amp;Settings</source>
+        <source>Settings</source>
         <translation>Nastavenia</translation>
     </message>
     <message>
-        <source>&amp;Tools</source>
+        <source>Tools</source>
         <translation>Nástroje</translation>
     </message>
     <message>
-        <source>&amp;Help</source>
+        <source>Help</source>
         <translation>Pomoc</translation>
     </message>
     <message>
@@ -606,19 +577,19 @@
         <translation>Odoslať mince na adresu FantasyGold</translation>
     </message>
     <message>
-        <source>Request payments (generates QR codes and fantasygold: URIs)</source>
-        <translation>Vyžiadať platby (generuje QR kódy a fantasygold: identifikátory URI)</translation>
+        <source>Request payments (generates QR codes and FantasyGold: URIs)</source>
+        <translation>Vyžiadať platby (generuje QR kódy a FantasyGold: identifikátory URI)</translation>
     </message>
     <message>
-        <source>&amp;Masternodes</source>
-        <translation>&amp;Masternodes</translation>
+        <source>Masternodes</source>
+        <translation>Masternodes</translation>
     </message>
     <message>
         <source>Browse masternodes</source>
         <translation>Prezrieť masternody</translation>
     </message>
     <message>
-        <source>&amp;About FantasyGold Core</source>
+        <source>About FantasyGold Core</source>
         <translation>O FantasyGold Core</translation>
     </message>
     <message>
@@ -638,7 +609,7 @@
         <translation>Overte správy, aby sa zabezpečilo, že boli podpísané zadanými FantasyGold adresami</translation>
     </message>
     <message>
-        <source>&amp;BIP38 tool</source>
+        <source>BIP38 tool</source>
         <translation>BIP 38 Utilita</translation>
     </message>
     <message>
@@ -646,19 +617,19 @@
         <translation>Šifrovať a dešifrovať privátne kľúče pomocou prístupovej frázy</translation>
     </message>
     <message>
-        <source>&amp;MultiSend</source>
-        <translation>&amp;MultiSend</translation>
+        <source>MultiSend</source>
+        <translation>MultiSend</translation>
     </message>
     <message>
         <source>MultiSend Settings</source>
         <translation>MultiSend Nastavenia</translation>
     </message>
     <message>
-        <source>Open Wallet &amp;Configuration File</source>
+        <source>Open Wallet Configuration File</source>
         <translation>Otvoriť konfiguračný súbor peňaženky</translation>
     </message>
     <message>
-        <source>Open &amp;Masternode Configuration File</source>
+        <source>Open Masternode Configuration File</source>
         <translation>Otvoriť konfiguračný súbor masternodu</translation>
     </message>
     <message>
@@ -670,7 +641,7 @@
         <translation>Otvorte FantasyGold: URI alebo žiadosť o platbu</translation>
     </message>
     <message>
-        <source>&amp;Blockchain explorer</source>
+        <source>Blockchain explorer</source>
         <translation>Blockchain prehliadač</translation>
     </message>
     <message>
@@ -708,10 +679,6 @@
     <message>
         <source>%1 and %2</source>
         <translation>%1 a %2</translation>
-    </message>
-    <message>
-        <source>%1 behind</source>
-        <translation>%1 pozadu</translation>
     </message>
     <message>
         <source>Catching up...</source>
@@ -786,10 +753,6 @@ MultiSend: %1</translation>
         <translation>Peňaženka je &lt;b&gt;zašifrovaná&lt;/ b&gt; a momentálne je &lt;b&gt;odomknutá&lt;/ b&gt;</translation>
     </message>
     <message>
-        <source>Wallet is &lt;b&gt;encrypted&lt;/b&gt; and currently &lt;b&gt;unlocked&lt;/b&gt; for anonimization and staking only</source>
-        <translation>Peňaženka je &lt;b&gt;zašifrovaná&lt;/ b&gt; a momentálne &lt;b&gt;odomknutá&lt;/ b&gt; iba na anonymizáciu a staking</translation>
-    </message>
-    <message>
         <source>Wallet is &lt;b&gt;encrypted&lt;/b&gt; and currently &lt;b&gt;locked&lt;/b&gt;</source>
         <translation>Peňaženka je &lt;b&gt;zašifrovaná&lt;/ b&gt; a momentálne je &lt;b&gt;zamknutá&lt;/ b&gt;</translation>
     </message>
@@ -819,10 +782,6 @@ MultiSend: %1</translation>
 </context>
 <context>
     <name>ClientModel</name>
-    <message>
-        <source>Total: %1 (OBF compatible: %2 / Enabled: %3)</source>
-        <translation>Sumár: %1 (OBF kompatibilné: %2 / Zapnuté: %3)</translation>
-    </message>
     <message>
         <source>Network Alert</source>
         <translation>Upozornenie siete </translation>
@@ -944,6 +903,17 @@ MultiSend: %1</translation>
         <source>Address:</source>
         <translation>Adresa:</translation>
     </message>
+    <message>
+        <source>(no label)</source>
+        <translation>(žiaden štítok)</translation>
+    </message>
+    </context>
+<context>
+    <name>MultisigDialog</name>
+    <message>
+        <source>Amount:</source>
+        <translation>Suma:</translation>
+    </message>
     </context>
 <context>
     <name>ObfuscationConfig</name>
@@ -964,6 +934,57 @@ MultiSend: %1</translation>
     <name>PeerTableModel</name>
     </context>
 <context>
+    <name>PrivacyDialog</name>
+    <message>
+        <source>Quantity:</source>
+        <translation>Množstvo:</translation>
+    </message>
+    <message>
+        <source>Amount:</source>
+        <translation>Suma:</translation>
+    </message>
+    <message>
+        <source>Choose previously used address</source>
+        <translation>Vyberte predtým použitú adresu</translation>
+    </message>
+    <message>
+        <source>Alt+A</source>
+        <translation>Alt+A</translation>
+    </message>
+    <message>
+        <source>Paste address from clipboard</source>
+        <translation>Vložte adresu zo schránky</translation>
+    </message>
+    <message>
+        <source>Alt+P</source>
+        <translation>Alt+P</translation>
+    </message>
+    <message>
+        <source>Priority:</source>
+        <translation>Priorita:</translation>
+    </message>
+    <message>
+        <source>TextLabel</source>
+        <translation>TextLabel</translation>
+    </message>
+    <message>
+        <source>Fee:</source>
+        <translation>Poplatok:</translation>
+    </message>
+    <message>
+        <source>Bytes:</source>
+        <translation>Bytov:</translation>
+    </message>
+    <message>
+        <source>Change:</source>
+        <translation>Zmena:</translation>
+    </message>
+    <message>
+        <source>Copy amount</source>
+        <translation>Skopírovať sumu</translation>
+    </message>
+    </context>
+<context>
     <name>QObject</name>
     <message>
         <source>Amount</source>
@@ -976,7 +997,7 @@ MultiSend: %1</translation>
 <context>
     <name>RPCConsole</name>
     <message>
-        <source>&amp;Information</source>
+        <source>Information</source>
         <translation>Informácie</translation>
     </message>
     </context>
@@ -1056,7 +1077,7 @@ MultiSend: %1</translation>
         <translation>Zmena:</translation>
     </message>
     <message>
-        <source>Clear &amp;All</source>
+        <source>Clear All</source>
         <translation>Všetko zmazať</translation>
     </message>
     <message>
@@ -1133,7 +1154,7 @@ MultiSend: %1</translation>
         <translation>Zmazať všetky polia správy</translation>
     </message>
     <message>
-        <source>Clear &amp;All</source>
+        <source>Clear All</source>
         <translation>Všetko zmazať</translation>
     </message>
     <message>
@@ -1251,13 +1272,16 @@ MultiSend: %1</translation>
 <context>
     <name>WalletView</name>
     <message>
-        <source>&amp;Export</source>
+        <source>Export</source>
         <translation>Exportovať</translation>
     </message>
     <message>
         <source>Export the data in the current tab to a file</source>
         <translation>Exportovať údaje na aktuálnej karte do súboru</translation>
     </message>
+    </context>
+<context>
+    <name>zFGCControlDialog</name>
     </context>
 <context>
     <name>fantasygold-core</name>

@@ -24,8 +24,7 @@ enum ChangeType {
 };
 
 /** Signals for UI communication. */
-class CClientUIInterface
-{
+class CClientUIInterface {
 public:
     /** Flags for CClientUIInterface::ThreadSafeMessageBox */
     enum MessageBoxFlags {
@@ -101,6 +100,9 @@ public:
 
     /** New block has been accepted */
     boost::signals2::signal<void(const uint256& hash)> NotifyBlockTip;
+
+    /** Banlist did change. */
+    boost::signals2::signal<void(void)> BannedListChanged;
 };
 
 extern CClientUIInterface uiInterface;
@@ -109,8 +111,7 @@ extern CClientUIInterface uiInterface;
  * Translation function: Call Translate signal on UI interface, which returns a boost::optional result.
  * If no translation slot is registered, nothing is returned, and simply return the input.
  */
-inline std::string _(const char* psz)
-{
+inline std::string _(const char* psz) {
     boost::optional<std::string> rv = uiInterface.Translate(psz);
     return rv ? (*rv) : psz;
 }

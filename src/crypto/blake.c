@@ -789,8 +789,7 @@ static const sph_u32 salt_zero_small[4] = { 0, 0, 0, 0 };
 
 static void
 blake32_init(sph_blake_small_context *sc,
-	const sph_u32 *iv, const sph_u32 *salt)
-{
+             const sph_u32 *iv, const sph_u32 *salt) {
 	memcpy(sc->H, iv, 8 * sizeof(sph_u32));
 	memcpy(sc->S, salt, 4 * sizeof(sph_u32));
 	sc->T0 = sc->T1 = 0;
@@ -798,8 +797,7 @@ blake32_init(sph_blake_small_context *sc,
 }
 
 static void
-blake32(sph_blake_small_context *sc, const void *data, size_t len)
-{
+blake32(sph_blake_small_context *sc, const void *data, size_t len) {
 	unsigned char *buf;
 	size_t ptr;
 	DECL_STATE32
@@ -837,8 +835,7 @@ blake32(sph_blake_small_context *sc, const void *data, size_t len)
 
 static void
 blake32_close(sph_blake_small_context *sc,
-	unsigned ub, unsigned n, void *dst, size_t out_size_w32)
-{
+              unsigned ub, unsigned n, void *dst, size_t out_size_w32) {
 	union {
 		unsigned char buf[64];
 		sph_u32 dummy;
@@ -894,8 +891,7 @@ static const sph_u64 salt_zero_big[4] = { 0, 0, 0, 0 };
 
 static void
 blake64_init(sph_blake_big_context *sc,
-	const sph_u64 *iv, const sph_u64 *salt)
-{
+             const sph_u64 *iv, const sph_u64 *salt) {
 	memcpy(sc->H, iv, 8 * sizeof(sph_u64));
 	memcpy(sc->S, salt, 4 * sizeof(sph_u64));
 	sc->T0 = sc->T1 = 0;
@@ -903,8 +899,7 @@ blake64_init(sph_blake_big_context *sc,
 }
 
 static void
-blake64(sph_blake_big_context *sc, const void *data, size_t len)
-{
+blake64(sph_blake_big_context *sc, const void *data, size_t len) {
 	unsigned char *buf;
 	size_t ptr;
 	DECL_STATE64
@@ -942,8 +937,7 @@ blake64(sph_blake_big_context *sc, const void *data, size_t len)
 
 static void
 blake64_close(sph_blake_big_context *sc,
-	unsigned ub, unsigned n, void *dst, size_t out_size_w64)
-{
+              unsigned ub, unsigned n, void *dst, size_t out_size_w64) {
 	union {
 		unsigned char buf[128];
 		sph_u64 dummy;
@@ -997,58 +991,50 @@ blake64_close(sph_blake_big_context *sc,
 
 /* see sph_blake.h */
 void
-sph_blake224_init(void *cc)
-{
+sph_blake224_init(void *cc) {
 	blake32_init(cc, IV224, salt_zero_small);
 }
 
 /* see sph_blake.h */
 void
-sph_blake224(void *cc, const void *data, size_t len)
-{
+sph_blake224(void *cc, const void *data, size_t len) {
 	blake32(cc, data, len);
 }
 
 /* see sph_blake.h */
 void
-sph_blake224_close(void *cc, void *dst)
-{
+sph_blake224_close(void *cc, void *dst) {
 	sph_blake224_addbits_and_close(cc, 0, 0, dst);
 }
 
 /* see sph_blake.h */
 void
-sph_blake224_addbits_and_close(void *cc, unsigned ub, unsigned n, void *dst)
-{
+sph_blake224_addbits_and_close(void *cc, unsigned ub, unsigned n, void *dst) {
 	blake32_close(cc, ub, n, dst, 7);
 	sph_blake224_init(cc);
 }
 
 /* see sph_blake.h */
 void
-sph_blake256_init(void *cc)
-{
+sph_blake256_init(void *cc) {
 	blake32_init(cc, IV256, salt_zero_small);
 }
 
 /* see sph_blake.h */
 void
-sph_blake256(void *cc, const void *data, size_t len)
-{
+sph_blake256(void *cc, const void *data, size_t len) {
 	blake32(cc, data, len);
 }
 
 /* see sph_blake.h */
 void
-sph_blake256_close(void *cc, void *dst)
-{
+sph_blake256_close(void *cc, void *dst) {
 	sph_blake256_addbits_and_close(cc, 0, 0, dst);
 }
 
 /* see sph_blake.h */
 void
-sph_blake256_addbits_and_close(void *cc, unsigned ub, unsigned n, void *dst)
-{
+sph_blake256_addbits_and_close(void *cc, unsigned ub, unsigned n, void *dst) {
 	blake32_close(cc, ub, n, dst, 8);
 	sph_blake256_init(cc);
 }
@@ -1057,58 +1043,50 @@ sph_blake256_addbits_and_close(void *cc, unsigned ub, unsigned n, void *dst)
 
 /* see sph_blake.h */
 void
-sph_blake384_init(void *cc)
-{
+sph_blake384_init(void *cc) {
 	blake64_init(cc, IV384, salt_zero_big);
 }
 
 /* see sph_blake.h */
 void
-sph_blake384(void *cc, const void *data, size_t len)
-{
+sph_blake384(void *cc, const void *data, size_t len) {
 	blake64(cc, data, len);
 }
 
 /* see sph_blake.h */
 void
-sph_blake384_close(void *cc, void *dst)
-{
+sph_blake384_close(void *cc, void *dst) {
 	sph_blake384_addbits_and_close(cc, 0, 0, dst);
 }
 
 /* see sph_blake.h */
 void
-sph_blake384_addbits_and_close(void *cc, unsigned ub, unsigned n, void *dst)
-{
+sph_blake384_addbits_and_close(void *cc, unsigned ub, unsigned n, void *dst) {
 	blake64_close(cc, ub, n, dst, 6);
 	sph_blake384_init(cc);
 }
 
 /* see sph_blake.h */
 void
-sph_blake512_init(void *cc)
-{
+sph_blake512_init(void *cc) {
 	blake64_init(cc, IV512, salt_zero_big);
 }
 
 /* see sph_blake.h */
 void
-sph_blake512(void *cc, const void *data, size_t len)
-{
+sph_blake512(void *cc, const void *data, size_t len) {
 	blake64(cc, data, len);
 }
 
 /* see sph_blake.h */
 void
-sph_blake512_close(void *cc, void *dst)
-{
+sph_blake512_close(void *cc, void *dst) {
 	sph_blake512_addbits_and_close(cc, 0, 0, dst);
 }
 
 /* see sph_blake.h */
 void
-sph_blake512_addbits_and_close(void *cc, unsigned ub, unsigned n, void *dst)
-{
+sph_blake512_addbits_and_close(void *cc, unsigned ub, unsigned n, void *dst) {
 	blake64_close(cc, ub, n, dst, 8);
 	sph_blake512_init(cc);
 }

@@ -48,10 +48,18 @@ void TestVector(const Hasher &h, const In &in, const Out &out) {
     }
 }
 
-void TestSHA1(const std::string &in, const std::string &hexout) { TestVector(CSHA1(), in, ParseHex(hexout));}
-void TestSHA256(const std::string &in, const std::string &hexout) { TestVector(CSHA256(), in, ParseHex(hexout));}
-void TestSHA512(const std::string &in, const std::string &hexout) { TestVector(CSHA512(), in, ParseHex(hexout));}
-void TestRIPEMD160(const std::string &in, const std::string &hexout) { TestVector(CRIPEMD160(), in, ParseHex(hexout));}
+void TestSHA1(const std::string &in, const std::string &hexout) {
+    TestVector(CSHA1(), in, ParseHex(hexout));
+}
+void TestSHA256(const std::string &in, const std::string &hexout) {
+    TestVector(CSHA256(), in, ParseHex(hexout));
+}
+void TestSHA512(const std::string &in, const std::string &hexout) {
+    TestVector(CSHA512(), in, ParseHex(hexout));
+}
+void TestRIPEMD160(const std::string &in, const std::string &hexout) {
+    TestVector(CRIPEMD160(), in, ParseHex(hexout));
+}
 
 void TestHMACSHA256(const std::string &hexkey, const std::string &hexin, const std::string &hexout) {
     std::vector<unsigned char> key = ParseHex(hexkey);
@@ -248,8 +256,7 @@ BOOST_AUTO_TEST_CASE(hmac_sha512_testvectors) {
                    "b6022cac3c4982b10d5eeb55c3e4de15134676fb6de0446065c97440fa8c6a58");
 }
 
-void TestRFC6979(const std::string& hexkey, const std::string& hexmsg, const std::vector<std::string>& hexout)
-{
+void TestRFC6979(const std::string& hexkey, const std::string& hexmsg, const std::vector<std::string>& hexout) {
     std::vector<unsigned char> key = ParseHex(hexkey);
     std::vector<unsigned char> msg = ParseHex(hexmsg);
     RFC6979_HMAC_SHA256 rng(&key[0], key.size(), &msg[0], msg.size());
@@ -263,8 +270,7 @@ void TestRFC6979(const std::string& hexkey, const std::string& hexmsg, const std
     }
 }
 
-BOOST_AUTO_TEST_CASE(rfc6979_hmac_sha256)
-{
+BOOST_AUTO_TEST_CASE(rfc6979_hmac_sha256) {
     TestRFC6979(
         "0102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f00",
         "4bf5122f344554c53bde2ebb8cd2b7e3d1600ad631c385a5d7cce23c7785459a",

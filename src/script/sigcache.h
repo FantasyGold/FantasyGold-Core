@@ -12,8 +12,7 @@
 
 class CPubKey;
 
-class CachingTransactionSignatureChecker : public TransactionSignatureChecker
-{
+class CachingTransactionSignatureChecker : public TransactionSignatureChecker {
 private:
     bool store;
 

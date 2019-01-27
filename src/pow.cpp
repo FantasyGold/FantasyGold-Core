@@ -1,5 +1,6 @@
 // Copyright (c) 2009-2010 Satoshi Nakamoto
 // Copyright (c) 2009-2014 The Bitcoin developers
+// Copyright (c) 2015-2017 The PIVX developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -11,11 +12,11 @@
 #include "primitives/block.h"
 #include "uint256.h"
 #include "util.h"
+#include "spork.h"
 
 #include <math.h>
 
-unsigned int static DarkGravityWave(const CBlockIndex* pindexLast) 
-{
+unsigned int static DarkGravityWave(const CBlockIndex* pindexLast) {
     /* current difficulty formula, fantasygold - DarkGravity v3, written by Evan Duffield - evan@dashpay.io */
     const CBlockIndex* BlockLastSolved = pindexLast;
     const CBlockIndex* BlockReading = pindexLast;
@@ -31,9 +32,23 @@ unsigned int static DarkGravityWave(const CBlockIndex* pindexLast)
         return Params().ProofOfWorkLimit().GetCompact();
     }
 
-    if (pindexLast->nHeight > Params().LAST_POW_BLOCK()) {
+    // Change starting PoS block according to active spork
+    // for PoW rollback.
+    int nLastPOWBlock = Params().LAST_POW_BLOCK();
+    if (IsSporkActive(SPORK_19_POW_ROLLBACK))
+        nLastPOWBlock = Params().LAST_POW_BLOCK_OLD();
+
+    if (pindexLast->nHeight >= nLastPOWBlock) {
         uint256 bnTargetLimit = (~uint256(0) >> 24);
-        int64_t nTargetSpacing = 90;
+
+        // For first 20 blocks return limit to avoid high
+        // difficulty from TH/s PoW.
+        if (pindexLast->nHeight <= (nLastPOWBlock + 20)) {
+            bnTargetLimit = (~uint256(0) >> 12);
+            return bnTargetLimit.GetCompact();
+        }
+
+        int64_t nTargetSpacing = Params().TargetSpacing(); // mainnet vs testnet
         int64_t nTargetTimespan = 60 * 30; //1800
 
         int64_t nActualSpacing = 0;
@@ -47,8 +62,8 @@ unsigned int static DarkGravityWave(const CBlockIndex* pindexLast)
         // ppcoin: retarget with exponential moving toward target spacing
         uint256 bnNew;
         bnNew.SetCompact(pindexLast->nBits);
-
         int64_t nInterval = nTargetTimespan / nTargetSpacing;
+
         bnNew *= ((nInterval - 1) * nTargetSpacing + nActualSpacing + nActualSpacing);
         bnNew /= ((nInterval + 1) * nTargetSpacing);
 
@@ -88,7 +103,7 @@ unsigned int static DarkGravityWave(const CBlockIndex* pindexLast)
 
     uint256 bnNew(PastDifficultyAverage);
 
-    int64_t _nTargetTimespan = CountBlocks * Params().TargetSpacing();
+    int64_t _nTargetTimespan = CountBlocks * (pindexLast->nHeight > 250 ? Params().TargetSpacing() : Params().TargetSpacingSlowLaunch());
 
     if (nActualTimespan < _nTargetTimespan / 3)
         nActualTimespan = _nTargetTimespan / 3;
@@ -106,13 +121,11 @@ unsigned int static DarkGravityWave(const CBlockIndex* pindexLast)
     return bnNew.GetCompact();	
 }
 	
-unsigned int GetNextWorkRequired(const CBlockIndex* pindexLast, const CBlockHeader* pblock)
-{
+unsigned int GetNextWorkRequired(const CBlockIndex* pindexLast, const CBlockHeader* pblock) {
 	return DarkGravityWave(pindexLast);
 }
 
-bool CheckProofOfWork(uint256 hash, unsigned int nBits)
-{
+bool CheckProofOfWork(uint256 hash, unsigned int nBits) {
     bool fNegative;
     bool fOverflow;
     uint256 bnTarget;
@@ -133,8 +146,7 @@ bool CheckProofOfWork(uint256 hash, unsigned int nBits)
     return true;
 }
 
-uint256 GetBlockProof(const CBlockIndex& block)
-{
+uint256 GetBlockProof(const CBlockIndex& block) {
     uint256 bnTarget;
     bool fNegative;
     bool fOverflow;

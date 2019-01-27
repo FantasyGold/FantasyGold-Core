@@ -1,3 +1,6 @@
+// Copyright (c) 2017 The PIVX Core developers
+// Distributed under the MIT software license, see the accompanying
+// file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
 #include "bip38.h"
 #include "base58.h"
@@ -21,52 +24,45 @@
  * 6) Encrypted Part 2 - 16 bytes - 32 chars - strKey[46..77]
  */
 
-void DecryptAES(uint256 encryptedIn, uint256 decryptionKey, uint256& output)
-{
+void DecryptAES(uint256 encryptedIn, uint256 decryptionKey, uint256& output) {
     AES_KEY key;
     AES_set_decrypt_key(decryptionKey.begin(), 256, &key);
     AES_decrypt(encryptedIn.begin(), output.begin(), &key);
 }
 
-void ComputePreFactor(std::string strPassphrase, std::string strSalt, uint256& prefactor)
-{
+void ComputePreFactor(std::string strPassphrase, std::string strSalt, uint256& prefactor) {
     //passfactor is the scrypt hash of passphrase and ownersalt (NOTE this needs to handle alt cases too in the future)
     uint64_t s = uint256(ReverseEndianString(strSalt)).Get64();
     scrypt_hash(strPassphrase.c_str(), strPassphrase.size(), BEGIN(s), strSalt.size() / 2, BEGIN(prefactor), 16384, 8, 8, 32);
 }
 
-void ComputePassfactor(std::string ownersalt, uint256 prefactor, uint256& passfactor)
-{
+void ComputePassfactor(std::string ownersalt, uint256 prefactor, uint256& passfactor) {
     //concat prefactor and ownersalt
     uint512 temp(ReverseEndianString(HexStr(prefactor) + ownersalt));
     Hash(temp.begin(), 40, passfactor.begin()); //40 bytes is the length of prefactor + salt
     Hash(passfactor.begin(), 32, passfactor.begin());
 }
 
-bool ComputePasspoint(uint256 passfactor, CPubKey& passpoint)
-{
+bool ComputePasspoint(uint256 passfactor, CPubKey& passpoint) {
     //passpoint is the ec_mult of passfactor on secp256k1
     int clen = 65;
     return secp256k1_ec_pubkey_create(UBEGIN(passpoint), &clen, passfactor.begin(), true) != 0;
 }
 
-void ComputeSeedBPass(CPubKey passpoint, std::string strAddressHash, std::string strOwnerSalt, uint512& seedBPass)
-{
+void ComputeSeedBPass(CPubKey passpoint, std::string strAddressHash, std::string strOwnerSalt, uint512& seedBPass) {
     // Derive decryption key for seedb using scrypt with passpoint, addresshash, and ownerentropy
     string salt = ReverseEndianString(strAddressHash + strOwnerSalt);
     uint256 s2(salt);
     scrypt_hash(BEGIN(passpoint), HexStr(passpoint).size() / 2, BEGIN(s2), salt.size() / 2, BEGIN(seedBPass), 1024, 1, 1, 64);
 }
 
-void ComputeFactorB(uint256 seedB, uint256& factorB)
-{
+void ComputeFactorB(uint256 seedB, uint256& factorB) {
     //factorB - a double sha256 hash of seedb
     Hash(seedB.begin(), 24, factorB.begin()); //seedB is only 24 bytes
     Hash(factorB.begin(), 32, factorB.begin());
 }
 
-std::string AddressToBip38Hash(std::string address)
-{
+std::string AddressToBip38Hash(std::string address) {
     uint256 addrCheck;
     Hash((void*)address.c_str(), address.size(), addrCheck.begin());
     Hash(addrCheck.begin(), 32, addrCheck.begin());
@@ -74,8 +70,7 @@ std::string AddressToBip38Hash(std::string address)
     return HexStr(addrCheck).substr(0, 8);
 }
 
-std::string BIP38_Encrypt(std::string strAddress, std::string strPassphrase, uint256 privKey)
-{
+std::string BIP38_Encrypt(std::string strAddress, std::string strPassphrase, uint256 privKey, bool fCompressed) {
     string strAddressHash = AddressToBip38Hash(strAddress);
 
     uint512 hashed;
@@ -103,7 +98,10 @@ std::string BIP38_Encrypt(std::string strAddress, std::string strPassphrase, uin
     uint512 encrypted2;
     AES_encrypt(block2.begin(), encrypted2.begin(), &key);
 
-    uint512 encryptedKey(ReverseEndianString("0142E0" + strAddressHash));
+    string strPrefix = "0142";
+    strPrefix += (fCompressed ? "E0" : "C0");
+
+    uint512 encryptedKey(ReverseEndianString(strPrefix + strAddressHash));
 
     //add encrypted1 to the end of encryptedKey
     encryptedKey = encryptedKey | (encrypted1 << 56);
@@ -111,12 +109,18 @@ std::string BIP38_Encrypt(std::string strAddress, std::string strPassphrase, uin
     //add encrypted2 to the end of encryptedKey
     encryptedKey = encryptedKey | (encrypted2 << (56 + 128));
 
-    //TODO: ensure +43 works on different OS
+    //Base58 checksum is the 4 bytes of dSHA256 hash of the encrypted key
+    uint256 hashChecksum = Hash(encryptedKey.begin(), encryptedKey.begin() + 39);
+    uint512 b58Checksum(hashChecksum.ToString().substr(64 - 8, 8));
+
+    // append the encrypted key with checksum (currently occupies 312 bits)
+    encryptedKey = encryptedKey | (b58Checksum << 312);
+
+    //43 bytes is the total size that we are encoding
     return EncodeBase58(encryptedKey.begin(), encryptedKey.begin() + 43);
 }
 
-bool BIP38_Decrypt(std::string strPassphrase, std::string strEncryptedKey, uint256& privKey, bool& fCompressed)
-{
+bool BIP38_Decrypt(std::string strPassphrase, std::string strEncryptedKey, uint256& privKey, bool& fCompressed) {
     std::string strKey = DecodeBase58(strEncryptedKey.c_str());
 
     //incorrect encoding of key, it must be 39 bytes - and another 4 bytes for base58 checksum

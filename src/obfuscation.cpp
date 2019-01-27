@@ -1,5 +1,5 @@
 // Copyright (c) 2014-2015 The Dash developers
-// // Copyright (c) 2015-2017 The Bulwark developers
+// Copyright (c) 2015-2017 The PIVX developers
 // Copyright (c) 2017-2018 The FantasyGold developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
@@ -16,7 +16,6 @@
 #include <boost/algorithm/string/replace.hpp>
 #include <boost/filesystem.hpp>
 #include <boost/filesystem/fstream.hpp>
-#include <boost/lexical_cast.hpp>
 
 #include <algorithm>
 #include <boost/assign/list_of.hpp>
@@ -44,8 +43,7 @@ CActiveMasternode activeMasternode;
         udjinm6   - udjinm6@dashpay.io
 */
 
-void CObfuscationPool::ProcessMessageObfuscation(CNode* pfrom, std::string& strCommand, CDataStream& vRecv)
-{
+void CObfuscationPool::ProcessMessageObfuscation(CNode* pfrom, std::string& strCommand, CDataStream& vRecv) {
     if (fLiteMode) return; //disable all Obfuscation/Masternode related functionality
     if (!masternodeSync.IsBlockchainSynced()) return;
 
@@ -377,10 +375,11 @@ void CObfuscationPool::ProcessMessageObfuscation(CNode* pfrom, std::string& strC
     }
 }
 
-int randomizeList(int i) { return std::rand() % i; }
+int randomizeList(int i) {
+    return std::rand() % i;
+}
 
-void CObfuscationPool::Reset()
-{
+void CObfuscationPool::Reset() {
     cachedLastSuccess = 0;
     lastNewBlock = 0;
     txCollateral = CMutableTransaction();
@@ -389,8 +388,7 @@ void CObfuscationPool::Reset()
     SetNull();
 }
 
-void CObfuscationPool::SetNull()
-{
+void CObfuscationPool::SetNull() {
     // MN side
     sessionUsers = 0;
     vecSessionCollateral.clear();
@@ -416,8 +414,7 @@ void CObfuscationPool::SetNull()
     std::srand(seed);
 }
 
-bool CObfuscationPool::SetCollateralAddress(std::string strAddress)
-{
+bool CObfuscationPool::SetCollateralAddress(std::string strAddress) {
     CBitcoinAddress address;
     if (!address.SetString(strAddress)) {
         LogPrintf("CObfuscationPool::SetCollateralAddress - Invalid Obfuscation collateral address\n");
@@ -430,24 +427,23 @@ bool CObfuscationPool::SetCollateralAddress(std::string strAddress)
 //
 // Unlock coins after Obfuscation fails or succeeds
 //
-void CObfuscationPool::UnlockCoins()
-{
+void CObfuscationPool::UnlockCoins() {
     while (true) {
         TRY_LOCK(pwalletMain->cs_wallet, lockWallet);
         if (!lockWallet) {
             MilliSleep(50);
             continue;
         }
-        BOOST_FOREACH (CTxIn v, lockedCoins)
+        BOOST_FOREACH(CTxIn v, lockedCoins) {
             pwalletMain->UnlockCoin(v.prevout);
+        }
         break;
     }
 
     lockedCoins.clear();
 }
 
-std::string CObfuscationPool::GetStatus()
-{
+std::string CObfuscationPool::GetStatus() {
     static int showingObfuScationMessage = 0;
     showingObfuScationMessage += 10;
     std::string suffix = "";
@@ -515,8 +511,7 @@ std::string CObfuscationPool::GetStatus()
 //
 // Check the Obfuscation progress and send client updates if a Masternode
 //
-void CObfuscationPool::Check()
-{
+void CObfuscationPool::Check() {
     if (fMasterNode) LogPrint("obfuscation", "CObfuscationPool::Check() - entries count %lu\n", entries.size());
     //printf("CObfuscationPool::Check() %d - %d - %d\n", state, anonTx.CountEntries(), GetTimeMillis()-lastTimeChanged);
 
@@ -540,11 +535,13 @@ void CObfuscationPool::Check()
 
             // make our new transaction
             for (unsigned int i = 0; i < entries.size(); i++) {
-                BOOST_FOREACH (const CTxOut& v, entries[i].vout)
+                BOOST_FOREACH(const CTxOut& v, entries[i].vout) {
                     txNew.vout.push_back(v);
+                }
 
-                BOOST_FOREACH (const CTxDSIn& s, entries[i].sev)
+                BOOST_FOREACH(const CTxDSIn& s, entries[i].sev) {
                     txNew.vin.push_back(s);
+            }
             }
 
             // shuffle the outputs for improved anonymity
@@ -577,8 +574,7 @@ void CObfuscationPool::Check()
     }
 }
 
-void CObfuscationPool::CheckFinalTransaction()
-{
+void CObfuscationPool::CheckFinalTransaction() {
     if (!fMasterNode) return; // check and relay final tx only on masternode
 
     CWalletTx txNew = CWalletTx(pwalletMain, finalTransaction);
@@ -603,7 +599,7 @@ void CObfuscationPool::CheckFinalTransaction()
         // sign a message
 
         int64_t sigTime = GetAdjustedTime();
-        std::string strMessage = txNew.GetHash().ToString() + boost::lexical_cast<std::string>(sigTime);
+        std::string strMessage = txNew.GetHash().ToString() + std::to_string(sigTime);
         std::string strError = "";
         std::vector<unsigned char> vchSig;
         CKey key2;
@@ -662,8 +658,7 @@ void CObfuscationPool::CheckFinalTransaction()
 // transaction for the client to be able to enter the pool. This transaction is kept by the Masternode
 // until the transaction is either complete or fails.
 //
-void CObfuscationPool::ChargeFees()
-{
+void CObfuscationPool::ChargeFees() {
     if (!fMasterNode) return;
 
     //we don't need to charge collateral for every offence.
@@ -765,8 +760,7 @@ void CObfuscationPool::ChargeFees()
 
 // charge the collateral randomly
 //  - Obfuscation is completely free, to pay miners we randomly pay the collateral of users.
-void CObfuscationPool::ChargeRandomFees()
-{
+void CObfuscationPool::ChargeRandomFees() {
     if (fMasterNode) {
         int i = 0;
 
@@ -801,9 +795,8 @@ void CObfuscationPool::ChargeRandomFees()
 //
 // Check for various timeouts (queue objects, Obfuscation, etc)
 //
-void CObfuscationPool::CheckTimeout()
-{
-    if (!fEnableObfuscation && !fMasterNode) return;
+void CObfuscationPool::CheckTimeout() {
+    if (!fEnableZeromint && !fMasterNode) return;
 
     // catching hanging sessions
     if (!fMasterNode) {
@@ -886,9 +879,8 @@ void CObfuscationPool::CheckTimeout()
 //
 // Check for complete queue
 //
-void CObfuscationPool::CheckForCompleteQueue()
-{
-    if (!fEnableObfuscation && !fMasterNode) return;
+void CObfuscationPool::CheckForCompleteQueue() {
+    if (!fEnableZeromint && !fMasterNode) return;
 
     /* Check to see if we're ready for submissions from clients */
     //
@@ -909,8 +901,7 @@ void CObfuscationPool::CheckForCompleteQueue()
 }
 
 // check to see if the signature is valid
-bool CObfuscationPool::SignatureValid(const CScript& newSig, const CTxIn& newVin)
-{
+bool CObfuscationPool::SignatureValid(const CScript& newSig, const CTxIn& newVin) {
     CMutableTransaction txNew;
     txNew.vin.clear();
     txNew.vout.clear();
@@ -920,8 +911,9 @@ bool CObfuscationPool::SignatureValid(const CScript& newSig, const CTxIn& newVin
     unsigned int i = 0;
 
     BOOST_FOREACH (CObfuScationEntry& e, entries) {
-        BOOST_FOREACH (const CTxOut& out, e.vout)
+        BOOST_FOREACH(const CTxOut& out, e.vout) {
             txNew.vout.push_back(out);
+        }
 
         BOOST_FOREACH (const CTxDSIn& s, e.sev) {
             txNew.vin.push_back(s);
@@ -949,8 +941,7 @@ bool CObfuscationPool::SignatureValid(const CScript& newSig, const CTxIn& newVin
 }
 
 // check to make sure the collateral provided by the client is valid
-bool CObfuscationPool::IsCollateralValid(const CTransaction& txCollateral)
-{
+bool CObfuscationPool::IsCollateralValid(const CTransaction& txCollateral) {
     if (txCollateral.vout.size() < 1) return false;
     if (txCollateral.nLockTime != 0) return false;
 
@@ -1008,8 +999,7 @@ bool CObfuscationPool::IsCollateralValid(const CTransaction& txCollateral)
 //
 // Add a clients transaction to the pool
 //
-bool CObfuscationPool::AddEntry(const std::vector<CTxIn>& newInput, const CAmount& nAmount, const CTransaction& txCollateral, const std::vector<CTxOut>& newOutput, int& errorID)
-{
+bool CObfuscationPool::AddEntry(const std::vector<CTxIn>& newInput, const CAmount& nAmount, const CTransaction& txCollateral, const std::vector<CTxOut>& newOutput, int& errorID) {
     if (!fMasterNode) return false;
 
     BOOST_FOREACH (CTxIn in, newInput) {
@@ -1059,8 +1049,7 @@ bool CObfuscationPool::AddEntry(const std::vector<CTxIn>& newInput, const CAmoun
     return true;
 }
 
-bool CObfuscationPool::AddScriptSig(const CTxIn& newVin)
-{
+bool CObfuscationPool::AddScriptSig(const CTxIn& newVin) {
     LogPrint("obfuscation", "CObfuscationPool::AddScriptSig -- new sig  %s\n", newVin.scriptSig.ToString().substr(0, 24));
 
 
@@ -1099,8 +1088,7 @@ bool CObfuscationPool::AddScriptSig(const CTxIn& newVin)
 }
 
 // Check to make sure everything is signed
-bool CObfuscationPool::SignaturesComplete()
-{
+bool CObfuscationPool::SignaturesComplete() {
     BOOST_FOREACH (const CObfuScationEntry& v, entries) {
         BOOST_FOREACH (const CTxDSIn& s, v.sev) {
             if (!s.fHasSig) return false;
@@ -1113,8 +1101,7 @@ bool CObfuscationPool::SignaturesComplete()
 // Execute a Obfuscation denomination via a Masternode.
 // This is only ran from clients
 //
-void CObfuscationPool::SendObfuscationDenominate(std::vector<CTxIn>& vin, std::vector<CTxOut>& vout, CAmount amount)
-{
+void CObfuscationPool::SendObfuscationDenominate(std::vector<CTxIn>& vin, std::vector<CTxOut>& vout, CAmount amount) {
     if (fMasterNode) {
         LogPrintf("CObfuscationPool::SendObfuscationDenominate() - Obfuscation from a Masternode is not supported currently.\n");
         return;
@@ -1126,11 +1113,13 @@ void CObfuscationPool::SendObfuscationDenominate(std::vector<CTxIn>& vin, std::v
     }
 
     // lock the funds we're going to use
-    BOOST_FOREACH (CTxIn in, txCollateral.vin)
+    BOOST_FOREACH(CTxIn in, txCollateral.vin) {
         lockedCoins.push_back(in);
+    }
 
-    BOOST_FOREACH (CTxIn in, vin)
+    BOOST_FOREACH(CTxIn in, vin) {
         lockedCoins.push_back(in);
+    }
 
     //BOOST_FOREACH(CTxOut o, vout)
     //    LogPrintf(" vout - %s\n", o.ToString());
@@ -1147,7 +1136,7 @@ void CObfuscationPool::SendObfuscationDenominate(std::vector<CTxIn>& vin, std::v
     if (!CheckDiskSpace()) {
         UnlockCoins();
         SetNull();
-        fEnableObfuscation = false;
+        fEnableZeromint = false;
         LogPrintf("CObfuscationPool::SendObfuscationDenominate() - Not enough disk space, disabling Obfuscation.\n");
         return;
     }
@@ -1208,8 +1197,7 @@ void CObfuscationPool::SendObfuscationDenominate(std::vector<CTxIn>& vin, std::v
 //                  0 means transaction was not accepted
 //                  1 means transaction was accepted
 
-bool CObfuscationPool::StatusUpdate(int newState, int newEntriesCount, int newAccepted, int& errorID, int newSessionID)
-{
+bool CObfuscationPool::StatusUpdate(int newState, int newEntriesCount, int newAccepted, int& errorID, int newSessionID) {
     if (fMasterNode) return false;
     if (state == POOL_STATUS_ERROR || state == POOL_STATUS_SUCCESS) return false;
 
@@ -1256,8 +1244,7 @@ bool CObfuscationPool::StatusUpdate(int newState, int newEntriesCount, int newAc
 // check it to make sure it's what we want, then sign it if we agree.
 // If we refuse to sign, it's possible we'll be charged collateral
 //
-bool CObfuscationPool::SignFinalTransaction(CTransaction& finalTransactionNew, CNode* node)
-{
+bool CObfuscationPool::SignFinalTransaction(CTransaction& finalTransactionNew, CNode* node) {
     if (fMasterNode) return false;
 
     finalTransaction = finalTransactionNew;
@@ -1295,8 +1282,9 @@ bool CObfuscationPool::SignFinalTransaction(CTransaction& finalTransactionNew, C
                     }
                 }
 
-                BOOST_FOREACH (const CTxOut o, e.vout)
+                BOOST_FOREACH(const CTxOut o, e.vout) {
                     nValue2 += o.nValue;
+                }
 
                 int targetOuputs = e.vout.size();
                 if (foundOutputs < targetOuputs || nValue1 != nValue2) {
@@ -1333,8 +1321,7 @@ bool CObfuscationPool::SignFinalTransaction(CTransaction& finalTransactionNew, C
     return true;
 }
 
-void CObfuscationPool::NewBlock()
-{
+void CObfuscationPool::NewBlock() {
     LogPrint("obfuscation", "CObfuscationPool::NewBlock \n");
 
     //we we're processing lots of blocks, we'll just leave
@@ -1345,8 +1332,7 @@ void CObfuscationPool::NewBlock()
 }
 
 // Obfuscation transaction was completed (failed or successful)
-void CObfuscationPool::CompletedTransaction(bool error, int errorID)
-{
+void CObfuscationPool::CompletedTransaction(bool error, int errorID) {
     if (fMasterNode) return;
 
     if (error) {
@@ -1369,8 +1355,7 @@ void CObfuscationPool::CompletedTransaction(bool error, int errorID)
     lastMessage = GetMessageByID(errorID);
 }
 
-void CObfuscationPool::ClearLastMessage()
-{
+void CObfuscationPool::ClearLastMessage() {
     lastMessage = "";
 }
 
@@ -1379,9 +1364,10 @@ void CObfuscationPool::ClearLastMessage()
 //
 // This does NOT run by default for daemons, only for QT.
 //
-bool CObfuscationPool::DoAutomaticDenominating(bool fDryRun)
-{
-    if (!fEnableObfuscation) return false;
+bool CObfuscationPool::DoAutomaticDenominating(bool fDryRun) {
+    return false;  // Disabled until Obfuscation is completely removed
+
+    if (!fEnableZeromint) return false;
     if (fMasterNode) return false;
     if (state == POOL_STATUS_ERROR || state == POOL_STATUS_SUCCESS) return false;
     if (GetEntriesCount() > 0) {
@@ -1451,7 +1437,7 @@ bool CObfuscationPool::DoAutomaticDenominating(bool fDryRun)
     LogPrint("obfuscation", "DoAutomaticDenominating : nLowestDenom=%d, nBalanceNeedsAnonymized=%d\n", nLowestDenom, nBalanceNeedsAnonymized);
 
     // select coins that should be given to the pool
-    if (!pwalletMain->SelectCoinsDark(nValueMin, nBalanceNeedsAnonymized, vCoins, nValueIn, 0, nObfuscationRounds)) {
+    if (!pwalletMain->SelectCoinsDark(nValueMin, nBalanceNeedsAnonymized, vCoins, nValueIn, 0, nZeromintPercentage)) {
         nValueIn = 0;
         vCoins.clear();
 
@@ -1556,7 +1542,7 @@ bool CObfuscationPool::DoAutomaticDenominating(bool fDryRun)
                 std::vector<CTxIn> vTempCoins;
                 std::vector<COutput> vTempCoins2;
                 // Try to match their denominations if possible
-                if (!pwalletMain->SelectCoinsByDenominations(dsq.nDenom, nValueMin, nBalanceNeedsAnonymized, vTempCoins, vTempCoins2, nValueIn, 0, nObfuscationRounds)) {
+                if (!pwalletMain->SelectCoinsByDenominations(dsq.nDenom, nValueMin, nBalanceNeedsAnonymized, vTempCoins, vTempCoins2, nValueIn, 0, nZeromintPercentage)) {
                     LogPrintf("DoAutomaticDenominating --- Couldn't match denominations %d\n", dsq.nDenom);
                     continue;
                 }
@@ -1644,19 +1630,18 @@ bool CObfuscationPool::DoAutomaticDenominating(bool fDryRun)
 }
 
 
-bool CObfuscationPool::PrepareObfuscationDenominate()
-{
+bool CObfuscationPool::PrepareObfuscationDenominate() {
     std::string strError = "";
     // Submit transaction to the pool if we get here
     // Try to use only inputs with the same number of rounds starting from lowest number of rounds possible
-    for (int i = 0; i < nObfuscationRounds; i++) {
+    for (int i = 0; i < nZeromintPercentage; i++) {
         strError = pwalletMain->PrepareObfuscationDenominate(i, i + 1);
         LogPrintf("DoAutomaticDenominating : Running Obfuscation denominate for %d rounds. Return '%s'\n", i, strError);
         if (strError == "") return true;
     }
 
     // We failed? That's strange but let's just make final attempt and try to mix everything
-    strError = pwalletMain->PrepareObfuscationDenominate(0, nObfuscationRounds);
+    strError = pwalletMain->PrepareObfuscationDenominate(0, nZeromintPercentage);
     LogPrintf("DoAutomaticDenominating : Running Obfuscation denominate for all rounds. Return '%s'\n", strError);
     if (strError == "") return true;
 
@@ -1666,10 +1651,9 @@ bool CObfuscationPool::PrepareObfuscationDenominate()
     return false;
 }
 
-bool CObfuscationPool::SendRandomPaymentToSelf()
-{
-    CAmount nBalance = pwalletMain->GetBalance();
-    CAmount nPayment = (nBalance * 0.35) + (rand() % nBalance);
+bool CObfuscationPool::SendRandomPaymentToSelf() {
+    int64_t nBalance = pwalletMain->GetBalance();
+    int64_t nPayment = (nBalance * 0.35) + (rand() % nBalance);
 
     if (nPayment > nBalance) nPayment = nBalance - (0.1 * COIN);
 
@@ -1704,8 +1688,7 @@ bool CObfuscationPool::SendRandomPaymentToSelf()
 }
 
 // Split up large inputs or create fee sized inputs
-bool CObfuscationPool::MakeCollateralAmounts()
-{
+bool CObfuscationPool::MakeCollateralAmounts() {
     CWalletTx wtx;
     CAmount nFeeRet = 0;
     std::string strFail = "";
@@ -1758,8 +1741,7 @@ bool CObfuscationPool::MakeCollateralAmounts()
 }
 
 // Create denominations
-bool CObfuscationPool::CreateDenominated(CAmount nTotalValue)
-{
+bool CObfuscationPool::CreateDenominated(CAmount nTotalValue) {
     CWalletTx wtx;
     CAmount nFeeRet = 0;
     std::string strFail = "";
@@ -1836,8 +1818,7 @@ bool CObfuscationPool::CreateDenominated(CAmount nTotalValue)
     return true;
 }
 
-bool CObfuscationPool::IsCompatibleWithEntries(std::vector<CTxOut>& vout)
-{
+bool CObfuscationPool::IsCompatibleWithEntries(std::vector<CTxOut>& vout) {
     if (GetDenominations(vout) == 0) return false;
 
     BOOST_FOREACH (const CObfuScationEntry v, entries) {
@@ -1855,8 +1836,7 @@ bool CObfuscationPool::IsCompatibleWithEntries(std::vector<CTxOut>& vout)
     return true;
 }
 
-bool CObfuscationPool::IsCompatibleWithSession(int64_t nDenom, CTransaction txCollateral, int& errorID)
-{
+bool CObfuscationPool::IsCompatibleWithSession(int64_t nDenom, CTransaction txCollateral, int& errorID) {
     if (nDenom == 0) return false;
 
     LogPrintf("CObfuscationPool::IsCompatibleWithSession - sessionDenom %d sessionUsers %d\n", sessionDenom, sessionUsers);
@@ -1912,8 +1892,7 @@ bool CObfuscationPool::IsCompatibleWithSession(int64_t nDenom, CTransaction txCo
 }
 
 //create a nice string to show the denominations
-void CObfuscationPool::GetDenominationsToString(int nDenom, std::string& strDenom)
-{
+void CObfuscationPool::GetDenominationsToString(int nDenom, std::string& strDenom) {
     // Function returns as follows:
     //
     // bit 0 - 100FGC+1 ( bit on if present )
@@ -1946,24 +1925,24 @@ void CObfuscationPool::GetDenominationsToString(int nDenom, std::string& strDeno
     }
 }
 
-int CObfuscationPool::GetDenominations(const std::vector<CTxDSOut>& vout)
-{
+int CObfuscationPool::GetDenominations(const std::vector<CTxDSOut>& vout) {
     std::vector<CTxOut> vout2;
 
-    BOOST_FOREACH (CTxDSOut out, vout)
+    BOOST_FOREACH(CTxDSOut out, vout) {
         vout2.push_back(out);
+    }
 
     return GetDenominations(vout2);
 }
 
 // return a bitshifted integer representing the denominations in this list
-int CObfuscationPool::GetDenominations(const std::vector<CTxOut>& vout, bool fSingleRandomDenom)
-{
+int CObfuscationPool::GetDenominations(const std::vector<CTxOut>& vout, bool fSingleRandomDenom) {
     std::vector<pair<int64_t, int> > denomUsed;
 
     // make a list of denominations, with zero uses
-    BOOST_FOREACH (int64_t d, obfuScationDenominations)
+    BOOST_FOREACH(int64_t d, obfuScationDenominations) {
         denomUsed.push_back(make_pair(d, 0));
+    }
 
     // look for denominations and update uses to 1
     BOOST_FOREACH (CTxOut out, vout) {
@@ -1998,8 +1977,7 @@ int CObfuscationPool::GetDenominations(const std::vector<CTxOut>& vout, bool fSi
 }
 
 
-int CObfuscationPool::GetDenominationsByAmounts(std::vector<int64_t>& vecAmount)
-{
+int CObfuscationPool::GetDenominationsByAmounts(std::vector<int64_t>& vecAmount) {
     CScript e = CScript();
     std::vector<CTxOut> vout1;
 
@@ -2012,8 +1990,7 @@ int CObfuscationPool::GetDenominationsByAmounts(std::vector<int64_t>& vecAmount)
     return GetDenominations(vout1, true);
 }
 
-int CObfuscationPool::GetDenominationsByAmount(CAmount nAmount, int nDenomTarget)
-{
+int CObfuscationPool::GetDenominationsByAmount(CAmount nAmount, int nDenomTarget) {
     CScript e = CScript();
     CAmount nValueLeft = nAmount;
 
@@ -2050,8 +2027,7 @@ int CObfuscationPool::GetDenominationsByAmount(CAmount nAmount, int nDenomTarget
     return GetDenominations(vout1);
 }
 
-std::string CObfuscationPool::GetMessageByID(int messageID)
-{
+std::string CObfuscationPool::GetMessageByID(int messageID) {
     switch (messageID) {
     case ERR_ALREADY_HAVE:
         return _("Already have that input.");
@@ -2101,8 +2077,7 @@ std::string CObfuscationPool::GetMessageByID(int messageID)
     }
 }
 
-bool CObfuScationSigner::IsVinAssociatedWithPubkey(CTxIn& vin, CPubKey& pubkey)
-{
+bool CObfuScationSigner::IsVinAssociatedWithPubkey(CTxIn& vin, CPubKey& pubkey) {
     CScript payee2;
     payee2 = GetScriptForDestination(pubkey.GetID());
 
@@ -2119,8 +2094,7 @@ bool CObfuScationSigner::IsVinAssociatedWithPubkey(CTxIn& vin, CPubKey& pubkey)
     return false;
 }
 
-bool CObfuScationSigner::SetKey(std::string strSecret, std::string& errorMessage, CKey& key, CPubKey& pubkey)
-{
+bool CObfuScationSigner::SetKey(std::string strSecret, std::string& errorMessage, CKey& key, CPubKey& pubkey) {
     CBitcoinSecret vchSecret;
     bool fGood = vchSecret.SetString(strSecret);
 
@@ -2135,8 +2109,7 @@ bool CObfuScationSigner::SetKey(std::string strSecret, std::string& errorMessage
     return true;
 }
 
-bool CObfuScationSigner::GetKeysFromSecret(std::string strSecret, CKey& keyRet, CPubKey& pubkeyRet)
-{
+bool CObfuScationSigner::GetKeysFromSecret(std::string strSecret, CKey& keyRet, CPubKey& pubkeyRet) {
     CBitcoinSecret vchSecret;
 
     if (!vchSecret.SetString(strSecret)) return false;
@@ -2147,8 +2120,7 @@ bool CObfuScationSigner::GetKeysFromSecret(std::string strSecret, CKey& keyRet, 
     return true;
 }
 
-bool CObfuScationSigner::SignMessage(std::string strMessage, std::string& errorMessage, vector<unsigned char>& vchSig, CKey key)
-{
+bool CObfuScationSigner::SignMessage(std::string strMessage, std::string& errorMessage, vector<unsigned char>& vchSig, CKey key) {
     CHashWriter ss(SER_GETHASH, 0);
     ss << strMessageMagic;
     ss << strMessage;
@@ -2161,8 +2133,7 @@ bool CObfuScationSigner::SignMessage(std::string strMessage, std::string& errorM
     return true;
 }
 
-bool CObfuScationSigner::VerifyMessage(CPubKey pubkey, vector<unsigned char>& vchSig, std::string strMessage, std::string& errorMessage)
-{
+bool CObfuScationSigner::VerifyMessage(CPubKey pubkey, vector<unsigned char>& vchSig, std::string strMessage, std::string& errorMessage) {
     CHashWriter ss(SER_GETHASH, 0);
     ss << strMessageMagic;
     ss << strMessage;
@@ -2179,11 +2150,10 @@ bool CObfuScationSigner::VerifyMessage(CPubKey pubkey, vector<unsigned char>& vc
     return (pubkey2.GetID() == pubkey.GetID());
 }
 
-bool CObfuscationQueue::Sign()
-{
+bool CObfuscationQueue::Sign() {
     if (!fMasterNode) return false;
 
-    std::string strMessage = vin.ToString() + boost::lexical_cast<std::string>(nDenom) + boost::lexical_cast<std::string>(time) + boost::lexical_cast<std::string>(ready);
+    std::string strMessage = vin.ToString() + std::to_string(nDenom) + std::to_string(time) + std::to_string(ready);
 
     CKey key2;
     CPubKey pubkey2;
@@ -2207,8 +2177,7 @@ bool CObfuscationQueue::Sign()
     return true;
 }
 
-bool CObfuscationQueue::Relay()
-{
+bool CObfuscationQueue::Relay() {
     LOCK(cs_vNodes);
     BOOST_FOREACH (CNode* pnode, vNodes) {
         // always relay to everyone
@@ -2218,12 +2187,11 @@ bool CObfuscationQueue::Relay()
     return true;
 }
 
-bool CObfuscationQueue::CheckSignature()
-{
+bool CObfuscationQueue::CheckSignature() {
     CMasternode* pmn = mnodeman.Find(vin);
 
     if (pmn != NULL) {
-        std::string strMessage = vin.ToString() + boost::lexical_cast<std::string>(nDenom) + boost::lexical_cast<std::string>(time) + boost::lexical_cast<std::string>(ready);
+        std::string strMessage = vin.ToString() + std::to_string(nDenom) + std::to_string(time) + std::to_string(ready);
 
         std::string errorMessage = "";
         if (!obfuScationSigner.VerifyMessage(pmn->pubKeyMasternode, vchSig, strMessage, errorMessage)) {
@@ -2237,26 +2205,26 @@ bool CObfuscationQueue::CheckSignature()
 }
 
 
-void CObfuscationPool::RelayFinalTransaction(const int sessionID, const CTransaction& txNew)
-{
+void CObfuscationPool::RelayFinalTransaction(const int sessionID, const CTransaction& txNew) {
     LOCK(cs_vNodes);
     BOOST_FOREACH (CNode* pnode, vNodes) {
         pnode->PushMessage("dsf", sessionID, txNew);
     }
 }
 
-void CObfuscationPool::RelayIn(const std::vector<CTxDSIn>& vin, const int64_t& nAmount, const CTransaction& txCollateral, const std::vector<CTxDSOut>& vout)
-{
+void CObfuscationPool::RelayIn(const std::vector<CTxDSIn>& vin, const int64_t& nAmount, const CTransaction& txCollateral, const std::vector<CTxDSOut>& vout) {
     if (!pSubmittedToMasternode) return;
 
     std::vector<CTxIn> vin2;
     std::vector<CTxOut> vout2;
 
-    BOOST_FOREACH (CTxDSIn in, vin)
+    BOOST_FOREACH(CTxDSIn in, vin) {
         vin2.push_back(in);
+    }
 
-    BOOST_FOREACH (CTxDSOut out, vout)
+    BOOST_FOREACH(CTxDSOut out, vout) {
         vout2.push_back(out);
+    }
 
     CNode* pnode = FindNode(pSubmittedToMasternode->addr);
     if (pnode != NULL) {
@@ -2265,23 +2233,22 @@ void CObfuscationPool::RelayIn(const std::vector<CTxDSIn>& vin, const int64_t& n
     }
 }
 
-void CObfuscationPool::RelayStatus(const int sessionID, const int newState, const int newEntriesCount, const int newAccepted, const int errorID)
-{
+void CObfuscationPool::RelayStatus(const int sessionID, const int newState, const int newEntriesCount, const int newAccepted, const int errorID) {
     LOCK(cs_vNodes);
-    BOOST_FOREACH (CNode* pnode, vNodes)
+    BOOST_FOREACH(CNode* pnode, vNodes) {
         pnode->PushMessage("dssu", sessionID, newState, newEntriesCount, newAccepted, errorID);
 }
+}
 
-void CObfuscationPool::RelayCompletedTransaction(const int sessionID, const bool error, const int errorID)
-{
+void CObfuscationPool::RelayCompletedTransaction(const int sessionID, const bool error, const int errorID) {
     LOCK(cs_vNodes);
-    BOOST_FOREACH (CNode* pnode, vNodes)
+    BOOST_FOREACH(CNode* pnode, vNodes) {
         pnode->PushMessage("dsc", sessionID, error, errorID);
+}
 }
 
 //TODO: Rename/move to core
-void ThreadCheckObfuScationPool()
-{
+void ThreadCheckObfuScationPool() {
     if (fLiteMode) return; //disable all Obfuscation/Masternode related functionality
 
     // Make this thread recognisable as the wallet flushing thread

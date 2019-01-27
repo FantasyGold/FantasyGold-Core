@@ -1,4 +1,4 @@
-// Copyright (c) 2014 The Bitcoin Core developers
+// Copyright (c) 2014 The Bitcoin developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -9,8 +9,7 @@
 #include <stdlib.h>
 
 /** A hasher class for SHA1. */
-class CSHA1
-{
+class CSHA1 {
 private:
     uint32_t s[5];
     unsigned char buf[64];

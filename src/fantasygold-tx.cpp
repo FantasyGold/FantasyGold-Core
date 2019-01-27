@@ -1,4 +1,5 @@
 // Copyright (c) 2009-2014 The Bitcoin developers
+// Copyright (c) 2015-2017 The PIVX developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -12,7 +13,7 @@
 #include "script/script.h"
 #include "script/sign.h"
 #include "ui_interface.h" // for _(...)
-#include "univalue/univalue.h"
+#include <univalue.h>
 #include "util.h"
 #include "utilmoneystr.h"
 #include "utilstrencodings.h"
@@ -29,8 +30,7 @@ static bool fCreateBlank;
 static map<string, UniValue> registers;
 CClientUIInterface uiInterface;
 
-static bool AppInitRawTx(int argc, char* argv[])
-{
+static bool AppInitRawTx(int argc, char* argv[]) {
     //
     // Parameters
     //
@@ -90,8 +90,7 @@ static bool AppInitRawTx(int argc, char* argv[])
     return true;
 }
 
-static void RegisterSetJson(const string& key, const string& rawJson)
-{
+static void RegisterSetJson(const string& key, const string& rawJson) {
     UniValue val;
     if (!val.read(rawJson)) {
         string strErr = "Cannot parse JSON for key " + key;
@@ -101,8 +100,7 @@ static void RegisterSetJson(const string& key, const string& rawJson)
     registers[key] = val;
 }
 
-static void RegisterSet(const string& strInput)
-{
+static void RegisterSet(const string& strInput) {
     // separate NAME:VALUE in string
     size_t pos = strInput.find(':');
     if ((pos == string::npos) ||
@@ -116,8 +114,7 @@ static void RegisterSet(const string& strInput)
     RegisterSetJson(key, valStr);
 }
 
-static void RegisterLoad(const string& strInput)
-{
+static void RegisterLoad(const string& strInput) {
     // separate NAME:FILENAME in string
     size_t pos = strInput.find(':');
     if ((pos == string::npos) ||
@@ -156,8 +153,7 @@ static void RegisterLoad(const string& strInput)
     RegisterSetJson(key, valStr);
 }
 
-static void MutateTxVersion(CMutableTransaction& tx, const string& cmdVal)
-{
+static void MutateTxVersion(CMutableTransaction& tx, const string& cmdVal) {
     int64_t newVersion = atoi64(cmdVal);
     if (newVersion < 1 || newVersion > CTransaction::CURRENT_VERSION)
         throw runtime_error("Invalid TX version requested");
@@ -165,8 +161,7 @@ static void MutateTxVersion(CMutableTransaction& tx, const string& cmdVal)
     tx.nVersion = (int)newVersion;
 }
 
-static void MutateTxLocktime(CMutableTransaction& tx, const string& cmdVal)
-{
+static void MutateTxLocktime(CMutableTransaction& tx, const string& cmdVal) {
     int64_t newLocktime = atoi64(cmdVal);
     if (newLocktime < 0LL || newLocktime > 0xffffffffLL)
         throw runtime_error("Invalid TX locktime requested");
@@ -174,8 +169,7 @@ static void MutateTxLocktime(CMutableTransaction& tx, const string& cmdVal)
     tx.nLockTime = (unsigned int)newLocktime;
 }
 
-static void MutateTxAddInput(CMutableTransaction& tx, const string& strInput)
-{
+static void MutateTxAddInput(CMutableTransaction& tx, const string& strInput) {
     // separate TXID:VOUT in string
     size_t pos = strInput.find(':');
     if ((pos == string::npos) ||
@@ -190,7 +184,8 @@ static void MutateTxAddInput(CMutableTransaction& tx, const string& strInput)
     uint256 txid(strTxid);
 
     static const unsigned int minTxOutSz = 9;
-    static const unsigned int maxVout = MAX_BLOCK_SIZE / minTxOutSz;
+    unsigned int nMaxSize = MAX_BLOCK_SIZE_LEGACY;
+    static const unsigned int maxVout = nMaxSize / minTxOutSz;
 
     // extract and validate vout
     string strVout = strInput.substr(pos + 1, string::npos);
@@ -203,8 +198,7 @@ static void MutateTxAddInput(CMutableTransaction& tx, const string& strInput)
     tx.vin.push_back(txin);
 }
 
-static void MutateTxAddOutAddr(CMutableTransaction& tx, const string& strInput)
-{
+static void MutateTxAddOutAddr(CMutableTransaction& tx, const string& strInput) {
     // separate VALUE:ADDRESS in string
     size_t pos = strInput.find(':');
     if ((pos == string::npos) ||
@@ -232,8 +226,7 @@ static void MutateTxAddOutAddr(CMutableTransaction& tx, const string& strInput)
     tx.vout.push_back(txout);
 }
 
-static void MutateTxAddOutScript(CMutableTransaction& tx, const string& strInput)
-{
+static void MutateTxAddOutScript(CMutableTransaction& tx, const string& strInput) {
     // separate VALUE:SCRIPT in string
     size_t pos = strInput.find(':');
     if ((pos == string::npos) ||
@@ -255,8 +248,7 @@ static void MutateTxAddOutScript(CMutableTransaction& tx, const string& strInput
     tx.vout.push_back(txout);
 }
 
-static void MutateTxDelInput(CMutableTransaction& tx, const string& strInIdx)
-{
+static void MutateTxDelInput(CMutableTransaction& tx, const string& strInIdx) {
     // parse requested deletion index
     int inIdx = atoi(strInIdx);
     if (inIdx < 0 || inIdx >= (int)tx.vin.size()) {
@@ -268,8 +260,7 @@ static void MutateTxDelInput(CMutableTransaction& tx, const string& strInIdx)
     tx.vin.erase(tx.vin.begin() + inIdx);
 }
 
-static void MutateTxDelOutput(CMutableTransaction& tx, const string& strOutIdx)
-{
+static void MutateTxDelOutput(CMutableTransaction& tx, const string& strOutIdx) {
     // parse requested deletion index
     int outIdx = atoi(strOutIdx);
     if (outIdx < 0 || outIdx >= (int)tx.vout.size()) {
@@ -294,8 +285,7 @@ static const struct {
     {"SINGLE|ANYONECANPAY", SIGHASH_SINGLE | SIGHASH_ANYONECANPAY},
 };
 
-static bool findSighashFlags(int& flags, const string& flagStr)
-{
+static bool findSighashFlags(int& flags, const string& flagStr) {
     flags = 0;
 
     for (unsigned int i = 0; i < N_SIGHASH_OPTS; i++) {
@@ -308,15 +298,13 @@ static bool findSighashFlags(int& flags, const string& flagStr)
     return false;
 }
 
-uint256 ParseHashUO(map<string, UniValue>& o, string strKey)
-{
+uint256 ParseHashUO(map<string, UniValue>& o, string strKey) {
     if (!o.count(strKey))
         return 0;
     return ParseHashUV(o[strKey], strKey);
 }
 
-vector<unsigned char> ParseHexUO(map<string, UniValue>& o, string strKey)
-{
+vector<unsigned char> ParseHexUO(map<string, UniValue>& o, string strKey) {
     if (!o.count(strKey)) {
         vector<unsigned char> emptyVec;
         return emptyVec;
@@ -324,8 +312,7 @@ vector<unsigned char> ParseHexUO(map<string, UniValue>& o, string strKey)
     return ParseHexUV(o[strKey], strKey);
 }
 
-static void MutateTxSign(CMutableTransaction& tx, const string& flagStr)
-{
+static void MutateTxSign(CMutableTransaction& tx, const string& flagStr) {
     int nHashType = SIGHASH_ALL;
 
     if (flagStr.size() > 0)
@@ -349,7 +336,7 @@ static void MutateTxSign(CMutableTransaction& tx, const string& flagStr)
     UniValue keysObj = registers["privatekeys"];
     fGivenKeys = true;
 
-    for (unsigned int kidx = 0; kidx < keysObj.count(); kidx++) {
+    for (unsigned int kidx = 0; kidx < keysObj.size(); kidx++) {
         if (!keysObj[kidx].isStr())
             throw runtime_error("privatekey not a string");
         CBitcoinSecret vchSecret;
@@ -366,7 +353,7 @@ static void MutateTxSign(CMutableTransaction& tx, const string& flagStr)
         throw runtime_error("prevtxs register variable must be set.");
     UniValue prevtxsObj = registers["prevtxs"];
     {
-        for (unsigned int previdx = 0; previdx < prevtxsObj.count(); previdx++) {
+        for (unsigned int previdx = 0; previdx < prevtxsObj.size(); previdx++) {
             UniValue prevOut = prevtxsObj[previdx];
             if (!prevOut.isObject())
                 throw runtime_error("expected prevtxs internal object");
@@ -445,8 +432,7 @@ static void MutateTxSign(CMutableTransaction& tx, const string& flagStr)
     tx = mergedTx;
 }
 
-static void MutateTx(CMutableTransaction& tx, const string& command, const string& commandVal)
-{
+static void MutateTx(CMutableTransaction& tx, const string& command, const string& commandVal) {
     if (command == "nversion")
         MutateTxVersion(tx, commandVal);
     else if (command == "locktime")
@@ -477,8 +463,7 @@ static void MutateTx(CMutableTransaction& tx, const string& command, const strin
         throw runtime_error("unknown command");
 }
 
-static void OutputTxJSON(const CTransaction& tx)
-{
+static void OutputTxJSON(const CTransaction& tx) {
     UniValue entry(UniValue::VOBJ);
     TxToUniv(tx, 0, entry);
 
@@ -486,22 +471,19 @@ static void OutputTxJSON(const CTransaction& tx)
     fprintf(stdout, "%s\n", jsonOutput.c_str());
 }
 
-static void OutputTxHash(const CTransaction& tx)
-{
+static void OutputTxHash(const CTransaction& tx) {
     string strHexHash = tx.GetHash().GetHex(); // the hex-encoded transaction hash (aka the transaction id)
 
     fprintf(stdout, "%s\n", strHexHash.c_str());
 }
 
-static void OutputTxHex(const CTransaction& tx)
-{
+static void OutputTxHex(const CTransaction& tx) {
     string strHex = EncodeHexTx(tx);
 
     fprintf(stdout, "%s\n", strHex.c_str());
 }
 
-static void OutputTx(const CTransaction& tx)
-{
+static void OutputTx(const CTransaction& tx) {
     if (GetBoolArg("-json", false))
         OutputTxJSON(tx);
     else if (GetBoolArg("-txid", false))
@@ -510,8 +492,7 @@ static void OutputTx(const CTransaction& tx)
         OutputTxHex(tx);
 }
 
-static string readStdin()
-{
+static string readStdin() {
     char buf[4096];
     string ret;
 
@@ -530,8 +511,7 @@ static string readStdin()
     return ret;
 }
 
-static int CommandLineRawTx(int argc, char* argv[])
-{
+static int CommandLineRawTx(int argc, char* argv[]) {
     string strPrint;
     int nRet = 0;
     try {
@@ -597,8 +577,7 @@ static int CommandLineRawTx(int argc, char* argv[])
     return nRet;
 }
 
-int main(int argc, char* argv[])
-{
+int main(int argc, char* argv[]) {
     SetupEnvironment();
 
     try {

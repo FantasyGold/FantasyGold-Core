@@ -6,18 +6,17 @@
 #ifndef BITCOIN_RPCPROTOCOL_H
 #define BITCOIN_RPCPROTOCOL_H
 
-#include <boost/asio.hpp>
-#include <boost/asio/ssl.hpp>
-#include <boost/iostreams/concepts.hpp>
-#include <boost/iostreams/stream.hpp>
 #include <list>
 #include <map>
 #include <stdint.h>
 #include <string>
+#include <boost/iostreams/concepts.hpp>
+#include <boost/iostreams/stream.hpp>
+#include <boost/asio.hpp>
+#include <boost/asio/ssl.hpp>
+#include <boost/filesystem.hpp>
 
-#include "json/json_spirit_reader_template.h"
-#include "json/json_spirit_utils.h"
-#include "json/json_spirit_writer_template.h"
+#include <univalue.h>
 
 //! HTTP status codes
 enum HTTPStatusCode {
@@ -52,6 +51,7 @@ enum RPCErrorCode {
     RPC_VERIFY_REJECTED = -26,         //! Transaction or block was rejected by network rules
     RPC_VERIFY_ALREADY_IN_CHAIN = -27, //! Transaction already in chain
     RPC_IN_WARMUP = -28,               //! Client still warming up
+    RPC_GBT_POS_ERROR = -29,           //! GetBlockTemplate error during PoS period
 
     //! Aliases for backward compatibility
     RPC_TRANSACTION_ERROR = RPC_VERIFY_ERROR,
@@ -63,6 +63,7 @@ enum RPCErrorCode {
     RPC_CLIENT_IN_INITIAL_DOWNLOAD = -10, //! Still downloading initial blocks
     RPC_CLIENT_NODE_ALREADY_ADDED = -23,  //! Node is already added
     RPC_CLIENT_NODE_NOT_ADDED = -24,      //! Node has not been added before
+    RPC_CLIENT_INVALID_IP_OR_SUBNET = -30,//! Invalid IP/Subnet
 
     //! Wallet errors
     RPC_WALLET_ERROR = -4,                 //! Unspecified problem with wallet (key not found etc.)
@@ -80,35 +81,29 @@ enum RPCErrorCode {
  * IOStream device that speaks SSL but can also speak non-SSL
  */
 template <typename Protocol>
-class SSLIOStreamDevice : public boost::iostreams::device<boost::iostreams::bidirectional>
-{
+class SSLIOStreamDevice : public boost::iostreams::device<boost::iostreams::bidirectional> {
 public:
-    SSLIOStreamDevice(boost::asio::ssl::stream<typename Protocol::socket>& streamIn, bool fUseSSLIn) : stream(streamIn)
-    {
+    SSLIOStreamDevice(boost::asio::ssl::stream<typename Protocol::socket>& streamIn, bool fUseSSLIn) : stream(streamIn) {
         fUseSSL = fUseSSLIn;
         fNeedHandshake = fUseSSLIn;
     }
 
-    void handshake(boost::asio::ssl::stream_base::handshake_type role)
-    {
+    void handshake(boost::asio::ssl::stream_base::handshake_type role) {
         if (!fNeedHandshake) return;
         fNeedHandshake = false;
         stream.handshake(role);
     }
-    std::streamsize read(char* s, std::streamsize n)
-    {
+    std::streamsize read(char* s, std::streamsize n) {
         handshake(boost::asio::ssl::stream_base::server); // HTTPS servers read first
         if (fUseSSL) return stream.read_some(boost::asio::buffer(s, n));
         return stream.next_layer().read_some(boost::asio::buffer(s, n));
     }
-    std::streamsize write(const char* s, std::streamsize n)
-    {
+    std::streamsize write(const char* s, std::streamsize n) {
         handshake(boost::asio::ssl::stream_base::client); // HTTPS clients write first
         if (fUseSSL) return boost::asio::write(stream, boost::asio::buffer(s, n));
         return boost::asio::write(stream.next_layer(), boost::asio::buffer(s, n));
     }
-    bool connect(const std::string& server, const std::string& port)
-    {
+    bool connect(const std::string& server, const std::string& port) {
         using namespace boost::asio::ip;
         tcp::resolver resolver(stream.get_io_service());
         tcp::resolver::iterator endpoint_iterator;
@@ -152,9 +147,18 @@ bool ReadHTTPRequestLine(std::basic_istream<char>& stream, int& proto, std::stri
 int ReadHTTPStatus(std::basic_istream<char>& stream, int& proto);
 int ReadHTTPHeaders(std::basic_istream<char>& stream, std::map<std::string, std::string>& mapHeadersRet);
 int ReadHTTPMessage(std::basic_istream<char>& stream, std::map<std::string, std::string>& mapHeadersRet, std::string& strMessageRet, int nProto, size_t max_size);
-std::string JSONRPCRequest(const std::string& strMethod, const json_spirit::Array& params, const json_spirit::Value& id);
-json_spirit::Object JSONRPCReplyObj(const json_spirit::Value& result, const json_spirit::Value& error, const json_spirit::Value& id);
-std::string JSONRPCReply(const json_spirit::Value& result, const json_spirit::Value& error, const json_spirit::Value& id);
-json_spirit::Object JSONRPCError(int code, const std::string& message);
+std::string JSONRPCRequest(const std::string& strMethod, const UniValue& params, const UniValue& id);
+UniValue JSONRPCReplyObj(const UniValue& result, const UniValue& error, const UniValue& id);
+std::string JSONRPCReply(const UniValue& result, const UniValue& error, const UniValue& id);
+UniValue JSONRPCError(int code, const std::string& message);
+
+/** Get name of RPC authentication cookie file */
+boost::filesystem::path GetAuthCookieFile();
+/** Generate a new RPC authentication cookie and write it to disk */
+bool GenerateAuthCookie(std::string *cookie_out);
+/** Read the RPC authentication cookie from disk */
+bool GetAuthCookie(std::string *cookie_out);
+/** Delete RPC authentication cookie from disk */
+void DeleteAuthCookie();
 
 #endif // BITCOIN_RPCPROTOCOL_H

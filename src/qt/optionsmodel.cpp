@@ -1,6 +1,6 @@
 // Copyright (c) 2011-2014 The Bitcoin developers
 // Copyright (c) 2014-2015 The Dash developers
-// // Copyright (c) 2015-2017 The Bulwark developers
+// Copyright (c) 2015-2017 The PIVX developers
 // Copyright (c) 2017-2018 The FantasyGold developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
@@ -30,19 +30,16 @@
 #include <QSettings>
 #include <QStringList>
 
-OptionsModel::OptionsModel(QObject* parent) : QAbstractListModel(parent)
-{
+OptionsModel::OptionsModel(QObject* parent) : QAbstractListModel(parent) {
     Init();
 }
 
-void OptionsModel::addOverriddenOption(const std::string& option)
-{
+void OptionsModel::addOverriddenOption(const std::string& option) {
     strOverriddenByCommandLine += QString::fromStdString(option) + "=" + QString::fromStdString(mapArgs[option]) + " ";
 }
 
 // Writes all missing QSettings with their default values
-void OptionsModel::Init()
-{
+void OptionsModel::Init() {
     resetSettings = false;
     QSettings settings;
 
@@ -71,7 +68,7 @@ void OptionsModel::Init()
 
     if (!settings.contains("fCoinControlFeatures"))
         settings.setValue("fCoinControlFeatures", false);
-    fCoinControlFeatures = settings.value("fCoinControlFeatures", false).toBool();
+    fCoinControlFeatures = settings.value("fCoinControlFeatures").toBool();
 
     if (!settings.contains("nObfuscationRounds"))
         settings.setValue("nObfuscationRounds", 2);
@@ -79,7 +76,6 @@ void OptionsModel::Init()
     if (!settings.contains("nAnonymizeFantasyGoldAmount"))
         settings.setValue("nAnonymizeFantasyGoldAmount", 1000);
 
-    nObfuscationRounds = settings.value("nObfuscationRounds").toLongLong();
     nAnonymizeFantasyGoldAmount = settings.value("nAnonymizeFantasyGoldAmount").toLongLong();
 
     if (!settings.contains("fShowMasternodesTab"))
@@ -107,9 +103,12 @@ void OptionsModel::Init()
 // Wallet
 #ifdef ENABLE_WALLET
     if (!settings.contains("bSpendZeroConfChange"))
-        settings.setValue("bSpendZeroConfChange", true);
+        settings.setValue("bSpendZeroConfChange", false);
     if (!SoftSetBoolArg("-spendzeroconfchange", settings.value("bSpendZeroConfChange").toBool()))
         addOverriddenOption("-spendzeroconfchange");
+    if (!settings.contains("fShowOrphans"))
+        settings.setValue("fShowOrphans", false);
+    fShowOrphans = settings.value("fShowOrphans").toBool();
 #endif
 
     // Network
@@ -145,16 +144,17 @@ void OptionsModel::Init()
     if (!SoftSetArg("-lang", settings.value("language").toString().toStdString()))
         addOverriddenOption("-lang");
 
-    if (settings.contains("nObfuscationRounds"))
-        SoftSetArg("-obfuscationrounds", settings.value("nObfuscationRounds").toString().toStdString());
+    if (settings.contains("nZeromintPercentage"))
+        SoftSetArg("-zeromintpercentage", settings.value("nZeromintPercentage").toString().toStdString());
+    if (settings.contains("nPreferredDenom"))
+        SoftSetArg("-preferredDenom", settings.value("nPreferredDenom").toString().toStdString());
     if (settings.contains("nAnonymizeFantasyGoldAmount"))
         SoftSetArg("-anonymizefantasygoldamount", settings.value("nAnonymizeFantasyGoldAmount").toString().toStdString());
 
     language = settings.value("language").toString();
 }
 
-void OptionsModel::Reset()
-{
+void OptionsModel::Reset() {
     QSettings settings;
 
     // Remove all entries from our QSettings object
@@ -166,14 +166,12 @@ void OptionsModel::Reset()
         GUIUtil::SetStartOnSystemStartup(false);
 }
 
-int OptionsModel::rowCount(const QModelIndex& parent) const
-{
+int OptionsModel::rowCount(const QModelIndex& parent) const {
     return OptionIDRowCount;
 }
 
 // read QSettings values and return them
-QVariant OptionsModel::data(const QModelIndex& index, int role) const
-{
+QVariant OptionsModel::data(const QModelIndex& index, int role) const {
     if (role == Qt::EditRole) {
         QSettings settings;
         switch (index.row()) {
@@ -209,6 +207,8 @@ QVariant OptionsModel::data(const QModelIndex& index, int role) const
             return settings.value("bSpendZeroConfChange");
         case ShowMasternodesTab:
             return settings.value("fShowMasternodesTab");
+        case ShowOrphans:
+            return settings.value("fShowOrphans");
 #endif
         case DisplayUnit:
             return nDisplayUnit;
@@ -226,8 +226,10 @@ QVariant OptionsModel::data(const QModelIndex& index, int role) const
             return settings.value("nDatabaseCache");
         case ThreadsScriptVerif:
             return settings.value("nThreadsScriptVerif");
-        case ObfuscationRounds:
-            return QVariant(nObfuscationRounds);
+        case ZeromintPercentage:
+            return QVariant(nZeromintPercentage);
+        case ZeromintPrefDenom:
+            return QVariant(nPreferredDenom);
         case AnonymizeFantasyGoldAmount:
             return QVariant(nAnonymizeFantasyGoldAmount);
         case Listen:
@@ -240,8 +242,7 @@ QVariant OptionsModel::data(const QModelIndex& index, int role) const
 }
 
 // write QSettings values
-bool OptionsModel::setData(const QModelIndex& index, const QVariant& value, int role)
-{
+bool OptionsModel::setData(const QModelIndex& index, const QVariant& value, int role) {
     bool successful = true; /* set to false on parse error */
     if (role == Qt::EditRole) {
         QSettings settings;
@@ -279,7 +280,8 @@ bool OptionsModel::setData(const QModelIndex& index, const QVariant& value, int 
                 settings.setValue("addrProxy", strNewValue);
                 setRestartRequired(true);
             }
-        } break;
+        }
+        break;
         case ProxyPort: {
             // contains current IP at index 0 and current port at index 1
             QStringList strlIpPort = settings.value("addrProxy").toString().split(":", QString::SkipEmptyParts);
@@ -290,7 +292,8 @@ bool OptionsModel::setData(const QModelIndex& index, const QVariant& value, int 
                 settings.setValue("addrProxy", strNewValue);
                 setRestartRequired(true);
             }
-        } break;
+        }
+        break;
 #ifdef ENABLE_WALLET
         case SpendZeroConfChange:
             if (settings.value("bSpendZeroConfChange") != value) {
@@ -298,6 +301,11 @@ bool OptionsModel::setData(const QModelIndex& index, const QVariant& value, int 
                 setRestartRequired(true);
             }
             break;
+        case ShowOrphans:
+            if (settings.value("fShowOrphans") != value) {
+                settings.setValue("fShowOrphans", value);
+                setRestartRequired(true);
+            }
         case ShowMasternodesTab:
             if (settings.value("fShowMasternodesTab") != value) {
                 settings.setValue("fShowMasternodesTab", value);
@@ -333,11 +341,17 @@ bool OptionsModel::setData(const QModelIndex& index, const QVariant& value, int 
                 setRestartRequired(true);
             }
             break;
-        case ObfuscationRounds:
-            nObfuscationRounds = value.toInt();
-            settings.setValue("nObfuscationRounds", nObfuscationRounds);
-            emit obfuscationRoundsChanged(nObfuscationRounds);
+        case ZeromintPercentage:
+            nZeromintPercentage = value.toInt();
+            settings.setValue("nZeromintPercentage", nZeromintPercentage);
+            emit zeromintPercentageChanged(nZeromintPercentage);
             break;
+        case ZeromintPrefDenom:
+            nPreferredDenom = value.toInt();
+            settings.setValue("nPreferredDenom", nPreferredDenom);
+            emit preferredDenomChanged(nPreferredDenom);
+            break;
+
         case AnonymizeFantasyGoldAmount:
             nAnonymizeFantasyGoldAmount = value.toInt();
             settings.setValue("nAnonymizeFantasyGoldAmount", nAnonymizeFantasyGoldAmount);
@@ -377,8 +391,7 @@ bool OptionsModel::setData(const QModelIndex& index, const QVariant& value, int 
 }
 
 /** Updates current unit in memory, settings and emits displayUnitChanged(newUnit) signal */
-void OptionsModel::setDisplayUnit(const QVariant& value)
-{
+void OptionsModel::setDisplayUnit(const QVariant& value) {
     if (!value.isNull()) {
         QSettings settings;
         nDisplayUnit = value.toInt();
@@ -387,15 +400,14 @@ void OptionsModel::setDisplayUnit(const QVariant& value)
     }
 }
 
-bool OptionsModel::getProxySettings(QNetworkProxy& proxy) const
-{
+bool OptionsModel::getProxySettings(QNetworkProxy& proxy) const {
     // Directly query current base proxy, because
     // GUI settings can be overridden with -proxy.
     proxyType curProxy;
     if (GetProxy(NET_IPV4, curProxy)) {
         proxy.setType(QNetworkProxy::Socks5Proxy);
-        proxy.setHostName(QString::fromStdString(curProxy.ToStringIP()));
-        proxy.setPort(curProxy.GetPort());
+        proxy.setHostName(QString::fromStdString(curProxy.proxy.ToStringIP()));
+        proxy.setPort(curProxy.proxy.GetPort());
 
         return true;
     } else
@@ -404,14 +416,12 @@ bool OptionsModel::getProxySettings(QNetworkProxy& proxy) const
     return false;
 }
 
-void OptionsModel::setRestartRequired(bool fRequired)
-{
+void OptionsModel::setRestartRequired(bool fRequired) {
     QSettings settings;
     return settings.setValue("fRestartRequired", fRequired);
 }
 
-bool OptionsModel::isRestartRequired()
-{
+bool OptionsModel::isRestartRequired() {
     QSettings settings;
     return settings.value("fRestartRequired", false).toBool();
 }

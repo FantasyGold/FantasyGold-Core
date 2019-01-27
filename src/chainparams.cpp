@@ -6,6 +6,7 @@
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
+#include "libzerocoin/Params.h"
 #include "chainparams.h"
 
 #include "random.h"
@@ -31,8 +32,7 @@ struct SeedSpec6 {
  */
 
 //! Convert the pnSeeds6 array into usable address objects.
-static void convertSeed6(std::vector<CAddress>& vSeedsOut, const SeedSpec6* data, unsigned int count)
-{
+static void convertSeed6(std::vector<CAddress>& vSeedsOut, const SeedSpec6* data, unsigned int count) {
     // It'll only connect to one or two seed nodes because once it connects,
     // it'll get a pile of addresses with newer timestamps.
     // Seed nodes are given a random 'last seen time' of between one and two
@@ -46,6 +46,7 @@ static void convertSeed6(std::vector<CAddress>& vSeedsOut, const SeedSpec6* data
         vSeedsOut.push_back(addr);
     }
 }
+
 //   What makes a good checkpoint block?
 // + Is surrounded by blocks with reasonable timestamps
 //   (no blocks before with a timestamp after, none after with
@@ -73,18 +74,26 @@ static const Checkpoints::CCheckpointData dataRegtest = {
     &mapCheckpointsRegtest,
     1454124731,
     0,
-    100};
-class CMainParams : public CChainParams
-{
+    100
+};
+
+libzerocoin::ZerocoinParams* CChainParams::Zerocoin_Params() const {
+    assert(this);
+    static CBigNum bnTrustedModulus(zerocoinModulus);
+    static libzerocoin::ZerocoinParams ZCParams = libzerocoin::ZerocoinParams(bnTrustedModulus);
+
+    return &ZCParams;
+}
+
+class CMainParams : public CChainParams {
 public:
-    CMainParams()
-    {
+    CMainParams() {
         networkID = CBaseChainParams::MAIN;
         strNetworkID = "main";
         /**
          * The message start string is designed to be unlikely to occur in normal data.
-         * The characters are rarely used upper ASCII, not valid as UTF-8, and produce a large 4-byte int at any alignment.
-         * a large 4-byte int at any alignment. here
+         * The characters are rarely used upper ASCII, not valid as UTF-8, and produce
+         * a large 4-byte int at any alignment.
          */
         pchMessageStart[0] = 0x54;
         pchMessageStart[1] = 0x49;
@@ -161,7 +170,7 @@ public:
         //  BIP44 coin type is 'TBD'
         base58Prefixes[EXT_COIN_TYPE] = boost::assign::list_of(0x13)(0x00)(0x00)(0x80).convert_to_container<std::vector<unsigned char> >();
         convertSeed6(vFixedSeeds, pnSeed6_main, ARRAYLEN(pnSeed6_main));
-        fRequireRPCPassword = true;
+
         fMiningRequiresPeers = true;
         fAllowMinDifficultyBlocks = false;
         fDefaultConsistencyChecks = false;
@@ -170,6 +179,7 @@ public:
         fSkipProofOfWorkCheck = false;
         fTestnetToBeDeprecatedFieldRPC = false;
         fHeadersFirstSyncingActive = false;
+
         nPoolMaxTransactions = 3;
 		strSporkKey = "04d8bc8901ec5b46c8e23d94a4ed2d69d127c4aa79311a28058bb6ab3c87505cefbb4ff9161c285dcf34cf846d2c4eda945d5331902195f8a064bdf6053d0d6767";
         strObfuscationPoolDummyAddress = "fDiJwVuKv9dcKBN4KCfX6UmXbkpqLfzGyf";
@@ -181,14 +191,13 @@ public:
     }
 };
 static CMainParams mainParams;
+
 /**
  * Testnet (v3)
  */
-class CTestNetParams : public CMainParams
-{
+class CTestNetParams : public CMainParams {
 public:
-    CTestNetParams()
-    {
+    CTestNetParams() {
         networkID = CBaseChainParams::TESTNET;
         strNetworkID = "test";
         pchMessageStart[0] = 0x41;
@@ -232,32 +241,31 @@ public:
         // Testnet fantasygold BIP44 coin type is '1' (All coin's testnet default)
         base58Prefixes[EXT_COIN_TYPE] = boost::assign::list_of(0x01)(0x00)(0x00)(0x80).convert_to_container<std::vector<unsigned char> >();
         convertSeed6(vFixedSeeds, pnSeed6_test, ARRAYLEN(pnSeed6_test));
-        fRequireRPCPassword = true;
+
         fMiningRequiresPeers = false;
-        fAllowMinDifficultyBlocks = false;
+        fAllowMinDifficultyBlocks = true;
         fDefaultConsistencyChecks = false;
         fRequireStandard = false;
         fMineBlocksOnDemand = false;
         fTestnetToBeDeprecatedFieldRPC = true;
+
         nPoolMaxTransactions = 2;
         strSporkKey = "04d45e7b9bd690618bbf1275990c42db1d15f6c059bdafcd0362f30e64e134fdfdbbbe17e0ad4d6cd17c5d8eae7163cbaf8518b8c45039062c8283c1bc4de67890";
         strObfuscationPoolDummyAddress = "FQfdVa57fUXHEU7zboSbyGeBkS63gpowW3";
         nStartMasternodePayments = 1511092620; //November 19, 2017 11:57:00 AM
     }
-    const Checkpoints::CCheckpointData& Checkpoints() const
-    {
+    const Checkpoints::CCheckpointData& Checkpoints() const {
         return dataTestnet;
     }
 };
 static CTestNetParams testNetParams;
+
 /**
  * Regression test
  */
-class CRegTestParams : public CTestNetParams
-{
+class CRegTestParams : public CTestNetParams {
 public:
-    CRegTestParams()
-    {
+    CRegTestParams() {
         networkID = CBaseChainParams::REGTEST;
         strNetworkID = "regtest";
         strNetworkID = "regtest";
@@ -278,7 +286,7 @@ public:
     	assert(hashGenesisBlock == uint256("00000469c51791d203c00e59b9b1fde736b5f4c16c7e54ab1b87aefe3bd05a9c"));
         vFixedSeeds.clear(); //! Testnet mode doesn't have any fixed seeds.
         vSeeds.clear();      //! Testnet mode doesn't have any DNS seeds.
-        fRequireRPCPassword = false;
+
         fMiningRequiresPeers = false;
         fAllowMinDifficultyBlocks = true;
         fDefaultConsistencyChecks = true;
@@ -286,59 +294,72 @@ public:
         fMineBlocksOnDemand = true;
         fTestnetToBeDeprecatedFieldRPC = false;
     }
-    const Checkpoints::CCheckpointData& Checkpoints() const
-    {
+    const Checkpoints::CCheckpointData& Checkpoints() const {
         return dataRegtest;
     }
 };
 static CRegTestParams regTestParams;
+
 /**
  * Unit test
  */
-class CUnitTestParams : public CMainParams, public CModifiableParams
-{
+class CUnitTestParams : public CMainParams, public CModifiableParams {
 public:
-    CUnitTestParams()
-    {
+    CUnitTestParams() {
         networkID = CBaseChainParams::UNITTEST;
         strNetworkID = "unittest";
         nDefaultPort = 60806;
         vFixedSeeds.clear(); //! Unit test mode doesn't have any fixed seeds.
         vSeeds.clear();      //! Unit test mode doesn't have any DNS seeds.
-        fRequireRPCPassword = false;
+
         fMiningRequiresPeers = false;
         fDefaultConsistencyChecks = true;
         fAllowMinDifficultyBlocks = false;
-        fMineBlocksOnDemand = false;
+        fMineBlocksOnDemand = true;
     }
-    const Checkpoints::CCheckpointData& Checkpoints() const
-    {
+
+    const Checkpoints::CCheckpointData& Checkpoints() const {
         // UnitTest share the same checkpoints as MAIN
         return dataMainNet;
     }
+
     //! Published setters to allow changing values in unit test cases
-    virtual void setDefaultConsistencyChecks(bool afDefaultConsistencyChecks) { fDefaultConsistencyChecks = afDefaultConsistencyChecks; }
-    virtual void setAllowMinDifficultyBlocks(bool afAllowMinDifficultyBlocks) { fAllowMinDifficultyBlocks = afAllowMinDifficultyBlocks; }
-    virtual void setSkipProofOfWorkCheck(bool afSkipProofOfWorkCheck) { fSkipProofOfWorkCheck = afSkipProofOfWorkCheck; }
-    virtual void setEnforceBlockUpgradeMajority(int anEnforceBlockUpgradeMajority) { nEnforceBlockUpgradeMajority = anEnforceBlockUpgradeMajority; }
-    virtual void setRejectBlockOutdatedMajority(int anRejectBlockOutdatedMajority) { nRejectBlockOutdatedMajority = anRejectBlockOutdatedMajority; }
-    virtual void setToCheckBlockUpgradeMajority(int anToCheckBlockUpgradeMajority) { nToCheckBlockUpgradeMajority = anToCheckBlockUpgradeMajority; }
+    virtual void setDefaultConsistencyChecks(bool afDefaultConsistencyChecks) {
+        fDefaultConsistencyChecks = afDefaultConsistencyChecks;
+    }
+    virtual void setAllowMinDifficultyBlocks(bool afAllowMinDifficultyBlocks) {
+        fAllowMinDifficultyBlocks = afAllowMinDifficultyBlocks;
+    }
+    virtual void setSkipProofOfWorkCheck(bool afSkipProofOfWorkCheck) {
+        fSkipProofOfWorkCheck = afSkipProofOfWorkCheck;
+    }
+    virtual void setEnforceBlockUpgradeMajority(int anEnforceBlockUpgradeMajority) {
+        nEnforceBlockUpgradeMajority = anEnforceBlockUpgradeMajority;
+    }
+    virtual void setRejectBlockOutdatedMajority(int anRejectBlockOutdatedMajority) {
+        nRejectBlockOutdatedMajority = anRejectBlockOutdatedMajority;
+    }
+    virtual void setToCheckBlockUpgradeMajority(int anToCheckBlockUpgradeMajority) {
+        nToCheckBlockUpgradeMajority = anToCheckBlockUpgradeMajority;
+    }
 };
 static CUnitTestParams unitTestParams;
+
+
 static CChainParams* pCurrentParams = 0;
-CModifiableParams* ModifiableParams()
-{
+
+CModifiableParams* ModifiableParams() {
     assert(pCurrentParams);
     assert(pCurrentParams == &unitTestParams);
     return (CModifiableParams*)&unitTestParams;
 }
-const CChainParams& Params()
-{
+
+const CChainParams& Params() {
     assert(pCurrentParams);
     return *pCurrentParams;
 }
-CChainParams& Params(CBaseChainParams::Network network)
-{
+
+CChainParams& Params(CBaseChainParams::Network network) {
     switch (network) {
     case CBaseChainParams::MAIN:
         return mainParams;
@@ -353,16 +374,17 @@ CChainParams& Params(CBaseChainParams::Network network)
         return mainParams;
     }
 }
-void SelectParams(CBaseChainParams::Network network)
-{
+
+void SelectParams(CBaseChainParams::Network network) {
     SelectBaseParams(network);
     pCurrentParams = &Params(network);
 }
-bool SelectParamsFromCommandLine()
-{
+
+bool SelectParamsFromCommandLine() {
     CBaseChainParams::Network network = NetworkIdFromCommandLine();
     if (network == CBaseChainParams::MAX_NETWORK_TYPES)
         return false;
+
     SelectParams(network);
     return true;
 }

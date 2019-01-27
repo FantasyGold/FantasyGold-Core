@@ -1,6 +1,6 @@
 // Copyright (c) 2011-2014 The Bitcoin developers
 // Copyright (c) 2014-2015 The Dash developers
-// // Copyright (c) 2015-2017 The Bulwark developers
+// Copyright (c) 2015-2017 The PIVX developers
 // Copyright (c) 2017-2018 The FantasyGold developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
@@ -47,11 +47,10 @@
 /** FantasyGold unit definitions. Encapsulates parsing and formatting
    and serves as list model for drop-down selection boxes.
 */
-class BitcoinUnits : public QAbstractListModel
-{
+class BitcoinUnits : public QAbstractListModel {
     Q_OBJECT
 
-public:
+  public:
     explicit BitcoinUnits(QObject* parent);
 
     /** FantasyGold units.
@@ -113,8 +112,7 @@ public:
     QVariant data(const QModelIndex& index, int role) const;
     ///@}
 
-    static QString removeSpaces(QString text)
-    {
+    static QString removeSpaces(QString text) {
         text.remove(' ');
         text.remove(QChar(THIN_SP_CP));
 #if (THIN_SP_CP != REAL_THIN_SP_CP)
@@ -126,7 +124,7 @@ public:
     //! Return maximum number of base units (Satoshis)
     static CAmount maxMoney();
 
-private:
+  private:
     QList<BitcoinUnits::Unit> unitlist;
 };
 typedef BitcoinUnits::Unit BitcoinUnit;

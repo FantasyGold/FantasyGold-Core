@@ -10,36 +10,36 @@
         <translation>Criar um novo endereço</translation>
     </message>
     <message>
-        <source>&amp;New</source>
-        <translation>&amp;Novo</translation>
+        <source>New</source>
+        <translation>Novo</translation>
     </message>
     <message>
         <source>Copy the currently selected address to the system clipboard</source>
         <translation>Copiar o endereço selecionado para a área de transferência</translation>
     </message>
     <message>
-        <source>&amp;Copy</source>
-        <translation>&amp;Copiar</translation>
+        <source>Copy</source>
+        <translation>Copiar</translation>
     </message>
     <message>
         <source>Delete the currently selected address from the list</source>
         <translation>Deletar da lista o endereço selecionado </translation>
     </message>
     <message>
-        <source>&amp;Delete</source>
-        <translation>&amp;Deletar</translation>
+        <source>Delete</source>
+        <translation>Deletar</translation>
     </message>
     <message>
         <source>Export the data in the current tab to a file</source>
         <translation>Exportar as informações da aba atual para um arquivo</translation>
     </message>
     <message>
-        <source>&amp;Export</source>
-        <translation>&amp;Exportar</translation>
+        <source>Export</source>
+        <translation>Exportar</translation>
     </message>
     <message>
-        <source>C&amp;lose</source>
-        <translation>&amp;Fechar</translation>
+        <source>Close</source>
+        <translation>Fechar</translation>
     </message>
     <message>
         <source>Choose the address to send coins to</source>
@@ -50,8 +50,8 @@
         <translation>Escolha o endereço para receber moedas</translation>
     </message>
     <message>
-        <source>C&amp;hoose</source>
-        <translation>&amp;Selecionar</translation>
+        <source>Choose</source>
+        <translation>Selecionar</translation>
     </message>
     <message>
         <source>Sending addresses</source>
@@ -70,16 +70,16 @@
         <translation>Esses são seus endereços FantasyGold para recebimento de pagamentos. É recomendado usar um novo endereço para cada transação.</translation>
     </message>
     <message>
-        <source>&amp;Copy Address</source>
-        <translation>&amp;Copiar endereço</translation>
+        <source>Copy Address</source>
+        <translation>Copiar endereço</translation>
     </message>
     <message>
-        <source>Copy &amp;Label</source>
-        <translation>Copiar &amp;Rotular</translation>
+        <source>Copy Label</source>
+        <translation>Copiar Rotular</translation>
     </message>
     <message>
-        <source>&amp;Edit</source>
-        <translation>&amp;Alterar</translation>
+        <source>Edit</source>
+        <translation>Alterar</translation>
     </message>
     <message>
         <source>Export Address List</source>
@@ -132,8 +132,12 @@
         <translation>Repita a nova palavra-chave</translation>
     </message>
     <message>
-        <source>For anonymization and staking only</source>
-        <translation>Para anonimização e staking somente</translation>
+        <source>Serves to disable the trivial sendmoney when OS account compromised. Provides no real security.</source>
+        <translation>Server irá desabilitar o sendmoney trivial quando a conta do sistema operacional for comprometido. Não oferece segurança real.</translation>
+    </message>
+    <message>
+        <source>For anonymization, automint, and staking only</source>
+        <translation>Somente para anonimização, automint e staking</translation>
     </message>
     <message>
         <source>Enter the new passphrase to the wallet.&lt;br/&gt;Please use a passphrase of &lt;b&gt;ten or more random characters&lt;/b&gt;, or &lt;b&gt;eight or more words&lt;/b&gt;.</source>
@@ -172,16 +176,16 @@
         <translation>Confirmar criptografia de carteira</translation>
     </message>
     <message>
-        <source>FantasyGold will close now to finish the encryption process. Remember that encrypting your wallet cannot fully protect your FGCs from being stolen by malware infecting your computer.</source>
-        <translation>FantasyGold vai fechar agora para finalizar o processo de criptografia. Lembre-se que encriptar sua carteira não pode proteger totalmente suas FGCs de serem roubadas por malwares infectando seu computador.</translation>
+        <source>FantasyGold will close now to finish the encryption process. Remember that encrypting your wallet cannot fully protect your FGCS from being stolen by malware infecting your computer.</source>
+        <translation>FantasyGold vai fechar agora para finalizar o processo de criptografia. Lembre-se que encriptar sua carteira não pode proteger totalmente suas FantasyGolds de serem roubadas por malwares infectando seu computador.</translation>
     </message>
     <message>
         <source>Are you sure you wish to encrypt your wallet?</source>
         <translation>Você tem certeza que deseja criptografar sua carteira?</translation>
     </message>
     <message>
-        <source>Warning: If you encrypt your wallet and lose your passphrase, you will &lt;b&gt;LOSE ALL OF YOUR FGC&lt;/b&gt;!</source>
-        <translation>Aviso: se você criptografar sua carteira e perder sua senha você &lt;b&gt;PERDERÁ TODAS AS SUAS FGC&lt;b&gt;!</translation>
+        <source>Warning: If you encrypt your wallet and lose your passphrase, you will &lt;b&gt;LOSE ALL OF YOUR FantasyGold&lt;/b&gt;!</source>
+        <translation>Aviso: se você criptografar sua carteira e perder sua senha você &lt;b&gt;PERDERÁ TODAS AS SUAS FantasyGold&lt;b&gt;!</translation>
     </message>
     <message>
         <source>Wallet encrypted</source>
@@ -225,26 +229,33 @@
     </message>
 </context>
 <context>
+    <name>BanTableModel</name>
+    <message>
+        <source>IP/Netmask</source>
+        <translation>IP/Netmask</translation>
+    </message>
+    <message>
+        <source>Banned Until</source>
+        <translation>Proibido até</translation>
+    </message>
+</context>
+<context>
     <name>Bip38ToolDialog</name>
     <message>
         <source>BIP 38 Tool</source>
         <translation>Ferramenta da BIP 38</translation>
     </message>
     <message>
-        <source>&amp;BIP 38 Encrypt</source>
-        <translation>&amp;Encriptação BIP 38</translation>
-    </message>
-    <message>
-        <source>Enter a FantasyGold Address that you would like to encrypt using BIP 38. Enter a passphrase in the middle box. Press encrypt to compute the encrypted private key.</source>
-        <translation>Insira um endereço que você deseja criptografar usando a BIP 38. Insira a palavra-chave na caixa do meio. Pressione criptografar para computar a chave privada criptografada.</translation>
+        <source>BIP 38 Encrypt</source>
+        <translation>Encriptação BIP 38</translation>
     </message>
     <message>
         <source>Address:</source>
         <translation>Endereço:</translation>
     </message>
     <message>
-        <source>The FantasyGold address to sign the message with</source>
-        <translation>O endereço FantasyGold para assinar a mensagem</translation>
+        <source>Enter a FantasyGold Address that you would like to encrypt using BIP 38. Enter a passphrase in the middle box. Press encrypt to compute the encrypted private key.</source>
+        <translation>Insira um endereço que você deseja criptografar usando a BIP 38. Insira a palavra-chave na caixa do meio. Pressione criptografar para computar a chave privada criptografada.</translation>
     </message>
     <message>
         <source>Choose previously used address</source>
@@ -275,36 +286,20 @@
         <translation>Copia a assinatura atual do sistema de transferência</translation>
     </message>
     <message>
-        <source>Sign the message to prove you own this FantasyGold address</source>
-        <translation>Assine a mensagem para provar que você possui este endereço FantasyGold</translation>
-    </message>
-    <message>
-        <source>Encrypt &amp;Key</source>
+        <source>Encrypt Key</source>
         <translation>Chave encriptada:</translation>
     </message>
     <message>
-        <source>Reset all sign message fields</source>
-        <translation>Reiniciar todos os campos de mensagem</translation>
+        <source>Clear All</source>
+        <translation>Limpar Tudo</translation>
     </message>
     <message>
-        <source>Clear &amp;All</source>
-        <translation>Limpar &amp;Tudo</translation>
+        <source>BIP 38 Decrypt</source>
+        <translation>Descriptografar BIP 38</translation>
     </message>
     <message>
-        <source>The FantasyGold address the message was signed with</source>
-        <translation>O endereço FantasyGold que assinou a mensagem</translation>
-    </message>
-    <message>
-        <source>Verify the message to ensure it was signed with the specified FantasyGold address</source>
-        <translation>Verifique a mensagem para ter certeza que foi assinada com o endereço FantasyGold especificado.</translation>
-    </message>
-    <message>
-        <source>Decrypt &amp;Key</source>
-        <translation>Descriptografar &amp;Chave</translation>
-    </message>
-    <message>
-        <source>Reset all verify message fields</source>
-        <translation>Reiniciar todos os campos de mensagem</translation>
+        <source>Decrypt Key</source>
+        <translation>Descriptografar Chave</translation>
     </message>
     <message>
         <source>Decrypted Key:</source>
@@ -390,136 +385,140 @@
         <translation>Nó</translation>
     </message>
     <message>
-        <source>&amp;Overview</source>
-        <translation>&amp;Visão Geral</translation>
+        <source>Overview</source>
+        <translation>Visão Geral</translation>
     </message>
     <message>
         <source>Show general overview of wallet</source>
         <translation>Mostrar visão geral da carteira</translation>
     </message>
     <message>
-        <source>&amp;Send</source>
-        <translation>&amp;Enviar</translation>
+        <source>Send</source>
+        <translation>Enviar</translation>
     </message>
     <message>
-        <source>&amp;Receive</source>
-        <translation>&amp;Receber</translation>
+        <source>Receive</source>
+        <translation>Receber</translation>
     </message>
     <message>
-        <source>&amp;Transactions</source>
-        <translation>&amp;Transações</translation>
+        <source>Transactions</source>
+        <translation>Transações</translation>
     </message>
     <message>
         <source>Browse transaction history</source>
         <translation>Olhar histórico de transação</translation>
     </message>
     <message>
-        <source>E&amp;xit</source>
-        <translation>&amp;Sair</translation>
+        <source>Privacy Actions for zFGC</source>
+        <translation>Ações privadas para zFGC</translation>
+    </message>
+    <message>
+        <source>Exit</source>
+        <translation>Sair</translation>
     </message>
     <message>
         <source>Quit application</source>
         <translation>Sair da aplicação</translation>
     </message>
     <message>
-        <source>About &amp;Qt</source>
-        <translation>Sobre &amp;Qt</translation>
+        <source>About Qt</source>
+        <translation>Sobre Qt</translation>
     </message>
     <message>
         <source>Show information about Qt</source>
         <translation>Mostrar informação sobre Qt</translation>
     </message>
     <message>
-        <source>&amp;Options...</source>
-        <translation>&amp;Opções...</translation>
+        <source>Options...</source>
+        <translation>Opções...</translation>
     </message>
     <message>
-        <source>&amp;Show / Hide</source>
-        <translation>&amp;Mostrar / Esconder</translation>
+        <source>Show / Hide</source>
+        <translation>Mostrar / Esconder</translation>
     </message>
     <message>
         <source>Show or hide the main Window</source>
         <translation>Mostrar ou esconder a janela principal</translation>
     </message>
     <message>
-        <source>&amp;Encrypt Wallet...</source>
-        <translation>&amp;Criptografar carteira</translation>
+        <source>Encrypt Wallet...</source>
+        <translation>Criptografar carteira</translation>
     </message>
     <message>
         <source>Encrypt the private keys that belong to your wallet</source>
         <translation>Criptografar as chaves privadas que pertencem à sua carteira</translation>
     </message>
     <message>
-        <source>&amp;Backup Wallet...</source>
-        <translation>&amp;Carteira de backup...</translation>
+        <source>Backup Wallet...</source>
+        <translation>Carteira de backup...</translation>
     </message>
     <message>
         <source>Backup wallet to another location</source>
         <translation>Backup da carteira em outro local</translation>
     </message>
     <message>
-        <source>&amp;Change Passphrase...</source>
-        <translation>&amp;Alterar palavra-chave...</translation>
+        <source>Change Passphrase...</source>
+        <translation>Alterar palavra-chave...</translation>
     </message>
     <message>
         <source>Change the passphrase used for wallet encryption</source>
         <translation>Altera a palavra-chave utilizada para encriptação da carteira</translation>
     </message>
     <message>
-        <source>&amp;Unlock Wallet...</source>
-        <translation>&amp;Destravar carteira...</translation>
+        <source>Unlock Wallet...</source>
+        <translation>Destravar carteira...</translation>
     </message>
     <message>
         <source>Unlock wallet</source>
         <translation>Desbloquear carteira</translation>
     </message>
     <message>
-        <source>&amp;Lock Wallet</source>
-        <translation>&amp;Travar carteira</translation>
+        <source>Lock Wallet</source>
+        <translation>Travar carteira</translation>
     </message>
     <message>
-        <source>Sign &amp;message...</source>
-        <translation>Assinar &amp;mensagem...</translation>
+        <source>Sign message...</source>
+        <translation>Assinar mensagem...</translation>
     </message>
     <message>
-        <source>&amp;Verify message...</source>
-        <translation>&amp;Verificar mensagem...</translation>
+        <source>Verify message...</source>
+        <translation>Verificar mensagem...</translation>
     </message>
     <message>
-        <source>&amp;Information</source>
-        <translation>&amp;Informação</translation>
+        <source>Information</source>
+        <translation>Informação</translation>
     </message>
     <message>
         <source>Show diagnostic information</source>
         <translation>Mostrar informação de diagnóstico</translation>
     </message>
     <message>
-        <source>&amp;Debug console</source>
-        <translation>&amp;Debug console</translation>
+        <source>Debug console</source>
+        <translation>Debug console</translation>
     </message>
     <message>
         <source>Open debugging console</source>
         <translation>Abra o console de Debug</translation>
     </message>
     <message>
-        <source>&amp;Network Monitor</source>
-        <translation>&amp;Monitor de rede</translation>
+        <source>Network Monitor</source>
+        <translation>Monitor de rede</translation>
     </message>
     <message>
         <source>Show network monitor</source>
         <translation>Mostrar monitor de rede</translation>
     </message>
     <message>
-        <source>&amp;Peers list</source>
-        <translation>&amp;Lista de pares</translation>
+        <source>Peers list</source>
+        <translation>Lista de pares</translation>
     </message>
     <message>
         <source>Show peers info</source>
         <translation>Mostrar informação da lista de pares</translation>
     </message>
     <message>
-        <source>Wallet &amp;Repair</source>
-        <translation>Carteira &amp;Reparo</translation>
+        <source>Wallet Repair</source>
+        <translation>Carteira Reparo</translation>
     </message>
     <message>
         <source>Show wallet repair options</source>
@@ -530,56 +529,84 @@
         <translation>Abrir arquivo de configuração</translation>
     </message>
     <message>
-        <source>Show Automatic &amp;Backups</source>
-        <translation>Mostrar &amp;Backups automáticos</translation>
+        <source>Show Automatic Backups</source>
+        <translation>Mostrar Backups automáticos</translation>
     </message>
     <message>
         <source>Show automatically created wallet backups</source>
         <translation>Mostrar backups de carteira criados automaticamente</translation>
     </message>
     <message>
-        <source>&amp;Sending addresses...</source>
-        <translation>&amp;Endereços de envio...</translation>
+        <source>Sending addresses...</source>
+        <translation>Endereços de envio...</translation>
     </message>
     <message>
         <source>Show the list of used sending addresses and labels</source>
         <translation>Mostrar a lista de endereços de envio e rótulos utilizados</translation>
     </message>
     <message>
-        <source>&amp;Receiving addresses...</source>
-        <translation>&amp;Endereços de recebimento...</translation>
+        <source>Receiving addresses...</source>
+        <translation>Endereços de recebimento...</translation>
     </message>
     <message>
         <source>Show the list of used receiving addresses and labels</source>
         <translation>Mostrar a lista de endereços de recebimento e rótulos utilizados</translation>
     </message>
     <message>
-        <source>Open &amp;URI...</source>
-        <translation>Abrir &amp;URI...</translation>
+        <source>Multisignature creation...</source>
+        <translation>Criação de multiassinaturas</translation>
     </message>
     <message>
-        <source>&amp;Command-line options</source>
-        <translation>&amp;Opções de linha de comando</translation>
+        <source>Create a new multisignature address and add it to this wallet</source>
+        <translation>Crie um novo endereço multiassinatura e adicione à esta carteira</translation>
+    </message>
+    <message>
+        <source>Multisignature spending...</source>
+        <translation>Gasto multiassinatura...</translation>
+    </message>
+    <message>
+        <source>Spend from a multisignature address</source>
+        <translation>Gastar de um endereço multiassinatura</translation>
+    </message>
+    <message>
+        <source>Multisignature signing...</source>
+        <translation>Assinando multiassinatura...</translation>
+    </message>
+    <message>
+        <source>Sign with a multisignature address</source>
+        <translation>Assinar com um endereço multiassinatura</translation>
+    </message>
+    <message>
+        <source>Open URI...</source>
+        <translation>Abrir URI...</translation>
+    </message>
+    <message>
+        <source>Command-line options</source>
+        <translation>Opções de linha de comando</translation>
     </message>
     <message>
         <source>Synchronizing additional data: %p%</source>
         <translation>Sincronizando informação adicional: %p%</translation>
     </message>
     <message>
-        <source>&amp;File</source>
-        <translation>&amp;Arquivo</translation>
+        <source>%1 behind. Scanning block %2</source>
+        <translation>%1 atrás. Escaneado bloco %2</translation>
     </message>
     <message>
-        <source>&amp;Settings</source>
-        <translation>&amp;Configurações</translation>
+        <source>File</source>
+        <translation>Arquivo</translation>
     </message>
     <message>
-        <source>&amp;Tools</source>
-        <translation>&amp;Ferramentas</translation>
+        <source>Settings</source>
+        <translation>Configurações</translation>
     </message>
     <message>
-        <source>&amp;Help</source>
-        <translation>&amp;Ajuda</translation>
+        <source>Tools</source>
+        <translation>Ferramentas</translation>
+    </message>
+    <message>
+        <source>Help</source>
+        <translation>Ajuda</translation>
     </message>
     <message>
         <source>Tabs toolbar</source>
@@ -594,20 +621,24 @@
         <translation>Enviar moedas para um endereço FantasyGold</translation>
     </message>
     <message>
-        <source>Request payments (generates QR codes and fantasygold: URIs)</source>
-        <translation>Requisitar pagamentos (gera códigos QR e fantasygold: URIs)</translation>
+        <source>Request payments (generates QR codes and FantasyGold: URIs)</source>
+        <translation>Requisitar pagamentos (gera códigos QR e FantasyGold: URIs)</translation>
     </message>
     <message>
-        <source>&amp;Masternodes</source>
-        <translation>&amp;Masternodes</translation>
+        <source>Privacy</source>
+        <translation>Privacidade</translation>
+    </message>
+    <message>
+        <source>Masternodes</source>
+        <translation>Masternodes</translation>
     </message>
     <message>
         <source>Browse masternodes</source>
         <translation>Procurar masternodes</translation>
     </message>
     <message>
-        <source>&amp;About FantasyGold Core</source>
-        <translation>&amp;Sobre o FantasyGold Core</translation>
+        <source>About FantasyGold Core</source>
+        <translation>Sobre o FantasyGold Core</translation>
     </message>
     <message>
         <source>Show information about FantasyGold Core</source>
@@ -626,28 +657,28 @@
         <translation>Verifique as mensagens para ter certeza que estão assinadas com os endereços FantasyGold especificados</translation>
     </message>
     <message>
-        <source>&amp;BIP38 tool</source>
-        <translation>&amp;Ferramenta da BIP38</translation>
+        <source>BIP38 tool</source>
+        <translation>Ferramenta da BIP38</translation>
     </message>
     <message>
         <source>Encrypt and decrypt private keys using a passphrase</source>
         <translation>Criptografar e descriptografar chaves privadas usando uma palavra-chave</translation>
     </message>
     <message>
-        <source>&amp;MultiSend</source>
-        <translation>&amp;MultiSend</translation>
+        <source>MultiSend</source>
+        <translation>MultiSend</translation>
     </message>
     <message>
         <source>MultiSend Settings</source>
         <translation>Configurações MultiSend</translation>
     </message>
     <message>
-        <source>Open Wallet &amp;Configuration File</source>
-        <translation>Abrir arquivo de &amp;Configuração de Carteira</translation>
+        <source>Open Wallet Configuration File</source>
+        <translation>Abrir arquivo de Configuração de Carteira</translation>
     </message>
     <message>
-        <source>Open &amp;Masternode Configuration File</source>
-        <translation>Abrir arquivo de Configuração de &amp;Masternode</translation>
+        <source>Open Masternode Configuration File</source>
+        <translation>Abrir arquivo de Configuração de Masternode</translation>
     </message>
     <message>
         <source>Open Masternode configuration file</source>
@@ -658,8 +689,8 @@
         <translation>Abrir um FantasyGold: URI ou requisição de pagamento</translation>
     </message>
     <message>
-        <source>&amp;Blockchain explorer</source>
-        <translation>Explorador da &amp;Blockchain</translation>
+        <source>Blockchain explorer</source>
+        <translation>Explorador da Blockchain</translation>
     </message>
     <message>
         <source>Block explorer window</source>
@@ -696,10 +727,6 @@
     <message>
         <source>%1 and %2</source>
         <translation>%1 e %2</translation>
-    </message>
-    <message>
-        <source>%1 behind</source>
-        <translation>%1 atrás</translation>
     </message>
     <message>
         <source>Catching up...</source>
@@ -779,10 +806,6 @@ MultiSend: %1</translation>
         <translation>A Carteira está &lt;b&gt;criptografada&lt;/b&gt; e atualmente &lt;b&gt;desbloqueada&lt;/b&gt;</translation>
     </message>
     <message>
-        <source>Wallet is &lt;b&gt;encrypted&lt;/b&gt; and currently &lt;b&gt;unlocked&lt;/b&gt; for anonimization and staking only</source>
-        <translation>A Carteira está &lt;b&gt;criptografada&lt;/b&gt; e atualmente &lt;b&gt;desbloqueada&lt;/b&gt; somente para anonimização e staking</translation>
-    </message>
-    <message>
         <source>Wallet is &lt;b&gt;encrypted&lt;/b&gt; and currently &lt;b&gt;locked&lt;/b&gt;</source>
         <translation>A carteira está &lt;b&gt;criptografada&lt;/b&gt; e atualmente &lt;b&gt;travada&lt;/b&gt;</translation>
     </message>
@@ -792,6 +815,14 @@ MultiSend: %1</translation>
     <message>
         <source>Blockchain Explorer</source>
         <translation>Explorador Blockchain</translation>
+    </message>
+    <message>
+        <source>Back</source>
+        <translation>Voltar</translation>
+    </message>
+    <message>
+        <source>Forward</source>
+        <translation>Avançar</translation>
     </message>
     <message>
         <source>Address / Block / Transaction</source>
@@ -813,8 +844,8 @@ MultiSend: %1</translation>
 <context>
     <name>ClientModel</name>
     <message>
-        <source>Total: %1 (OBF compatible: %2 / Enabled: %3)</source>
-        <translation>Total: %1 (OBF compatível: %2 / Ativado: %3)</translation>
+        <source>Total: %1 (IPv4: %2 / IPv6: %3 / Tor: %4 / Unknown: %5)</source>
+        <translation>Total: %1 (IPv4: %2 / IPv6: %3 / Tor: %4 / Desconhecido: %5)</translation>
     </message>
     <message>
         <source>Network Alert</source>
@@ -888,6 +919,10 @@ MultiSend: %1</translation>
         <translation>Recebido no endereço</translation>
     </message>
     <message>
+        <source>Type</source>
+        <translation>Tipo</translation>
+    </message>
+    <message>
         <source>Date</source>
         <translation>Data</translation>
     </message>
@@ -956,10 +991,6 @@ MultiSend: %1</translation>
         <translation>Favor alterar para o "Modo de lista" para usar esta função.</translation>
     </message>
     <message>
-        <source>Non-anonymized input selected. &lt;b&gt;Obfuscation will be disabled.&lt;/b&gt;&lt;br&gt;&lt;br&gt;If you still want to use Obfuscation, please deselect all non-nonymized inputs first and then check Obfuscation checkbox again.</source>
-        <translation>Input não-anonimizado selecionado. &lt;b&gt;Ofuscação será desabilitada.&lt;/b&gt;&lt;br&gt;&lt;br&gt; Se você ainda quiser usar a Ofuscação, favor desmarcar todos os inputs não anônimos primeiro e então marque a opção de Ofuscação novamente.</translation>
-    </message>
-    <message>
         <source>highest</source>
         <translation>mais alto</translation>
     </message>
@@ -974,14 +1005,6 @@ MultiSend: %1</translation>
     <message>
         <source>medium-high</source>
         <translation>médio-alto</translation>
-    </message>
-    <message>
-        <source>Can vary +/- %1 duff(s) per input.</source>
-        <translation>pode variar entre +/-%1 duff(s) por input</translation>
-    </message>
-    <message>
-        <source>n/a</source>
-        <translation>n/a</translation>
     </message>
     <message>
         <source>medium</source>
@@ -1063,16 +1086,16 @@ MultiSend: %1</translation>
         <translation>Alterar endereço</translation>
     </message>
     <message>
-        <source>&amp;Label</source>
-        <translation>&amp;Rótulo</translation>
+        <source>Label</source>
+        <translation>Rótulo</translation>
     </message>
     <message>
         <source>The label associated with this address list entry</source>
         <translation>Rótulo referente a essa entrada na lista de endereços</translation>
     </message>
     <message>
-        <source>&amp;Address</source>
-        <translation>&amp;Endereço</translation>
+        <source>Address</source>
+        <translation>Endereço</translation>
     </message>
     <message>
         <source>The address associated with this address list entry. This can only be modified for sending addresses.</source>
@@ -1165,6 +1188,14 @@ MultiSend: %1</translation>
         <translation>opções de linha de comando</translation>
     </message>
     <message>
+        <source>UI Options:</source>
+        <translation>Opções de UI:</translation>
+    </message>
+    <message>
+        <source>Choose data directory on startup (default: %u)</source>
+        <translation>Escolher diretório de informações ao inicializar (padrão: %u)</translation>
+    </message>
+    <message>
         <source>Set language, for example "de_DE" (default: system locale)</source>
         <translation>Definir linguagem, por exemplo "de_DE (padrão: local do sistema)</translation>
     </message>
@@ -1231,10 +1262,6 @@ MultiSend: %1</translation>
         <translation>Formulário</translation>
     </message>
     <message>
-        <source>My Masternodes</source>
-        <translation>Meus Masternodes</translation>
-    </message>
-    <message>
         <source>Alias</source>
         <translation>Apelido</translation>
     </message>
@@ -1263,12 +1290,16 @@ MultiSend: %1</translation>
         <translation>Pubkey</translation>
     </message>
     <message>
-        <source>S&amp;tart alias</source>
+        <source>Start alias</source>
         <translation>iniciar apelido</translation>
     </message>
     <message>
-        <source>&amp;Update status</source>
-        <translation>&amp;Atualizar situação</translation>
+        <source>Start all</source>
+        <translation>Iniciar todos</translation>
+    </message>
+    <message>
+        <source>Update status</source>
+        <translation>Atualizar situação</translation>
     </message>
     <message>
         <source>Status will be updated automatically in (sec):</source>
@@ -1366,6 +1397,10 @@ MultiSend: %1</translation>
         <translation>Endereço:</translation>
     </message>
     <message>
+        <source>Enter a label for this address to add it to your address book</source>
+        <translation>Coloque uma etiqueta neste endereço para adicioná-lo à lista de contatos</translation>
+    </message>
+    <message>
         <source>Delete Address From MultiSend Vector</source>
         <translation>Deleta endereço do vetor MultiSend</translation>
     </message>
@@ -1396,6 +1431,10 @@ MultiSend: %1</translation>
     <message>
         <source>Send For Masternode Rewards</source>
         <translation>Enviar para recompensas de Masternode</translation>
+    </message>
+    <message>
+        <source>(no label)</source>
+        <translation>(sem rótulo)</translation>
     </message>
     <message>
         <source>The entered address:
@@ -1438,6 +1477,81 @@ Favor verificar o endereço e tente novamente.</translation>
     </message>
 </context>
 <context>
+    <name>MultisigDialog</name>
+    <message>
+        <source>Create MultiSignature Address</source>
+        <translation>Criar Endereço multiassinatura</translation>
+    </message>
+    <message>
+        <source>How many people must sign to verify a transaction</source>
+        <translation>Quantas pessoas devem assinar para verificar uma transação</translation>
+    </message>
+    <message>
+        <source>Address Label:</source>
+        <translation>Rótulo do endereço:</translation>
+    </message>
+    <message>
+        <source>Create a new multisig address</source>
+        <translation>Criar um novo endereço multisig</translation>
+    </message>
+    <message>
+        <source>Create</source>
+        <translation>Criar</translation>
+    </message>
+    <message>
+        <source>Status:</source>
+        <translation>Situação:</translation>
+    </message>
+    <message>
+        <source>Inputs:</source>
+        <translation>Inputs:</translation>
+    </message>
+    <message>
+        <source>Quantity Selected:</source>
+        <translation>Quantia selecionada:</translation>
+    </message>
+    <message>
+        <source>0</source>
+        <translation>0</translation>
+    </message>
+    <message>
+        <source>Amount:</source>
+        <translation>Quantia:</translation>
+    </message>
+    <message>
+        <source>Address / Amount:</source>
+        <translation>Endereço / Quantia:</translation>
+    </message>
+    <message>
+        <source>Create</source>
+        <translation>Criar</translation>
+    </message>
+    <message>
+        <source>Sign</source>
+        <translation>Assinar</translation>
+    </message>
+    <message>
+        <source>Add Private Key</source>
+        <translation>Adicionar Chave Privada</translation>
+    </message>
+    <message>
+        <source>Sign with only private keys (Not Recommened)</source>
+        <translation>Assinar somente com chaves privadas (Não Recomendado)</translation>
+    </message>
+    <message>
+        <source>Invalid Tx Hash.</source>
+        <translation>Tx Hash inválido.</translation>
+    </message>
+    <message>
+        <source>Amount: </source>
+        <translation>Quantidade:</translation>
+    </message>
+    <message>
+        <source>Maximum (15)</source>
+        <translation>Máximo (15)</translation>
+    </message>
+</context>
+<context>
     <name>ObfuscationConfig</name>
     <message>
         <source>Configure Obfuscation</source>
@@ -1460,32 +1574,32 @@ Favor verificar o endereço e tente novamente.</translation>
         <translation>Favor selecionar o nível de privacidade.</translation>
     </message>
     <message>
-        <source>Use 2 separate masternodes to mix funds up to 10000 FGC</source>
-        <translation>Use 2 masternodes separados para embaralhar fundos até 10000 FGC</translation>
+        <source>Use 2 separate masternodes to mix funds up to 10000 FantasyGold</source>
+        <translation>Use 2 masternodes separados para embaralhar fundos até 10000 FantasyGold</translation>
     </message>
     <message>
-        <source>Use 8 separate masternodes to mix funds up to 10000 FGC</source>
-        <translation>Use 8 masternodes separados para embaralhar fundos até 10000 FGC</translation>
+        <source>Use 8 separate masternodes to mix funds up to 10000 FantasyGold</source>
+        <translation>Use 8 masternodes separados para embaralhar fundos até 10000 FantasyGold</translation>
     </message>
     <message>
         <source>Use 16 separate masternodes</source>
         <translation>Use 16 masternodes separados</translation>
     </message>
     <message>
-        <source>This option is the quickest and will cost about ~0.025 FGC to anonymize 10000 FGC</source>
-        <translation>Está opção é a mais rápida e vai custar em torno de ~0.025 FGC para anonimizar 10000 FGC</translation>
+        <source>This option is the quickest and will cost about ~0.025 FantasyGold to anonymize 10000 FantasyGold</source>
+        <translation>Está opção é a mais rápida e vai custar em torno de ~0.025 FantasyGold para anonimizar 10000 FantasyGold</translation>
     </message>
     <message>
-        <source>This option is moderately fast and will cost about 0.05 FGC to anonymize 10000 FGC</source>
-        <translation>Está opção moderamente rápida e vai custar em torno de ~0.05 FGC para anonimizar 10000 FGC</translation>
+        <source>This option is moderately fast and will cost about 0.05 FantasyGold to anonymize 10000 FantasyGold</source>
+        <translation>Está opção moderamente rápida e vai custar em torno de ~0.05 FantasyGold para anonimizar 10000 FantasyGold</translation>
     </message>
     <message>
         <source>This is the slowest and most secure option. Using maximum anonymity will cost</source>
         <translation>Esta é a opção mais lenta e mais segura. Usando a anonimização máxima vai custar</translation>
     </message>
     <message>
-        <source>0.1 FGC per 10000 FGC you anonymize.</source>
-        <translation>0.1 FGC por 10000 FGC que deixar anônima.</translation>
+        <source>0.1 FantasyGold per 10000 FantasyGold you anonymize.</source>
+        <translation>0.1 FantasyGold por 10000 FantasyGold que deixar anônima.</translation>
     </message>
     <message>
         <source>Obfuscation Configuration</source>
@@ -1534,12 +1648,12 @@ Favor verificar o endereço e tente novamente.</translation>
         <translation>Opções</translation>
     </message>
     <message>
-        <source>&amp;Main</source>
-        <translation>&amp;Principal</translation>
+        <source>Main</source>
+        <translation>Principal</translation>
     </message>
     <message>
-        <source>Size of &amp;database cache</source>
-        <translation>Tamanho do cachê da &amp;basededados</translation>
+        <source>Size of database cache</source>
+        <translation>Tamanho do cachê da basededados</translation>
     </message>
     <message>
         <source>MB</source>
@@ -1550,8 +1664,8 @@ Favor verificar o endereço e tente novamente.</translation>
         <translation>(0 = auto, &lt;0 = deixe esse tanto de núcleos livres)</translation>
     </message>
     <message>
-        <source>W&amp;allet</source>
-        <translation>C&amp;arteira</translation>
+        <source>Wallet</source>
+        <translation>Carteira</translation>
     </message>
     <message>
         <source>Automatically open the FantasyGold client port on the router. This only works when your router supports UPnP and it is enabled.</source>
@@ -1566,8 +1680,8 @@ Favor verificar o endereço e tente novamente.</translation>
         <translation>Aceitar conexões chegando</translation>
     </message>
     <message>
-        <source>&amp;Connect through SOCKS5 proxy (default proxy):</source>
-        <translation>&amp;Conectar através de proxy SOCKS5 (proxy padrão):</translation>
+        <source>Connect through SOCKS5 proxy (default proxy):</source>
+        <translation>Conectar através de proxy SOCKS5 (proxy padrão):</translation>
     </message>
     <message>
         <source>Expert</source>
@@ -1578,32 +1692,20 @@ Favor verificar o endereço e tente novamente.</translation>
         <translation>Iniciar automaticamente FantasyGold depois de logar no sistema.</translation>
     </message>
     <message>
-        <source>&amp;Start FantasyGold on system login</source>
-        <translation>&amp;Iniciar FantasyGold ao logar no sistema</translation>
+        <source>Start FantasyGold on system login</source>
+        <translation>Iniciar FantasyGold ao logar no sistema</translation>
     </message>
     <message>
-        <source>This setting determines the amount of individual masternodes that an input will be anonymized through.&lt;br/&gt;More rounds of anonymization gives a higher degree of privacy, but also costs more in fees.</source>
-        <translation>Esta configuração determina a quantidade de masternodes individuais em que um input será feito anônimo. &lt;br/&gt;Mais rodadas de anonimidade darão um grau maior de privacidade, mas também custarão mais em taxas. </translation>
-    </message>
-    <message>
-        <source>Obfuscation rounds to use</source>
-        <translation>Rodadas de ofuscação para usar</translation>
-    </message>
-    <message>
-        <source>Amount of FantasyGold to keep anonymized</source>
-        <translation>Quantidade de FantasyGold a manter anônima</translation>
-    </message>
-    <message>
-        <source>Enable coin &amp;control features</source>
-        <translation>Habilitar &amp;funcções de controle de moeda</translation>
+        <source>Enable coin control features</source>
+        <translation>Habilitar funcções de controle de moeda</translation>
     </message>
     <message>
         <source>Show Masternodes Tab</source>
         <translation>Mostra aba de Masternodes</translation>
     </message>
     <message>
-        <source>&amp;Network</source>
-        <translation>&amp;Rede</translation>
+        <source>Network</source>
+        <translation>Rede</translation>
     </message>
     <message>
         <source>The user interface language can be set here. This setting will take effect after restarting FantasyGold.</source>
@@ -1611,61 +1713,61 @@ Favor verificar o endereço e tente novamente.</translation>
     </message>
     <message>
         <source>Language missing or translation incomplete? Help contributing translations here:
-https://www.transifex.com/fantasygold-project/fantasygold-project-translations</source>
+https://www.transifex.com/FantasyGold-project/FantasyGold-project-translations</source>
         <translation>Linguagem não encontrada ou tradução incompleta? Ajude contribuido com traduções aqui:
-https://www.transifex.com/fantasygold-project/fantasygold-project-translations</translation>
+https://www.transifex.com/FantasyGold-project/FantasyGold-project-translations</translation>
     </message>
     <message>
         <source>Connect to the FantasyGold network through a SOCKS5 proxy.</source>
         <translation>Conectar à rede FantasyGold através de um proxy SOCKS5</translation>
     </message>
     <message>
-        <source>Proxy &amp;IP:</source>
-        <translation>Proxy &amp;IP:</translation>
+        <source>Proxy IP:</source>
+        <translation>Proxy IP:</translation>
     </message>
     <message>
         <source>IP address of the proxy (e.g. IPv4: 127.0.0.1 / IPv6: ::1)</source>
         <translation>Endereço IP do proxy (e.g. IPv4: 127.0.0.1 / IPv6: ::1)</translation>
     </message>
     <message>
-        <source>&amp;Port:</source>
-        <translation>&amp;Porta:</translation>
+        <source>Port:</source>
+        <translation>Porta:</translation>
     </message>
     <message>
         <source>Port of the proxy (e.g. 9050)</source>
         <translation>Porta do proxy (e.g. 9050)</translation>
     </message>
     <message>
-        <source>&amp;Window</source>
-        <translation>&amp;Janela</translation>
+        <source>Window</source>
+        <translation>Janela</translation>
     </message>
     <message>
         <source>Show only a tray icon after minimizing the window.</source>
         <translation>Mostrar somente um icone depois de minimizar a janela.</translation>
     </message>
     <message>
-        <source>&amp;Minimize to the tray instead of the taskbar</source>
-        <translation>&amp;Minimizar para a bandeja ao invés da barra de tarefas</translation>
+        <source>Minimize to the tray instead of the taskbar</source>
+        <translation>Minimizar para a bandeja ao invés da barra de tarefas</translation>
     </message>
     <message>
-        <source>M&amp;inimize on close</source>
+        <source>Minimize on close</source>
         <translation>Minimizar quando fechar</translation>
     </message>
     <message>
-        <source>&amp;Display</source>
-        <translation>&amp;Mostrar</translation>
+        <source>Display</source>
+        <translation>Mostrar</translation>
     </message>
     <message>
-        <source>User Interface &amp;language:</source>
-        <translation>Interface do usuário &amp;Linguagem:</translation>
+        <source>User Interface language:</source>
+        <translation>Interface do usuário Linguagem:</translation>
     </message>
     <message>
         <source>User Interface Theme:</source>
         <translation>Usar tema de inferface:</translation>
     </message>
     <message>
-        <source>&amp;Unit to show amounts in:</source>
-        <translation>&amp;Unidades para mostrar as quantias:</translation>
+        <source>Unit to show amounts in:</source>
+        <translation>Unidades para mostrar as quantias:</translation>
     </message>
     <message>
         <source>Choose the default subdivision unit to show in the interface and when sending coins.</source>
@@ -1684,16 +1786,16 @@ https://www.transifex.com/fantasygold-project/fantasygold-project-translations</
         <translation>Reiniciar todas as opções do cliente para o padrão.</translation>
     </message>
     <message>
-        <source>&amp;Reset Options</source>
-        <translation>&amp;Reiniciar Opções</translation>
+        <source>Reset Options</source>
+        <translation>Reiniciar Opções</translation>
     </message>
     <message>
-        <source>&amp;OK</source>
-        <translation>&amp;OK</translation>
+        <source>OK</source>
+        <translation>OK</translation>
     </message>
     <message>
-        <source>&amp;Cancel</source>
-        <translation>&amp;Cancel</translation>
+        <source>Cancel</source>
+        <translation>Cancel</translation>
     </message>
     <message>
         <source>default</source>
@@ -1723,7 +1825,7 @@ https://www.transifex.com/fantasygold-project/fantasygold-project-translations</
         <source>The supplied proxy address is invalid.</source>
         <translation>O endereço proxy fornecido é inválido.</translation>
     </message>
-</context>
+    </context>
 <context>
     <name>OverviewPage</name>
     <message>
@@ -1751,10 +1853,6 @@ https://www.transifex.com/fantasygold-project/fantasygold-project-translations</
         <translation>Imaturo:</translation>
     </message>
     <message>
-        <source>Balances</source>
-        <translation>Fundos</translation>
-    </message>
-    <message>
         <source>The displayed information may be out of date. Your wallet automatically synchronizes with the FantasyGold network after a connection is established, but this process has not completed yet.</source>
         <translation>A informação mostrada pode estar desatualizada. A sua carteira se sincroniza automaticamente com a rede FantasyGold após estabelecer uma conexão, mas esse processo ainda não foi concluído.</translation>
     </message>
@@ -1765,10 +1863,6 @@ https://www.transifex.com/fantasygold-project/fantasygold-project-translations</
     <message>
         <source>Total:</source>
         <translation>Total:</translation>
-    </message>
-    <message>
-        <source>Your current total balance</source>
-        <translation>Seu saldo total atual</translation>
     </message>
     <message>
         <source>Current total balance in watch-only addresses</source>
@@ -1783,132 +1877,22 @@ https://www.transifex.com/fantasygold-project/fantasygold-project-translations</
         <translation>Disponível:</translation>
     </message>
     <message>
-        <source>Status:</source>
-        <translation>Situação:</translation>
+        <source>Locked:</source>
+        <translation>Travado:</translation>
     </message>
     <message>
-        <source>Obfuscation Balance:</source>
-        <translation>Saldo ofuscado:</translation>
-    </message>
-    <message>
-        <source>0 FGC/ 0 Rounds</source>
-        <translation>0 FGC/ 0 Rodadas</translation>
-    </message>
-    <message>
-        <source>Enabled/Disabled</source>
-        <translation>Ativado/Desativado</translation>
-    </message>
-    <message>
-        <source>Try to manually submit a Obfuscation request.</source>
-        <translation>Tente encaminhar uma requisição manualmente de Ofuscação.</translation>
-    </message>
-    <message>
-        <source>Reset the current status of Obfuscation (can interrupt Obfuscation if it's in the process of Mixing, which can cost you money!)</source>
-        <translation>Reinicia o presente estado de ofuscação (pode interromper a Ofuscação se estiver em processo de Embaralhamento, o que pode lhe custar dinheiro!)</translation>
-    </message>
-    <message>
-        <source>Obfuscation</source>
-        <translation>Ofuscação</translation>
-    </message>
-    <message>
-        <source>Completion:</source>
-        <translation>Conclusão:</translation>
-    </message>
-    <message>
-        <source>Amount and Rounds:</source>
-        <translation>Quantia e Rodadas:</translation>
-    </message>
-    <message>
-        <source>n/a</source>
-        <translation>n/a</translation>
+        <source>Unconfirmed:</source>
+        <translation>Não confirmado:</translation>
     </message>
     <message>
         <source>Recent transactions</source>
         <translation>Transações recentes</translation>
     </message>
     <message>
-        <source>Start/Stop Mixing</source>
-        <translation>Iniciar/Parar embaralhamento</translation>
-    </message>
-    <message>
-        <source>(Last Message)</source>
-        <translation>(Última mensagem)</translation>
-    </message>
-    <message>
-        <source>Try Mix</source>
-        <translation>Tente embaralhar</translation>
-    </message>
-    <message>
-        <source>Reset</source>
-        <translation>Reinicia</translation>
-    </message>
-    <message>
         <source>out of sync</source>
         <translation>fora de sincronia</translation>
     </message>
-    <message>
-        <source>Disabled</source>
-        <translation>Desativado</translation>
-    </message>
-    <message>
-        <source>No inputs detected</source>
-        <translation>Nenhum input detectado</translation>
-    </message>
-    <message>
-        <source>Overall progress</source>
-        <translation>Progresso geral</translation>
-    </message>
-    <message>
-        <source>Denominated</source>
-        <translation>Denominado</translation>
-    </message>
-    <message>
-        <source>Anonymized</source>
-        <translation>Anonimizado</translation>
-    </message>
-    <message>
-        <source>Last Obfuscation message:
-</source>
-        <translation>Última mensagem de ofuscação:
-</translation>
-    </message>
-    <message>
-        <source>Obfuscation was successfully reset.</source>
-        <translation>Ofuscação foi reiniciada com sucesso.</translation>
-    </message>
-    <message>
-        <source>Obfuscation requires at least %1 to use.</source>
-        <translation>Ofuscação requer pelo menos %1 para usar.</translation>
-    </message>
-    <message>
-        <source>Wallet is locked and user declined to unlock. Disabling Obfuscation.</source>
-        <translation>A carteira está travada e o usuário recusou o destravamento. Desabilitando a Ofuscação.</translation>
-    </message>
-    <message>
-        <source>Found enough compatible inputs to anonymize %1</source>
-        <translation>Foram encontrados inputos suficientes para anonimizar %1</translation>
-    </message>
-    <message>
-        <source>Start Obfuscation</source>
-        <translation>Iniciar ofuscação</translation>
-    </message>
-    <message>
-        <source>Stop Obfuscation</source>
-        <translation>Parar ofuscação</translation>
-    </message>
-    <message>
-        <source>Mixed</source>
-        <translation>Embaralhado</translation>
-    </message>
-    <message>
-        <source>Enabled</source>
-        <translation>Ativado</translation>
-    </message>
-    <message>
-        <source>N/A</source>
-        <translation>N/A</translation>
-    </message>
-</context>
+    </context>
 <context>
     <name>PaymentServer</name>
     <message>
@@ -1957,6 +1941,229 @@ https://www.transifex.com/fantasygold-project/fantasygold-project-translations</
     <message>
         <source>Ping Time</source>
         <translation>Tempo de resposta</translation>
+    </message>
+</context>
+<context>
+    <name>PrivacyDialog</name>
+    <message>
+        <source>Zerocoin Actions:</source>
+        <translation>Ações Zerocoin:</translation>
+    </message>
+    <message>
+        <source>The displayed information may be out of date. Your wallet automatically synchronizes with the FantasyGold network after a connection is established, but this process has not completed yet.</source>
+        <translation>A informação mostrada pode estar desatualizada. A sua carteira se sincroniza automaticamente com a rede FantasyGold após estabelecer uma conexão, mas esse processo ainda não foi concluído.</translation>
+    </message>
+    <message>
+        <source>0</source>
+        <translation>0</translation>
+    </message>
+    <message>
+        <source>zFGC</source>
+        <translation>zFGC</translation>
+    </message>
+    <message>
+        <source>0.000 000 00 FGC</source>
+        <translation>0.000 000 00 FGC</translation>
+    </message>
+    <message>
+        <source>Reset</source>
+        <translation>Reinicia</translation>
+    </message>
+    <message>
+        <source>Quantity:</source>
+        <translation>Quantidade:</translation>
+    </message>
+    <message>
+        <source>Amount:</source>
+        <translation>Quantia:</translation>
+    </message>
+    <message>
+        <source>Quantity Selected:</source>
+        <translation>Quantia selecionada:</translation>
+    </message>
+    <message>
+        <source>Available Balance:</source>
+        <translation>Saldo disponível:</translation>
+    </message>
+    <message>
+        <source>Security Level:</source>
+        <translation>Nível de Segurança:</translation>
+    </message>
+    <message>
+        <source>Security Level 1 - 100 (default: 42)</source>
+        <translation>Nível de segurança 1 - 100 (padrão: 42)</translation>
+    </message>
+    <message>
+        <source>Pay To:</source>
+        <translation>Pagar Para:</translation>
+    </message>
+    <message>
+        <source>The FantasyGold address to send the payment to. Creates local payment to yourself when empty.</source>
+        <translation>O endereço FantasyGold para enviar o pagamento. Cria um pagamento local para si mesmo quando vazio.</translation>
+    </message>
+    <message>
+        <source>Choose previously used address</source>
+        <translation>Escolha o endereço previamente utilizado</translation>
+    </message>
+    <message>
+        <source>Alt+A</source>
+        <translation>Alt+A</translation>
+    </message>
+    <message>
+        <source>Paste address from clipboard</source>
+        <translation>Cole o endereço da área de transferência</translation>
+    </message>
+    <message>
+        <source>Alt+P</source>
+        <translation>Alt+P</translation>
+    </message>
+    <message>
+        <source>Label:</source>
+        <translation>Rótulo:</translation>
+    </message>
+    <message>
+        <source>Enter a label for this address to add it to the list of used addresses</source>
+        <translation>Coloque uma etiqueta neste endereço para adicioná-lo à lista de endereços utilizados</translation>
+    </message>
+    <message>
+        <source>Amount:</source>
+        <translation>Quantia:</translation>
+    </message>
+    <message>
+        <source>Information about the available Zerocoin funds.</source>
+        <translation>Informação sobre os fundos disponíveis em Zerocoin.</translation>
+    </message>
+    <message>
+        <source>Zerocoin Stats:</source>
+        <translation>Estatísticas zerocoin:</translation>
+    </message>
+    <message>
+        <source>Total Balance including unconfirmed and immature zFGC</source>
+        <translation>Balanço Total incluindo não confirmadas e imaturas zFGC</translation>
+    </message>
+    <message>
+        <source>Total Zerocoin  Balance:</source>
+        <translation>Balanço Total Zerocoin:</translation>
+    </message>
+    <message>
+        <source>0 x</source>
+        <translation>0 x</translation>
+    </message>
+    <message>
+        <source>Denominations with value 10:</source>
+        <translation>Denominações com valor 10:</translation>
+    </message>
+    <message>
+        <source>Denominations with value 50:</source>
+        <translation>Denominações com valor 50:</translation>
+    </message>
+    <message>
+        <source>Denominations with value 100:</source>
+        <translation>Denominações com valor 100:</translation>
+    </message>
+    <message>
+        <source>Denominations with value 500:</source>
+        <translation>Denominações com valor 500:</translation>
+    </message>
+    <message>
+        <source>Denominations with value 1000:</source>
+        <translation>Denominações com valor 1000:</translation>
+    </message>
+    <message>
+        <source>Denominations with value 5000:</source>
+        <translation>Denominações com valor 5000:</translation>
+    </message>
+    <message>
+        <source>Priority:</source>
+        <translation>Prioridade:</translation>
+    </message>
+    <message>
+        <source>TextLabel</source>
+        <translation>Rótulo</translation>
+    </message>
+    <message>
+        <source>Fee:</source>
+        <translation>Taxa:</translation>
+    </message>
+    <message>
+        <source>no</source>
+        <translation>não</translation>
+    </message>
+    <message>
+        <source>Bytes:</source>
+        <translation>Bytes:</translation>
+    </message>
+    <message>
+        <source>Insufficient funds!</source>
+        <translation>Fundos insuficientes!</translation>
+    </message>
+    <message>
+        <source>medium</source>
+        <translation>médio</translation>
+    </message>
+    <message>
+        <source>Coin Control Features</source>
+        <translation>Funções do Controle de Moedas</translation>
+    </message>
+    <message>
+        <source>Amount After Fee:</source>
+        <translation>Quantia depois da taxa:</translation>
+    </message>
+    <message>
+        <source>Change:</source>
+        <translation>Troco:</translation>
+    </message>
+    <message>
+        <source>out of sync</source>
+        <translation>fora de sincronia</translation>
+    </message>
+    <message>
+        <source>Copy quantity</source>
+        <translation>Copiar quantidade</translation>
+    </message>
+    <message>
+        <source>Copy amount</source>
+        <translation>Copiar quantia</translation>
+    </message>
+    <message>
+        <source>Error: Your wallet is locked. Please enter the wallet passphrase first.</source>
+        <translation>Erro: Sua carteira está travada. Favor inserir a palavra-chave da carteira primeiro.</translation>
+    </message>
+    <message>
+        <source>Message: Enter an amount &gt; 0.</source>
+        <translation>Mensagem: Insira uma quantia &gt; 0.</translation>
+    </message>
+    <message>
+        <source>Confirm additional Fees</source>
+        <translation>Confirmar Taxas adicionais</translation>
+    </message>
+    <message>
+        <source> to address </source>
+        <translation>para o endereço</translation>
+    </message>
+    <message>
+        <source>Confirm send coins</source>
+        <translation>Confirmar envio de moedas</translation>
+    </message>
+    <message>
+        <source>denomination: </source>
+        <translation>denominação:</translation>
+    </message>
+    <message>
+        <source>address: </source>
+        <translation>endereço:</translation>
+    </message>
+    <message>
+        <source>Sending successful, return code: </source>
+        <translation>Enviado com sucesso, código de retorno:</translation>
+    </message>
+    <message>
+        <source>txid: </source>
+        <translation>txid:</translation>
+    </message>
+    <message>
+        <source>fee: </source>
+        <translation>taxa:</translation>
     </message>
 </context>
 <context>
@@ -2009,12 +2216,12 @@ https://www.transifex.com/fantasygold-project/fantasygold-project-translations</
 <context>
     <name>QRImageWidget</name>
     <message>
-        <source>&amp;Save Image...</source>
-        <translation>&amp;Salvar imagem...</translation>
+        <source>Save Image...</source>
+        <translation>Salvar imagem...</translation>
     </message>
     <message>
-        <source>&amp;Copy Image</source>
-        <translation>&amp;Copiar imagem</translation>
+        <source>Copy Image</source>
+        <translation>Copiar imagem</translation>
     </message>
     <message>
         <source>Save QR Code</source>
@@ -2028,8 +2235,8 @@ https://www.transifex.com/fantasygold-project/fantasygold-project-translations</
 <context>
     <name>RPCConsole</name>
     <message>
-        <source>&amp;Information</source>
-        <translation>&amp;Informação</translation>
+        <source>Information</source>
+        <translation>Informação</translation>
     </message>
     <message>
         <source>General</source>
@@ -2052,8 +2259,8 @@ https://www.transifex.com/fantasygold-project/fantasygold-project-translations</
         <translation>Número de conexões</translation>
     </message>
     <message>
-        <source>&amp;Open</source>
-        <translation>&amp;Abrir</translation>
+        <source>Open</source>
+        <translation>Abrir</translation>
     </message>
     <message>
         <source>Startup time</source>
@@ -2092,20 +2299,20 @@ https://www.transifex.com/fantasygold-project/fantasygold-project-translations</
         <translation>Número de Masternodes</translation>
     </message>
     <message>
-        <source>&amp;Console</source>
-        <translation>&amp;Console</translation>
+        <source>Console</source>
+        <translation>Console</translation>
     </message>
     <message>
         <source>Clear console</source>
         <translation>Limpar console</translation>
     </message>
     <message>
-        <source>&amp;Network Traffic</source>
-        <translation>&amp;Tráfego da Rede</translation>
+        <source>Network Traffic</source>
+        <translation>Tráfego da Rede</translation>
     </message>
     <message>
-        <source>&amp;Clear</source>
-        <translation>&amp;Limpar</translation>
+        <source>Clear</source>
+        <translation>Limpar</translation>
     </message>
     <message>
         <source>Totals</source>
@@ -2120,8 +2327,8 @@ https://www.transifex.com/fantasygold-project/fantasygold-project-translations</
         <translation>Enviado</translation>
     </message>
     <message>
-        <source>&amp;Peers</source>
-        <translation>&amp;Pares</translation>
+        <source>Peers</source>
+        <translation>Pares</translation>
     </message>
     <message>
         <source>Select a peer to view detailed information.</source>
@@ -2142,14 +2349,6 @@ https://www.transifex.com/fantasygold-project/fantasygold-project-translations</
     <message>
         <source>Services</source>
         <translation>Serviços</translation>
-    </message>
-    <message>
-        <source>Starting Height</source>
-        <translation>Altura de início</translation>
-    </message>
-    <message>
-        <source>Sync Height</source>
-        <translation>Altura da sincronização</translation>
     </message>
     <message>
         <source>Connection Time</source>
@@ -2176,8 +2375,20 @@ https://www.transifex.com/fantasygold-project/fantasygold-project-translations</
         <translation>Tempo de resposta</translation>
     </message>
     <message>
-        <source>&amp;Wallet Repair</source>
-        <translation>&amp;Reparo da Carteira</translation>
+        <source>Wallet Repair</source>
+        <translation>Reparo da Carteira</translation>
+    </message>
+    <message>
+        <source>Delete local Blockchain Folders</source>
+        <translation>Excluir pastas locais Blockchain</translation>
+    </message>
+    <message>
+        <source>Wallet In Use:</source>
+        <translation>Carteiro em uso:</translation>
+    </message>
+    <message>
+        <source>Attempt to recover private keys from a corrupt wallet.dat.</source>
+        <translation>Tentar recuperar chaves privadas de um wallet.dat corrompido.</translation>
     </message>
     <message>
         <source>Rescan blockchain files</source>
@@ -2194,6 +2405,10 @@ https://www.transifex.com/fantasygold-project/fantasygold-project-translations</
     <message>
         <source>Upgrade wallet format</source>
         <translation>Atualizar formato da carteira</translation>
+    </message>
+    <message>
+        <source>Deletes all local blockchain folders so the wallet synchronizes from scratch.</source>
+        <translation>Deleta todos os arquivos locais da blockchain para que a carteira sincronize do zero.</translation>
     </message>
     <message>
         <source>The buttons below will restart the wallet with command-line options to repair the wallet, fix issues with corrupt blockhain files or missing/obsolete transactions.</source>
@@ -2218,6 +2433,10 @@ https://www.transifex.com/fantasygold-project/fantasygold-project-translations</
     <message>
         <source>Welcome to the FantasyGold RPC console.</source>
         <translation>Bem-vindo ao console da FantasyGold RPC</translation>
+    </message>
+    <message>
+        <source>Do you want to continue?.&lt;br /&gt;</source>
+        <translation>Você deseja continuar?.&lt;br /&gt;</translation>
     </message>
     <message>
         <source>Use up and down arrows to navigate history, and &lt;b&gt;Ctrl-L&lt;/b&gt; to clear screen.</source>
@@ -2255,32 +2474,28 @@ https://www.transifex.com/fantasygold-project/fantasygold-project-translations</
         <source>Unknown</source>
         <translation>Desconhecido</translation>
     </message>
-    <message>
-        <source>Fetching...</source>
-        <translation>buscando...</translation>
-    </message>
 </context>
 <context>
     <name>ReceiveCoinsDialog</name>
     <message>
-        <source>&amp;Message:</source>
-        <translation>&amp;Mensagem:</translation>
+        <source>Message:</source>
+        <translation>Mensagem:</translation>
     </message>
     <message>
         <source>An optional label to associate with the new receiving address.</source>
         <translation>Um rótulo opcional para associar a novos endereços de recebimento.</translation>
     </message>
     <message>
-        <source>&amp;Label:</source>
-        <translation>Rótu&amp;lo:</translation>
+        <source>Label:</source>
+        <translation>Rótulo:</translation>
     </message>
     <message>
-        <source>&amp;Amount:</source>
-        <translation>&amp;Quantidade:</translation>
+        <source>Amount:</source>
+        <translation>Quantidade:</translation>
     </message>
     <message>
-        <source>&amp;Request payment</source>
-        <translation>&amp;Requisitar pagamento</translation>
+        <source>Request payment</source>
+        <translation>Requisitar pagamento</translation>
     </message>
     <message>
         <source>Clear all fields of the form.</source>
@@ -2330,12 +2545,16 @@ https://www.transifex.com/fantasygold-project/fantasygold-project-translations</
         <translation>Código QR</translation>
     </message>
     <message>
-        <source>Copy &amp;URI</source>
-        <translation>Copiar &amp;URI</translation>
+        <source>Copy URI</source>
+        <translation>Copiar URI</translation>
     </message>
     <message>
-        <source>&amp;Save Image...</source>
-        <translation>&amp;Salvar imagem...</translation>
+        <source>Copy Address</source>
+        <translation>Copiar Endereço</translation>
+    </message>
+    <message>
+        <source>Save Image...</source>
+        <translation>Salvar imagem...</translation>
     </message>
     <message>
         <source>Request payment to %1</source>
@@ -2416,10 +2635,6 @@ https://www.transifex.com/fantasygold-project/fantasygold-project-translations</
         <translation>Funções do Controle de Moedas</translation>
     </message>
     <message>
-        <source>automatically selected</source>
-        <translation>selecionado automaticamente</translation>
-    </message>
-    <message>
         <source>Insufficient funds!</source>
         <translation>Fundos insuficientes!</translation>
     </message>
@@ -2472,8 +2687,8 @@ https://www.transifex.com/fantasygold-project/fantasygold-project-translations</
         <translation>Tamanho UTXO:</translation>
     </message>
     <message>
-        <source>0 FGC</source>
-        <translation>0 FGC</translation>
+        <source>0 FantasyGold</source>
+        <translation>0 FantasyGold</translation>
     </message>
     <message>
         <source>Transaction Fee:</source>
@@ -2492,10 +2707,6 @@ https://www.transifex.com/fantasygold-project/fantasygold-project-translations</
         <translation>Minimizar</translation>
     </message>
     <message>
-        <source>Obfuscation</source>
-        <translation>Ofuscação</translation>
-    </message>
-    <message>
         <source>per kilobyte</source>
         <translation>por kilobyte</translation>
     </message>
@@ -2510,6 +2721,10 @@ https://www.transifex.com/fantasygold-project/fantasygold-project-translations</
     <message>
         <source>(Smart fee not initialized yet. This usually takes a few blocks...)</source>
         <translation>(Smart fee não inicializada ainda. Isso geralmente leva alguns blocos...)</translation>
+    </message>
+    <message>
+        <source>SwiftX</source>
+        <translation>SwiftX</translation>
     </message>
     <message>
         <source>Confirmation time:</source>
@@ -2548,24 +2763,28 @@ https://www.transifex.com/fantasygold-project/fantasygold-project-translations</
         <translation>Confirma a ação de envio</translation>
     </message>
     <message>
+        <source>Send</source>
+        <translation>Enviar</translation>
+    </message>
+    <message>
         <source>Clear all fields of the form.</source>
         <translation>Limpa todos os campos do formulário.</translation>
     </message>
     <message>
-        <source>Clear &amp;All</source>
-        <translation>Limpar &amp;Tudo</translation>
+        <source>Clear All</source>
+        <translation>Limpar Tudo</translation>
     </message>
     <message>
         <source>Send to multiple recipients at once</source>
         <translation>Envia para diversos recipientes de uma vez</translation>
     </message>
     <message>
-        <source>Add &amp;Recipient</source>
-        <translation>Adicionar &amp;Recipiente</translation>
+        <source>Add Recipient</source>
+        <translation>Adicionar Recipiente</translation>
     </message>
     <message>
-        <source>SwiftTX</source>
-        <translation>SwiftTX</translation>
+        <source>Anonymized FGC</source>
+        <translation>FantasyGold anonimizadas</translation>
     </message>
     <message>
         <source>Balance:</source>
@@ -2600,24 +2819,8 @@ https://www.transifex.com/fantasygold-project/fantasygold-project-translations</
         <translation>Copiar troco</translation>
     </message>
     <message>
-        <source>using</source>
-        <translation>usando</translation>
-    </message>
-    <message>
-        <source>anonymous funds</source>
-        <translation>fundos anônimos</translation>
-    </message>
-    <message>
-        <source>Warning: Invalid FantasyGold address</source>
+        <source>Warning: Invalid FGC address</source>
         <translation>Aviso: endereço FantasyGold inválido</translation>
-    </message>
-    <message>
-        <source>any available funds (not recommended)</source>
-        <translation>quaisquer fundos disponíveis (não recomendado)</translation>
-    </message>
-    <message>
-        <source>and SwiftTX</source>
-        <translation>e SwiftTX</translation>
     </message>
     <message>
         <source>%1 to %2</source>
@@ -2699,8 +2902,8 @@ https://www.transifex.com/fantasygold-project/fantasygold-project-translations</
         <translation>Esse é um pagamento normal.</translation>
     </message>
     <message>
-        <source>Pay &amp;To:</source>
-        <translation>Pagar &amp;Para:</translation>
+        <source>Pay To:</source>
+        <translation>Pagar Para:</translation>
     </message>
     <message>
         <source>The FantasyGold address to send the payment to</source>
@@ -2727,15 +2930,15 @@ https://www.transifex.com/fantasygold-project/fantasygold-project-translations</
         <translation>Remova esta entrada</translation>
     </message>
     <message>
-        <source>&amp;Label:</source>
-        <translation>&amp;Rótulo:</translation>
+        <source>Label:</source>
+        <translation>Rótulo:</translation>
     </message>
     <message>
         <source>Enter a label for this address to add it to the list of used addresses</source>
         <translation>Coloque uma etiqueta neste endereço para adicioná-lo à lista de endereços utilizados</translation>
     </message>
     <message>
-        <source>A&amp;mount:</source>
+        <source>Amount:</source>
         <translation>Quantia:</translation>
     </message>
     <message>
@@ -2781,8 +2984,8 @@ https://www.transifex.com/fantasygold-project/fantasygold-project-translations</
         <translation>Assinaturas - Assinar / Verificar uma Mensagem</translation>
     </message>
     <message>
-        <source>&amp;Sign Message</source>
-        <translation>&amp;Assinar mensagem</translation>
+        <source>Sign Message</source>
+        <translation>Assinar mensagem</translation>
     </message>
     <message>
         <source>The FantasyGold address to sign the message with</source>
@@ -2829,7 +3032,7 @@ https://www.transifex.com/fantasygold-project/fantasygold-project-translations</
         <translation>Verifique a mensagem para ter certeza que foi assinada com o endereço FantasyGold especificado.</translation>
     </message>
     <message>
-        <source>Sign &amp;Message</source>
+        <source>Sign Message</source>
         <translation>Você pode assinar mensagens com os seus endereços para provar que você os possui. Cuidado ao assinar mensagens vagas, pois há ataques de phishing que podem tentar te manipular a assinar a sua identidade para eles. Assine apenas mensagens que você esteja ciente e concorde com o conteúdo.</translation>
     </message>
     <message>
@@ -2837,16 +3040,16 @@ https://www.transifex.com/fantasygold-project/fantasygold-project-translations</
         <translation>Reiniciar todos os campos de mensagem</translation>
     </message>
     <message>
-        <source>Clear &amp;All</source>
-        <translation>Limpar &amp;Tudo</translation>
+        <source>Clear All</source>
+        <translation>Limpar Tudo</translation>
     </message>
     <message>
-        <source>&amp;Verify Message</source>
-        <translation>&amp;Verificar mensagem</translation>
+        <source>Verify Message</source>
+        <translation>Verificar mensagem</translation>
     </message>
     <message>
-        <source>Verify &amp;Message</source>
-        <translation>Verificar &amp;Mensagem</translation>
+        <source>Verify Message</source>
+        <translation>Verificar Mensagem</translation>
     </message>
     <message>
         <source>Reset all verify message fields</source>
@@ -2950,18 +3153,6 @@ https://www.transifex.com/fantasygold-project/fantasygold-project-translations</
         <translation>conflitou</translation>
     </message>
     <message>
-        <source>%1/offline (verified via swifttx)</source>
-        <translation>%1/offline (verificado via swifttx)</translation>
-    </message>
-    <message>
-        <source>%1/confirmed (verified via swifttx)</source>
-        <translation>%1/confirmado (verificado via swifttx)</translation>
-    </message>
-    <message>
-        <source>%1 confirmations (verified via swifttx)</source>
-        <translation>%1 confirmações (verificado via swifttx)</translation>
-    </message>
-    <message>
         <source>%1/offline</source>
         <translation>%1/offline</translation>
     </message>
@@ -2974,24 +3165,36 @@ https://www.transifex.com/fantasygold-project/fantasygold-project-translations</
         <translation>%1 confirmações</translation>
     </message>
     <message>
-        <source>%1/offline (SwiftTX verification in progress - %2 of %3 signatures)</source>
-        <translation>%1/offline (verificação SwiftTX em progresso - %2 de %3 assinaturas)</translation>
+        <source>%1/offline (verified via SwiftX)</source>
+        <translation>%1/offline (verificado via SwiftX)</translation>
     </message>
     <message>
-        <source>%1/confirmed (SwiftTX verification in progress - %2 of %3 signatures )</source>
-        <translation>%1/confirmado (verificação SwiftTX em progresso - %2 de %3 assinaturas)</translation>
+        <source>%1/confirmed (verified via SwiftX)</source>
+        <translation>%1/confirmado (verificado via SwiftX)</translation>
     </message>
     <message>
-        <source>%1 confirmations (SwiftTX verification in progress - %2 of %3 signatures)</source>
-        <translation>%1 confirmações (verificação SwiftTX em progresso - %2 de %3 assinaturas)</translation>
+        <source>%1 confirmations (verified via SwiftX)</source>
+        <translation>%1 confirmações (verificado via SwiftX)</translation>
     </message>
     <message>
-        <source>%1/offline (SwiftTX verification failed)</source>
-        <translation>%1/offline (verificação SwiftTX falhou)</translation>
+        <source>%1/offline (SwiftX verification in progress - %2 of %3 signatures)</source>
+        <translation>%1/offline (verificação SwiftX  em progresso - %2 de %3 assinaturas)</translation>
     </message>
     <message>
-        <source>%1/confirmed (SwiftTX verification failed)</source>
-        <translation>%1/confirmado (verificação SwiftTX falhou)</translation>
+        <source>%1/confirmed (SwiftX verification in progress - %2 of %3 signatures )</source>
+        <translation>%1/confirmado (verificação SwiftX  em progresso - %2 de %3 assinaturas )</translation>
+    </message>
+    <message>
+        <source>%1 confirmations (SwiftX verification in progress - %2 of %3 signatures)</source>
+        <translation>%1 confirmações ( verificação SwiftX  em progresso - %2 de %3 assinaturas)</translation>
+    </message>
+    <message>
+        <source>%1/offline (SwiftX verification failed)</source>
+        <translation>%1/offline ( verificação SwiftX falhou)</translation>
+    </message>
+    <message>
+        <source>%1/confirmed (SwiftX verification failed)</source>
+        <translation>%1/confirmado (verificação SwiftX falhou)</translation>
     </message>
     <message>
         <source>Status</source>
@@ -3084,6 +3287,10 @@ https://www.transifex.com/fantasygold-project/fantasygold-project-translations</
     <message>
         <source>Merchant</source>
         <translation>Vendedor</translation>
+    </message>
+    <message>
+        <source>Debug information</source>
+        <translation>Informação de depuração</translation>
     </message>
     <message>
         <source>Transaction</source>
@@ -3180,12 +3387,12 @@ https://www.transifex.com/fantasygold-project/fantasygold-project-translations</
         <translation>Enviado para</translation>
     </message>
     <message>
-        <source>Payment to yourself</source>
-        <translation>Pagamento para si mesmo</translation>
+        <source>Orphan Block - Generated but not accepted. This does not impact your holdings.</source>
+        <translation>Bloco órfão - Gerado, porém não aceito. Isto não impacta seus fundos.</translation>
     </message>
     <message>
-        <source>Minted</source>
-        <translation>Cunhado</translation>
+        <source>Payment to yourself</source>
+        <translation>Pagamento para si mesmo</translation>
     </message>
     <message>
         <source>Mined</source>
@@ -3269,10 +3476,6 @@ https://www.transifex.com/fantasygold-project/fantasygold-project-translations</
     <message>
         <source>Sent to</source>
         <translation>Enviado para</translation>
-    </message>
-    <message>
-        <source>Obfuscated</source>
-        <translation>Ofuscado</translation>
     </message>
     <message>
         <source>To yourself</source>
@@ -3407,16 +3610,12 @@ https://www.transifex.com/fantasygold-project/fantasygold-project-translations</
         <source>Send Coins</source>
         <translation>Enviar Moedas</translation>
     </message>
-    <message>
-        <source>SwiftTX doesn't support sending values that high yet. Transactions are currently limited to %1 FGC.</source>
-        <translation>SwiftTX ainda não suporta o envio de valores altos assim. As transações atualmente são limitadas a %1 FGC.</translation>
-    </message>
-</context>
+    </context>
 <context>
     <name>WalletView</name>
     <message>
-        <source>&amp;Export</source>
-        <translation>&amp;Exportar</translation>
+        <source>Export</source>
+        <translation>Exportar</translation>
     </message>
     <message>
         <source>Export the data in the current tab to a file</source>
@@ -3434,36 +3633,31 @@ https://www.transifex.com/fantasygold-project/fantasygold-project-translations</
         <source>Wallet Data (*.dat)</source>
         <translation>Wallet Data (.dat)</translation>
     </message>
-    <message>
-        <source>Backup Failed</source>
-        <translation>Backup falhou</translation>
-    </message>
-    <message>
-        <source>There was an error trying to save the wallet data to %1.</source>
-        <translation>Aconteceu um erro na tentativa de salvar os dados da carteira em %1.</translation>
-    </message>
-    <message>
-        <source>Backup Successful</source>
-        <translation>Backup com sucesso</translation>
-    </message>
-    <message>
-        <source>The wallet data was successfully saved to %1.</source>
-        <translation>Os dados da carteira foram salvos em %1 com sucesso.</translation>
-    </message>
 </context>
+<context>
+    <name>zFGCControlDialog</name>
+    <message>
+        <source>Quantity</source>
+        <translation>Quantia</translation>
+    </message>
+    <message>
+        <source>0</source>
+        <translation>0</translation>
+    </message>
+    <message>
+        <source>zFGC</source>
+        <translation>zFGC</translation>
+    </message>
+    <message>
+        <source>Select/Deselect All</source>
+        <translation>Selecionar/Deselecionar todos</translation>
+    </message>
+    </context>
 <context>
     <name>fantasygold-core</name>
     <message>
         <source>Delete all wallet transactions and only recover those parts of the blockchain through -rescan on startup</source>
         <translation>Deletar todas as transações da carteira e somente recuperar aquelas partes da blockchain através de -rescan na inicialização</translation>
-    </message>
-    <message>
-        <source>Disable all FantasyGold specific functionality (Masternodes, Obfuscation, SwiftTX, Budgeting) (0-1, default: %u)</source>
-        <translation>Desabilitar todas as funcionalidades específicas FantasyGold (Masternodes, Ofuscação, SwiftTX, Budgeting) (0-1, padrão: %u)</translation>
-    </message>
-    <message>
-        <source>Enable use of automated obfuscation for funds stored in this wallet (0-1, default: %u)</source>
-        <translation>Permitir o uso de ofuscação automática para fundos armazenados nesta carteira (0-1, padrão: %u)</translation>
     </message>
     <message>
         <source>Error: Unsupported argument -socks found. Setting SOCKS version isn't possible anymore, only SOCKS5 proxies are supported.</source>
@@ -3478,12 +3672,12 @@ https://www.transifex.com/fantasygold-project/fantasygold-project-translations</
         <translation>Executar o comando quando uma transação da carteira mudar (%s no cmd será substituído pela TxID)</translation>
     </message>
     <message>
-        <source>Fees (in FGC/Kb) smaller than this are considered zero fee for relaying (default: %s)</source>
-        <translation>Taxas (em FGC/Kb) menores que isso serão consideradas taxa zero para propagação (padrão: %s)</translation>
+        <source>Fees (in FGC/kB) smaller than this are considered zero fee for relaying (default: %s)</source>
+        <translation>Taxas (em FGC/kB) menores que isso serão consideradas taxa zero para propagação (padrão: %s)</translation>
     </message>
     <message>
-        <source>Fees (in FGC/Kb) smaller than this are considered zero fee for transaction creation (default: %s)</source>
-        <translation>Taxas (em FGC/Kb) menores que isso serão consideradas taxa zero para a criação da transação (padrão: %s)</translation>
+        <source>Fees (in FGC/kB) smaller than this are considered zero fee for transaction creation (default: %s)</source>
+        <translation>Taxas (em FGC/kB) menores que isso serão consideradas taxa zero para a criação da transação (padrão: %s)</translation>
     </message>
     <message>
         <source>In this mode -genproclimit controls how many blocks are generated immediately.</source>
@@ -3502,12 +3696,8 @@ https://www.transifex.com/fantasygold-project/fantasygold-project-translations</
         <translation>Define o tamanho máximo de transações de alta prioridade/taxa baixa em bytes (padrão: %d)</translation>
     </message>
     <message>
-        <source>SwiftTX requires inputs with at least 6 confirmations, you might need to wait a few minutes and try again.</source>
-        <translation>SwiftTX requer inputs com pelo menos 6 confirmações, você precisar aguardar alguns minutos e tentar novamente.</translation>
-    </message>
-    <message>
-        <source>Unable to locate enough funds for this transaction that are not equal 10000 FGC.</source>
-        <translation>Incapaz de localizar fundos para esta transação que não são iguais a 10000 FGC.</translation>
+        <source>Unable to locate enough funds for this transaction that are not equal 10000 FantasyGold.</source>
+        <translation>Incapaz de localizar fundos para esta transação que não são iguais a 10000 FantasyGold.</translation>
     </message>
     <message>
         <source>Use separate SOCKS5 proxy to reach peers via Tor hidden services (default: %s)</source>
@@ -3538,8 +3728,8 @@ https://www.transifex.com/fantasygold-project/fantasygold-project-translations</
         <translation>Você deve especificar uma masternodeprivkey na configuração. Favor verificar o manual para obter ajuda.</translation>
     </message>
     <message>
-        <source>(57810 could be used only on mainnet)</source>
-        <translation>(57810 could be used only on mainnet)</translation>
+        <source>(51472 could be used only on mainnet)</source>
+        <translation>(51472 could be used only on mainnet)</translation>
     </message>
     <message>
         <source>(default: %s)</source>
@@ -3550,8 +3740,8 @@ https://www.transifex.com/fantasygold-project/fantasygold-project-translations</
         <translation>(padrão: 1)</translation>
     </message>
     <message>
-        <source>(must be 57810 for mainnet)</source>
-        <translation>(deve ser 57810 para mainnet)</translation>
+        <source>(must be 51472 for mainnet)</source>
+        <translation>(deve ser 51472 para mainnet)</translation>
     </message>
     <message>
         <source>Accept connections from outside (default: 1 if no -proxy or -connect)</source>
@@ -3606,12 +3796,16 @@ https://www.transifex.com/fantasygold-project/fantasygold-project-translations</
         <translation>Todos os direitos reservados (C) 2015-%i aos Desenvolvedores do FantasyGold Core</translation>
     </message>
     <message>
-        <source>Copyright (C) 2017-%i The FantasyGold Core Developers</source>
-        <translation>Todos os direitos reservados (C) 2017-%i aos Desenvolvedores do FantasyGold Core</translation>
-    </message>
-    <message>
         <source>Corrupted block database detected</source>
         <translation>database de blocos corrompida</translation>
+    </message>
+    <message>
+        <source>Debugging/Testing options:</source>
+        <translation>Opções de depuração/teste:</translation>
+    </message>
+    <message>
+        <source>Disable OS notifications for incoming transactions (default: %u)</source>
+        <translation>Desabilitar notificações OS para transações chegando (padrão: %u)</translation>
     </message>
     <message>
         <source>Discover own IP address (default: 1 when listening and no -externalip)</source>
@@ -3694,6 +3888,10 @@ https://www.transifex.com/fantasygold-project/fantasygold-project-translations</
         <translation>Erro: Você já possui entradas pendentes na pool de Ofuscação</translation>
     </message>
     <message>
+        <source>Failed to listen on any port. Use -listen=0 if you want this.</source>
+        <translation>Falhou em escutar qualquer porta. Use -listen=0 se você quiser isso.</translation>
+    </message>
+    <message>
         <source>Failed to read block</source>
         <translation>Falhou em ler o bloco</translation>
     </message>
@@ -3750,16 +3948,12 @@ https://www.transifex.com/fantasygold-project/fantasygold-project-translations</
         <translation>O input não é válido.</translation>
     </message>
     <message>
+        <source>Insufficient funds</source>
+        <translation>Fundos insuficientes</translation>
+    </message>
+    <message>
         <source>Insufficient funds.</source>
         <translation>Fundos insuficientes.</translation>
-    </message>
-    <message>
-        <source>Invalid -onion address: '%s'</source>
-        <translation>Inválido -onion endereço: '%s'</translation>
-    </message>
-    <message>
-        <source>Invalid -proxy address: '%s'</source>
-        <translation>Inválido -proxy endereço: '%s'</translation>
     </message>
     <message>
         <source>Invalid amount for -maxtxfee=&lt;amount&gt;: '%s'</source>
@@ -3786,6 +3980,10 @@ https://www.transifex.com/fantasygold-project/fantasygold-project-translations</
         <translation>Quantia inválida para -reservebalance=&lt;quantidade&gt;</translation>
     </message>
     <message>
+        <source>Invalid amount</source>
+        <translation>quantia inválida</translation>
+    </message>
+    <message>
         <source>Invalid masternodeprivkey. Please see documenation.</source>
         <translation>masternodeprivkey inválido. Favor conferir o manual.</translation>
     </message>
@@ -3806,8 +4004,18 @@ https://www.transifex.com/fantasygold-project/fantasygold-project-translations</
         <translation>Script inválido detectado.</translation>
     </message>
     <message>
-        <source>Keep N FGCanonymized (default: %u)</source>
-        <translation>Manter N FGCanônimo (padrão: %u)</translation>
+        <source>SwiftX options:</source>
+        <translation>opções SwiftX:</translation>
+    </message>
+    <message>
+        <source> unconfirmed transactions removed
+</source>
+        <translation>transações não confirmadas removidas
+</translation>
+    </message>
+    <message>
+        <source>&lt;category&gt; can be:</source>
+        <translation>&lt;category&gt; pode ser:</translation>
     </message>
     <message>
         <source>Last Obfuscation was too recent.</source>
@@ -3910,10 +4118,6 @@ https://www.transifex.com/fantasygold-project/fantasygold-project-translations</
         <translation>Ofuscação está ociosa.</translation>
     </message>
     <message>
-        <source>Obfuscation options:</source>
-        <translation>Opções de ofuscação:</translation>
-    </message>
-    <message>
         <source>Obfuscation request complete:</source>
         <translation>Requisição de ofuscação completa:</translation>
     </message>
@@ -3934,8 +4138,8 @@ https://www.transifex.com/fantasygold-project/fantasygold-project-translations</
         <translation>Senha para conexões JSON-RPC</translation>
     </message>
     <message>
-        <source>RPC SSL options: (see the Bitcoin Wiki for SSL setup instructions)</source>
-        <translation>Opções de SSL RPC (veja a Bitcoin Wiki para instruções na configuração do SSL)</translation>
+        <source>Preparing for resync...</source>
+        <translation>Preparando para ressincronizar... </translation>
     </message>
     <message>
         <source>RPC server options:</source>
@@ -3952,10 +4156,6 @@ https://www.transifex.com/fantasygold-project/fantasygold-project-translations</
     <message>
         <source>Send transactions as zero-fee transactions if possible (default: %u)</source>
         <translation>Enviar transações com taxa zero se possível (padrão: %u)</translation>
-    </message>
-    <message>
-        <source>Server private key (default: %s)</source>
-        <translation>Chave privada do servidor (padrão: %s)</translation>
     </message>
     <message>
         <source>Session not complete!</source>
@@ -4026,6 +4226,10 @@ https://www.transifex.com/fantasygold-project/fantasygold-project-translations</
         <translation>Especifique seu próprio endereço público</translation>
     </message>
     <message>
+        <source>Staking options:</source>
+        <translation>Opções de staking:</translation>
+    </message>
+    <message>
         <source>Stop running after importing blocks from disk (default: %u)</source>
         <translation>Parar de rodar depois de importar blocos do disco (padrão: %u)</translation>
     </message>
@@ -4040,10 +4244,6 @@ https://www.transifex.com/fantasygold-project/fantasygold-project-translations</
     <message>
         <source>Submitted to masternode, waiting in queue %s</source>
         <translation>Enviado ao masternode, aguardando na fila %s</translation>
-    </message>
-    <message>
-        <source>SwiftTX options:</source>
-        <translation>opções SwiftTX:</translation>
     </message>
     <message>
         <source>Synchronization failed</source>
@@ -4118,10 +4318,6 @@ https://www.transifex.com/fantasygold-project/fantasygold-project-translations</
         <translation>Atualize a carteira para o último formato</translation>
     </message>
     <message>
-        <source>Use OpenSSL (https) for JSON-RPC connections</source>
-        <translation>Usar OpenSSL (https) para conexões JSON-RPC</translation>
-    </message>
-    <message>
         <source>Use the test network</source>
         <translation>Use a rede de testes</translation>
     </message>
@@ -4192,6 +4388,10 @@ https://www.transifex.com/fantasygold-project/fantasygold-project-translations</
     <message>
         <source>Zapping all transactions from wallet...</source>
         <translation>Eliminando todas as transações da carteira...</translation>
+    </message>
+    <message>
+        <source>Zerocoin options:</source>
+        <translation>opções Zerocoin:</translation>
     </message>
     <message>
         <source>on startup</source>
