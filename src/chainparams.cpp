@@ -59,15 +59,18 @@ static const Checkpoints::CCheckpointData dataMainNet = {
     1525119213,// * UNIX timestamp of last checkpoint block
     750,    // * total number of transactions between genesis and last checkpoint
                 //   (the tx=... number in the SetBestChain debug.log lines)
-    10        // * estimated number of transactions per day after checkpoint
+    960        // * estimated number of transactions per day after checkpoint
 };
+
 static Checkpoints::MapCheckpoints mapCheckpointsTestnet =
     boost::assign::map_list_of(0, uint256("0x001"));
 static const Checkpoints::CCheckpointData dataTestnet = {
     &mapCheckpointsTestnet,
     1509884281,
     0,
-    250};
+    250
+};
+
 static Checkpoints::MapCheckpoints mapCheckpointsRegtest =
     boost::assign::map_list_of(0, uint256("0x001"));
 static const Checkpoints::CCheckpointData dataRegtest = {
@@ -99,7 +102,6 @@ public:
         pchMessageStart[1] = 0x49;
         pchMessageStart[2] = 0x4D;
         pchMessageStart[3] = 0x42;
-
 		vAlertPubKey = ParseHex("048a8a673e322e02cae3b27a95b93551abb29772906923641d572e2e9dc5e3c2707ec37122a16d5563e883b673eec7f6e5894c54e281a5f18518b0f173471229ad");
         nDefaultPort = 57810;
         bnProofOfWorkLimit = ~uint256(0) >> 20; // FantasyGold starting difficulty is 1 / 2^12
@@ -109,6 +111,7 @@ public:
         nTargetSpacing = 90;  // FantasyGold: 6 Minutes
         nLastPOWBlock = 43200;
         nMaturity = 66;
+		nMasternodeCountDrift = 4;
         nModifierUpdateBlock = 1;
 		nMaxMoneyOut = 21000000 * COIN;
        	nEnforceBlockUpgradeMajority = 750;
@@ -130,13 +133,9 @@ public:
         genesis.nNonce = 1015505; 
 		//MineGenesis(genesis);
 		hashGenesisBlock = genesis.GetHash();
-
 		assert(hashGenesisBlock == uint256("0x000006b85859195cd62b57d137bba5871588d8f05cecc5fa21673e4c894e8997"));
 	    assert(genesis.hashMerkleRoot == uint256("0x57efb4ec57bf3c7424a679cc41bec99026d6e6b90a91f26cda0b8d5249559502"));
 
-
-		vSeeds.clear();
-		vFixedSeeds.clear();
 		vSeeds.push_back(CDNSSeedData("seed-england-london.fantasygold.network", "seed-england-london.fantasygold.network"));
 		vSeeds.push_back(CDNSSeedData("seed-eu-frankfurt.fantasygold.network", "seed-eu-frankfurt.fantasygold.network"));
 		vSeeds.push_back(CDNSSeedData("seed-eu-ireland.fantasygold.network", "seed-eu-ireland.fantasygold.network"));
@@ -167,9 +166,10 @@ public:
         base58Prefixes[SECRET_KEY] = std::vector<unsigned char>(1, 212);
         base58Prefixes[EXT_PUBLIC_KEY] = boost::assign::list_of(0x46)(0x53)(0x47)(0x4D).convert_to_container<std::vector<unsigned char> >();
         base58Prefixes[EXT_SECRET_KEY] = boost::assign::list_of(0x66)(0x73)(0x67)(0x70).convert_to_container<std::vector<unsigned char> >();
-        //  BIP44 coin type is 'TBD'
+        // 	BIP44 coin type is from https://github.com/satoshilabs/slips/blob/master/slip-0044.md
         base58Prefixes[EXT_COIN_TYPE] = boost::assign::list_of(0x13)(0x00)(0x00)(0x80).convert_to_container<std::vector<unsigned char> >();
-        convertSeed6(vFixedSeeds, pnSeed6_main, ARRAYLEN(pnSeed6_main));
+        
+		convertSeed6(vFixedSeeds, pnSeed6_main, ARRAYLEN(pnSeed6_main));
 
         fMiningRequiresPeers = true;
         fAllowMinDifficultyBlocks = false;
@@ -184,9 +184,30 @@ public:
 		strSporkKey = "04d8bc8901ec5b46c8e23d94a4ed2d69d127c4aa79311a28058bb6ab3c87505cefbb4ff9161c285dcf34cf846d2c4eda945d5331902195f8a064bdf6053d0d6767";
         strObfuscationPoolDummyAddress = "fDiJwVuKv9dcKBN4KCfX6UmXbkpqLfzGyf";
         nStartMasternodePayments = 1511092620; //November 19, 2017 11:57:00 AM
+		
+		/** Zerocoin */
+        zerocoinModulus = "b2275261dcaa303374af30576c5f676c8c2f1596aae7814f932f08839d442a5b2f7eaac75ffe9481321cbaae1c48703eff"
+                          "384222885cf9e07e3996fa36d25f0866a7f3834c2457b253b0bbbd0ec23036fcc6c84886cce4d6bcc917ce7fb40d3ffcc12984db02e55e4e"
+                          "ccd205f7a239fe48ab27ea1124efa0a545ae434876b0b934ebcc54b03375c78bdbb1cde74c8e42048839e191f3986436f757c11d36b60942"
+                          "f6b88f40acbcd4b36d82890e05b6e508192873dee5be51352e7215fbca7dfe30daac0efd8435426313557b1d193be3fa3be8c3c81f5501e0"
+                          "52478afcfc1bd1f06ff429ecae3b682faa26bda5bb530fe1eca4d630fadc3b5d15e3d1feeeb161812894d3f17f497bb321c224f5419e30d2"
+                          "b79511979fa41d24bc78c0aa18e12dc668b164841ce56bc8de5b7386cff2bb314b11094a4ad5661a7fd7b517181f8a999e61ddadc6936262"
+                          "80b2692bc5b62bd328eb0b4c7d48b98942b0e6037add6568897f41adb825482057ae6224531047eef0cfd8f5510eb64e0610d83a1c7181";
+        nMaxZerocoinSpendsPerTransaction = 7; // Assume about 20kb each
+        nMinZerocoinMintFee = 1 * CENT; //high fee required for zerocoin mints
+        nMintRequiredConfirmations = 20; //the maximum amount of confirmations until accumulated in 19
+        nRequiredAccumulation = 1;
+        nDefaultSecurityLevel = 100; //full security level for accumulators
+        nZerocoinHeaderVersion = 4; //Block headers must be this version once zerocoin is active
+        nBudget_Fee_Confirmations = 6; // Number of confirmations for the finalization fee
+
+        /** Staking Requirements */
+        nStakeMinStartProtocol = 70850; // Starting protocol version (ActiveProtocol())
+        nStakeMinConfirmations = 475; // Required number of confirmations
+        nStakeMinAmount = 100 * COIN; // Minimum required staking amount
     }
-    const Checkpoints::CCheckpointData& Checkpoints() const
-    {
+    
+	const Checkpoints::CCheckpointData& Checkpoints() const {
         return dataMainNet;
     }
 };
@@ -208,14 +229,17 @@ public:
 		vAlertPubKey = ParseHex("04a1c011a5c59b09f6ac5ca2acaa1827c3c9dde95e01c1383c2159d2f769ef97d7a14526c7c0bae6391d66baa16bdbb255679811f30c42e377f364ad202c3461dd");
         nDefaultPort = 58806;
         nMinerThreads = 0;
-        nTargetTimespan = 90; // 90 Seconds
-        nTargetSpacing = 90;  // 360 Seconds
+        nTargetTimespan = 30; // 30 Seconds
+        nTargetSpacing = 30;  // 30 Seconds
         nLastPOWBlock = 800;
         nMaturity = 15;
 		nMaxMoneyOut = 21000000 * COIN;
         nEnforceBlockUpgradeMajority = 51;
         nRejectBlockOutdatedMajority = 75;
         nToCheckBlockUpgradeMajority = 100;
+		nMasternodeCountDrift = 4;
+		nModifierUpdateBlock = 51197;
+		
         //! Modify the testnet genesis block so the timestamp is valid for a later start.
         genesis.nTime = 1508638280;
         genesis.nNonce = 1081421;
@@ -253,7 +277,14 @@ public:
         strSporkKey = "04d45e7b9bd690618bbf1275990c42db1d15f6c059bdafcd0362f30e64e134fdfdbbbe17e0ad4d6cd17c5d8eae7163cbaf8518b8c45039062c8283c1bc4de67890";
         strObfuscationPoolDummyAddress = "FQfdVa57fUXHEU7zboSbyGeBkS63gpowW3";
         nStartMasternodePayments = 1511092620; //November 19, 2017 11:57:00 AM
-    }
+		nBudget_Fee_Confirmations = 3; // Number of confirmations for the finalization fee. We have to make this very short
+        // here because we only have a 8 block finalization window on testnet
+
+        /** Staking Requirements */
+        nStakeMinStartProtocol = 70850; // Starting protocol version (ActiveProtocol())
+        nStakeMinConfirmations = 30; // Required number of confirmations
+        nStakeMinAmount = 500 * COIN; // Minimum required staking amount
+	}
     const Checkpoints::CCheckpointData& Checkpoints() const {
         return dataTestnet;
     }
