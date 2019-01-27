@@ -55,7 +55,7 @@ QToolBar > QToolButton {
 	color: #fff
 }
 QToolBar > QToolButton:checked {
-	background-color: #fff;
+	background-color: #e0c469;
 	color: #fff
 }
 QToolBar > QToolButton:hover {
@@ -238,7 +238,7 @@ QComboBox::item {
 	color: #818181
 }
 QComboBox::item:alternate {
-	background: #fff
+	background: #e0c469
 }
 QComboBox::item:selected {
 	border: 0px solid transparent;
