@@ -4235,6 +4235,10 @@ Präge entweder höhere Stückelungen (damit weniger Eingaben benötigt werdenn)
         <source>The Dash Core developers</source>
         <translation>Die Dash Core Entwickler</translation>
     </message>
+	<message>
+        <source>The Bulwark Core developers</source>
+        <translation>Die Bulwark Core Entwickler</translation>
+    </message>
     <message>
         <source>The FantasyGold Core developers</source>
         <translation>Die FantasyGold Core Entwickler</translation>

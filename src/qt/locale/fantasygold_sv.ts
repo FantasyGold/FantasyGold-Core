@@ -4160,6 +4160,10 @@ Minta antingen högre valörer (så att färre inputs behövs) eller spendera mi
         <source>The Dash Core developers</source>
         <translation>Dash Core utvecklarna</translation>
     </message>
+	<message>
+        <source>The Bulwark Core developers</source>
+        <translation>Bulwark Core utvecklarna</translation>
+    </message>
     <message>
         <source>The FantasyGold Core developers</source>
         <translation>FantasyGold Core utvecklarna</translation>

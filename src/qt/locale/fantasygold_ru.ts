@@ -4243,6 +4243,10 @@ Either mint higher denominations (so fewer inputs are needed) or reduce the amou
         <source>The Dash Core developers</source>
         <translation>Разработчики Dash Core</translation>
     </message>
+	<message>
+        <source>The Bulwark Core developers</source>
+        <translation>Разработчики Bulwark Core</translation>
+    </message>
     <message>
         <source>The FantasyGold Core developers</source>
         <translation>Разработчики FantasyGold Core</translation>

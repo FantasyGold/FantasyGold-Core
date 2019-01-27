@@ -2472,6 +2472,10 @@ Nematura: konfirmita, sed malpli ol 1 minto el la samo nomado post ĝin estis mi
         <source>The Dash Core developers</source>
         <translation>La Dash kerno programistoj</translation>
     </message>
+	<message>
+        <source>The Bulwark Core developers</source>
+        <translation>La Bulwark kerno programistoj</translation>
+    </message>
     <message>
         <source>The FantasyGold Core developers</source>
         <translation>La FantasyGold kerno programistoj</translation>

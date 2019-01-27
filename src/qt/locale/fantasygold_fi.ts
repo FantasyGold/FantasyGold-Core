@@ -2214,6 +2214,10 @@ Please check the address and try again.</source>
         <source>The Dash Core developers</source>
         <translation>Dash Core kehittäjät</translation>
     </message>
+	<message>
+        <source>The Bulwark Core developers</source>
+        <translation>Bulwark Core kehittäjät</translation>
+    </message>
     <message>
         <source>The FantasyGold Core developers</source>
         <translation>FantasyGold core kehittäjät</translation>
