@@ -136,30 +136,8 @@ public:
 		assert(hashGenesisBlock == uint256("0x000006b85859195cd62b57d137bba5871588d8f05cecc5fa21673e4c894e8997"));
 	    assert(genesis.hashMerkleRoot == uint256("0x57efb4ec57bf3c7424a679cc41bec99026d6e6b90a91f26cda0b8d5249559502"));
 
-		vSeeds.push_back(CDNSSeedData("seed-england-london.fantasygold.network", "seed-england-london.fantasygold.network"));
-		vSeeds.push_back(CDNSSeedData("seed-eu-frankfurt.fantasygold.network", "seed-eu-frankfurt.fantasygold.network"));
-		vSeeds.push_back(CDNSSeedData("seed-eu-ireland.fantasygold.network", "seed-eu-ireland.fantasygold.network"));
-		vSeeds.push_back(CDNSSeedData("seed-eu-london.fantasygold.network", "seed-eu-london.fantasygold.network"));
-		vSeeds.push_back(CDNSSeedData("seed-eu-paris.fantasygold.network", "seed-eu-paris.fantasygold.network"));
-		vSeeds.push_back(CDNSSeedData("seed-south-america-saopaulo.fantasygold.network", "seed-south-america-saopaulo.fantasygold.network"));
-		vSeeds.push_back(CDNSSeedData("seed-us-1.fantasygold.network", "seed-us-1.fantasygold.network"));
-		vSeeds.push_back(CDNSSeedData("seed-us-2.fantasygold.network", "seed-us-2.fantasygold.network"));
-		vSeeds.push_back(CDNSSeedData("seed-us-3.fantasygold.network", "seed-us-3.fantasygold.network"));
-		vSeeds.push_back(CDNSSeedData("seed-us-4.fantasygold.network", "seed-us-4.fantasygold.network"));
-		vSeeds.push_back(CDNSSeedData("seed-us-5.fantasygold.network", "seed-us-5.fantasygold.network"));
-		vSeeds.push_back(CDNSSeedData("seed-us-6.fantasygold.network", "seed-us-67.fantasygold.network"));
-		vSeeds.push_back(CDNSSeedData("seed-us-7.fantasygold.network", "seed-us-7.fantasygold.network"));
-		vSeeds.push_back(CDNSSeedData("seed-us-central-dallas.fantasygold.network", "seed-us-central-dallas.fantasygold.network"));
-		vSeeds.push_back(CDNSSeedData("seed-us-east-atlanta.fantasygold.network", "seed-us-east-atlanta.fantasygold.network"));
-		vSeeds.push_back(CDNSSeedData("seed-us-east-newark.fantasygold.network", "seed-us-east-newark.fantasygold.network"));
-		vSeeds.push_back(CDNSSeedData("seed-us-west-fremont.fantasygold.network", "seed-us-west-fremont.fantasygold.network"));
-		vSeeds.push_back(CDNSSeedData("seed-asia-mumbai.fantasygold.network", "seed-asia-mumbai.fantasygold.network"));
-		vSeeds.push_back(CDNSSeedData("seed-asia-singapore.fantasygold.network", "seed-asia-singapore.fantasygold.network"));
-		vSeeds.push_back(CDNSSeedData("seed-asia-seoul.fantasygold.network", "seed-asia-seoul.fantasygold.network"));
-		vSeeds.push_back(CDNSSeedData("seed-asia-tokyo.fantasygold.network", "seed-asia-tokyo.fantasygold.network"));
-		vSeeds.push_back(CDNSSeedData("seed-australia-sydney.fantasygold.network", "seed-australia-sydney.fantasygold.network"));
-		vSeeds.push_back(CDNSSeedData("seed-canada-central.fantasygold.network", "seed-canada-central.fantasygold.network"));
-		vSeeds.push_back(CDNSSeedData("seed-denmark-frankfurt.fantasygold.network", "seed-denmark-frankfurt.fantasygold.network"));
+		vSeeds.push_back(CDNSSeedData("seeder.fantasygold.co", "seeder.fantasygold.co"));
+		
 				
         base58Prefixes[PUBKEY_ADDRESS] = std::vector<unsigned char>(1, 35); // f
         base58Prefixes[SCRIPT_ADDRESS] = std::vector<unsigned char>(1, 18); 
@@ -249,11 +227,10 @@ public:
 		assert(hashGenesisBlock == uint256("0x000005b218ee50a90d18144376a07d8fa5e2477b234c1a7df54fa29229ecf96c"));
 		assert(genesis.hashMerkleRoot == uint256("0x57efb4ec57bf3c7424a679cc41bec99026d6e6b90a91f26cda0b8d5249559502"));
 
-        vFixedSeeds.clear();
-        vSeeds.clear();
-		//vSeeds.push_back(CDNSSeedData("fantasygoldcrypto.com", "test01.fantasygoldcrypto.com"));
-		//vSeeds.push_back(CDNSSeedData("fantasygoldcrypto.com", "test02.fantasygoldcrypto.com"));
-		//vSeeds.push_back(CDNSSeedData("fantasygoldcrypto.com", "test03.fantasygoldcrypto.com"));
+        
+		vSeeds.push_back(CDNSSeedData("dns1.fantasygold.co", "dns1.fantasygold.co"));
+		//vSeeds.push_back(CDNSSeedData("fantasygold.co", "test02.fantasygold.co"));
+		//vSeeds.push_back(CDNSSeedData("fantasygold.co", "test03.fantasygold.co"));
 
         base58Prefixes[PUBKEY_ADDRESS] = std::vector<unsigned char>(1, 65); // Testnet fantasygold addresses start with 'T'
         base58Prefixes[SCRIPT_ADDRESS] = std::vector<unsigned char>(1, 12);  // Testnet fantasygold script addresses start with '5' or '6'
