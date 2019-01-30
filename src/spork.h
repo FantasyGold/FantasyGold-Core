@@ -43,7 +43,6 @@ using namespace boost;
 #define SPORK_16_MN_WINNER_MINIMUM_AGE 10015
 #define SPORK_17_NEW_PROTOCOL_ENFORCEMENT_3 10016
 #define SPORK_18_NEW_PROTOCOL_ENFORCEMENT_4 10017
-#define SPORK_19_POW_ROLLBACK 10018
 #define SPORK_20_NEW_PROTOCOL_DYNAMIC 10019
 #define SPORK_21_ENABLE_ZEROCOIN 10020
 #define SPORK_22_ZEROCOIN_MAINTENANCE_MODE 10021
@@ -66,7 +65,7 @@ using namespace boost;
                                                                    // Set this to zero to emulate classic behaviour
 #define SPORK_17_NEW_PROTOCOL_ENFORCEMENT_3_DEFAULT 4070908800    //ON
 #define SPORK_18_NEW_PROTOCOL_ENFORCEMENT_4_DEFAULT 4070908800    //ON
-#define SPORK_19_POW_ROLLBACK_DEFAULT 4070908800                  //OFF
+
 #define SPORK_20_NEW_PROTOCOL_DYNAMIC_DEFAULT 4070908800          //OFF
 // Will be whatever value is provided during spork update.
 // Example `spork SPORK_20_NEW_PROTOCOL_DYNAMIC 70850` will set active
