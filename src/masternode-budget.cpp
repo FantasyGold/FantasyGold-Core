@@ -863,6 +863,7 @@ CAmount CBudgetManager::GetTotalBudget(int nHeight) {
 	//calculates total budget for a month
     CAmount nBudgetBudget = .10; // Percentage of block reward to allocate to budgets
     if (chainActive.Tip() == NULL) return 0;
+
     //get block value and calculate from that
 	CAmount nSubsidy = 0; 
 	if (nHeight > 345600) {
@@ -872,6 +873,7 @@ CAmount CBudgetManager::GetTotalBudget(int nHeight) {
 		// GetBudgetPaymentCycleBlocks could also return 0 if before block 345600 and we could get this function down to nothing but one line.
 		nSubsidy = GetBlockValue(nHeight) * GetBudgetPaymentCycleBlocks() * nBudgetBudget;
 	}
+
     // Amount of blocks in a months period of time (using 1.5 minutes per)
     return nSubsidy;
 }
