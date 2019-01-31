@@ -13,6 +13,8 @@
 #include "script/script_error.h"
 #include "script/sign.h"
 #include "util.h"
+#include "utilstrencodings.h"
+#include "rpcserver.h"
 
 #if defined(HAVE_CONSENSUS_LIB)
 #include "script/bitcoinconsensus.h"
@@ -46,10 +48,12 @@ unsigned int ParseScriptFlags(string strFlags);
 string FormatScriptFlags(unsigned int flags);
 
 UniValue
-read_json(const std::string& jsondata) {
+read_json(const std::string& jsondata)
+{
     UniValue v;
 
-    if (!v.read(jsondata) || !v.isArray()) {
+    if (!v.read(jsondata) || !v.isArray())
+    {
         BOOST_ERROR("Parse error.");
         return UniValue(UniValue::VARR);
     }
@@ -58,7 +62,8 @@ read_json(const std::string& jsondata) {
 
 BOOST_AUTO_TEST_SUITE(script_tests)
 
-CMutableTransaction BuildCreditingTransaction(const CScript& scriptPubKey) {
+CMutableTransaction BuildCreditingTransaction(const CScript& scriptPubKey, int nValue = 0)
+{
     CMutableTransaction txCredit;
     txCredit.nVersion = 1;
     txCredit.nLockTime = 0;
@@ -68,37 +73,51 @@ CMutableTransaction BuildCreditingTransaction(const CScript& scriptPubKey) {
     txCredit.vin[0].scriptSig = CScript() << CScriptNum(0) << CScriptNum(0);
     txCredit.vin[0].nSequence = std::numeric_limits<unsigned int>::max();
     txCredit.vout[0].scriptPubKey = scriptPubKey;
-    txCredit.vout[0].nValue = 0;
+    txCredit.vout[0].nValue = nValue;
 
     return txCredit;
 }
 
-CMutableTransaction BuildSpendingTransaction(const CScript& scriptSig, const CMutableTransaction& txCredit) {
+CMutableTransaction BuildSpendingTransaction(const CScript& scriptSig, const CScriptWitness& scriptWitness, const CMutableTransaction& txCredit)
+{
     CMutableTransaction txSpend;
     txSpend.nVersion = 1;
     txSpend.nLockTime = 0;
     txSpend.vin.resize(1);
     txSpend.vout.resize(1);
+    txSpend.wit.vtxinwit.resize(1);
+    txSpend.wit.vtxinwit[0].scriptWitness = scriptWitness;
     txSpend.vin[0].prevout.hash = txCredit.GetHash();
     txSpend.vin[0].prevout.n = 0;
     txSpend.vin[0].scriptSig = scriptSig;
     txSpend.vin[0].nSequence = std::numeric_limits<unsigned int>::max();
     txSpend.vout[0].scriptPubKey = CScript();
-    txSpend.vout[0].nValue = 0;
+    txSpend.vout[0].nValue = txCredit.vout[0].nValue;
 
     return txSpend;
 }
 
-void DoTest(const CScript& scriptPubKey, const CScript& scriptSig, int flags, bool expect, const std::string& message) {
+void DoTest(const CScript& scriptPubKey, const CScript& scriptSig, const CScriptWitness& scriptWitness, int flags, bool expect, const std::string& message, CAmount nValue = 0)
+{
+    if (flags & SCRIPT_VERIFY_CLEANSTACK) {
+        flags |= SCRIPT_VERIFY_P2SH;
+        flags |= SCRIPT_VERIFY_WITNESS;
+    }
     ScriptError err;
-    CMutableTransaction tx = BuildSpendingTransaction(scriptSig, BuildCreditingTransaction(scriptPubKey));
+    CMutableTransaction txCredit = BuildCreditingTransaction(scriptPubKey, nValue);
+    CMutableTransaction tx = BuildSpendingTransaction(scriptSig, scriptWitness, txCredit);
     CMutableTransaction tx2 = tx;
-    BOOST_CHECK_MESSAGE(VerifyScript(scriptSig, scriptPubKey, flags, MutableTransactionSignatureChecker(&tx, 0), &err) == expect, message);
+    BOOST_CHECK_MESSAGE(VerifyScript(scriptSig, scriptPubKey, &scriptWitness, flags, MutableTransactionSignatureChecker(&tx, 0, txCredit.vout[0].nValue), &err) == expect, message);
     BOOST_CHECK_MESSAGE(expect == (err == SCRIPT_ERR_OK), std::string(ScriptErrorString(err)) + ": " + message);
 #if defined(HAVE_CONSENSUS_LIB)
     CDataStream stream(SER_NETWORK, PROTOCOL_VERSION);
     stream << tx2;
+    if (flags & bitcoinconsensus_SCRIPT_FLAGS_VERIFY_WITNESS) {
+        BOOST_CHECK_MESSAGE(bitcoinconsensus_verify_script_with_amount(begin_ptr(scriptPubKey), scriptPubKey.size(), txCredit.vout[0].nValue, (const unsigned char*)&stream[0], stream.size(), 0, flags, NULL) == expect, message);
+    } else {
+        BOOST_CHECK_MESSAGE(bitcoinconsensus_verify_script_with_amount(begin_ptr(scriptPubKey), scriptPubKey.size(), 0, (const unsigned char*)&stream[0], stream.size(), 0, flags, NULL) == expect, message);
     BOOST_CHECK_MESSAGE(bitcoinconsensus_verify_script(begin_ptr(scriptPubKey), scriptPubKey.size(), (const unsigned char*)&stream[0], stream.size(), 0, flags, NULL) == expect,message);
+    }
 #endif
 }
 
@@ -144,18 +163,21 @@ void static NegateSignatureS(std::vector<unsigned char>& vchSig) {
     vchSig.push_back(hashtype);
 }
 
-namespace {
+namespace
+{
 const unsigned char vchKey0[32] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1};
 const unsigned char vchKey1[32] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0};
 const unsigned char vchKey2[32] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0};
 
-struct KeyData {
+struct KeyData
+{
     CKey key0, key0C, key1, key1C, key2, key2C;
     CPubKey pubkey0, pubkey0C, pubkey0H;
     CPubKey pubkey1, pubkey1C;
     CPubKey pubkey2, pubkey2C;
 
-    KeyData() {
+    KeyData()
+    {
 
         key0.Set(vchKey0, vchKey0 + 32, false);
         key0C.Set(vchKey0, vchKey0 + 32, true);
@@ -176,59 +198,95 @@ struct KeyData {
     }
 };
 
+enum WitnessMode {
+    WITNESS_NONE,
+    WITNESS_PKH,
+    WITNESS_SH
+};
 
-class TestBuilder {
-private:
-    CScript scriptPubKey;
+class TestBuilder
+{
+  private:
+    //! Actually executed script
+    CScript script;
+    //! The P2SH redeemscript
+    CScript redeemscript;
+    //! The Witness embedded script
+    CScript witscript;
+    CScriptWitness scriptWitness;
     CTransaction creditTx;
     CMutableTransaction spendTx;
     bool havePush;
     std::vector<unsigned char> push;
     std::string comment;
     int flags;
+    CAmount nValue;
 
-    void DoPush() {
+    void DoPush()
+    {
         if (havePush) {
             spendTx.vin[0].scriptSig << push;
             havePush = false;
         }
     }
 
-    void DoPush(const std::vector<unsigned char>& data) {
-         DoPush();
-         push = data;
-         havePush = true;
+    void DoPush(const std::vector<unsigned char>& data)
+    {
+        DoPush();
+        push = data;
+        havePush = true;
     }
 
-public:
-    TestBuilder(const CScript& redeemScript, const std::string& comment_, int flags_, bool P2SH = false) : scriptPubKey(redeemScript), havePush(false), comment(comment_), flags(flags_) {
-        if (P2SH) {
-            creditTx = BuildCreditingTransaction(CScript() << OP_HASH160 << ToByteVector(CScriptID(redeemScript)) << OP_EQUAL);
-        } else {
-            creditTx = BuildCreditingTransaction(redeemScript);
+  public:
+    TestBuilder(const CScript& script_, const std::string& comment_, int flags_, bool P2SH = false, WitnessMode wm = WITNESS_NONE, int witnessversion = 0, CAmount nValue_ = 0) : script(script_), havePush(false), comment(comment_), flags(flags_), nValue(nValue_)
+    {
+        CScript scriptPubKey = script;
+        if (wm == WITNESS_PKH) {
+            uint160 hash;
+            CHash160().Write(&script[1], script.size() - 1).Finalize(hash.begin());
+            script = CScript() << OP_DUP << OP_HASH160 << ToByteVector(hash) << OP_EQUALVERIFY << OP_CHECKSIG;
+            scriptPubKey = CScript() << OP_0 << ToByteVector(hash);
+        } else if (wm == WITNESS_SH) {
+            witscript = scriptPubKey;
+            uint256 hash;
+            CSHA256().Write(&witscript[0], witscript.size()).Finalize(hash.begin());
+            scriptPubKey = CScript() << OP_0 << ToByteVector(hash);
         }
-        spendTx = BuildSpendingTransaction(CScript(), creditTx);
+        if (P2SH) {
+            redeemscript = scriptPubKey;
+            scriptPubKey = CScript() << OP_HASH160 << ToByteVector(CScriptID(redeemscript)) << OP_EQUAL;
+        }
+        creditTx = BuildCreditingTransaction(scriptPubKey, nValue);
+        spendTx = BuildSpendingTransaction(CScript(), CScriptWitness(), creditTx);
     }
 
-    TestBuilder& Add(const CScript& script) {
+    TestBuilder& Add(const CScript& script)
+    {
         DoPush();
         spendTx.vin[0].scriptSig += script;
         return *this;
     }
 
-    TestBuilder& Num(int num) {
+    TestBuilder& Num(int num)
+    {
         DoPush();
         spendTx.vin[0].scriptSig << num;
         return *this;
     }
 
-    TestBuilder& Push(const std::string& hex) {
+    TestBuilder& Push(const std::string& hex)
+    {
         DoPush(ParseHex(hex));
         return *this;
     }
 
-    TestBuilder& PushSig(const CKey& key, int nHashType = SIGHASH_ALL, unsigned int lenR = 32, unsigned int lenS = 32) {
-        uint256 hash = SignatureHash(scriptPubKey, spendTx, 0, nHashType);
+    TestBuilder& Push(const CScript& script) {
+         DoPush(std::vector<unsigned char>(script.begin(), script.end()));
+        return *this;
+    }
+    TestBuilder& PushSig(const CKey& key, int nHashType = SIGHASH_ALL, unsigned int lenR = 32, unsigned int lenS = 32, SigVersion sigversion = SIGVERSION_BASE, CAmount amount = 0)
+    {
+        uint256 hash = SignatureHash(script, spendTx, 0, nHashType, amount, sigversion);
         std::vector<unsigned char> vchSig, r, s;
         uint32_t iter = 0;
         do {
@@ -244,17 +302,33 @@ public:
         return *this;
     }
 
-    TestBuilder& Push(const CPubKey& pubkey) {
+    TestBuilder& PushWitSig(const CKey& key, CAmount amount = -1, int nHashType = SIGHASH_ALL, unsigned int lenR = 32, unsigned int lenS = 32, SigVersion sigversion = SIGVERSION_WITNESS_V0)
+    {
+        if (amount == -1)
+            amount = nValue;
+        return PushSig(key, nHashType, lenR, lenS, sigversion, amount).AsWit();
+    }
+
+    TestBuilder& Push(const CPubKey& pubkey)
+    {
         DoPush(std::vector<unsigned char>(pubkey.begin(), pubkey.end()));
         return *this;
     }
 
-    TestBuilder& PushRedeem() {
-        DoPush(static_cast<std::vector<unsigned char> >(scriptPubKey));
+    TestBuilder& PushRedeem()
+    {
+        DoPush(std::vector<unsigned char>(redeemscript.begin(), redeemscript.end()));
         return *this;
     }
 
-    TestBuilder& EditPush(unsigned int pos, const std::string& hexin, const std::string& hexout) {
+    TestBuilder& PushWitRedeem()
+    {
+        DoPush(std::vector<unsigned char>(witscript.begin(), witscript.end()));
+        return AsWit();
+    }
+
+    TestBuilder& EditPush(unsigned int pos, const std::string& hexin, const std::string& hexout)
+    {
         assert(havePush);
         std::vector<unsigned char> datain = ParseHex(hexin);
         std::vector<unsigned char> dataout = ParseHex(hexout);
@@ -265,24 +339,43 @@ public:
         return *this;
     }
 
-    TestBuilder& DamagePush(unsigned int pos) {
+    TestBuilder& DamagePush(unsigned int pos)
+    {
         assert(havePush);
         assert(pos < push.size());
         push[pos] ^= 1;
         return *this;
     }
 
-    TestBuilder& Test(bool expect) {
+    TestBuilder& Test(bool expect)
+    {
         TestBuilder copy = *this; // Make a copy so we can rollback the push.
         DoPush();
-        DoTest(creditTx.vout[0].scriptPubKey, spendTx.vin[0].scriptSig, flags, expect, comment);
+        DoTest(creditTx.vout[0].scriptPubKey, spendTx.vin[0].scriptSig, scriptWitness, flags, expect, comment, nValue);
         *this = copy;
         return *this;
     }
 
-    UniValue GetJSON() {
+    TestBuilder& AsWit()
+    {
+        assert(havePush);
+        scriptWitness.stack.push_back(push);
+        havePush = false;
+        return *this;
+    }
+
+    UniValue GetJSON()
+    {
         DoPush();
         UniValue array(UniValue::VARR);
+        if (!scriptWitness.stack.empty()) {
+            UniValue wit(UniValue::VARR);
+            for (unsigned i = 0; i < scriptWitness.stack.size(); i++) {
+                wit.push_back(HexStr(scriptWitness.stack[i]));
+            }
+            wit.push_back(ValueFromAmount(nValue));
+            array.push_back(wit);
+        }
         array.push_back(FormatScript(spendTx.vin[0].scriptSig));
         array.push_back(FormatScript(creditTx.vout[0].scriptPubKey));
         array.push_back(FormatScriptFlags(flags));
@@ -290,17 +383,32 @@ public:
         return array;
     }
 
-    std::string GetComment() {
+    std::string GetComment()
+    {
         return comment;
     }
 
-    const CScript& GetScriptPubKey() {
+    const CScript& GetScriptPubKey()
+    {
         return creditTx.vout[0].scriptPubKey;
     }
 };
+
+std::string JSONPrettyPrint(const UniValue& univalue)
+{
+    std::string ret = univalue.write(4);
+    // Workaround for libunivalue pretty printer, which puts a space between comma's and newlines
+    size_t pos = 0;
+    while ((pos = ret.find(" \n", pos)) != std::string::npos) {
+        ret.replace(pos, 2, "\n");
+        pos++;
+    }
+    return ret;
+}
 }
 
-BOOST_AUTO_TEST_CASE(script_build) {
+BOOST_AUTO_TEST_CASE(script_build)
+{
     const KeyData keys;
 
     std::vector<TestBuilder> good;
@@ -535,6 +643,150 @@ BOOST_AUTO_TEST_CASE(script_build) {
     good.push_back(TestBuilder(CScript() << OP_2 << ToByteVector(keys.pubkey1C) << ToByteVector(keys.pubkey1C) << OP_2 << OP_CHECKMULTISIG,
                                "2-of-2 with two identical keys and sigs pushed", SCRIPT_VERIFY_SIGPUSHONLY
                               ).Num(0).PushSig(keys.key1).PushSig(keys.key1));
+    good.push_back(TestBuilder(CScript() << ToByteVector(keys.pubkey0) << OP_CHECKSIG,
+                                "Basic P2WSH", SCRIPT_VERIFY_WITNESS | SCRIPT_VERIFY_P2SH, false, WITNESS_SH
+                               ).PushWitSig(keys.key0).PushWitRedeem());
+    good.push_back(TestBuilder(CScript() << ToByteVector(keys.pubkey0) << OP_CHECKSIG,
+                                "Basic P2WSH", SCRIPT_VERIFY_WITNESS | SCRIPT_VERIFY_P2SH, false, WITNESS_SH,
+                                0, 1).PushWitSig(keys.key0).PushWitRedeem());
+    good.push_back(TestBuilder(CScript() << ToByteVector(keys.pubkey0),
+                                "Basic P2WPKH", SCRIPT_VERIFY_WITNESS | SCRIPT_VERIFY_P2SH, false, WITNESS_PKH,
+                                0, 1).PushWitSig(keys.key0).Push(keys.pubkey0).AsWit());
+    good.push_back(TestBuilder(CScript() << ToByteVector(keys.pubkey0) << OP_CHECKSIG,
+                                "Basic P2SH(P2WSH)", SCRIPT_VERIFY_WITNESS | SCRIPT_VERIFY_P2SH, true, WITNESS_SH,
+                                0, 1).PushWitSig(keys.key0).PushWitRedeem().PushRedeem());
+    good.push_back(TestBuilder(CScript() << ToByteVector(keys.pubkey0),
+                                "Basic P2SH(P2WPKH)", SCRIPT_VERIFY_WITNESS | SCRIPT_VERIFY_P2SH, true, WITNESS_PKH,
+                                0, 1).PushWitSig(keys.key0).Push(keys.pubkey0).AsWit().PushRedeem());
+    bad.push_back(TestBuilder(CScript() << ToByteVector(keys.pubkey1) << OP_CHECKSIG,
+                                "Basic P2WSH with the wrong key", SCRIPT_VERIFY_WITNESS | SCRIPT_VERIFY_P2SH, false, WITNESS_SH
+                               ).PushWitSig(keys.key0).PushWitRedeem());
+    bad.push_back(TestBuilder(CScript() << ToByteVector(keys.pubkey1),
+                                "Basic P2WPKH with the wrong key", SCRIPT_VERIFY_WITNESS | SCRIPT_VERIFY_P2SH, false, WITNESS_PKH
+                               ).PushWitSig(keys.key0).Push(keys.pubkey1).AsWit());
+    bad.push_back(TestBuilder(CScript() << ToByteVector(keys.pubkey1) << OP_CHECKSIG,
+                                "Basic P2SH(P2WSH) with the wrong key", SCRIPT_VERIFY_WITNESS | SCRIPT_VERIFY_P2SH, true, WITNESS_SH
+                               ).PushWitSig(keys.key0).PushWitRedeem().PushRedeem());
+    bad.push_back(TestBuilder(CScript() << ToByteVector(keys.pubkey1),
+                                "Basic P2SH(P2WPKH) with the wrong key", SCRIPT_VERIFY_WITNESS | SCRIPT_VERIFY_P2SH, true, WITNESS_PKH
+                               ).PushWitSig(keys.key0).Push(keys.pubkey1).AsWit().PushRedeem());
+    good.push_back(TestBuilder(CScript() << ToByteVector(keys.pubkey1) << OP_CHECKSIG,
+                                "Basic P2WSH with the wrong key but no WITNESS", SCRIPT_VERIFY_P2SH, false, WITNESS_SH
+                               ).PushWitSig(keys.key0).PushWitRedeem());
+    good.push_back(TestBuilder(CScript() << ToByteVector(keys.pubkey1),
+                                "Basic P2WPKH with the wrong key but no WITNESS", SCRIPT_VERIFY_P2SH, false, WITNESS_PKH
+                               ).PushWitSig(keys.key0).Push(keys.pubkey1).AsWit());
+    good.push_back(TestBuilder(CScript() << ToByteVector(keys.pubkey1) << OP_CHECKSIG,
+                                "Basic P2SH(P2WSH) with the wrong key but no WITNESS", SCRIPT_VERIFY_P2SH, true, WITNESS_SH
+                               ).PushWitSig(keys.key0).PushWitRedeem().PushRedeem());
+    good.push_back(TestBuilder(CScript() << ToByteVector(keys.pubkey1),
+                                "Basic P2SH(P2WPKH) with the wrong key but no WITNESS", SCRIPT_VERIFY_P2SH, true, WITNESS_PKH
+                               ).PushWitSig(keys.key0).Push(keys.pubkey1).AsWit().PushRedeem());
+    bad.push_back(TestBuilder(CScript() << ToByteVector(keys.pubkey0) << OP_CHECKSIG,
+                                "Basic P2WSH with wrong value", SCRIPT_VERIFY_WITNESS | SCRIPT_VERIFY_P2SH, false, WITNESS_SH,
+                                0, 0).PushWitSig(keys.key0, 1).PushWitRedeem());
+    bad.push_back(TestBuilder(CScript() << ToByteVector(keys.pubkey0),
+                                "Basic P2WPKH with wrong value", SCRIPT_VERIFY_WITNESS | SCRIPT_VERIFY_P2SH, false, WITNESS_PKH,
+                                0, 0).PushWitSig(keys.key0, 1).Push(keys.pubkey0).AsWit());
+    bad.push_back(TestBuilder(CScript() << ToByteVector(keys.pubkey0) << OP_CHECKSIG,
+                                "Basic P2SH(P2WSH) with wrong value", SCRIPT_VERIFY_WITNESS | SCRIPT_VERIFY_P2SH, true, WITNESS_SH,
+                                0, 0).PushWitSig(keys.key0, 1).PushWitRedeem().PushRedeem());
+    bad.push_back(TestBuilder(CScript() << ToByteVector(keys.pubkey0),
+                                "Basic P2SH(P2WPKH) with wrong value", SCRIPT_VERIFY_WITNESS | SCRIPT_VERIFY_P2SH, true, WITNESS_PKH,
+                                0, 0).PushWitSig(keys.key0, 1).Push(keys.pubkey0).AsWit().PushRedeem());
+    // Compressed keys should pass SCRIPT_VERIFY_WITNESS_PUBKEYTYPE
+    good.push_back(TestBuilder(CScript() << ToByteVector(keys.pubkey0C) << OP_CHECKSIG,
+                                "Basic P2WSH with compressed key", SCRIPT_VERIFY_WITNESS | SCRIPT_VERIFY_P2SH | SCRIPT_VERIFY_WITNESS_PUBKEYTYPE, false, WITNESS_SH,
+                                0, 1).PushWitSig(keys.key0C).PushWitRedeem());
+    good.push_back(TestBuilder(CScript() << ToByteVector(keys.pubkey0C),
+                                "Basic P2WPKH with compressed key", SCRIPT_VERIFY_WITNESS | SCRIPT_VERIFY_P2SH | SCRIPT_VERIFY_WITNESS_PUBKEYTYPE, false, WITNESS_PKH,
+                                0, 1).PushWitSig(keys.key0C).Push(keys.pubkey0C).AsWit());
+    good.push_back(TestBuilder(CScript() << ToByteVector(keys.pubkey0C) << OP_CHECKSIG,
+                                "Basic P2SH(P2WSH) with compressed key", SCRIPT_VERIFY_WITNESS | SCRIPT_VERIFY_P2SH | SCRIPT_VERIFY_WITNESS_PUBKEYTYPE, true, WITNESS_SH,
+                                0, 1).PushWitSig(keys.key0C).PushWitRedeem().PushRedeem());
+    good.push_back(TestBuilder(CScript() << ToByteVector(keys.pubkey0C),
+                                "Basic P2SH(P2WPKH) with compressed key", SCRIPT_VERIFY_WITNESS | SCRIPT_VERIFY_P2SH | SCRIPT_VERIFY_WITNESS_PUBKEYTYPE, true, WITNESS_PKH,
+                                0, 1).PushWitSig(keys.key0C).Push(keys.pubkey0C).AsWit().PushRedeem());
+
+    // Testing uncompressed key in witness with SCRIPT_VERIFY_WITNESS_PUBKEYTYPE
+    bad.push_back(TestBuilder(CScript() << ToByteVector(keys.pubkey0) << OP_CHECKSIG,
+                                "Basic P2WSH", SCRIPT_VERIFY_WITNESS | SCRIPT_VERIFY_P2SH | SCRIPT_VERIFY_WITNESS_PUBKEYTYPE, false, WITNESS_SH,
+                                0, 1).PushWitSig(keys.key0).PushWitRedeem());
+    bad.push_back(TestBuilder(CScript() << ToByteVector(keys.pubkey0),
+                                "Basic P2WPKH", SCRIPT_VERIFY_WITNESS | SCRIPT_VERIFY_P2SH | SCRIPT_VERIFY_WITNESS_PUBKEYTYPE, false, WITNESS_PKH,
+                                0, 1).PushWitSig(keys.key0).Push(keys.pubkey0).AsWit());
+    bad.push_back(TestBuilder(CScript() << ToByteVector(keys.pubkey0) << OP_CHECKSIG,
+                                "Basic P2SH(P2WSH)", SCRIPT_VERIFY_WITNESS | SCRIPT_VERIFY_P2SH | SCRIPT_VERIFY_WITNESS_PUBKEYTYPE, true, WITNESS_SH,
+                                0, 1).PushWitSig(keys.key0).PushWitRedeem().PushRedeem());
+    bad.push_back(TestBuilder(CScript() << ToByteVector(keys.pubkey0),
+                                "Basic P2SH(P2WPKH)", SCRIPT_VERIFY_WITNESS | SCRIPT_VERIFY_P2SH | SCRIPT_VERIFY_WITNESS_PUBKEYTYPE, true, WITNESS_PKH,
+                                0, 1).PushWitSig(keys.key0).Push(keys.pubkey0).AsWit().PushRedeem());
+
+    // P2WSH 1-of-2 multisig with compressed keys
+    good.push_back(TestBuilder(CScript() << OP_1 << ToByteVector(keys.pubkey1C) << ToByteVector(keys.pubkey0C) << OP_2 << OP_CHECKMULTISIG,
+                                "P2WSH CHECKMULTISIG with compressed keys", SCRIPT_VERIFY_WITNESS | SCRIPT_VERIFY_P2SH | SCRIPT_VERIFY_WITNESS_PUBKEYTYPE, false, WITNESS_SH,
+                                0, 1).Push(CScript()).AsWit().PushWitSig(keys.key0C).PushWitRedeem());
+    good.push_back(TestBuilder(CScript() << OP_1 << ToByteVector(keys.pubkey1C) << ToByteVector(keys.pubkey0C) << OP_2 << OP_CHECKMULTISIG,
+                                "P2SH(P2WSH) CHECKMULTISIG with compressed keys", SCRIPT_VERIFY_WITNESS | SCRIPT_VERIFY_P2SH | SCRIPT_VERIFY_WITNESS_PUBKEYTYPE, true, WITNESS_SH,
+                                0, 1).Push(CScript()).AsWit().PushWitSig(keys.key0C).PushWitRedeem().PushRedeem());
+    good.push_back(TestBuilder(CScript() << OP_1 << ToByteVector(keys.pubkey1C) << ToByteVector(keys.pubkey0C) << OP_2 << OP_CHECKMULTISIG,
+                                "P2WSH CHECKMULTISIG with compressed keys", SCRIPT_VERIFY_WITNESS | SCRIPT_VERIFY_P2SH | SCRIPT_VERIFY_WITNESS_PUBKEYTYPE, false, WITNESS_SH,
+                                0, 1).Push(CScript()).AsWit().PushWitSig(keys.key1C).PushWitRedeem());
+    good.push_back(TestBuilder(CScript() << OP_1 << ToByteVector(keys.pubkey1C) << ToByteVector(keys.pubkey0C) << OP_2 << OP_CHECKMULTISIG,
+                                "P2SH(P2WSH) CHECKMULTISIG with compressed keys", SCRIPT_VERIFY_WITNESS | SCRIPT_VERIFY_P2SH | SCRIPT_VERIFY_WITNESS_PUBKEYTYPE, true, WITNESS_SH,
+                                0, 1).Push(CScript()).AsWit().PushWitSig(keys.key1C).PushWitRedeem().PushRedeem());
+
+    // P2WSH 1-of-2 multisig with first key uncompressed
+    good.push_back(TestBuilder(CScript() << OP_1 << ToByteVector(keys.pubkey1C) << ToByteVector(keys.pubkey0) << OP_2 << OP_CHECKMULTISIG,
+                                "P2WSH CHECKMULTISIG with first key uncompressed and signing with the first key", SCRIPT_VERIFY_WITNESS | SCRIPT_VERIFY_P2SH, false, WITNESS_SH,
+                                0, 1).Push(CScript()).AsWit().PushWitSig(keys.key0).PushWitRedeem());
+    good.push_back(TestBuilder(CScript() << OP_1 << ToByteVector(keys.pubkey1C) << ToByteVector(keys.pubkey0) << OP_2 << OP_CHECKMULTISIG,
+                                "P2SH(P2WSH) CHECKMULTISIG first key uncompressed and signing with the first key", SCRIPT_VERIFY_WITNESS | SCRIPT_VERIFY_P2SH, true, WITNESS_SH,
+                                0, 1).Push(CScript()).AsWit().PushWitSig(keys.key0).PushWitRedeem().PushRedeem());
+    bad.push_back(TestBuilder(CScript() << OP_1 << ToByteVector(keys.pubkey1C) << ToByteVector(keys.pubkey0) << OP_2 << OP_CHECKMULTISIG,
+                                "P2WSH CHECKMULTISIG with first key uncompressed and signing with the first key", SCRIPT_VERIFY_WITNESS | SCRIPT_VERIFY_P2SH | SCRIPT_VERIFY_WITNESS_PUBKEYTYPE, false, WITNESS_SH,
+                                0, 1).Push(CScript()).AsWit().PushWitSig(keys.key0).PushWitRedeem());
+    bad.push_back(TestBuilder(CScript() << OP_1 << ToByteVector(keys.pubkey1C) << ToByteVector(keys.pubkey0) << OP_2 << OP_CHECKMULTISIG,
+                                "P2SH(P2WSH) CHECKMULTISIG with first key uncompressed and signing with the first key", SCRIPT_VERIFY_WITNESS | SCRIPT_VERIFY_P2SH | SCRIPT_VERIFY_WITNESS_PUBKEYTYPE, true, WITNESS_SH,
+                                0, 1).Push(CScript()).AsWit().PushWitSig(keys.key0).PushWitRedeem().PushRedeem());
+    good.push_back(TestBuilder(CScript() << OP_1 << ToByteVector(keys.pubkey1C) << ToByteVector(keys.pubkey0) << OP_2 << OP_CHECKMULTISIG,
+                                "P2WSH CHECKMULTISIG with first key uncompressed and signing with the second key", SCRIPT_VERIFY_WITNESS | SCRIPT_VERIFY_P2SH, false, WITNESS_SH,
+                                0, 1).Push(CScript()).AsWit().PushWitSig(keys.key1C).PushWitRedeem());
+    good.push_back(TestBuilder(CScript() << OP_1 << ToByteVector(keys.pubkey1C) << ToByteVector(keys.pubkey0) << OP_2 << OP_CHECKMULTISIG,
+                                "P2SH(P2WSH) CHECKMULTISIG with first key uncompressed and signing with the second key", SCRIPT_VERIFY_WITNESS | SCRIPT_VERIFY_P2SH, true, WITNESS_SH,
+                                0, 1).Push(CScript()).AsWit().PushWitSig(keys.key1C).PushWitRedeem().PushRedeem());
+    bad.push_back(TestBuilder(CScript() << OP_1 << ToByteVector(keys.pubkey1C) << ToByteVector(keys.pubkey0) << OP_2 << OP_CHECKMULTISIG,
+                                "P2WSH CHECKMULTISIG with first key uncompressed and signing with the second key", SCRIPT_VERIFY_WITNESS | SCRIPT_VERIFY_P2SH | SCRIPT_VERIFY_WITNESS_PUBKEYTYPE, false, WITNESS_SH,
+                                0, 1).Push(CScript()).AsWit().PushWitSig(keys.key1C).PushWitRedeem());
+    bad.push_back(TestBuilder(CScript() << OP_1 << ToByteVector(keys.pubkey1C) << ToByteVector(keys.pubkey0) << OP_2 << OP_CHECKMULTISIG,
+                                "P2SH(P2WSH) CHECKMULTISIG with first key uncompressed and signing with the second key", SCRIPT_VERIFY_WITNESS | SCRIPT_VERIFY_P2SH | SCRIPT_VERIFY_WITNESS_PUBKEYTYPE, true, WITNESS_SH,
+                                0, 1).Push(CScript()).AsWit().PushWitSig(keys.key1C).PushWitRedeem().PushRedeem());
+    // P2WSH 1-of-2 multisig with second key uncompressed
+    good.push_back(TestBuilder(CScript() << OP_1 << ToByteVector(keys.pubkey1) << ToByteVector(keys.pubkey0C) << OP_2 << OP_CHECKMULTISIG,
+                                "P2WSH CHECKMULTISIG with second key uncompressed and signing with the first key", SCRIPT_VERIFY_WITNESS | SCRIPT_VERIFY_P2SH, false, WITNESS_SH,
+                                0, 1).Push(CScript()).AsWit().PushWitSig(keys.key0C).PushWitRedeem());
+    good.push_back(TestBuilder(CScript() << OP_1 << ToByteVector(keys.pubkey1) << ToByteVector(keys.pubkey0C) << OP_2 << OP_CHECKMULTISIG,
+                                "P2SH(P2WSH) CHECKMULTISIG second key uncompressed and signing with the first key", SCRIPT_VERIFY_WITNESS | SCRIPT_VERIFY_P2SH, true, WITNESS_SH,
+                                0, 1).Push(CScript()).AsWit().PushWitSig(keys.key0C).PushWitRedeem().PushRedeem());
+    good.push_back(TestBuilder(CScript() << OP_1 << ToByteVector(keys.pubkey1) << ToByteVector(keys.pubkey0C) << OP_2 << OP_CHECKMULTISIG,
+                                "P2WSH CHECKMULTISIG with second key uncompressed and signing with the first key should pass as the uncompressed key is not used", SCRIPT_VERIFY_WITNESS | SCRIPT_VERIFY_P2SH | SCRIPT_VERIFY_WITNESS_PUBKEYTYPE, false, WITNESS_SH,
+                                0, 1).Push(CScript()).AsWit().PushWitSig(keys.key0C).PushWitRedeem());
+    good.push_back(TestBuilder(CScript() << OP_1 << ToByteVector(keys.pubkey1) << ToByteVector(keys.pubkey0C) << OP_2 << OP_CHECKMULTISIG,
+                                "P2SH(P2WSH) CHECKMULTISIG with second key uncompressed and signing with the first key should pass as the uncompressed key is not used", SCRIPT_VERIFY_WITNESS | SCRIPT_VERIFY_P2SH | SCRIPT_VERIFY_WITNESS_PUBKEYTYPE, true, WITNESS_SH,
+                                0, 1).Push(CScript()).AsWit().PushWitSig(keys.key0C).PushWitRedeem().PushRedeem());
+    good.push_back(TestBuilder(CScript() << OP_1 << ToByteVector(keys.pubkey1) << ToByteVector(keys.pubkey0C) << OP_2 << OP_CHECKMULTISIG,
+                                "P2WSH CHECKMULTISIG with second key uncompressed and signing with the second key", SCRIPT_VERIFY_WITNESS | SCRIPT_VERIFY_P2SH, false, WITNESS_SH,
+                                0, 1).Push(CScript()).AsWit().PushWitSig(keys.key1).PushWitRedeem());
+    good.push_back(TestBuilder(CScript() << OP_1 << ToByteVector(keys.pubkey1) << ToByteVector(keys.pubkey0C) << OP_2 << OP_CHECKMULTISIG,
+                                "P2SH(P2WSH) CHECKMULTISIG with second key uncompressed and signing with the second key", SCRIPT_VERIFY_WITNESS | SCRIPT_VERIFY_P2SH, true, WITNESS_SH,
+                                0, 1).Push(CScript()).AsWit().PushWitSig(keys.key1).PushWitRedeem().PushRedeem());
+    bad.push_back(TestBuilder(CScript() << OP_1 << ToByteVector(keys.pubkey1) << ToByteVector(keys.pubkey0C) << OP_2 << OP_CHECKMULTISIG,
+                                "P2WSH CHECKMULTISIG with second key uncompressed and signing with the second key", SCRIPT_VERIFY_WITNESS | SCRIPT_VERIFY_P2SH | SCRIPT_VERIFY_WITNESS_PUBKEYTYPE, false, WITNESS_SH,
+                                0, 1).Push(CScript()).AsWit().PushWitSig(keys.key1).PushWitRedeem());
+    bad.push_back(TestBuilder(CScript() << OP_1 << ToByteVector(keys.pubkey1) << ToByteVector(keys.pubkey0C) << OP_2 << OP_CHECKMULTISIG,
+                                "P2SH(P2WSH) CHECKMULTISIG with second key uncompressed and signing with the second key", SCRIPT_VERIFY_WITNESS | SCRIPT_VERIFY_P2SH | SCRIPT_VERIFY_WITNESS_PUBKEYTYPE, true, WITNESS_SH,
+                                0, 1).Push(CScript()).AsWit().PushWitSig(keys.key1).PushWitRedeem().PushRedeem());
+
 
 
     std::set<std::string> tests_good;
@@ -546,11 +798,11 @@ BOOST_AUTO_TEST_CASE(script_build) {
 
         for (unsigned int idx = 0; idx < json_good.size(); idx++) {
             const UniValue& tv = json_good[idx];
-            tests_good.insert(tv.get_array().write());
+            tests_good.insert(JSONPrettyPrint(tv.get_array()));
         }
         for (unsigned int idx = 0; idx < json_bad.size(); idx++) {
             const UniValue& tv = json_bad[idx];
-            tests_bad.insert(tv.get_array().write());
+            tests_bad.insert(JSONPrettyPrint(tv.get_array()));
         }
     }
 
@@ -559,7 +811,7 @@ BOOST_AUTO_TEST_CASE(script_build) {
 
     BOOST_FOREACH(TestBuilder& test, good) {
         test.Test(true);
-        std::string str = test.GetJSON().write();
+        std::string str = JSONPrettyPrint(test.GetJSON());
 #ifndef UPDATE_JSON_TESTS
         if (tests_good.count(str) == 0) {
             BOOST_CHECK_MESSAGE(false, "Missing auto script_valid test: " + test.GetComment());
@@ -569,7 +821,7 @@ BOOST_AUTO_TEST_CASE(script_build) {
     }
     BOOST_FOREACH(TestBuilder& test, bad) {
         test.Test(false);
-        std::string str = test.GetJSON().write();
+        std::string str = JSONPrettyPrint(test.GetJSON());
 #ifndef UPDATE_JSON_TESTS
         if (tests_bad.count(str) == 0) {
             BOOST_CHECK_MESSAGE(false, "Missing auto script_invalid test: " + test.GetComment());
@@ -588,10 +840,11 @@ BOOST_AUTO_TEST_CASE(script_build) {
 #endif
 }
 
-BOOST_AUTO_TEST_CASE(script_valid) {
+BOOST_AUTO_TEST_CASE(script_valid)
+{
     // Read tests from test/data/script_valid.json
     // Format is an array of arrays
-    // Inner arrays are [ "scriptSig", "scriptPubKey", "flags" ]
+    // Inner arrays are [ ["wit"...]?, "scriptSig", "scriptPubKey", "flags" ]
     // ... where scriptSig and scriptPubKey are stringified
     // scripts.
     UniValue tests = read_json(std::string(json_tests::script_valid, json_tests::script_valid + sizeof(json_tests::script_valid)));
@@ -599,46 +852,72 @@ BOOST_AUTO_TEST_CASE(script_valid) {
     for (unsigned int idx = 0; idx < tests.size(); idx++) {
         UniValue test = tests[idx];
         string strTest = test.write();
-        if (test.size() < 3) { // Allow size > 3; extra stuff ignored (useful for comments)
+        CScriptWitness witness;
+        CAmount nValue = 0;
+        unsigned int pos = 0;
+        if (test.size() > 0 && test[pos].isArray()) {
+            unsigned int i = 0;
+            for (i = 0; i < test[pos].size()-1; i++) {
+                witness.stack.push_back(ParseHex(test[pos][i].get_str()));
+            }
+            nValue = AmountFromValue(test[pos][i]);
+            pos++;
+        }
+        if (test.size() < 3 + pos) // Allow size > 3; extra stuff ignored (useful for comments)
+        {
             if (test.size() != 1) {
                 BOOST_ERROR("Bad test: " << strTest);
             }
             continue;
         }
-        string scriptSigString = test[0].get_str();
+        string scriptSigString = test[pos++].get_str();
         CScript scriptSig = ParseScript(scriptSigString);
-        string scriptPubKeyString = test[1].get_str();
+        string scriptPubKeyString = test[pos++].get_str();
         CScript scriptPubKey = ParseScript(scriptPubKeyString);
-        unsigned int scriptflags = ParseScriptFlags(test[2].get_str());
+        unsigned int scriptflags = ParseScriptFlags(test[pos++].get_str());
 
-        DoTest(scriptPubKey, scriptSig, scriptflags, true, strTest);
+        DoTest(scriptPubKey, scriptSig, witness, scriptflags, true, strTest, nValue);
     }
 }
 
-BOOST_AUTO_TEST_CASE(script_invalid) {
+BOOST_AUTO_TEST_CASE(script_invalid)
+{
     // Scripts that should evaluate as invalid
     UniValue tests = read_json(std::string(json_tests::script_invalid, json_tests::script_invalid + sizeof(json_tests::script_invalid)));
 
     for (unsigned int idx = 0; idx < tests.size(); idx++) {
         UniValue test = tests[idx];
         string strTest = test.write();
-        if (test.size() < 3) { // Allow size > 3; extra stuff ignored (useful for comments)
+        CScriptWitness witness;
+        CAmount nValue = 0;
+        unsigned int pos = 0;
+        if (test.size() > 0 && test[pos].isArray()) {
+            unsigned int i=0;
+            for (i = 0; i < test[pos].size()-1; i++) {
+                witness.stack.push_back(ParseHex(test[pos][i].get_str()));
+            }
+            nValue = AmountFromValue(test[pos][i]);
+            pos++;
+        }
+        if (test.size() < 3 + pos) // Allow size > 3; extra stuff ignored (useful for comments)
+        {
             if (test.size() != 1) {
                 BOOST_ERROR("Bad test: " << strTest);
             }
             continue;
         }
-        string scriptSigString = test[0].get_str();
+        string scriptSigString = test[pos++].get_str();
         CScript scriptSig = ParseScript(scriptSigString);
-        string scriptPubKeyString = test[1].get_str();
+        string scriptPubKeyString = test[pos++].get_str();
         CScript scriptPubKey = ParseScript(scriptPubKeyString);
-        unsigned int scriptflags = ParseScriptFlags(test[2].get_str());
+        unsigned int scriptflags = ParseScriptFlags(test[pos++].get_str());
 
-        DoTest(scriptPubKey, scriptSig, scriptflags, false, strTest);
+        DoTest(scriptPubKey, scriptSig, witness, scriptflags, false, strTest, nValue);
     }
 }
 
-BOOST_AUTO_TEST_CASE(script_PushData) {
+BOOST_AUTO_TEST_CASE(script_PushData)
+{
     // Check that PUSHDATA1, PUSHDATA2, and PUSHDATA4 create the same value on
     // the stack as the 1-75 opcodes do.
     static const unsigned char direct[] = { 1, 0x5a };
@@ -648,28 +927,29 @@ BOOST_AUTO_TEST_CASE(script_PushData) {
 
     ScriptError err;
     vector<vector<unsigned char> > directStack;
-    BOOST_CHECK(EvalScript(directStack, CScript(&direct[0], &direct[sizeof(direct)]), true, BaseSignatureChecker(), &err));
+    BOOST_CHECK(EvalScript(directStack, CScript(&direct[0], &direct[sizeof(direct)]), SCRIPT_VERIFY_P2SH, BaseSignatureChecker(), SIGVERSION_BASE, &err));
     BOOST_CHECK_MESSAGE(err == SCRIPT_ERR_OK, ScriptErrorString(err));
 
     vector<vector<unsigned char> > pushdata1Stack;
-    BOOST_CHECK(EvalScript(pushdata1Stack, CScript(&pushdata1[0], &pushdata1[sizeof(pushdata1)]), true, BaseSignatureChecker(), &err));
+    BOOST_CHECK(EvalScript(pushdata1Stack, CScript(&pushdata1[0], &pushdata1[sizeof(pushdata1)]), SCRIPT_VERIFY_P2SH, BaseSignatureChecker(), SIGVERSION_BASE, &err));
     BOOST_CHECK(pushdata1Stack == directStack);
     BOOST_CHECK_MESSAGE(err == SCRIPT_ERR_OK, ScriptErrorString(err));
 
     vector<vector<unsigned char> > pushdata2Stack;
-    BOOST_CHECK(EvalScript(pushdata2Stack, CScript(&pushdata2[0], &pushdata2[sizeof(pushdata2)]), true, BaseSignatureChecker(), &err));
+    BOOST_CHECK(EvalScript(pushdata2Stack, CScript(&pushdata2[0], &pushdata2[sizeof(pushdata2)]), SCRIPT_VERIFY_P2SH, BaseSignatureChecker(), SIGVERSION_BASE, &err));
     BOOST_CHECK(pushdata2Stack == directStack);
     BOOST_CHECK_MESSAGE(err == SCRIPT_ERR_OK, ScriptErrorString(err));
 
     vector<vector<unsigned char> > pushdata4Stack;
-    BOOST_CHECK(EvalScript(pushdata4Stack, CScript(&pushdata4[0], &pushdata4[sizeof(pushdata4)]), true, BaseSignatureChecker(), &err));
+    BOOST_CHECK(EvalScript(pushdata4Stack, CScript(&pushdata4[0], &pushdata4[sizeof(pushdata4)]), SCRIPT_VERIFY_P2SH, BaseSignatureChecker(), SIGVERSION_BASE, &err));
     BOOST_CHECK(pushdata4Stack == directStack);
     BOOST_CHECK_MESSAGE(err == SCRIPT_ERR_OK, ScriptErrorString(err));
 }
 
 CScript
-sign_multisig(CScript scriptPubKey, std::vector<CKey> keys, CTransaction transaction) {
-    uint256 hash = SignatureHash(scriptPubKey, transaction, 0, SIGHASH_ALL);
+sign_multisig(CScript scriptPubKey, std::vector<CKey> keys, CTransaction transaction)
+{
+    uint256 hash = SignatureHash(scriptPubKey, transaction, 0, SIGHASH_ALL, 0, SIGVERSION_BASE);
 
     CScript result;
     //
@@ -681,7 +961,8 @@ sign_multisig(CScript scriptPubKey, std::vector<CKey> keys, CTransaction transac
     // and vice-versa)
     //
     result << OP_0;
-    BOOST_FOREACH(const CKey &key, keys) {
+    BOOST_FOREACH(const CKey &key, keys)
+    {
         vector<unsigned char> vchSig;
         BOOST_CHECK(key.Sign(hash, vchSig));
         vchSig.push_back((unsigned char)SIGHASH_ALL);
@@ -690,13 +971,15 @@ sign_multisig(CScript scriptPubKey, std::vector<CKey> keys, CTransaction transac
     return result;
 }
 CScript
-sign_multisig(CScript scriptPubKey, const CKey &key, CTransaction transaction) {
+sign_multisig(CScript scriptPubKey, const CKey &key, CTransaction transaction)
+{
     std::vector<CKey> keys;
     keys.push_back(key);
     return sign_multisig(scriptPubKey, keys, transaction);
 }
 
-BOOST_AUTO_TEST_CASE(script_CHECKMULTISIG12) {
+BOOST_AUTO_TEST_CASE(script_CHECKMULTISIG12)
+{
     ScriptError err;
     CKey key1, key2, key3;
     key1.MakeNewKey(true);
@@ -707,10 +990,10 @@ BOOST_AUTO_TEST_CASE(script_CHECKMULTISIG12) {
     scriptPubKey12 << OP_1 << ToByteVector(key1.GetPubKey()) << ToByteVector(key2.GetPubKey()) << OP_2 << OP_CHECKMULTISIG;
 
     CMutableTransaction txFrom12 = BuildCreditingTransaction(scriptPubKey12);
-    CMutableTransaction txTo12 = BuildSpendingTransaction(CScript(), txFrom12);
+    CMutableTransaction txTo12 = BuildSpendingTransaction(CScript(), CScriptWitness(), txFrom12);
 
     CScript goodsig1 = sign_multisig(scriptPubKey12, key1, txTo12);
-    BOOST_CHECK(VerifyScript(goodsig1, scriptPubKey12, flags, MutableTransactionSignatureChecker(&txTo12, 0), &err));
+    BOOST_CHECK(VerifyScript(goodsig1, scriptPubKey12, NULL, flags, MutableTransactionSignatureChecker(&txTo12, 0, txFrom12.vout[0].nValue), &err));
     BOOST_CHECK_MESSAGE(err == SCRIPT_ERR_OK, ScriptErrorString(err));
     txTo12.vout[0].nValue = 2;
     BOOST_CHECK(!VerifyScript(goodsig1, scriptPubKey12, flags, MutableTransactionSignatureChecker(&txTo12, 0), &err));
@@ -799,7 +1082,7 @@ BOOST_AUTO_TEST_CASE(script_CHECKMULTISIG23) {
     CScript badsig6 = sign_multisig(scriptPubKey23, keys, txTo23);
     BOOST_CHECK(!VerifyScript(badsig6, scriptPubKey23, flags, MutableTransactionSignatureChecker(&txTo23, 0), &err));
     BOOST_CHECK_MESSAGE(err == SCRIPT_ERR_INVALID_STACK_OPERATION, ScriptErrorString(err));
-}    
+}
 
 BOOST_AUTO_TEST_CASE(script_combineSigs) {
     // Test the CombineSignatures function

@@ -2,7 +2,6 @@
 // Copyright (c) 2009-2014 The Bitcoin developers
 // Copyright (c) 2014-2015 The Dash developers
 // Copyright (c) 2015-2017 The PIVX developers
-// Copyright (c) 2017-2018 The Bulwark Core Developers
 // Copyright (c) 2017-2018 The FantasyGold developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
@@ -36,20 +35,20 @@ using namespace std;
 #define GLOBAL extern
 #endif
 
-GLOBAL sph_blake512_context     z_blake;
-GLOBAL sph_groestl512_context   z_groestl;
-GLOBAL sph_jh512_context        z_jh;
-GLOBAL sph_keccak512_context    z_keccak;
-GLOBAL sph_skein512_context     z_skein;
+GLOBAL sph_blake512_context z_blake;
+GLOBAL sph_groestl512_context z_groestl;
+GLOBAL sph_jh512_context z_jh;
+GLOBAL sph_keccak512_context z_keccak;
+GLOBAL sph_skein512_context z_skein;
 
 #define fillz()					\
 	do { 					\
-            sph_blake512_init(&z_blake); \
-            sph_groestl512_init(&z_groestl); \
-            sph_jh512_init(&z_jh); \
-            sph_keccak512_init(&z_keccak); \
-            sph_skein512_init(&z_skein); \
-} while (0)
+            sph_blake512_init(&z_blake); 	\
+            sph_groestl512_init(&z_groestl); 	\
+            sph_jh512_init(&z_jh); 		\
+            sph_keccak512_init(&z_keccak); 	\
+            sph_skein512_init(&z_skein); 	\
+	} while (0)
 
 #define ZBLAKE (memcpy(&ctx_blake, &z_blake, sizeof(z_blake)))
 #define ZGROESTL (memcpy(&ctx_groestl, &z_groestl, sizeof(z_groestl)))
@@ -59,10 +58,10 @@ GLOBAL sph_skein512_context     z_skein;
 
 /** A hasher class for Bitcoin's 256-bit hash (double SHA-256). */
 class CHash256 {
-private:
+  private:
     CSHA256 sha;
 
-public:
+  public:
     static const size_t OUTPUT_SIZE = CSHA256::OUTPUT_SIZE;
 
     void Finalize(unsigned char hash[OUTPUT_SIZE]) {
@@ -84,10 +83,10 @@ public:
 
 /** A hasher class for Bitcoin's 160-bit hash (SHA-256 + RIPEMD-160). */
 class CHash160 {
-private:
+  private:
     CSHA256 sha;
 
-public:
+  public:
     static const size_t OUTPUT_SIZE = CRIPEMD160::OUTPUT_SIZE;
 
     void Finalize(unsigned char hash[OUTPUT_SIZE]) {
@@ -189,7 +188,7 @@ inline uint160 Hash160(const T1 pbegin, const T1 pend) {
     static unsigned char pblank[1] = {};
     uint160 result;
     CHash160().Write(pbegin == pend ? pblank : (const unsigned char*)&pbegin[0], (pend - pbegin) * sizeof(pbegin[0]))
-	    .Finalize((unsigned char*)&result);
+    .Finalize((unsigned char*)&result);
     return result;
 }
 
@@ -200,10 +199,10 @@ inline uint160 Hash160(const std::vector<unsigned char>& vch) {
 
 /** A writer stream (for serialization) that computes a 256-bit hash. */
 class CHashWriter {
-private:
+  private:
     CHash256 ctx;
 
-public:
+  public:
     int nType;
     int nVersion;
 

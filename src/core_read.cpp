@@ -83,6 +83,20 @@ bool DecodeHexTx(CTransaction& tx, const std::string& strHexTx) {
         return false;
 
     vector<unsigned char> txData(ParseHex(strHexTx));
+
+    if (fTryNoWitness) {
+        CDataStream ssData(txData, SER_NETWORK, PROTOCOL_VERSION | SERIALIZE_TRANSACTION_NO_WITNESS);
+        try {
+            ssData >> tx;
+            if (ssData.eof()) {
+                return true;
+            }
+        }
+        catch (const std::exception&) {
+            // Fall through.
+        }
+    }
+
     CDataStream ssData(txData, SER_NETWORK, PROTOCOL_VERSION);
     try {
         ssData >> tx;

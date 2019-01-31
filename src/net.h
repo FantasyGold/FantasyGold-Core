@@ -7,7 +7,6 @@
 #ifndef BITCOIN_NET_H
 #define BITCOIN_NET_H
 
-#include "addrdb.h"
 #include "bloom.h"
 #include "compat.h"
 #include "hash.h"
@@ -31,14 +30,12 @@
 #include <boost/filesystem/path.hpp>
 #include <boost/foreach.hpp>
 #include <boost/signals2/signal.hpp>
+#include <boost/thread/thread.hpp>
 
 class CAddrMan;
 class CBlockIndex;
+class CScheduler;
 class CNode;
-
-namespace boost {
-class thread_group;
-} // namespace boost
 
 /** Time between pings automatically sent out for latency probing and keepalive (in seconds). */
 static const int PING_INTERVAL = 2 * 60;
@@ -48,8 +45,8 @@ static const int TIMEOUT_INTERVAL = 20 * 60;
 static const unsigned int MAX_INV_SZ = 50000;
 /** The maximum number of new addresses to accumulate before announcing. */
 static const unsigned int MAX_ADDR_TO_SEND = 1000;
-/** Maximum length of incoming protocol messages (no message over 2 MiB is currently acceptable). */
-static const unsigned int MAX_PROTOCOL_MESSAGE_LENGTH = 2 * 1024 * 1024;
+/** Maximum length of incoming protocol messages (no message over 4 MB is currently acceptable). */
+static const unsigned int MAX_PROTOCOL_MESSAGE_LENGTH = 4 * 1000 * 1000;
 /** -listen default */
 static const bool DEFAULT_LISTEN = true;
 /** -upnp default */
@@ -76,7 +73,7 @@ bool OpenNetworkConnection(const CAddress& addrConnect, CSemaphoreGrant* grantOu
 void MapPort(bool fUseUPnP);
 unsigned short GetListenPort();
 bool BindListenPort(const CService& bindAddr, std::string& strError, bool fWhitelisted = false);
-void StartNode(boost::thread_group& threadGroup);
+void StartNode(boost::thread_group& threadGroup, CScheduler& scheduler);
 bool StopNode();
 void SocketSendData(CNode* pnode);
 
@@ -106,24 +103,25 @@ enum {
 };
 
 bool IsPeerAddrLocalGood(CNode* pnode);
-void AdvertiseLocal(CNode* pnode);
+void AdvertizeLocal(CNode* pnode);
 void SetLimited(enum Network net, bool fLimited = true);
 bool IsLimited(enum Network net);
 bool IsLimited(const CNetAddr& addr);
 bool AddLocal(const CService& addr, int nScore = LOCAL_NONE);
 bool AddLocal(const CNetAddr& addr, int nScore = LOCAL_NONE);
+bool RemoveLocal(const CService& addr);
 bool SeenLocal(const CService& addr);
 bool IsLocal(const CService& addr);
 bool GetLocal(CService& addr, const CNetAddr* paddrPeer = NULL);
 bool IsReachable(enum Network net);
 bool IsReachable(const CNetAddr& addr);
-void SetReachable(enum Network net, bool fFlag = true);
 CAddress GetLocalAddress(const CNetAddr* paddrPeer = NULL);
 
 
 extern bool fDiscover;
 extern bool fListen;
 extern uint64_t nLocalServices;
+extern uint64_t nRelevantServices;
 extern uint64_t nLocalHostNonce;
 extern CAddrMan addrman;
 extern int nMaxConnections;
@@ -150,12 +148,13 @@ extern CCriticalSection cs_mapLocalHost;
 extern std::map<CNetAddr, LocalServiceInfo> mapLocalHost;
 
 class CNodeStats {
-public:
+  public:
     NodeId nodeid;
     uint64_t nServices;
     int64_t nLastSend;
     int64_t nLastRecv;
     int64_t nTimeConnected;
+    int64_t nTimeOffset;
     std::string addrName;
     int nVersion;
     std::string cleanSubVer;
@@ -171,7 +170,7 @@ public:
 
 
 class CNetMessage {
-public:
+  public:
     bool in_data; // parsing header (false) or data (true)
 
     CDataStream hdrbuf; // partially received header
@@ -183,7 +182,8 @@ public:
 
     int64_t nTime; // time (in microseconds) of message receipt.
 
-    CNetMessage(int nTypeIn, int nVersionIn) : hdrbuf(nTypeIn, nVersionIn), vRecv(nTypeIn, nVersionIn) {
+    CNetMessage(int nTypeIn, int nVersionIn) : hdrbuf(nTypeIn, nVersionIn), vRecv(nTypeIn, nVersionIn)
+    {
         hdrbuf.resize(24);
         in_data = false;
         nHdrPos = 0;
@@ -191,13 +191,15 @@ public:
         nTime = 0;
     }
 
-    bool complete() const {
+    bool complete() const
+    {
         if (!in_data)
             return false;
         return (hdr.nMessageSize == nDataPos);
     }
 
-    void SetVersion(int nVersionIn) {
+    void SetVersion(int nVersionIn)
+    {
         hdrbuf.SetVersion(nVersionIn);
         vRecv.SetVersion(nVersionIn);
     }
@@ -207,11 +209,72 @@ public:
 };
 
 
+typedef enum BanReason{
+    BanReasonUnknown          = 0,
+    BanReasonNodeMisbehaving  = 1,
+    BanReasonManuallyAdded    = 2
+} BanReason;
+
+class CBanEntry{
+public:
+    static const int CURRENT_VERSION=1;
+    int nVersion;
+    int64_t nCreateTime;
+    int64_t nBanUntil;
+    uint8_t banReason;
+
+    CBanEntry()
+    {
+        SetNull();
+    }
+
+    CBanEntry(int64_t nCreateTimeIn)
+    {
+        SetNull();
+        nCreateTime = nCreateTimeIn;
+    }
+
+    ADD_SERIALIZE_METHODS;
+
+    template <typename Stream, typename Operation>
+    inline void SerializationOp(Stream& s, Operation ser_action, int nType, int nVersion) {
+        READWRITE(this->nVersion);
+        nVersion = this->nVersion;
+        READWRITE(nCreateTime);
+        READWRITE(nBanUntil);
+        READWRITE(banReason);
+    }
+
+    void SetNull()
+    {
+        nVersion = CBanEntry::CURRENT_VERSION;
+        nCreateTime = 0;
+        nBanUntil = 0;
+        banReason = BanReasonUnknown;
+    }
+
+    std::string banReasonToString()
+    {
+        switch (banReason) {
+        case BanReasonNodeMisbehaving:
+            return "node misbehaving";
+        case BanReasonManuallyAdded:
+            return "manually added";
+        default:
+            return "unknown";
+        }
+    }
+};
+
+typedef std::map<CSubNet, CBanEntry> banmap_t;
+
+
 /** Information about a peer */
 class CNode {
-public:
+  public:
     // socket
     uint64_t nServices;
+    uint64_t nServicesExpected;
     SOCKET hSocket;
     CDataStream ssSend;
     size_t nSendSize;   // total size of all vSendMsg entries
@@ -229,6 +292,7 @@ public:
     int64_t nLastSend;
     int64_t nLastRecv;
     int64_t nTimeConnected;
+    int64_t nTimeOffset;
     CAddress addr;
     std::string addrName;
     CService addrLocal;
@@ -262,7 +326,7 @@ public:
     int nRefCount;
     NodeId id;
 
-protected:
+  protected:
     // Denial-of-service detection/prevention
     // Key is IP address, value is banned-until-time
     static banmap_t setBanned;
@@ -279,7 +343,7 @@ protected:
     // Basic fuzz-testing
     void Fuzz(int nChance); // modifies ssSend
 
-public:
+  public:
     uint256 hashContinue;
     int nStartingHeight;
 
@@ -309,7 +373,7 @@ public:
     CNode(SOCKET hSocketIn, CAddress addrIn, std::string addrNameIn = "", bool fInboundIn = false);
     ~CNode();
 
-private:
+  private:
     // Network usage totals
     static CCriticalSection cs_totalBytesRecv;
     static CCriticalSection cs_totalBytesSent;
@@ -319,8 +383,9 @@ private:
     CNode(const CNode&);
     void operator=(const CNode&);
 
-public:
-    NodeId GetId() const {
+  public:
+    NodeId GetId() const
+    {
         return id;
     }
 
@@ -346,7 +411,7 @@ public:
         nRecvVersion = nVersionIn;
         BOOST_FOREACH(CNetMessage& msg, vRecvMsg) {
             msg.SetVersion(nVersionIn);
-    }
+        }
     }
 
     CNode* AddRef() {
@@ -387,7 +452,8 @@ public:
     void PushInventory(const CInv& inv) {
         {
             LOCK(cs_inventory);
-            if (!setInventoryKnown.count(inv))
+            if ((inv.type == MSG_TX || inv.type == MSG_WITNESS_TX) && setInventoryKnown.count(inv))
+                return;
                 vInventoryToSend.push_back(inv);
         }
     }
@@ -423,6 +489,23 @@ public:
             ssSend << a1;
             EndMessage();
         } catch (...) {
+            AbortMessage();
+            throw;
+        }
+    }
+
+    /** Send a message containing a1, serialized with flag flag. */
+    template<typename T1>
+    void PushMessageWithFlag(int flag, const char* pszCommand, const T1& a1)
+    {
+        try
+        {
+            BeginMessage(pszCommand);
+            WithOrVersion(&ssSend, flag) << a1;
+            EndMessage();
+        }
+        catch (...)
+        {
             AbortMessage();
             throw;
         }
@@ -561,7 +644,7 @@ public:
     }
 
     bool HasFulfilledRequest(std::string strRequest) {
-        BOOST_FOREACH (std::string& type, vecRequestsFulfilled) {
+        BOOST_FOREACH(std::string& type, vecRequestsFulfilled) {
             if (type == strRequest) return true;
         }
         return false;
@@ -605,19 +688,22 @@ public:
     // new code.
     static void ClearBanned(); // needed for unit testing
     static bool IsBanned(CNetAddr ip);
-    static bool IsBanned(CSubNet subNet);
-    static void Ban(const CNetAddr& ip, int64_t bantimeoffset = 0, bool sinceUnixEpoch = false);
-    static void Ban(const CSubNet& subNet, int64_t bantimeoffset = 0, bool sinceUnixEpoch = false);
-    static void DumpBanlist();
+    static bool IsBanned(CSubNet subnet);
+    static void Ban(const CNetAddr &ip, const BanReason &banReason, int64_t bantimeoffset = 0, bool sinceUnixEpoch = false);
+    static void Ban(const CSubNet &subNet, const BanReason &banReason, int64_t bantimeoffset = 0, bool sinceUnixEpoch = false);
     static bool Unban(const CNetAddr& ip);
-    static bool Unban(const CSubNet& subNet);
-    static bool BannedIsDirty();
+    static bool Unban(const CSubNet &ip);
     static void GetBanned(banmap_t &banmap);
     static void SetBanned(const banmap_t &banmap);
-    static void SetBannedIsDirty(bool dirty=true);
-    void copyStats(CNodeStats& stats);
-    //!clean unused entries (if bantime has expired)
+
+    //!check is the banlist has unwritten changes
+    static bool BannedSetIsDirty();
+    //!set the "dirty" flag for the banlist
+    static void SetBannedSetDirty(bool dirty=true);
+    //!clean unused entires (if bantime has expired)
     static void SweepBanned();
+
+    void copyStats(CNodeStats& stats);
 
     static bool IsWhitelistedRange(const CNetAddr& ip);
     static void AddWhitelistedRange(const CSubNet& subnet);
@@ -632,7 +718,7 @@ public:
 };
 
 class CExplicitNetCleanup {
-public:
+  public:
     static void callCleanup();
 };
 
@@ -644,13 +730,25 @@ void RelayInv(CInv& inv);
 
 /** Access to the (IP) address database (peers.dat) */
 class CAddrDB {
-private:
+  private:
     boost::filesystem::path pathAddr;
 
-public:
+  public:
     CAddrDB();
     bool Write(const CAddrMan& addr);
     bool Read(CAddrMan& addr);
 };
+
+/** Access to the banlist database (banlist.dat) */
+class CBanDB{
+private:
+    boost::filesystem::path pathBanlist;
+public:
+    CBanDB();
+    bool Write(const banmap_t& banSet);
+    bool Read(banmap_t& banSet);
+};
+
+void DumpBanlist();
 
 #endif // BITCOIN_NET_H

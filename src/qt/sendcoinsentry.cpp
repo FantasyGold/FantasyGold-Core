@@ -1,7 +1,6 @@
 // Copyright (c) 2011-2014 The Bitcoin developers
 // Copyright (c) 2014-2015 The Dash developers
 // Copyright (c) 2015-2017 The PIVX developers
-// Copyright (c) 2017-2018 The Bulwark Core Developers
 // Copyright (c) 2017-2018 The FantasyGold developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
@@ -27,6 +26,9 @@ SendCoinsEntry::SendCoinsEntry(QWidget* parent) : QStackedWidget(parent),
 
 #ifdef Q_OS_MAC
     ui->payToLayout->setSpacing(4);
+    ui->payTo->setAttribute(Qt::WA_MacShowFocusRect, 0);
+    ui->addAsLabel->setAttribute(Qt::WA_MacShowFocusRect, 0);
+    ui->payAmount->setAttribute(Qt::WA_MacShowFocusRect, 0);
 #endif
     ui->addAsLabel->setPlaceholderText(tr("Enter a label for this address to add it to your address book"));
 

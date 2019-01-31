@@ -61,6 +61,7 @@ class PeerTablePriv {
                 CNodeCombinedStats stats;
                 stats.nodeStateStats.nMisbehavior = 0;
                 stats.nodeStateStats.nSyncHeight = -1;
+                stats.nodeStateStats.nCommonHeight = -1;
                 stats.fNodeStateStatsAvailable = false;
                 pnode->copyStats(stats.nodeStats);
                 cachedNodeStats.append(stats);
@@ -84,10 +85,9 @@ class PeerTablePriv {
         // build index map
         mapNodeRows.clear();
         int row = 0;
-        BOOST_FOREACH(CNodeCombinedStats& stats, cachedNodeStats) {
+        foreach (const CNodeCombinedStats& stats, cachedNodeStats)
             mapNodeRows.insert(std::pair<NodeId, int>(stats.nodeStats.nodeid, row++));
         }
-    }
 
     int size() {
         return cachedNodeStats.size();

@@ -31,7 +31,7 @@ void ThreadFlushWalletDB(const std::string& strWalletFile);
 
 
 class CDBEnv {
-private:
+  private:
     bool fDbEnvInit;
     bool fMockDb;
     // Don't change into boost::filesystem::path, as that can result in
@@ -40,7 +40,7 @@ private:
 
     void EnvShutdown();
 
-public:
+  public:
     mutable CCriticalSection cs_db;
     DbEnv dbenv;
     std::map<std::string, int> mapFileUseCount;
@@ -49,9 +49,7 @@ public:
     CDBEnv();
     ~CDBEnv();
     void MakeMock();
-    bool IsMock() {
-        return fMockDb;
-    }
+    bool IsMock() { return fMockDb; }
 
     /**
      * Verify that database file strFile is OK. If it is not,
@@ -60,9 +58,8 @@ public:
      * Returns true if strFile is OK.
      */
     enum VerifyResult { VERIFY_OK,
-        RECOVER_OK,
-                        RECOVER_FAIL
-                      };
+                        RECOVER_OK,
+        RECOVER_FAIL };
     VerifyResult Verify(std::string strFile, bool (*recoverFunc)(CDBEnv& dbenv, std::string strFile));
     /**
      * Salvage data from a file that Verify says is bad.
@@ -96,33 +93,32 @@ extern CDBEnv bitdb;
 
 /** RAII class that provides access to a Berkeley database */
 class CDB {
-protected:
+  protected:
     Db* pdb;
     std::string strFile;
     DbTxn* activeTxn;
     bool fReadOnly;
+    int nSerVersion;
 
-    explicit CDB(const std::string& strFilename, const char* pszMode = "r+");
-    ~CDB() {
-        Close();
-    }
+    explicit CDB(const std::string& strFilename, const char* pszMode = "r+", int nSerVersion = CLIENT_VERSION);
+    ~CDB() { Close(); }
 
-public:
+  public:
     void Flush();
     void Close();
 
-private:
+  private:
     CDB(const CDB&);
     void operator=(const CDB&);
 
-protected:
+  protected:
     template <typename K, typename T>
     bool Read(const K& key, T& value) {
         if (!pdb)
             return false;
 
         // Key
-        CDataStream ssKey(SER_DISK, CLIENT_VERSION);
+        CDataStream ssKey(SER_DISK, nSerVersion);
         ssKey.reserve(1000);
         ssKey << key;
         Dbt datKey(&ssKey[0], ssKey.size());
@@ -137,7 +133,7 @@ protected:
 
         // Unserialize value
         try {
-            CDataStream ssValue((char*)datValue.get_data(), (char*)datValue.get_data() + datValue.get_size(), SER_DISK, CLIENT_VERSION);
+            CDataStream ssValue((char*)datValue.get_data(), (char*)datValue.get_data() + datValue.get_size(), SER_DISK, nSerVersion);
             ssValue >> value;
         } catch (const std::exception&) {
             return false;
@@ -157,13 +153,13 @@ protected:
             assert(!"Write called on database in read-only mode");
 
         // Key
-        CDataStream ssKey(SER_DISK, CLIENT_VERSION);
+        CDataStream ssKey(SER_DISK, nSerVersion);
         ssKey.reserve(1000);
         ssKey << key;
         Dbt datKey(&ssKey[0], ssKey.size());
 
         // Value
-        CDataStream ssValue(SER_DISK, CLIENT_VERSION);
+        CDataStream ssValue(SER_DISK, nSerVersion);
         ssValue.reserve(10000);
         ssValue << value;
         Dbt datValue(&ssValue[0], ssValue.size());
@@ -185,7 +181,7 @@ protected:
             assert(!"Erase called on database in read-only mode");
 
         // Key
-        CDataStream ssKey(SER_DISK, CLIENT_VERSION);
+        CDataStream ssKey(SER_DISK, nSerVersion);
         ssKey.reserve(1000);
         ssKey << key;
         Dbt datKey(&ssKey[0], ssKey.size());
@@ -204,7 +200,7 @@ protected:
             return false;
 
         // Key
-        CDataStream ssKey(SER_DISK, CLIENT_VERSION);
+        CDataStream ssKey(SER_DISK, nSerVersion);
         ssKey.reserve(1000);
         ssKey << key;
         Dbt datKey(&ssKey[0], ssKey.size());
@@ -263,7 +259,7 @@ protected:
         return 0;
     }
 
-public:
+  public:
     bool TxnBegin() {
         if (!pdb || activeTxn)
             return false;

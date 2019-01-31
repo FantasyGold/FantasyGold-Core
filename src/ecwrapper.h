@@ -14,10 +14,10 @@ class uint256;
 
 /** RAII Wrapper around OpenSSL's EC_KEY */
 class CECKey {
-private:
+  private:
     EC_KEY* pkey;
 
-public:
+  public:
     CECKey();
     ~CECKey();
 

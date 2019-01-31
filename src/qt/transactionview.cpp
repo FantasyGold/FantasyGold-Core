@@ -110,10 +110,12 @@ TransactionView::TransactionView(QWidget* parent) : QWidget(parent), model(0), t
     hlayout->addWidget(typeWidget);
 
     addressWidget = new QLineEdit(this);
+    addressWidget->setAttribute(Qt::WA_MacShowFocusRect, 0);
     addressWidget->setPlaceholderText(tr("Enter address or label to search"));
     hlayout->addWidget(addressWidget);
 
     amountWidget = new QLineEdit(this);
+    amountWidget->setAttribute(Qt::WA_MacShowFocusRect, 0);
     amountWidget->setPlaceholderText(tr("Min amount"));
 #ifdef Q_OS_MAC
     amountWidget->setFixedWidth(97);
@@ -128,7 +130,10 @@ TransactionView::TransactionView(QWidget* parent) : QWidget(parent), model(0), t
     vlayout->setSpacing(0);
 
     QTableView* view = new QTableView(this);
+    view->setShowGrid(false);
     vlayout->addLayout(hlayout);
+    QSpacerItem* verticalSpacer_3 = new QSpacerItem(20, 20, QSizePolicy::Minimum, QSizePolicy::Preferred);
+    vlayout->addItem(verticalSpacer_3);
     vlayout->addWidget(createDateRangeWidget());
     vlayout->addWidget(view);
     vlayout->setSpacing(0);
@@ -460,7 +465,7 @@ void TransactionView::computeSum() {
         amount += index.data(TransactionTableModel::AmountRole).toLongLong();
     }
     QString strAmount(BitcoinUnits::formatWithUnit(nDisplayUnit, amount, true, BitcoinUnits::separatorAlways));
-    if (amount < 0) strAmount = "<span style='color:red;'>" + strAmount + "</span>";
+    if (amount < 0) strAmount = "<span class='negative-sum'>" + strAmount + "</span>";
     emit trxAmount(strAmount);
 }
 

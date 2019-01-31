@@ -71,9 +71,7 @@ class TransactionTableModel : public QAbstractTableModel {
     QVariant data(const QModelIndex& index, int role) const;
     QVariant headerData(int section, Qt::Orientation orientation, int role) const;
     QModelIndex index(int row, int column, const QModelIndex& parent = QModelIndex()) const;
-    bool processingQueuedTransactions() {
-        return fProcessingQueuedTransactions;
-    }
+    bool processingQueuedTransactions() { return fProcessingQueuedTransactions; }
 
   private:
     CWallet* wallet;
@@ -105,9 +103,7 @@ class TransactionTableModel : public QAbstractTableModel {
     /** Updates the column title to "Amount (DisplayUnit)" and emits headerDataChanged() signal for table headers to react. */
     void updateAmountColumnTitle();
     /* Needed to update fProcessingQueuedTransactions through a QueuedConnection */
-    void setProcessingQueuedTransactions(bool value) {
-        fProcessingQueuedTransactions = value;
-    }
+    void setProcessingQueuedTransactions(bool value) { fProcessingQueuedTransactions = value; }
 
     friend class TransactionTablePriv;
 };

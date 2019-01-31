@@ -8,6 +8,7 @@
 #include "coins.h"
 #include "core_io.h"
 #include "keystore.h"
+#include "main.h"
 #include "primitives/block.h" // for MAX_BLOCK_SIZE
 #include "primitives/transaction.h"
 #include "script/script.h"
@@ -74,10 +75,10 @@ static bool AppInitRawTx(int argc, char* argv[]) {
         strUsage += HelpMessageOpt("outaddr=VALUE:ADDRESS", _("Add address-based output to TX"));
         strUsage += HelpMessageOpt("outscript=VALUE:SCRIPT", _("Add raw script output to TX"));
         strUsage += HelpMessageOpt("sign=SIGHASH-FLAGS", _("Add zero or more signatures to transaction") + ". " +
-            _("This command requires JSON registers:") +
-            _("prevtxs=JSON object") + ", " +
-            _("privatekeys=JSON object") + ". " +
-            _("See signrawtransaction docs for format of sighash flags, JSON objects."));
+                                   _("This command requires JSON registers:") +
+                                   _("prevtxs=JSON object") + ", " +
+                                   _("privatekeys=JSON object") + ". " +
+                                   _("See signrawtransaction docs for format of sighash flags, JSON objects."));
         fprintf(stdout, "%s", strUsage.c_str());
 
         strUsage = HelpMessageGroup(_("Register Commands:"));
@@ -104,8 +105,8 @@ static void RegisterSet(const string& strInput) {
     // separate NAME:VALUE in string
     size_t pos = strInput.find(':');
     if ((pos == string::npos) ||
-        (pos == 0) ||
-        (pos == (strInput.size() - 1)))
+            (pos == 0) ||
+            (pos == (strInput.size() - 1)))
         throw runtime_error("Register input requires NAME:VALUE");
 
     string key = strInput.substr(0, pos);
@@ -118,8 +119,8 @@ static void RegisterLoad(const string& strInput) {
     // separate NAME:FILENAME in string
     size_t pos = strInput.find(':');
     if ((pos == string::npos) ||
-        (pos == 0) ||
-        (pos == (strInput.size() - 1)))
+            (pos == 0) ||
+            (pos == (strInput.size() - 1)))
         throw runtime_error("Register load requires NAME:FILENAME");
 
     string key = strInput.substr(0, pos);
@@ -173,8 +174,8 @@ static void MutateTxAddInput(CMutableTransaction& tx, const string& strInput) {
     // separate TXID:VOUT in string
     size_t pos = strInput.find(':');
     if ((pos == string::npos) ||
-        (pos == 0) ||
-        (pos == (strInput.size() - 1)))
+            (pos == 0) ||
+            (pos == (strInput.size() - 1)))
         throw runtime_error("TX input missing separator");
 
     // extract and validate TXID
@@ -184,8 +185,7 @@ static void MutateTxAddInput(CMutableTransaction& tx, const string& strInput) {
     uint256 txid(strTxid);
 
     static const unsigned int minTxOutSz = 9;
-    unsigned int nMaxSize = MAX_BLOCK_SIZE_LEGACY;
-    static const unsigned int maxVout = nMaxSize / minTxOutSz;
+    static const unsigned int maxVout = MAX_BLOCK_SIZE_LEGACY / minTxOutSz;
 
     // extract and validate vout
     string strVout = strInput.substr(pos + 1, string::npos);
@@ -202,8 +202,8 @@ static void MutateTxAddOutAddr(CMutableTransaction& tx, const string& strInput) 
     // separate VALUE:ADDRESS in string
     size_t pos = strInput.find(':');
     if ((pos == string::npos) ||
-        (pos == 0) ||
-        (pos == (strInput.size() - 1)))
+            (pos == 0) ||
+            (pos == (strInput.size() - 1)))
         throw runtime_error("TX output missing separator");
 
     // extract and validate VALUE
@@ -214,12 +214,13 @@ static void MutateTxAddOutAddr(CMutableTransaction& tx, const string& strInput) 
 
     // extract and validate ADDRESS
     string strAddr = strInput.substr(pos + 1, string::npos);
-    CBitcoinAddress addr(strAddr);
-    if (!addr.IsValid())
+
+    if (!IsValidDestinationString(strAddr))
+
         throw runtime_error("invalid TX output address");
 
     // build standard output script via GetScriptForDestination()
-    CScript scriptPubKey = GetScriptForDestination(addr.Get());
+    CScript scriptPubKey = GetScriptForDestination(DecodeDestination(strAddr));
 
     // construct TxOut, append to transaction output list
     CTxOut txout(value, scriptPubKey);
@@ -230,7 +231,7 @@ static void MutateTxAddOutScript(CMutableTransaction& tx, const string& strInput
     // separate VALUE:SCRIPT in string
     size_t pos = strInput.find(':');
     if ((pos == string::npos) ||
-        (pos == 0))
+            (pos == 0))
         throw runtime_error("TX output missing separator");
 
     // extract and validate VALUE
@@ -312,7 +313,18 @@ vector<unsigned char> ParseHexUO(map<string, UniValue>& o, string strKey) {
     return ParseHexUV(o[strKey], strKey);
 }
 
-static void MutateTxSign(CMutableTransaction& tx, const string& flagStr) {
+static CAmount AmountFromValue(const UniValue& value)
+{
+    if (!value.isNum() && !value.isStr())
+        throw runtime_error("Amount is not a number or string");
+    CAmount amount;
+    if (!ParseFixedPoint(value.getValStr(), 8, &amount))
+        throw runtime_error("Invalid amount");
+    return amount;
+}
+
+static void MutateTxSign(CMutableTransaction& tx, const string& flagStr)
+{
     int nHashType = SIGHASH_ALL;
 
     if (flagStr.size() > 0)
@@ -382,13 +394,16 @@ static void MutateTxSign(CMutableTransaction& tx, const string& flagStr) {
                 if ((unsigned int)nOut >= coins->vout.size())
                     coins->vout.resize(nOut + 1);
                 coins->vout[nOut].scriptPubKey = scriptPubKey;
-                coins->vout[nOut].nValue = 0; // we don't know the actual output value
+                coins->vout[nOut].nValue = 0;
+                if (prevOut.exists("amount")) {
+                    coins->vout[nOut].nValue = AmountFromValue(prevOut["amount"]);
+                }
             }
 
             // if redeemScript given and private keys given,
             // add redeemScript to the tempKeystore so it can be signed:
-            if (fGivenKeys && scriptPubKey.IsPayToScriptHash() &&
-                prevOut.exists("redeemScript")) {
+            if (fGivenKeys && (scriptPubKey.IsPayToScriptHash() || scriptPubKey.IsPayToWitnessScriptHash()) &&
+                    prevOut.exists("redeemScript")) {
                 UniValue v = prevOut["redeemScript"];
                 vector<unsigned char> rsData(ParseHexUV(v, "redeemScript"));
                 CScript redeemScript(rsData.begin(), rsData.end());
@@ -410,17 +425,19 @@ static void MutateTxSign(CMutableTransaction& tx, const string& flagStr) {
             continue;
         }
         const CScript& prevPubKey = coins->vout[txin.prevout.n].scriptPubKey;
+        const CAmount& amount = coins->vout[txin.prevout.n].nValue;
 
-        txin.scriptSig.clear();
+        SignatureData sigdata;
         // Only sign SIGHASH_SINGLE if there's a corresponding output:
         if (!fHashSingle || (i < mergedTx.vout.size()))
-            SignSignature(keystore, prevPubKey, mergedTx, i, nHashType);
+            ProduceSignature(MutableTransactionSignatureCreator(&keystore, &mergedTx, i, amount, nHashType), prevPubKey, sigdata);
 
         // ... and merge in other signatures:
-        BOOST_FOREACH (const CTransaction& txv, txVariants) {
-            txin.scriptSig = CombineSignatures(prevPubKey, mergedTx, i, txin.scriptSig, txv.vin[i].scriptSig);
-        }
-        if (!VerifyScript(txin.scriptSig, prevPubKey, STANDARD_SCRIPT_VERIFY_FLAGS, MutableTransactionSignatureChecker(&mergedTx, i)))
+        BOOST_FOREACH(const CTransaction& txv, txVariants)
+            sigdata = CombineSignatures(prevPubKey, MutableTransactionSignatureChecker(&mergedTx, i, amount), sigdata, DataFromTransaction(txv, i));
+        UpdateTransaction(mergedTx, i, sigdata);
+
+        if (!VerifyScript(txin.scriptSig, prevPubKey, mergedTx.wit.vtxinwit.size() > i ? &mergedTx.wit.vtxinwit[i].scriptWitness : NULL, STANDARD_SCRIPT_VERIFY_FLAGS, MutableTransactionSignatureChecker(&mergedTx, i, amount)))
             fComplete = false;
     }
 
@@ -477,8 +494,9 @@ static void OutputTxHash(const CTransaction& tx) {
     fprintf(stdout, "%s\n", strHexHash.c_str());
 }
 
-static void OutputTxHex(const CTransaction& tx) {
-    string strHex = EncodeHexTx(tx);
+static void OutputTxHex(const CTransaction& tx)
+{
+    string strHex = EncodeHexTx(tx, PROTOCOL_VERSION);
 
     fprintf(stdout, "%s\n", strHex.c_str());
 }
@@ -517,7 +535,7 @@ static int CommandLineRawTx(int argc, char* argv[]) {
     try {
         // Skip switches; Permit common stdin convention "-"
         while (argc > 1 && IsSwitchChar(argv[1][0]) &&
-               (argv[1][1] != 0)) {
+                (argv[1][1] != 0)) {
             argc--;
             argv++;
         }
@@ -535,7 +553,7 @@ static int CommandLineRawTx(int argc, char* argv[]) {
             if (strHexTx == "-") // "-" implies standard input
                 strHexTx = readStdin();
 
-            if (!DecodeHexTx(txDecodeTmp, strHexTx))
+            if (!DecodeHexTx(txDecodeTmp, strHexTx, true))
                 throw runtime_error("invalid transaction encoding");
 
             startArg = 2;

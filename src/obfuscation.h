@@ -1,6 +1,5 @@
 // Copyright (c) 2014-2015 The Dash developers
 // Copyright (c) 2015-2017 The PIVX developers
-// Copyright (c) 2017-2018 The Bulwark Core Developers
 // Copyright (c) 2017-2018 The FantasyGold developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
@@ -19,7 +18,6 @@ class CTxIn;
 class CObfuscationPool;
 class CObfuScationSigner;
 class CMasterNodeVote;
-class CBitcoinAddress;
 class CObfuscationQueue;
 class CObfuscationBroadcastTx;
 class CActiveMasternode;
@@ -48,8 +46,8 @@ class CActiveMasternode;
 #define OBFUSCATION_RELAY_OUT 2
 #define OBFUSCATION_RELAY_SIG 3
 
-static const int64_t OBFUSCATION_COLLATERAL = (10 * COIN);
-static const int64_t OBFUSCATION_POOL_MAX = (99999.99 * COIN);
+static const CAmount OBFUSCATION_COLLATERAL = (10 * COIN);
+static const CAmount OBFUSCATION_POOL_MAX = (99999.99 * COIN);
 
 extern CObfuscationPool obfuScationPool;
 extern CObfuScationSigner obfuScationSigner;
@@ -61,7 +59,7 @@ extern CActiveMasternode activeMasternode;
 /** Holds an Obfuscation input
  */
 class CTxDSIn : public CTxIn {
-public:
+  public:
     bool fHasSig;   // flag to indicate if signed
     int nSentTimes; //times we've sent this anonymously
 
@@ -78,7 +76,7 @@ public:
 /** Holds an Obfuscation output
  */
 class CTxDSOut : public CTxOut {
-public:
+  public:
     int nSentTimes; //times we've sent this anonymously
 
     CTxDSOut(const CTxOut& out) {
@@ -91,7 +89,7 @@ public:
 
 // A clients transaction in the obfuscation pool
 class CObfuScationEntry {
-public:
+  public:
     bool isSet;
     std::vector<CTxDSIn> sev;
     std::vector<CTxDSOut> vout;
@@ -107,7 +105,8 @@ public:
     }
 
     /// Add entries to use for Obfuscation
-    bool Add(const std::vector<CTxIn> vinIn, CAmount amountIn, const CTransaction collateralIn, const std::vector<CTxOut> voutIn) {
+    bool Add(const std::vector<CTxIn> vinIn, int64_t amountIn, const CTransaction collateralIn, const std::vector<CTxOut> voutIn)
+    {
         if (isSet) {
             return false;
         }
@@ -129,7 +128,7 @@ public:
     }
 
     bool AddSig(const CTxIn& vin) {
-        BOOST_FOREACH (CTxDSIn& s, sev) {
+        BOOST_FOREACH(CTxDSIn& s, sev) {
             if (s.prevout == vin.prevout && s.nSequence == vin.nSequence) {
                 if (s.fHasSig) {
                     return false;
@@ -155,7 +154,7 @@ public:
  * A currently inprogress Obfuscation merge and denomination information
  */
 class CObfuscationQueue {
-public:
+  public:
     CTxIn vin;
     int64_t time;
     int nDenom;
@@ -223,7 +222,7 @@ public:
 /** Helper class to store Obfuscation transaction (tx) information.
  */
 class CObfuscationBroadcastTx {
-public:
+  public:
     CTransaction tx;
     CTxIn vin;
     vector<unsigned char> vchSig;
@@ -233,7 +232,7 @@ public:
 /** Helper object for signing and checking signatures
  */
 class CObfuScationSigner {
-public:
+  public:
     /// Is the inputs associated with this public key? (and there is 10000 FGC - checking if valid masternode)
     bool IsVinAssociatedWithPubkey(CTxIn& vin, CPubKey& pubkey);
     /// Set the private/public key values, returns true if successful
@@ -249,7 +248,7 @@ public:
 /** Used to keep track of current status of Obfuscation pool
  */
 class CObfuscationPool {
-private:
+  private:
     mutable CCriticalSection cs_obfuscation;
 
     std::vector<CObfuScationEntry> entries; // Masternode/clients entries
@@ -283,7 +282,7 @@ private:
     //debugging data
     std::string strAutoDenomResult;
 
-public:
+  public:
     enum messages {
         ERR_ALREADY_HAVE,
         ERR_DENOM,
@@ -470,7 +469,7 @@ public:
 
     /// Get the denominations for a specific amount of fantasygold.
     int GetDenominationsByAmount(CAmount nAmount, int nDenomTarget = 0); // is not used anymore?
-    int GetDenominationsByAmounts(std::vector<int64_t>& vecAmount);
+    int GetDenominationsByAmounts(std::vector<CAmount>& vecAmount);
 
     std::string GetMessageByID(int messageID);
 
@@ -481,7 +480,7 @@ public:
     void RelayFinalTransaction(const int sessionID, const CTransaction& txNew);
     void RelaySignaturesAnon(std::vector<CTxIn>& vin);
     void RelayInAnon(std::vector<CTxIn>& vin, std::vector<CTxOut>& vout);
-    void RelayIn(const std::vector<CTxDSIn>& vin, const int64_t& nAmount, const CTransaction& txCollateral, const std::vector<CTxDSOut>& vout);
+    void RelayIn(const std::vector<CTxDSIn>& vin, const CAmount& nAmount, const CTransaction& txCollateral, const std::vector<CTxDSOut>& vout);
     void RelayStatus(const int sessionID, const int newState, const int newEntriesCount, const int newAccepted, const int errorID = MSG_NOERR);
     void RelayCompletedTransaction(const int sessionID, const bool error, const int errorID);
 };

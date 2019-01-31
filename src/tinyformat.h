@@ -154,7 +154,7 @@ namespace detail {
 // Test whether type T1 is convertible to type T2
 template <typename T1, typename T2>
 struct is_convertible {
-private:
+  private:
     // two types of different size
     struct fail {
         char dummy[2];
@@ -167,7 +167,7 @@ private:
     static succeed tryConvert(const T2&);
     static const T1& makeT1();
 
-public:
+  public:
 #ifdef _MSC_VER
 // Disable spurious loss of precision warnings in tryConvert(makeT1())
 #pragma warning(push)
@@ -209,9 +209,7 @@ struct is_wchar<wchar_t[n]> {
 // should never be called.
 template <typename T, typename fmtT, bool convertible = is_convertible<T, fmtT>::value>
 struct formatValueAsType {
-    static void invoke(std::ostream& /*out*/, const T& /*value*/) {
-        assert(0);
-    }
+    static void invoke(std::ostream& /*out*/, const T& /*value*/) { assert(0); }
 };
 // Specialized version for types that can actually be converted to fmtT, as
 // indicated by the "convertible" template parameter.
@@ -225,9 +223,7 @@ struct formatValueAsType<T, fmtT, true> {
 #ifdef TINYFORMAT_OLD_LIBSTDCPLUSPLUS_WORKAROUND
 template <typename T, bool convertible = is_convertible<T, int>::value>
 struct formatZeroIntegerWorkaround {
-    static bool invoke(std::ostream& /**/, const T& /**/) {
-        return false;
-    }
+    static bool invoke(std::ostream& /**/, const T& /**/) { return false; }
 };
 template <typename T>
 struct formatZeroIntegerWorkaround<T, true> {
@@ -254,9 +250,7 @@ struct convertToInt {
 // Specialization for convertToInt when conversion is possible
 template <typename T>
 struct convertToInt<T, true> {
-    static int invoke(const T& value) {
-        return static_cast<int>(value);
-    }
+    static int invoke(const T& value) { return static_cast<int>(value); }
 };
 
 } // namespace detail
@@ -453,7 +447,7 @@ namespace detail {
 // Class holding current position in format string and an output stream into
 // which arguments are formatted.
 class FormatIterator {
-public:
+  public:
     // Flags for features not representable with standard stream state
     enum ExtraFormatFlags {
         Flag_None = 0,
@@ -498,7 +492,7 @@ public:
     template <typename T>
     void accept(const T& value);
 
-private:
+  private:
     // Parse and return an integer from the string c, as atoi()
     // On return, c is set to one past the end of the integer.
     static int parseIntAndAdvance(const char*& c) {
@@ -558,10 +552,10 @@ private:
     }
 
     static const char* streamStateFromFormat(std::ostream& out,
-        unsigned int& extraFlags,
-        const char* fmtStart,
-        int variableWidth,
-        int variablePrecision);
+            unsigned int& extraFlags,
+            const char* fmtStart,
+            int variableWidth,
+            int variablePrecision);
 
     // Private copy & assign: Kill gcc warnings with -Weffc++
     FormatIterator(const FormatIterator&);
@@ -587,7 +581,7 @@ private:
 // Accept a value for formatting into the internal stream.
 template <typename T>
 TINYFORMAT_NOINLINE // < greatly reduces bloat in optimized builds
-    void
+void
 FormatIterator::accept(const T& value) {
     // Parse the format string
     const char* fmtEnd = 0;
@@ -613,7 +607,7 @@ FormatIterator::accept(const T& value) {
         // If we get here, we've set both the variable precision and width as
         // required and we need to rerun the stream state setup to insert these.
         fmtEnd = streamStateFromFormat(m_out, m_extraFlags, m_fmt,
-            m_variableWidth, m_variablePrecision);
+                                       m_variableWidth, m_variablePrecision);
     }
 
     // Format the value into the stream.
@@ -643,7 +637,7 @@ FormatIterator::accept(const T& value) {
                     result[i] = ' ';
         }
         if ((m_extraFlags & Flag_TruncateToPrecision) &&
-            (int)result.size() > (int)m_out.precision())
+                (int)result.size() > (int)m_out.precision())
             m_out.write(result.c_str(), m_out.precision());
         else
             m_out << result;
@@ -662,9 +656,9 @@ FormatIterator::accept(const T& value) {
 // state are returned in the extraFlags parameter which is a bitwise
 // combination of values from the ExtraFormatFlags enum.
 inline const char* FormatIterator::streamStateFromFormat(std::ostream& out,
-    unsigned int& extraFlags,
-    const char* fmtStart,
-    int variableWidth,
+        unsigned int& extraFlags,
+        const char* fmtStart,
+        int variableWidth,
         int variablePrecision) {
     if (*fmtStart != '%') {
         TINYFORMAT_ERROR("tinyformat: Not enough conversion specifiers in format string");
@@ -757,13 +751,7 @@ inline const char* FormatIterator::streamStateFromFormat(std::ostream& out,
     bool intConversion = false;
     switch (*c) {
     case 'u':
-        out.setf(std::ios::dec, std::ios::basefield);
-        intConversion = true;
-        break;
     case 'd':
-        out.setf(std::ios::dec, std::ios::basefield);
-        intConversion = true;
-        break;
     case 'i':
         out.setf(std::ios::dec, std::ios::basefield);
         intConversion = true;
@@ -774,39 +762,37 @@ inline const char* FormatIterator::streamStateFromFormat(std::ostream& out,
         break;
     case 'X':
         out.setf(std::ios::uppercase);
-        out.setf(std::ios::hex, std::ios::basefield);
-        intConversion = true;
-        break;
+        // [[gnu::fallthrough]] (or __attribute__ ((fallthrough))) was 
+        // introduced in GCC 7, and causes warning
+        // "warning: attributes at the beginning of statement are ignored [-Wattributes]"
+        // in GCC 5. Changing to /* fall through */ marker comment will
+        // suppress that warning and compatible with GCC 5/7, Clang.
+        //[[gnu::fallthrough]];
+        /* fall through */
     case 'x':
-        out.setf(std::ios::hex, std::ios::basefield);
-        intConversion = true;
-        break;
     case 'p':
         out.setf(std::ios::hex, std::ios::basefield);
         intConversion = true;
         break;
     case 'E':
         out.setf(std::ios::uppercase);
-        out.setf(std::ios::scientific, std::ios::floatfield);
-        out.setf(std::ios::dec, std::ios::basefield);
-        break;
+        //[[gnu::fallthrough]];
+        /* fall through */
     case 'e':
         out.setf(std::ios::scientific, std::ios::floatfield);
         out.setf(std::ios::dec, std::ios::basefield);
         break;
     case 'F':
         out.setf(std::ios::uppercase);
-        out.setf(std::ios::fixed, std::ios::floatfield);
-        break;
+        //[[gnu::fallthrough]];
+        /* fall through */
     case 'f':
         out.setf(std::ios::fixed, std::ios::floatfield);
         break;
     case 'G':
         out.setf(std::ios::uppercase);
-        out.setf(std::ios::dec, std::ios::basefield);
-        // As in boost::format, let stream decide float format.
-        out.flags(out.flags() & ~std::ios::floatfield);
-        break;
+        //[[gnu::fallthrough]];
+        /* fall through */
     case 'g':
         out.setf(std::ios::dec, std::ios::basefield);
         // As in boost::format, let stream decide float format.

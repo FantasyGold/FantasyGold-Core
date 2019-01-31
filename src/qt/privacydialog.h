@@ -95,10 +95,13 @@ class PrivacyDialog : public QDialog {
 //    void coinControlClipboardChange();
 
     void on_pushButtonMintzFGC_clicked();
+    void on_pushButtonMintReset_clicked();
+    void on_pushButtonSpentReset_clicked();
     void on_pushButtonSpendzFGC_clicked();
     void on_pushButtonZFGCControl_clicked();
     void on_pasteButton_clicked();
     void updateDisplayUnit();
+    void updateSPORK16Status();
 };
 
 #endif // BITCOIN_QT_PRIVACYDIALOG_H

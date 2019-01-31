@@ -1,11 +1,11 @@
 ---
-name: "fantasygold-win-1.2"
+name: "fantasygold-win-2.1"
 enable_cache: true
 suites:
 - "trusty"
 architectures:
 - "amd64"
-packages: 
+packages:
 - "curl"
 - "g++"
 - "git-core"

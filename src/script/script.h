@@ -20,6 +20,14 @@ typedef std::vector<unsigned char> valtype;
 
 static const unsigned int MAX_SCRIPT_ELEMENT_SIZE = 520; // bytes
 
+static const unsigned int MAX_OPS_PER_SCRIPT = 201;
+
+static const unsigned int MAX_PUBKEYS_PER_MULTISIG = 20;
+
+// Threshold for nLockTime: below this value it is interpreted as block number,
+// otherwise as UNIX timestamp.
+static const unsigned int LOCKTIME_THRESHOLD = 500000000; // Tue Nov  5 00:53:20 1985 UTC
+
 template <typename T>
 std::vector<unsigned char> ToByteVector(const T& in) {
     return std::vector<unsigned char>(in.begin(), in.end());
@@ -150,7 +158,9 @@ enum opcodetype {
     // expansion
     OP_NOP1 = 0xb0,
     OP_NOP2 = 0xb1,
+    OP_CHECKLOCKTIMEVERIFY = OP_NOP2,
     OP_NOP3 = 0xb2,
+    OP_CHECKSEQUENCEVERIFY = OP_NOP3,
     OP_NOP4 = 0xb3,
     OP_NOP5 = 0xb4,
     OP_NOP6 = 0xb5,
@@ -175,26 +185,30 @@ enum opcodetype {
 const char* GetOpName(opcodetype opcode);
 
 class scriptnum_error : public std::runtime_error {
-public:
+  public:
     explicit scriptnum_error(const std::string& str) : std::runtime_error(str) {}
 };
 
 class CScriptNum {
-/**
- * Numeric opcodes (OP_1ADD, etc) are restricted to operating on 4-byte integers.
- * The semantics are subtle, though: operands must be in the range [-2^31 +1...2^31 -1],
- * but results may overflow (and are valid as long as they are not used in a subsequent
- * numeric operation). CScriptNum enforces those semantics by storing results as
- * an int64 and allowing out-of-range values to be returned as a vector of bytes but
- * throwing an exception if arithmetic is done or the result is interpreted as an integer.
- */
-public:
+    /**
+     * Numeric opcodes (OP_1ADD, etc) are restricted to operating on 4-byte integers.
+     * The semantics are subtle, though: operands must be in the range [-2^31 +1...2^31 -1],
+     * but results may overflow (and are valid as long as they are not used in a subsequent
+     * numeric operation). CScriptNum enforces those semantics by storing results as
+     * an int64 and allowing out-of-range values to be returned as a vector of bytes but
+     * throwing an exception if arithmetic is done or the result is interpreted as an integer.
+     */
+  public:
 
     explicit CScriptNum(const int64_t& n) {
         m_value = n;
     }
 
-    explicit CScriptNum(const std::vector<unsigned char>& vch, bool fRequireMinimal) {
+    static const size_t nDefaultMaxNumSize = 4;
+
+    explicit CScriptNum(const std::vector<unsigned char>& vch, bool fRequireMinimal,
+                        const size_t nMaxNumSize = nDefaultMaxNumSize)
+    {
         if (vch.size() > nMaxNumSize) {
             throw scriptnum_error("script number overflow");
         }
@@ -219,65 +233,35 @@ public:
         m_value = set_vch(vch);
     }
 
-    inline bool operator==(const int64_t& rhs) const {
-        return m_value == rhs;
-    }
-    inline bool operator!=(const int64_t& rhs) const {
-        return m_value != rhs;
-    }
-    inline bool operator<=(const int64_t& rhs) const {
-        return m_value <= rhs;
-    }
-    inline bool operator< (const int64_t& rhs) const {
-        return m_value <  rhs;
-    }
-    inline bool operator>=(const int64_t& rhs) const {
-        return m_value >= rhs;
-    }
-    inline bool operator> (const int64_t& rhs) const {
-        return m_value >  rhs;
-    }
+    inline bool operator==(const int64_t& rhs) const    { return m_value == rhs; }
+    inline bool operator!=(const int64_t& rhs) const    { return m_value != rhs; }
+    inline bool operator<=(const int64_t& rhs) const    { return m_value <= rhs; }
+    inline bool operator< (const int64_t& rhs) const    { return m_value <  rhs; }
+    inline bool operator>=(const int64_t& rhs) const    { return m_value >= rhs; }
+    inline bool operator> (const int64_t& rhs) const    { return m_value >  rhs; }
 
-    inline bool operator==(const CScriptNum& rhs) const {
-        return operator==(rhs.m_value);
-    }
-    inline bool operator!=(const CScriptNum& rhs) const {
-        return operator!=(rhs.m_value);
-    }
-    inline bool operator<=(const CScriptNum& rhs) const {
-        return operator<=(rhs.m_value);
-    }
-    inline bool operator< (const CScriptNum& rhs) const {
-        return operator< (rhs.m_value);
-    }
-    inline bool operator>=(const CScriptNum& rhs) const {
-        return operator>=(rhs.m_value);
-    }
-    inline bool operator> (const CScriptNum& rhs) const {
-        return operator> (rhs.m_value);
-    }
+    inline bool operator==(const CScriptNum& rhs) const { return operator==(rhs.m_value); }
+    inline bool operator!=(const CScriptNum& rhs) const { return operator!=(rhs.m_value); }
+    inline bool operator<=(const CScriptNum& rhs) const { return operator<=(rhs.m_value); }
+    inline bool operator< (const CScriptNum& rhs) const { return operator< (rhs.m_value); }
+    inline bool operator>=(const CScriptNum& rhs) const { return operator>=(rhs.m_value); }
+    inline bool operator> (const CScriptNum& rhs) const { return operator> (rhs.m_value); }
 
-    inline CScriptNum operator+(   const int64_t& rhs)    const {
-        return CScriptNum(m_value + rhs);
-    }
-    inline CScriptNum operator-(   const int64_t& rhs)    const {
-        return CScriptNum(m_value - rhs);
-    }
-    inline CScriptNum operator+(   const CScriptNum& rhs) const {
-        return operator+(rhs.m_value);
-    }
-    inline CScriptNum operator-(   const CScriptNum& rhs) const {
-        return operator-(rhs.m_value);
-    }
+    inline CScriptNum operator+(   const int64_t& rhs)    const { return CScriptNum(m_value + rhs);}
+    inline CScriptNum operator-(   const int64_t& rhs)    const { return CScriptNum(m_value - rhs);}
+    inline CScriptNum operator+(   const CScriptNum& rhs) const { return operator+(rhs.m_value);   }
+    inline CScriptNum operator-(   const CScriptNum& rhs) const { return operator-(rhs.m_value);   }
 
-    inline CScriptNum& operator+=( const CScriptNum& rhs) {
-        return operator+=(rhs.m_value);
-    }
-    inline CScriptNum& operator-=( const CScriptNum& rhs) {
-        return operator-=(rhs.m_value);
-    }
+    inline CScriptNum& operator+=( const CScriptNum& rhs)       { return operator+=(rhs.m_value);  }
+    inline CScriptNum& operator-=( const CScriptNum& rhs)       { return operator-=(rhs.m_value);  }
 
-    inline CScriptNum operator-()                         const {
+    inline CScriptNum operator&(   const int64_t& rhs)    const { return CScriptNum(m_value & rhs);}
+    inline CScriptNum operator&(   const CScriptNum& rhs) const { return operator&(rhs.m_value);   }
+
+    inline CScriptNum& operator&=( const CScriptNum& rhs)       { return operator&=(rhs.m_value);  }
+
+    inline CScriptNum operator-()                         const
+    {
         assert(m_value != std::numeric_limits<int64_t>::min());
         return CScriptNum(-m_value);
     }
@@ -289,19 +273,26 @@ public:
 
     inline CScriptNum& operator+=( const int64_t& rhs) {
         assert(rhs == 0 || (rhs > 0 && m_value <= std::numeric_limits<int64_t>::max() - rhs) ||
-                           (rhs < 0 && m_value >= std::numeric_limits<int64_t>::min() - rhs));
+               (rhs < 0 && m_value >= std::numeric_limits<int64_t>::min() - rhs));
         m_value += rhs;
         return *this;
     }
 
     inline CScriptNum& operator-=( const int64_t& rhs) {
         assert(rhs == 0 || (rhs > 0 && m_value >= std::numeric_limits<int64_t>::min() + rhs) ||
-                           (rhs < 0 && m_value <= std::numeric_limits<int64_t>::max() + rhs));
+               (rhs < 0 && m_value <= std::numeric_limits<int64_t>::max() + rhs));
         m_value -= rhs;
         return *this;
     }
 
-    int getint() const {
+    inline CScriptNum& operator&=( const int64_t& rhs)
+    {
+        m_value &= rhs;
+        return *this;
+    }
+
+    int getint() const
+    {
         if (m_value > std::numeric_limits<int>::max())
             return std::numeric_limits<int>::max();
         else if (m_value < std::numeric_limits<int>::min())
@@ -344,23 +335,21 @@ public:
         return result;
     }
 
-    static const size_t nMaxNumSize = 4;
-
-private:
+  private:
     static int64_t set_vch(const std::vector<unsigned char>& vch) {
-      if (vch.empty())
-          return 0;
+        if (vch.empty())
+            return 0;
 
-      int64_t result = 0;
-      for (size_t i = 0; i != vch.size(); ++i)
-          result |= static_cast<int64_t>(vch[i]) << 8*i;
+        int64_t result = 0;
+        for (size_t i = 0; i != vch.size(); ++i)
+            result |= static_cast<int64_t>(vch[i]) << 8*i;
 
-      // If the input vector's most significant byte is 0x80, remove it from
-      // the result's msb and return a negative.
-      if (vch.back() & 0x80)
-          return -((int64_t)(result & ~(0x80ULL << (8 * (vch.size() - 1)))));
+        // If the input vector's most significant byte is 0x80, remove it from
+        // the result's msb and return a negative.
+        if (vch.back() & 0x80)
+            return -((int64_t)(result & ~(0x80ULL << (8 * (vch.size() - 1)))));
 
-      return result;
+        return result;
     }
 
     int64_t m_value;
@@ -368,7 +357,7 @@ private:
 
 /** Serialized script, used inside transaction inputs and outputs */
 class CScript : public std::vector<unsigned char> {
-protected:
+  protected:
     CScript& push_int64(int64_t n) {
         if (n == -1 || (n >= 1 && n <= 16)) {
             push_back(n + (OP_1 - 1));
@@ -379,7 +368,7 @@ protected:
         }
         return *this;
     }
-public:
+  public:
     CScript() { }
     CScript(const CScript& b) : std::vector<unsigned char>(b.begin(), b.end()) { }
     CScript(const_iterator pbegin, const_iterator pend) : std::vector<unsigned char>(pbegin, pend) { }
@@ -396,24 +385,14 @@ public:
         return ret;
     }
 
-    CScript(int64_t b) {
-        operator<<(b);
-    }
+    CScript(int64_t b)        { operator<<(b); }
 
-    explicit CScript(opcodetype b) {
-        operator<<(b);
-    }
-    explicit CScript(const CScriptNum& b) {
-        operator<<(b);
-    }
-    explicit CScript(const std::vector<unsigned char>& b) {
-        operator<<(b);
-    }
+    explicit CScript(opcodetype b)     { operator<<(b); }
+    explicit CScript(const CScriptNum& b) { operator<<(b); }
+    explicit CScript(const std::vector<unsigned char>& b) { operator<<(b); }
 
 
-    CScript& operator<<(int64_t b) {
-        return push_int64(b);
-    }
+    CScript& operator<<(int64_t b) { return push_int64(b); }
 
     CScript& operator<<(opcodetype opcode) {
         if (opcode < 0 || opcode > 0xff)
@@ -460,18 +439,18 @@ public:
 
 
     bool GetOp(iterator& pc, opcodetype& opcodeRet, std::vector<unsigned char>& vchRet) {
-         // Wrapper so it can be called with either iterator or const_iterator
-         const_iterator pc2 = pc;
-         bool fRet = GetOp2(pc2, opcodeRet, &vchRet);
-         pc = begin() + (pc2 - begin());
-         return fRet;
+        // Wrapper so it can be called with either iterator or const_iterator
+        const_iterator pc2 = pc;
+        bool fRet = GetOp2(pc2, opcodeRet, &vchRet);
+        pc = begin() + (pc2 - begin());
+        return fRet;
     }
 
     bool GetOp(iterator& pc, opcodetype& opcodeRet) {
-         const_iterator pc2 = pc;
-         bool fRet = GetOp2(pc2, opcodeRet, NULL);
-         pc = begin() + (pc2 - begin());
-         return fRet;
+        const_iterator pc2 = pc;
+        bool fRet = GetOp2(pc2, opcodeRet, NULL);
+        pc = begin() + (pc2 - begin());
+        return fRet;
     }
 
     bool GetOp(const_iterator& pc, opcodetype& opcodeRet, std::vector<unsigned char>& vchRet) const {
@@ -583,9 +562,13 @@ public:
     bool IsZerocoinMint() const;
     bool IsZerocoinSpend() const;
 
+    bool IsPayToWitnessScriptHash() const;
+    bool IsWitnessProgram(int& version, std::vector<unsigned char>& program) const;
+
     /** Called by IsStandardTx and P2SH/BIP62 VerifyScript (which makes it consensus-critical). */
+    bool IsPushOnly(const_iterator pc) const;
     bool IsPushOnly() const;
-	bool IsPushOnly(const_iterator pc) const;
+
     /**
      * Returns whether the script is guaranteed to fail at execution,
      * regardless of the initial stack. This allows outputs to be pruned
@@ -602,4 +585,17 @@ public:
     }
 };
 
+struct CScriptWitness
+{
+    // Note that this encodes the data elements being pushed, rather than
+    // encoding them as a CScript that pushes them.
+    std::vector<std::vector<unsigned char> > stack;
+
+    // Some compilers complain without a default constructor
+    CScriptWitness() { }
+
+    bool IsNull() const { return stack.empty(); }
+
+    std::string ToString() const;
+};
 #endif // BITCOIN_SCRIPT_SCRIPT_H

@@ -13,7 +13,7 @@
 #include <stdexcept>
 #include <vector>
 
-/** 
+/**
  * secp256k1:
  * const unsigned int PRIVATE_KEY_SIZE = 279;
  * const unsigned int PUBLIC_KEY_SIZE  = 65;
@@ -25,14 +25,14 @@
 
 /** A reference to a CKey: the Hash160 of its serialized public key */
 class CKeyID : public uint160 {
-public:
+  public:
     CKeyID() : uint160(0) {}
     CKeyID(const uint160& in) : uint160(in) {}
 };
 
 /** An encapsulated public key. */
 class CPubKey {
-private:
+  private:
     /**
      * Just store the serialized data.
      * Its length can very cheaply be computed from the first byte.
@@ -53,7 +53,11 @@ private:
         vch[0] = 0xFF;
     }
 
-public:
+  public:
+    bool static ValidSize(const std::vector<unsigned char> &vch) {
+        return vch.size() > 0 && GetLen(vch[0]) == vch.size();
+    }
+    
     //! Construct an invalid public key.
     CPubKey() {
         Invalidate();
@@ -81,18 +85,10 @@ public:
     }
 
     //! Simple read-only vector-like interface to the pubkey data.
-    unsigned int size() const {
-        return GetLen(vch[0]);
-    }
-    const unsigned char* begin() const {
-        return vch;
-    }
-    const unsigned char* end() const {
-        return vch + size();
-    }
-    const unsigned char& operator[](unsigned int pos) const {
-        return vch[pos];
-    }
+    unsigned int size() const { return GetLen(vch[0]); }
+    const unsigned char* begin() const { return vch; }
+    const unsigned char* end() const { return vch + size(); }
+    const unsigned char& operator[](unsigned int pos) const { return vch[pos]; }
 
     //! Comparator implementation.
     friend bool operator==(const CPubKey& a, const CPubKey& b) {
@@ -143,7 +139,7 @@ public:
 
     /*
      * Check syntactic correctness.
-     * 
+     *
      * Note that this is consensus critical as CheckSig() calls it!
      */
     bool IsValid() const {

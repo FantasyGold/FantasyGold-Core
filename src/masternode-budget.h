@@ -1,6 +1,5 @@
 // Copyright (c) 2014-2015 The Dash developers
 // Copyright (c) 2015-2017 The PIVX developers
-// Copyright (c) 2017-2018 The Bulwark Core Developers
 // Copyright (c) 2017-2018 The FantasyGold developers
 
 // Distributed under the MIT/X11 software license, see the accompanying
@@ -34,20 +33,18 @@ class CTxBudgetPayment;
 #define VOTE_NO 2
 
 enum class TrxValidationStatus {
-    InValid,         /** Transaction verification failed */
+    Invalid,         /** Transaction verification failed */
     Valid,           /** Transaction successfully verified */
     DoublePayment,   /** Transaction successfully verified, but includes a double-budget-payment */
     VoteThreshold    /** If not enough masternodes have voted on a finalized budget */
 };
 
-static const CAmount PROPOSAL_FEE_TX = (50 * COIN);
-static const CAmount BUDGET_FEE_TX = (5 * COIN);
-static const int64_t BUDGET_FEE_CONFIRMATIONS = 6;
 static const int64_t BUDGET_VOTE_UPDATE_MIN = 60 * 60;
-static map<uint256, int> mapPayment_History;
 
 extern std::vector<CBudgetProposalBroadcast> vecImmatureBudgetProposals;
 extern std::vector<CFinalizedBudgetBroadcast> vecImmatureFinalizedBudgets;
+
+static map<uint256, int> mapPayment_History;
 
 extern CBudgetManager budget;
 void DumpBudgets();
@@ -58,12 +55,15 @@ int GetBudgetPaymentCycleBlocks();
 //Check the collateral transaction for the budget proposal/finalized budget
 bool IsBudgetCollateralValid(uint256 nTxCollateralHash, uint256 nExpectedHash, std::string& strError, int64_t& nTime, int& nConf, bool fBudgetFinalization = false);
 
+// Get the budget collateral amount for a block height
+CAmount GetBudgetSystemCollateralAmount(int nHeight);
+
 //
 // CBudgetVote - Allow a masternode node to vote and broadcast throughout the network
 //
 
 class CBudgetVote {
-public:
+  public:
     bool fValid;  //if the vote is currently valid / counted
     bool fSynced; //if we've sent this to our peers
     CTxIn vin;
@@ -79,14 +79,16 @@ public:
     bool SignatureValid(bool fSignatureCheck);
     void Relay();
 
-    std::string GetVoteString() {
+    std::string GetVoteString()
+    {
         std::string ret = "ABSTAIN";
         if (nVote == VOTE_YES) ret = "YES";
         if (nVote == VOTE_NO) ret = "NO";
         return ret;
     }
 
-    uint256 GetHash() {
+    uint256 GetHash()
+    {
         CHashWriter ss(SER_GETHASH, PROTOCOL_VERSION);
         ss << vin;
         ss << nProposalHash;
@@ -98,7 +100,8 @@ public:
     ADD_SERIALIZE_METHODS;
 
     template <typename Stream, typename Operation>
-    inline void SerializationOp(Stream& s, Operation ser_action, int nType, int nVersion) {
+    inline void SerializationOp(Stream& s, Operation ser_action, int nType, int nVersion)
+    {
         READWRITE(vin);
         READWRITE(nProposalHash);
         READWRITE(nVote);
@@ -112,7 +115,7 @@ public:
 //
 
 class CFinalizedBudgetVote {
-public:
+  public:
     bool fValid;  //if the vote is currently valid / counted
     bool fSynced; //if we've sent this to our peers
     CTxIn vin;
@@ -127,7 +130,8 @@ public:
     bool SignatureValid(bool fSignatureCheck);
     void Relay();
 
-    uint256 GetHash() const {
+    uint256 GetHash()
+    {
         CHashWriter ss(SER_GETHASH, PROTOCOL_VERSION);
         ss << vin;
         ss << nBudgetHash;
@@ -149,11 +153,11 @@ public:
 /** Save Budget Manager (budget.dat)
  */
 class CBudgetDB {
-private:
+  private:
     boost::filesystem::path pathDB;
     std::string strMagicMessage;
 
-public:
+  public:
     enum ReadResult {
         Ok,
         FileError,
@@ -174,12 +178,12 @@ public:
 // Budget Manager : Contains all proposals for the budget
 //
 class CBudgetManager {
-private:
+  private:
     //hold txes until they mature enough to use
     // XX42    map<uint256, CTransaction> mapCollateral;
     map<uint256, uint256> mapCollateralTxids;
 
-public:
+  public:
     // critical section to protect the inner data structures
     mutable CCriticalSection cs;
 
@@ -238,6 +242,7 @@ public:
     bool UpdateFinalizedBudget(CFinalizedBudgetVote& vote, CNode* pfrom, std::string& strError);
     bool PropExists(uint256 nHash);
     TrxValidationStatus IsTransactionValid(const CTransaction& txNew, int nBlockHeight);
+    bool IsPaidAlready(uint256 nProposalHash, int nBlockHeight);
     std::string GetRequiredPaymentsString(int nBlockHeight);
     void FillBlockPayee(CMutableTransaction& txNew, CAmount nFees, bool fProofOfStake);
 
@@ -277,7 +282,7 @@ public:
 
 
 class CTxBudgetPayment {
-public:
+  public:
     uint256 nProposalHash;
     CScript payee;
     CAmount nAmount;
@@ -304,12 +309,12 @@ public:
 //
 
 class CFinalizedBudget {
-private:
+  private:
     // critical section to protect the inner data structures
     mutable CCriticalSection cs;
     bool fAutoChecked; //If it matches what we see, we'll auto vote for it (masternode only)
 
-public:
+  public:
     bool fValid;
     std::string strBudgetName;
     int nBlockStart;
@@ -373,12 +378,15 @@ public:
     //checks the hashes to make sure we know about them
     string GetStatus();
 
-    uint256 GetHash() const {
+    uint256 GetHash()
+    {
         CHashWriter ss(SER_GETHASH, PROTOCOL_VERSION);
         ss << strBudgetName;
         ss << nBlockStart;
         ss << vecBudgetPayments;
-        return ss.GetHash();
+
+        uint256 h1 = ss.GetHash();
+        return h1;
     }
 
     ADD_SERIALIZE_METHODS;
@@ -399,10 +407,10 @@ public:
 
 // FinalizedBudget are cast then sent to peers with this object, which leaves the votes out
 class CFinalizedBudgetBroadcast : public CFinalizedBudget {
-private:
+  private:
     std::vector<unsigned char> vchSig;
 
-public:
+  public:
     CFinalizedBudgetBroadcast();
     CFinalizedBudgetBroadcast(const CFinalizedBudget& other);
     CFinalizedBudgetBroadcast(std::string strBudgetNameIn, int nBlockStartIn, std::vector<CTxBudgetPayment> vecBudgetPaymentsIn, uint256 nFeeTXHashIn);
@@ -447,12 +455,12 @@ public:
 //
 
 class CBudgetProposal {
-private:
+  private:
     // critical section to protect the inner data structures
     mutable CCriticalSection cs;
     CAmount nAlloted;
 
-public:
+  public:
     bool fValid;
     std::string strProposalName;
 
@@ -490,21 +498,11 @@ public:
         return (nTime < GetTime() - (5 * 30 * 2));
     }
 
-    std::string GetName() {
-        return strProposalName;
-    }
-    std::string GetURL() {
-        return strURL;
-    }
-    int GetBlockStart() {
-        return nBlockStart;
-    }
-    int GetBlockEnd() {
-        return nBlockEnd;
-    }
-    CScript GetPayee() {
-        return address;
-    }
+    std::string GetName() { return strProposalName; }
+    std::string GetURL() { return strURL; }
+    int GetBlockStart() { return nBlockStart; }
+    int GetBlockEnd() { return nBlockEnd; }
+    CScript GetPayee() { return address; }
     int GetTotalPaymentCount();
     int GetRemainingPaymentCount();
     int GetBlockStartCycle();
@@ -514,15 +512,9 @@ public:
     int GetYeas();
     int GetNays();
     int GetAbstains();
-    CAmount GetAmount() {
-        return nAmount;
-    }
-    void SetAllotted(CAmount nAllotedIn) {
-        nAlloted = nAllotedIn;
-    }
-    CAmount GetAllotted() {
-        return nAlloted;
-    }
+    CAmount GetAmount() { return nAmount; }
+    void SetAllotted(CAmount nAllotedIn) { nAlloted = nAllotedIn; }
+    CAmount GetAllotted() { return nAlloted; }
 
     void CleanAndRemove(bool fSignatureCheck);
 
@@ -534,7 +526,9 @@ public:
         ss << nBlockEnd;
         ss << nAmount;
         ss << address;
-        return ss.GetHash();
+        uint256 h1 = ss.GetHash();
+
+        return h1;
     }
 
     ADD_SERIALIZE_METHODS;
@@ -559,7 +553,7 @@ public:
 
 // Proposals are cast then sent to peers with this object, which leaves the votes out
 class CBudgetProposalBroadcast : public CBudgetProposal {
-public:
+  public:
     CBudgetProposalBroadcast() : CBudgetProposal() {}
     CBudgetProposalBroadcast(const CBudgetProposal& other) : CBudgetProposal(other) {}
     CBudgetProposalBroadcast(const CBudgetProposalBroadcast& other) : CBudgetProposal(other) {}

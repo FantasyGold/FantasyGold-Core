@@ -30,6 +30,7 @@ class AskPassphraseDialog : public QDialog {
     explicit AskPassphraseDialog(Mode mode, QWidget* parent, WalletModel* model);
     ~AskPassphraseDialog();
 
+    void accept();
 
   private:
     Ui::AskPassphraseDialog* ui;

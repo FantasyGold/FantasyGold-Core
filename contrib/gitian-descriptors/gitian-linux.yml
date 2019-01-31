@@ -1,11 +1,11 @@
 ---
-name: "fantasygold-linux-1.2"
+name: "fantasygold-linux-2.1"
 enable_cache: true
 suites:
 - "trusty"
 architectures:
 - "amd64"
-packages: 
+packages:
 - "curl"
 - "g++-aarch64-linux-gnu"
 - "g++-4.8-aarch64-linux-gnu"

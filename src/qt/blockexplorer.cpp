@@ -47,19 +47,18 @@ static std::string ValueToString(CAmount nValue, bool AllowNegative = false) {
     return std::string("<span>") + Str.toUtf8().data() + "</span>";
 }
 
-static std::string ScriptToString(const CScript& Script, bool Long = false, bool Highlight = false) {
-    if (Script.empty())
+static std::string ScriptToString(const CScript& script, bool l = false, bool highlight = false) {
+    if (script.empty())
         return "unknown";
 
-    CTxDestination Dest;
-    CBitcoinAddress Address;
-    if (ExtractDestination(Script, Dest) && Address.Set(Dest)) {
-        if (Highlight)
-            return "<span class=\"addr\">" + Address.ToString() + "</span>";
+    CTxDestination dest;
+    if (ExtractDestination(script, dest)) {
+        if (highlight)
+            return "<span class=\"addr\">" + EncodeDestination(dest) + "</span>";
         else
-            return makeHRef(Address.ToString());
+            return makeHRef(EncodeDestination(dest));
     } else
-        return Long ? "<pre>" + FormatScript(Script) + "</pre>" : _("Non-standard script");
+        return l ? "<pre>" + FormatScript(script) + "</pre>" : _("Non-standard script");
 }
 
 static std::string TimeToString(uint64_t Time) {
@@ -272,8 +271,8 @@ std::string BlockToString(CBlockIndex* pBlock) {
 }
 
 std::string TxToString(uint256 BlockHash, const CTransaction& tx) {
-    int64_t Input = 0;
-    int64_t Output = tx.GetValueOut();
+    CAmount Input = 0;
+    CAmount Output = tx.GetValueOut();
 
     std::string InputsContentCells[] = {_("#"), _("Taken from"), _("Address"), _("Amount")};
     std::string InputsContent = makeHTMLTableRow(InputsContentCells, sizeof(InputsContentCells) / sizeof(std::string));
@@ -357,8 +356,9 @@ std::string TxToString(uint256 BlockHash, const CTransaction& tx) {
     return Content;
 }
 
-std::string AddressToString(const CBitcoinAddress& Address) {
-    std::string TxLabels[] = {
+std::string AddressToString(const CTxDestination& dest) {
+    std::string txLabels[] =
+        {
         _("Date"),
         _("Hash"),
         _("From"),
@@ -366,16 +366,15 @@ std::string AddressToString(const CBitcoinAddress& Address) {
         _("To"),
         _("Amount"),
         _("Delta"),
-        _("Balance")
-    };
-    std::string TxContent = table + makeHTMLTableRow(TxLabels, sizeof(TxLabels) / sizeof(std::string));
+            _("Balance")};
+    std::string txContent = table + makeHTMLTableRow(txLabels, sizeof(txLabels) / sizeof(std::string));
 
-    std::set<COutPoint> PrevOuts;
+    std::set<COutPoint> prevOuts;
     /*
     CScript AddressScript;
     AddressScript.SetDestination(Address.Get());
 
-    int64_t Sum = 0;
+    CAmount Sum = 0;
     bool fAddrIndex = false;
 
     if (!fAddrIndex)
@@ -401,12 +400,12 @@ std::string AddressToString(const CBitcoinAddress& Address) {
         }
     }
     */
-    TxContent += "</table>";
+    txContent += "</table>";
 
-    std::string Content;
-    Content += "<h1>" + _("Transactions to/from") + "&nbsp;<span>" + Address.ToString() + "</span></h1>";
-    Content += TxContent;
-    return Content;
+    std::string content;
+    content += "<h1>" + _("Transactions to/from") + "&nbsp;<span>" + EncodeDestination(dest) + "</span></h1>";
+    content += txContent;
+    return content;
 }
 
 BlockExplorer::BlockExplorer(QWidget* parent) : QMainWindow(parent),
@@ -491,13 +490,12 @@ bool BlockExplorer::switchTo(const QString& query) {
     }
 
     // If the query is not an integer, nor a block hash, nor a transaction hash, assume an address
-    CBitcoinAddress Address;
-    Address.SetString(query.toUtf8().constData());
-    if (Address.IsValid()) {
-        std::string Content = AddressToString(Address);
-        if (Content.empty())
+    if (IsValidDestinationString(query.toUtf8().constData())) {
+        CTxDestination dest = DecodeDestination(query.toUtf8().constData());
+        std::string content = EncodeDestination(dest);
+        if (content.empty())
             return false;
-        setContent(Content);
+        setContent(content);
         return true;
     }
 
@@ -524,7 +522,7 @@ void BlockExplorer::setBlock(CBlockIndex* pBlock) {
 }
 
 void BlockExplorer::setContent(const std::string& Content) {
-    QString CSS = "body {font-size:12px; color:#f8f6f6; bgcolor:#e0c469;}\n a, span { font-family: monospace; }\n span.addr {color:#e0c469; font-weight: bold;}\n table tr td {padding: 3px; border: 1px solid black; background-color: #e0c469;}\n td.d0 {font-weight: bold; color:#f8f6f6;}\n h2, h3 { white-space:nowrap; color:#e0c469;}\n a { color:#ffffff; text-decoration:none; }\n a:hover { color:#cccccc; }\n a.nav {color:#e0c469;}\n";
+    QString CSS = "body {font-size:12px; color:#f8f6f6; bgcolor:#0091ea;}\n a, span { font-family: monospace; }\n span.addr {color:#0091ea; font-weight: bold;}\n table tr td {padding: 3px; border: 1px solid black; background-color: #0091ea;}\n td.d0 {font-weight: bold; color:#f8f6f6;}\n h2, h3 { white-space:nowrap; color:#0091ea;}\n a { color:#ffffff; text-decoration:none; }\n a:hover { color:#cccccc; }\n a.nav {color:#0091ea;}\n";
     QString FullContent = "<html><head><style type=\"text/css\">" + CSS + "</style></head>" + "<body>" + Content.c_str() + "</body></html>";
     // printf(FullContent.toUtf8());
 

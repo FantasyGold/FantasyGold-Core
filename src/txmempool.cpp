@@ -1,12 +1,14 @@
 // Copyright (c) 2009-2010 Satoshi Nakamoto
 // Copyright (c) 2009-2014 The Bitcoin developers
 // Copyright (c) 2016-2017 The PIVX developers
+// Copyright (c) 2019 The FantasyGold Developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
 #include "txmempool.h"
 
 #include "clientversion.h"
+#include "consensus/validation.h"
 #include "main.h"
 #include "streams.h"
 #include "util.h"
@@ -17,22 +19,31 @@
 
 using namespace std;
 
-CTxMemPoolEntry::CTxMemPoolEntry() : nFee(0), nTxSize(0), nModSize(0), nTime(0), dPriority(0.0) {
-    nHeight = MEMPOOL_HEIGHT;
+CTxMemPoolEntry::CTxMemPoolEntry(const CTransaction& _tx, const CAmount& _nFee,
+                                 int64_t _nTime, double _dPriority, unsigned int _nHeight,
+                                 int64_t _sigOpsCost):
+    tx(_tx), nFee(_nFee), nTime(_nTime), dPriority(_dPriority), nHeight(_nHeight),
+    sigOpCost(_sigOpsCost) {
+    nTxSize = ::GetSerializeSize(tx, SER_NETWORK, PROTOCOL_VERSION);
 }
 
 CTxMemPoolEntry::CTxMemPoolEntry(const CTransaction& _tx, const CAmount& _nFee, int64_t _nTime, double _dPriority, unsigned int _nHeight) : tx(_tx), nFee(_nFee), nTime(_nTime), dPriority(_dPriority), nHeight(_nHeight) {
     nTxSize = ::GetSerializeSize(tx, SER_NETWORK, PROTOCOL_VERSION);
-
-    nModSize = tx.CalculateModifiedSize(nTxSize);
+    nTxCost = GetTransactionCost(_tx);
 }
 
 CTxMemPoolEntry::CTxMemPoolEntry(const CTxMemPoolEntry& other) {
     *this = other;
 }
 
-double
-CTxMemPoolEntry::GetPriority(unsigned int currentHeight) const {
+CTxMemPoolEntry::CTxMemPoolEntry(): nFee(0), nTxCost(0), nModSize(0), nTime(0), dPriority(0.0) {
+}
+
+size_t CTxMemPoolEntry::GetTxSize() const {
+    return GetVirtualTransactionSize(tx);
+}
+
+double CTxMemPoolEntry::GetPriority(unsigned int currentHeight) const{
     CAmount nValueIn = tx.GetValueOut() + nFee;
     double deltaPriority = ((double)(currentHeight - nHeight) * nValueIn) / nModSize;
     double dResult = dPriority + deltaPriority;
@@ -43,43 +54,42 @@ CTxMemPoolEntry::GetPriority(unsigned int currentHeight) const {
  * Keep track of fee/priority for transactions confirmed within N blocks
  */
 class CBlockAverage {
-private:
+  private:
     boost::circular_buffer<CFeeRate> feeSamples;
     boost::circular_buffer<double> prioritySamples;
 
     template <typename T>
-    std::vector<T> buf2vec(boost::circular_buffer<T> buf) const {
+    std::vector<T> buf2vec(boost::circular_buffer<T> buf) const
+    {
         std::vector<T> vec(buf.begin(), buf.end());
         return vec;
     }
 
-public:
+  public:
     CBlockAverage() : feeSamples(100), prioritySamples(100) {}
 
-    void RecordFee(const CFeeRate& feeRate) {
+    void RecordFee(const CFeeRate& feeRate)
+    {
         feeSamples.push_back(feeRate);
     }
 
-    void RecordPriority(double priority) {
+    void RecordPriority(double priority)
+    {
         prioritySamples.push_back(priority);
     }
 
-    size_t FeeSamples() const {
-        return feeSamples.size();
-    }
-    size_t GetFeeSamples(std::vector<CFeeRate>& insertInto) const {
-        BOOST_FOREACH(const CFeeRate& f, feeSamples) {
+    size_t FeeSamples() const { return feeSamples.size(); }
+    size_t GetFeeSamples(std::vector<CFeeRate>& insertInto) const
+    {
+        BOOST_FOREACH (const CFeeRate& f, feeSamples)
             insertInto.push_back(f);
-        }
         return feeSamples.size();
     }
-    size_t PrioritySamples() const {
-        return prioritySamples.size();
-    }
-    size_t GetPrioritySamples(std::vector<double>& insertInto) const {
-        BOOST_FOREACH(double d, prioritySamples) {
+    size_t PrioritySamples() const { return prioritySamples.size(); }
+    size_t GetPrioritySamples(std::vector<double>& insertInto) const
+    {
+        BOOST_FOREACH (double d, prioritySamples)
             insertInto.push_back(d);
-        }
         return prioritySamples.size();
     }
 
@@ -95,7 +105,7 @@ public:
         return true;
     }
     static bool AreSane(const std::vector<CFeeRate>& vecFee, const CFeeRate& minRelayFee) {
-        BOOST_FOREACH (CFeeRate fee, vecFee) {
+        BOOST_FOREACH(CFeeRate fee, vecFee) {
             if (!AreSane(fee, minRelayFee))
                 return false;
         }
@@ -105,7 +115,7 @@ public:
         return priority >= 0;
     }
     static bool AreSane(const std::vector<double> vecPriority) {
-        BOOST_FOREACH (double priority, vecPriority) {
+        BOOST_FOREACH(double priority, vecPriority) {
             if (!AreSane(priority))
                 return false;
         }
@@ -134,12 +144,12 @@ public:
             throw runtime_error("Corrupt priority value in estimates file.");
         if (feeSamples.size() + prioritySamples.size() > 0)
             LogPrint("estimatefee", "Read %d fee samples and %d priority samples\n",
-                feeSamples.size(), prioritySamples.size());
+                     feeSamples.size(), prioritySamples.size());
     }
 };
 
 class CMinerPolicyEstimator {
-private:
+  private:
     /**
      * Records observed averages transactions that confirmed within one block, two blocks,
      * three blocks etc.
@@ -175,10 +185,10 @@ private:
             // don't know why they got confirmed.
         }
         LogPrint("estimatefee", "Seen TX confirm: %s : %s fee/%g priority, took %d blocks\n",
-            assignedTo, feeRate.ToString(), dPriority, nBlocksAgo);
+                 assignedTo, feeRate.ToString(), dPriority, nBlocksAgo);
     }
 
-public:
+  public:
     CMinerPolicyEstimator(int nEntries) : nBestSeenHeight(0) {
         history.resize(nEntries);
     }
@@ -198,7 +208,7 @@ public:
         // to confirm.
         std::vector<std::vector<const CTxMemPoolEntry*> > entriesByConfirmations;
         entriesByConfirmations.resize(history.size());
-        BOOST_FOREACH (const CTxMemPoolEntry& entry, entries) {
+        BOOST_FOREACH(const CTxMemPoolEntry& entry, entries) {
             // How many blocks did it take for miners to include this transaction?
             int delta = nBlockHeight - entry.GetHeight();
             if (delta <= 0) {
@@ -218,7 +228,7 @@ public:
                 std::random_shuffle(e.begin(), e.end());
                 e.resize(10);
             }
-            BOOST_FOREACH (const CTxMemPoolEntry* entry, e) {
+            BOOST_FOREACH(const CTxMemPoolEntry* entry, e) {
                 // Fees are stored and reported as BTC-per-kb:
                 CFeeRate feeRate(entry->GetFee(), entry->GetTxSize());
                 double dPriority = entry->GetPriority(entry->GetHeight()); // Want priority when it went IN
@@ -234,9 +244,9 @@ public:
         for (size_t i = 0; i < history.size(); i++) {
             if (history[i].FeeSamples() + history[i].PrioritySamples() > 0)
                 LogPrint("estimatefee", "estimates: for confirming within %d blocks based on %d/%d samples, fee=%s, prio=%g\n",
-                    i,
-                    history[i].FeeSamples(), history[i].PrioritySamples(),
-                    estimateFee(i + 1).ToString(), estimatePriority(i + 1));
+                         i,
+                         history[i].FeeSamples(), history[i].PrioritySamples(),
+                         estimateFee(i + 1).ToString(), estimatePriority(i + 1));
         }
     }
 
@@ -253,7 +263,7 @@ public:
             for (size_t i = 0; i < history.size(); i++)
                 history.at(i).GetFeeSamples(sortedFeeSamples);
             std::sort(sortedFeeSamples.begin(), sortedFeeSamples.end(),
-                std::greater<CFeeRate>());
+                      std::greater<CFeeRate>());
         }
         if (sortedFeeSamples.size() < 11) {
             // Eleven is Gavin's Favorite Number
@@ -285,7 +295,7 @@ public:
             for (size_t i = 0; i < history.size(); i++)
                 history.at(i).GetPrioritySamples(sortedPrioritySamples);
             std::sort(sortedPrioritySamples.begin(), sortedPrioritySamples.end(),
-                std::greater<double>());
+                      std::greater<double>());
         }
         if (sortedPrioritySamples.size() < 11)
             return -1.0;
@@ -307,7 +317,7 @@ public:
     void Write(CAutoFile& fileout) const {
         fileout << nBestSeenHeight;
         fileout << history.size();
-        BOOST_FOREACH (const CBlockAverage& entry, history) {
+        BOOST_FOREACH(const CBlockAverage& entry, history) {
             entry.Write(fileout);
         }
     }
@@ -388,8 +398,8 @@ bool CTxMemPool::addUnchecked(const uint256& hash, const CTxMemPoolEntry& entry)
         mapTx[hash] = entry;
         const CTransaction& tx = mapTx[hash].GetTx();
         if(!tx.IsZerocoinSpend()) {
-        for (unsigned int i = 0; i < tx.vin.size(); i++)
-            mapNextTx[tx.vin[i].prevout] = CInPoint(&tx, i);
+            for (unsigned int i = 0; i < tx.vin.size(); i++)
+                mapNextTx[tx.vin[i].prevout] = CInPoint(&tx, i);
         }
         nTransactionsUpdated++;
         totalTxSize += entry.GetTxSize();
@@ -430,9 +440,8 @@ void CTxMemPool::remove(const CTransaction& origTx, std::list<CTransaction>& rem
                     txToRemove.push_back(it->second.ptx->GetHash());
                 }
             }
-            BOOST_FOREACH(const CTxIn& txin, tx.vin) {
+            BOOST_FOREACH (const CTxIn& txin, tx.vin)
                 mapNextTx.erase(txin.prevout);
-            }
 
             removed.push_back(tx);
             totalTxSize -= mapTx[hash].GetTxSize();
@@ -448,7 +457,7 @@ void CTxMemPool::removeCoinbaseSpends(const CCoinsViewCache* pcoins, unsigned in
     list<CTransaction> transactionsToRemove;
     for (std::map<uint256, CTxMemPoolEntry>::const_iterator it = mapTx.begin(); it != mapTx.end(); it++) {
         const CTransaction& tx = it->second.GetTx();
-        BOOST_FOREACH (const CTxIn& txin, tx.vin) {
+        BOOST_FOREACH(const CTxIn& txin, tx.vin) {
             std::map<uint256, CTxMemPoolEntry>::const_iterator it2 = mapTx.find(txin.prevout.hash);
             if (it2 != mapTx.end())
                 continue;
@@ -460,7 +469,7 @@ void CTxMemPool::removeCoinbaseSpends(const CCoinsViewCache* pcoins, unsigned in
             }
         }
     }
-    BOOST_FOREACH (const CTransaction& tx, transactionsToRemove) {
+    BOOST_FOREACH(const CTransaction& tx, transactionsToRemove) {
         list<CTransaction> removed;
         remove(tx, removed, true);
     }
@@ -470,7 +479,7 @@ void CTxMemPool::removeConflicts(const CTransaction& tx, std::list<CTransaction>
     // Remove transactions which depend on inputs of tx, recursively
     list<CTransaction> result;
     LOCK(cs);
-    BOOST_FOREACH (const CTxIn& txin, tx.vin) {
+    BOOST_FOREACH(const CTxIn& txin, tx.vin) {
         std::map<COutPoint, CInPoint>::iterator it = mapNextTx.find(txin.prevout);
         if (it != mapNextTx.end()) {
             const CTransaction& txConflict = *it->second.ptx;
@@ -487,13 +496,13 @@ void CTxMemPool::removeConflicts(const CTransaction& tx, std::list<CTransaction>
 void CTxMemPool::removeForBlock(const std::vector<CTransaction>& vtx, unsigned int nBlockHeight, std::list<CTransaction>& conflicts) {
     LOCK(cs);
     std::vector<CTxMemPoolEntry> entries;
-    BOOST_FOREACH (const CTransaction& tx, vtx) {
+    BOOST_FOREACH(const CTransaction& tx, vtx) {
         uint256 hash = tx.GetHash();
         if (mapTx.count(hash))
             entries.push_back(mapTx[hash]);
     }
     minerPolicyEstimator->seenBlock(entries, nBlockHeight, minRelayFee);
-    BOOST_FOREACH (const CTransaction& tx, vtx) {
+    BOOST_FOREACH(const CTransaction& tx, vtx) {
         std::list<CTransaction> dummy;
         remove(tx, dummy, false);
         removeConflicts(tx, conflicts);
@@ -527,7 +536,9 @@ void CTxMemPool::check(const CCoinsViewCache* pcoins) const {
         checkTotal += it->second.GetTxSize();
         const CTransaction& tx = it->second.GetTx();
         bool fDependsWait = false;
-        BOOST_FOREACH (const CTxIn& txin, tx.vin) {
+        BOOST_FOREACH(const CTxIn& txin, tx.vin) {
+            if (tx.IsZerocoinSpend())
+                continue;
             // Check that every mempool transaction's inputs refer to available coins, or other mempool tx's.
             std::map<uint256, CTxMemPoolEntry>::const_iterator it2 = mapTx.find(txin.prevout.hash);
             if (it2 != mapTx.end()) {
@@ -590,6 +601,14 @@ void CTxMemPool::queryHashes(vector<uint256>& vtxid) {
     vtxid.reserve(mapTx.size());
     for (map<uint256, CTxMemPoolEntry>::iterator mi = mapTx.begin(); mi != mapTx.end(); ++mi)
         vtxid.push_back((*mi).first);
+}
+
+void CTxMemPool::getTransactions(std::set<uint256>& setTxid) {
+    setTxid.clear();
+
+    LOCK(cs);
+    for (map<uint256, CTxMemPoolEntry>::iterator mi = mapTx.begin(); mi != mapTx.end(); ++mi)
+        setTxid.insert((*mi).first);
 }
 
 bool CTxMemPool::lookup(uint256 hash, CTransaction& result) const {

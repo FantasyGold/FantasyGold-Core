@@ -19,6 +19,7 @@
 #include <utility>
 #include <vector>
 #include "libzerocoin/Denominations.h"
+#include "libzerocoin/SpendType.h"
 
 class CScript;
 
@@ -42,7 +43,7 @@ inline T* NCONST_PTR(const T* val) {
     return const_cast<T*>(val);
 }
 
-/** 
+/**
  * Get begin pointer of vector (non-const version).
  * @note These functions avoid the undefined case of indexing into an empty
  * vector, as well as that of indexing after the end of the vector.
@@ -82,11 +83,11 @@ enum {
 
 #define READWRITE(obj) (::SerReadWrite(s, (obj), nType, nVersion, ser_action))
 
-/** 
+/**
  * Implement three methods for serializable objects. These are actually wrappers over
  * "SerializationOp" template, which implements the body of each class' serialization
  * code. Adding "ADD_SERIALIZE_METHODS" in the body of the class causes these wrappers to be
- * added as members. 
+ * added as members.
  */
 #define ADD_SERIALIZE_METHODS                                                         \
     size_t GetSerializeSize(int nType, int nVersion) const                            \
@@ -116,42 +117,18 @@ enum {
 inline unsigned int GetSerializeSize(char a, int, int = 0) {
     return sizeof(a);
 }
-inline unsigned int GetSerializeSize(signed char a, int, int = 0) {
-    return sizeof(a);
-}
-inline unsigned int GetSerializeSize(unsigned char a, int, int = 0) {
-    return sizeof(a);
-}
-inline unsigned int GetSerializeSize(signed short a, int, int = 0) {
-    return sizeof(a);
-}
-inline unsigned int GetSerializeSize(unsigned short a, int, int = 0) {
-    return sizeof(a);
-}
-inline unsigned int GetSerializeSize(signed int a, int, int = 0) {
-    return sizeof(a);
-}
-inline unsigned int GetSerializeSize(unsigned int a, int, int = 0) {
-    return sizeof(a);
-}
-inline unsigned int GetSerializeSize(signed long a, int, int = 0) {
-    return sizeof(a);
-}
-inline unsigned int GetSerializeSize(unsigned long a, int, int = 0) {
-    return sizeof(a);
-}
-inline unsigned int GetSerializeSize(signed long long a, int, int = 0) {
-    return sizeof(a);
-}
-inline unsigned int GetSerializeSize(unsigned long long a, int, int = 0) {
-    return sizeof(a);
-}
-inline unsigned int GetSerializeSize(float a, int, int = 0) {
-    return sizeof(a);
-}
-inline unsigned int GetSerializeSize(double a, int, int = 0) {
-    return sizeof(a);
-}
+inline unsigned int GetSerializeSize(signed char a, int, int = 0) { return sizeof(a); }
+inline unsigned int GetSerializeSize(unsigned char a, int, int = 0) { return sizeof(a); }
+inline unsigned int GetSerializeSize(signed short a, int, int = 0) { return sizeof(a); }
+inline unsigned int GetSerializeSize(unsigned short a, int, int = 0) { return sizeof(a); }
+inline unsigned int GetSerializeSize(signed int a, int, int = 0) { return sizeof(a); }
+inline unsigned int GetSerializeSize(unsigned int a, int, int = 0) { return sizeof(a); }
+inline unsigned int GetSerializeSize(signed long a, int, int = 0) { return sizeof(a); }
+inline unsigned int GetSerializeSize(unsigned long a, int, int = 0) { return sizeof(a); }
+inline unsigned int GetSerializeSize(signed long long a, int, int = 0) { return sizeof(a); }
+inline unsigned int GetSerializeSize(unsigned long long a, int, int = 0) { return sizeof(a); }
+inline unsigned int GetSerializeSize(float a, int, int = 0) { return sizeof(a); }
+inline unsigned int GetSerializeSize(double a, int, int = 0) { return sizeof(a); }
 
 template <typename Stream>
 inline void Serialize(Stream& s, char a, int, int = 0) {
@@ -259,9 +236,7 @@ inline void Unserialize(Stream& s, double& a, int, int = 0) {
     READDATA(s, a);
 }
 
-inline unsigned int GetSerializeSize(bool a, int, int = 0) {
-    return sizeof(char);
-}
+inline unsigned int GetSerializeSize(bool a, int, int = 0) { return sizeof(char); }
 template <typename Stream>
 inline void Serialize(Stream& s, bool a, int, int = 0) {
     char f = a;
@@ -276,9 +251,7 @@ inline void Unserialize(Stream& s, bool& a, int, int = 0) {
     a = f;
 }
 // Serializatin for libzerocoin::CoinDenomination
-inline unsigned int GetSerializeSize(libzerocoin::CoinDenomination a, int, int = 0) {
-    return sizeof(libzerocoin::CoinDenomination);
-}
+inline unsigned int GetSerializeSize(libzerocoin::CoinDenomination a, int, int = 0) { return sizeof(libzerocoin::CoinDenomination); }
 template <typename Stream>
 inline void Serialize(Stream& s, libzerocoin::CoinDenomination a, int, int = 0) {
     int f = libzerocoin::ZerocoinDenominationToInt(a);
@@ -292,7 +265,20 @@ inline void Unserialize(Stream& s, libzerocoin::CoinDenomination& a, int, int = 
     a = libzerocoin::IntToZerocoinDenomination(f);
 }
 
+// Serialization for libzerocoin::SpendType
+inline unsigned int GetSerializedSize(libzerocoin::SpendType a, int, int = 0) { return sizeof(libzerocoin::SpendType); }
+template <typename Stream>
+inline void Serialize(Stream& s, libzerocoin::SpendType a, int, int = 0) {
+    uint8_t f = static_cast<uint8_t>(a);
+    WRITEDATA(s, f);
+}
 
+template <typename Stream>
+inline void Unserialize(Stream& s, libzerocoin::SpendType & a, int, int = 0) {
+    uint8_t f=0;
+    READDATA(s, f);
+    a = static_cast<libzerocoin::SpendType>(f);
+}
 
 /**
  * Compact Size
@@ -373,16 +359,16 @@ uint64_t ReadCompactSize(Stream& is) {
  * sure the encoding is one-to-one, one is subtracted from all but the last digit.
  * Thus, the byte sequence a[] with length len, where all but the last byte
  * has bit 128 set, encodes the number:
- * 
+ *
  *  (a[len-1] & 0x7F) + sum(i=1..len-1, 128^i*((a[len-i-1] & 0x7F)+1))
- * 
+ *
  * Properties:
  * * Very small (0-127: 1 byte, 128-16511: 2 bytes, 16512-2113663: 3 bytes)
  * * Every integer has exactly one encoding
  * * Encoding does not depend on size of original integer type
  * * No redundancy: every (infinite) byte sequence corresponds to a list
  *   of encoded integers.
- * 
+ *
  * 0:         [0x00]  256:        [0x81 0x00]
  * 1:         [0x01]  16383:      [0xFE 0x7F]
  * 127:       [0x7F]  16384:      [0xFF 0x00]
@@ -437,33 +423,25 @@ I ReadVarInt(Stream& is) {
 #define VARINT(obj) REF(WrapVarInt(REF(obj)))
 #define LIMITED_STRING(obj, n) REF(LimitedString<n>(REF(obj)))
 
-/** 
+/**
  * Wrapper for serializing arrays and POD.
  */
 class CFlatData {
-protected:
+  protected:
     char* pbegin;
     char* pend;
 
-public:
+  public:
     CFlatData(void* pbeginIn, void* pendIn) : pbegin((char*)pbeginIn), pend((char*)pendIn) {}
     template <class T, class TAl>
     explicit CFlatData(std::vector<T, TAl>& v) {
         pbegin = (char*)begin_ptr(v);
         pend = (char*)end_ptr(v);
     }
-    char* begin() {
-        return pbegin;
-    }
-    const char* begin() const {
-        return pbegin;
-    }
-    char* end() {
-        return pend;
-    }
-    const char* end() const {
-        return pend;
-    }
+    char* begin() { return pbegin; }
+    const char* begin() const { return pbegin; }
+    char* end() { return pend; }
+    const char* end() const { return pend; }
 
     unsigned int GetSerializeSize(int, int = 0) const {
         return pend - pbegin;
@@ -482,10 +460,10 @@ public:
 
 template <typename I>
 class CVarInt {
-protected:
+  protected:
     I& n;
 
-public:
+  public:
     CVarInt(I& nIn) : n(nIn) {}
 
     unsigned int GetSerializeSize(int, int) const {
@@ -505,10 +483,10 @@ public:
 
 template <size_t Limit>
 class LimitedString {
-protected:
+  protected:
     std::string& string;
 
-public:
+  public:
     LimitedString(std::string& string) : string(string) {}
 
     template <typename Stream>
@@ -845,14 +823,10 @@ void Unserialize(Stream& is, std::set<K, Pred, A>& m, int nType, int nVersion) {
  * Support for ADD_SERIALIZE_METHODS and READWRITE macro
  */
 struct CSerActionSerialize {
-    bool ForRead() const {
-        return false;
-    }
+    bool ForRead() const { return false; }
 };
 struct CSerActionUnserialize {
-    bool ForRead() const {
-        return true;
-    }
+    bool ForRead() const { return true; }
 };
 
 template <typename Stream, typename T>
@@ -867,10 +841,10 @@ inline void SerReadWrite(Stream& s, T& obj, int nType, int nVersion, CSerActionU
 
 
 class CSizeComputer {
-protected:
+  protected:
     size_t nSize;
 
-public:
+  public:
     int nType;
     int nVersion;
 
@@ -887,7 +861,16 @@ public:
         return (*this);
     }
 
-    size_t size() const {
+    //
+    // Stream subset
+    //
+    void SetType(int n) { nType = n; }
+    int GetType() { return nType; }
+    void SetVersion(int n) { nVersion = n; }
+    int GetVersion() { return nVersion; }
+
+    size_t size() const
+    {
         return nSize;
     }
 };

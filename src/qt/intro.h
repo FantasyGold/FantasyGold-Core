@@ -34,6 +34,9 @@ class Intro : public QDialog {
     /**
      * Determine data directory. Let the user choose if the current one doesn't exist.
      *
+     * @returns true if a data directory was selected, false if the user cancelled the selection
+     * dialog.
+     *
      * @note do NOT call global GetDataDir() before calling this function, this
      * will cause the wrong path to be cached.
      */

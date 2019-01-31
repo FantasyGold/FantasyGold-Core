@@ -51,15 +51,13 @@ class ProposalList : public QWidget {
 
     enum ColumnWidths {
         PROPOSAL_COLUMN_WIDTH = 150,
-        AMOUNT_COLUMN_WIDTH = 100,
-        START_DATE_COLUMN_WIDTH = 110,
-        END_DATE_COLUMN_WIDTH = 110,
-        TOTAL_PAYMENT_COLUMN_WIDTH = 80,
-        REMAINING_PAYMENT_COLUMN_WIDTH = 80,
-        YES_VOTES_COLUMN_WIDTH = 60,
-        NO_VOTES_COLUMN_WIDTH = 60,
-        ABSTAIN_COLUMN_WIDTH = 60,
-        PERCENTAGE_COLUMN_WIDTH = 80,
+        AMOUNT_COLUMN_WIDTH = 150,		
+        START_DATE_COLUMN_WIDTH = 100,
+        END_DATE_COLUMN_WIDTH = 100,
+        YES_VOTES_COLUMN_WIDTH = 100,
+        NO_VOTES_COLUMN_WIDTH = 100,
+        ABSTAIN_COLUMN_WIDTH = 100,
+        VOTES_NEEDED_COLUMN_WIDTH = 150,
         MINIMUM_COLUMN_WIDTH = 23
     };
 
@@ -72,29 +70,26 @@ class ProposalList : public QWidget {
     QLineEdit *proposalWidget;
     QLineEdit *startDateWidget;
     QLineEdit *endDateWidget;
-    QLineEdit *totalPaymentCountWidget;
-    QLineEdit *remainingPaymentCountWidget;
     QTimer *timer;
 
     QLineEdit *yesVotesWidget;
     QLineEdit *noVotesWidget;
     QLineEdit *abstainVotesWidget;
     QLineEdit *amountWidget;
-    QLineEdit *percentageWidget;
+    QLineEdit *votesNeededWidget;
     QLabel *secondsLabel;
 
     QMenu *contextMenu;
 
+    //LineEdit *startDateRangeWidget;
     QLineEdit *proposalStartDate;
 
+    //QLineEdit *endDateRangeWidget;
     QLineEdit *proposalEndDate;
     ColumnAlignedLayout *hlayout;
 
-    /* Header - Info/Projection */
-    QComboBox *proposalTypeCombo;
-    QHBoxLayout *headLayout;
-    /* End Header - Info/Projection */
-
+    //QWidget *createStartDateRangeWidget();
+    //QWidget *createEndDateRangeWidget();
     void vote_click_handler(const std::string voteString);
 
     GUIUtil::TableViewLastColumnResizingFixer *columnResizingFixer;
@@ -102,13 +97,13 @@ class ProposalList : public QWidget {
     virtual void resizeEvent(QResizeEvent* event);
 
   private Q_SLOTS:
-    void createProposal();
-    void proposalType(int type);
     void contextualMenu(const QPoint &);
+    //void startDateRangeChanged();
+    //void endDateRangeChanged();
     void voteYes();
     void voteNo();
     void voteAbstain();
-    void copyProposalUrl();
+    void openProposalUrl();
     void invalidateAlignedLayout();
 
   Q_SIGNALS:
@@ -119,13 +114,12 @@ class ProposalList : public QWidget {
     void changedProposal(const QString &proposal);
     void chooseStartDate(const QString &startDate);
     void chooseEndDate(const QString &endDate);
-    void changedTotalPaymentCount(const QString &totalPaymentCount);
-    void changedRemainingPaymentCount(const QString &remainingPaymentCount);
     void changedYesVotes(const QString &minYesVotes);
     void changedNoVotes(const QString &minNoVotes);
     void changedAbstainVotes(const QString &minAbstainVotes);
-    void changedPercentage(const QString &minPercentage);
+    void changedVotesNeeded(const QString &votesNeeded);
     void changedAmount(const QString &minAmount);
+
 };
 
 #endif // FANTASYGOLD_QT_PROPOSALLIST_H

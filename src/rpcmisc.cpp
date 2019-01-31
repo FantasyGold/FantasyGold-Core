@@ -2,13 +2,13 @@
 // Copyright (c) 2009-2014 The Bitcoin developers
 // Copyright (c) 2014-2015 The Dash developers
 // Copyright (c) 2015-2017 The PIVX developers
-// Copyright (c) 2017-2018 The Bulwark Core Developers
 // Copyright (c) 2017-2018 The FantasyGold developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
 #include "base58.h"
 #include "clientversion.h"
+#include "crypto/ripemd160.h"
 #include "init.h"
 #include "main.h"
 #include "masternode-sync.h"
@@ -74,6 +74,7 @@ UniValue getinfo(const UniValue& params, bool fHelp) {
             "     \"100\" : n,          (numeric) supply of 100 zFGC denomination\n"
             "     \"500\" : n,          (numeric) supply of 500 zFGC denomination\n"
             "     \"1000\" : n,         (numeric) supply of 1000 zFGC denomination\n"
+            "     \"5000\" : n,         (numeric) supply of 5000 zFGC denomination\n"
             "     \"total\" : n,        (numeric) The total supply of all zFGC denominations\n"
             "  }\n"
             "  \"keypoololdest\": xxxxxx,    (numeric) the timestamp (seconds since GMT epoch) of the oldest pre-generated key in the key pool\n"
@@ -86,6 +87,12 @@ UniValue getinfo(const UniValue& params, bool fHelp) {
             "}\n"
             "\nExamples:\n" +
             HelpExampleCli("getinfo", "") + HelpExampleRpc("getinfo", ""));
+
+#ifdef ENABLE_WALLET
+    LOCK2(cs_main, pwalletMain ? &pwalletMain->cs_wallet : NULL);
+#else
+    LOCK(cs_main);
+#endif
 
     proxyType proxy;
     GetProxy(NET_IPV4, proxy);
@@ -106,13 +113,20 @@ UniValue getinfo(const UniValue& params, bool fHelp) {
     obj.push_back(Pair("proxy", (proxy.IsValid() ? proxy.proxy.ToStringIPPort() : string())));
     obj.push_back(Pair("difficulty", (double)GetDifficulty()));
     obj.push_back(Pair("testnet", Params().TestnetToBeDeprecatedFieldRPC()));
-    obj.push_back(Pair("moneysupply",ValueFromAmount(chainActive.Tip()->nMoneySupply)));
-    UniValue zFGCObj(UniValue::VOBJ);
-    for (auto denom : libzerocoin::zerocoinDenomList) {
-        zFGCObj.push_back(Pair(to_string(denom), ValueFromAmount(chainActive.Tip()->mapZerocoinSupply.at(denom) * (denom*COIN))));
+
+    // During inital block verification chainActive.Tip() might be not yet initialized
+    if (chainActive.Tip() == NULL) {
+        obj.push_back(Pair("status", "Blockchain information not yet available"));
+        return obj;
     }
-    zFGCObj.push_back(Pair("total", ValueFromAmount(chainActive.Tip()->GetZerocoinSupply())));
-    obj.push_back(Pair("zFGCsupply", zFGCObj));
+
+    obj.push_back(Pair("moneysupply",ValueFromAmount(chainActive.Tip()->nMoneySupply)));
+    UniValue zfgcObj(UniValue::VOBJ);
+    for (auto denom : libzerocoin::zerocoinDenomList) {
+        zfgcObj.push_back(Pair(to_string(denom), ValueFromAmount(chainActive.Tip()->mapZerocoinSupply.at(denom) * (denom*COIN))));
+    }
+    zfgcObj.push_back(Pair("total", ValueFromAmount(chainActive.Tip()->GetZerocoinSupply())));
+    obj.push_back(Pair("zFGCsupply", zfgcObj));
 
 #ifdef ENABLE_WALLET
     if (pwalletMain) {
@@ -205,22 +219,19 @@ UniValue mnsync(const UniValue& params, bool fHelp) {
 
 #ifdef ENABLE_WALLET
 class DescribeAddressVisitor : public boost::static_visitor<UniValue> {
-private:
-    isminetype mine;
-
 public:
-    DescribeAddressVisitor(isminetype mineIn) : mine(mineIn) {}
+    CWallet * const pwallet;
 
-    UniValue operator()(const CNoDestination &dest) const {
-        return UniValue(UniValue::VOBJ);
-    }
+    explicit DescribeAddressVisitor(CWallet *_pwallet) : pwallet(_pwallet) {}
+
+    UniValue operator()(const CNoDestination &dest) const { return UniValue(UniValue::VOBJ); }
 
     UniValue operator()(const CKeyID &keyID) const {
         UniValue obj(UniValue::VOBJ);
         CPubKey vchPubKey;
         obj.push_back(Pair("isscript", false));
-        if (mine == ISMINE_SPENDABLE) {
-            pwalletMain->GetPubKey(keyID, vchPubKey);
+        obj.push_back(Pair("iswitness", false));
+        if (pwallet && pwallet->GetPubKey(keyID, vchPubKey)) {
             obj.push_back(Pair("pubkey", HexStr(vchPubKey)));
             obj.push_back(Pair("iscompressed", vchPubKey.IsCompressed()));
         }
@@ -229,10 +240,10 @@ public:
 
     UniValue operator()(const CScriptID &scriptID) const {
         UniValue obj(UniValue::VOBJ);
+        CScript subscript;
         obj.push_back(Pair("isscript", true));
-        if (mine != ISMINE_NO) {
-            CScript subscript;
-            pwalletMain->GetCScript(scriptID, subscript);
+        obj.push_back(Pair("iswitness", false));
+        if (pwallet && pwallet->GetCScript(scriptID, subscript)) {
             std::vector<CTxDestination> addresses;
             txnouttype whichType;
             int nRequired;
@@ -240,13 +251,54 @@ public:
             obj.push_back(Pair("script", GetTxnOutputType(whichType)));
             obj.push_back(Pair("hex", HexStr(subscript.begin(), subscript.end())));
             UniValue a(UniValue::VARR);
-            BOOST_FOREACH(const CTxDestination& addr, addresses) {
-                a.push_back(CBitcoinAddress(addr).ToString());
+            for (const CTxDestination& addr : addresses) {
+                a.push_back(EncodeDestination(addr));
             }
             obj.push_back(Pair("addresses", a));
             if (whichType == TX_MULTISIG)
                 obj.push_back(Pair("sigsrequired", nRequired));
         }
+        return obj;
+    }
+
+    UniValue operator()(const WitnessV0KeyHash& id) const
+    {
+        UniValue obj(UniValue::VOBJ);
+        CPubKey pubkey;
+        obj.push_back(Pair("isscript", false));
+        obj.push_back(Pair("iswitness", true));
+        obj.push_back(Pair("witness_version", 0));
+        obj.push_back(Pair("witness_program", HexStr(id.begin(), id.end())));
+        if (pwallet && pwallet->GetPubKey(CKeyID(id), pubkey)) {
+            obj.push_back(Pair("pubkey", HexStr(pubkey)));
+        }
+        return obj;
+    }
+
+    UniValue operator()(const WitnessV0ScriptHash& id) const
+    {
+        UniValue obj(UniValue::VOBJ);
+        CScript subscript;
+        obj.push_back(Pair("isscript", true));
+        obj.push_back(Pair("iswitness", true));
+        obj.push_back(Pair("witness_version", 0));
+        obj.push_back(Pair("witness_program", HexStr(id.begin(), id.end())));
+        CRIPEMD160 hasher;
+        uint160 hash;
+        hasher.Write(id.begin(), 32).Finalize(hash.begin());
+        if (pwallet && pwallet->GetCScript(CScriptID(hash), subscript)) {
+            obj.push_back(Pair("hex", HexStr(subscript.begin(), subscript.end())));
+        }
+        return obj;
+    }
+
+    UniValue operator()(const WitnessUnknown& id) const
+    {
+        UniValue obj(UniValue::VOBJ);
+        CScript subscript;
+        obj.push_back(Pair("iswitness", true));
+        obj.push_back(Pair("witness_version", (int)id.version));
+        obj.push_back(Pair("witness_program", HexStr(id.program, id.program + id.length)));
         return obj;
     }
 };
@@ -277,11 +329,10 @@ UniValue spork(const UniValue& params, bool fHelp) {
         }
 
         // SPORK VALUE
-        int64_t nValue = params[1].get_int();
+        int64_t nValue = params[1].get_int64();
 
         //broadcast new spork
         if (sporkManager.UpdateSpork(nSporkID, nValue)) {
-            ExecuteSpork(nSporkID, nValue);
             return "success";
         } else {
             return "failure";
@@ -307,6 +358,7 @@ UniValue validateaddress(const UniValue& params, bool fHelp) {
             "  \"isvalid\" : true|false,         (boolean) If the address is valid or not. If not, this is the only property returned.\n"
             "  \"address\" : \"fantasygoldaddress\", (string) The fantasygold address validated\n"
             "  \"ismine\" : true|false,          (boolean) If the address is yours or not\n"
+            "  \"iswatchonly\" : true|false,   (boolean) If the address is watchonly\n"
             "  \"isscript\" : true|false,        (boolean) If the key is a script\n"
             "  \"pubkey\" : \"publickeyhex\",    (string) The hex value of the raw public key\n"
             "  \"iscompressed\" : true|false,    (boolean) If the address is compressed\n"
@@ -353,7 +405,7 @@ CScript _createmultisig_redeemScript(const UniValue& params) {
         throw runtime_error(
             strprintf("not enough keys supplied "
                       "(got %u keys, but need at least %d to redeem)",
-                keys.size(), nRequired));
+                      keys.size(), nRequired));
     if (keys.size() > 16)
         throw runtime_error("Number of addresses involved in the multisignature address creation > 16\nReduce the number");
     std::vector<CPubKey> pubkeys;
@@ -361,7 +413,7 @@ CScript _createmultisig_redeemScript(const UniValue& params) {
     for (unsigned int i = 0; i < keys.size(); i++) {
         const std::string& ks = keys[i].get_str();
 #ifdef ENABLE_WALLET
-        // Case 1: Fantasy Gold address and we have full public key:
+        // Case 1: FantasyGold address and we have full public key:
         CBitcoinAddress address(ks);
         if (pwalletMain && address.IsValid()) {
             CKeyID keyID;
@@ -381,13 +433,13 @@ CScript _createmultisig_redeemScript(const UniValue& params) {
         else
 #endif
             if (IsHex(ks)) {
-            CPubKey vchPubKey(ParseHex(ks));
-            if (!vchPubKey.IsFullyValid())
+                CPubKey vchPubKey(ParseHex(ks));
+                if (!vchPubKey.IsFullyValid())
+                    throw runtime_error(" Invalid public key: " + ks);
+                pubkeys[i] = vchPubKey;
+            } else {
                 throw runtime_error(" Invalid public key: " + ks);
-            pubkeys[i] = vchPubKey;
-        } else {
-            throw runtime_error(" Invalid public key: " + ks);
-        }
+            }
     }
     CScript result = GetScriptForMultisig(nRequired, pubkeys);
 

@@ -24,7 +24,7 @@ static const unsigned int MAX_BLOCK_SIZE_LEGACY = 1000000;
  * of the block.
  */
 class CBlockHeader {
-public:
+  public:
     // header
     static const int32_t CURRENT_VERSION=4;
     int32_t nVersion;
@@ -79,7 +79,7 @@ public:
 
 
 class CBlock : public CBlockHeader {
-public:
+  public:
     // network and disk
     std::vector<CTransaction> vtx;
 
@@ -105,8 +105,8 @@ public:
     inline void SerializationOp(Stream& s, Operation ser_action, int nType, int nVersion) {
         READWRITE(*(CBlockHeader*)this);
         READWRITE(vtx);
-	if(vtx.size() > 1 && vtx[1].IsCoinStake())
-		READWRITE(vchBlockSig);
+        if(vtx.size() > 1 && vtx[1].IsCoinStake())
+            READWRITE(vchBlockSig);
     }
 
     void SetNull() {
@@ -157,7 +157,6 @@ public:
     void print() const;
 };
 
-
 /** Describes a place in the block chain to another node such that if the
  * other node doesn't have the same branch, it can find a recent common trunk.
  * The further back it is, the further before the fork it may be.
@@ -188,5 +187,8 @@ struct CBlockLocator {
         return vHave.empty();
     }
 };
+
+/** Compute the consensus-critical block cost (see BIP 141). */
+int64_t GetBlockCost(const CBlock& tx);
 
 #endif // BITCOIN_PRIMITIVES_BLOCK_H

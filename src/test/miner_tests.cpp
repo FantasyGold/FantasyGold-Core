@@ -2,6 +2,7 @@
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
+#include "consensus/validation.h"
 #include "init.h"
 #include "main.h"
 #include "miner.h"
@@ -101,7 +102,7 @@ BOOST_AUTO_TEST_CASE(CreateNewBlock_validity) {
     for (unsigned int i = 0; i < 1001; ++i) {
         tx.vout[0].nValue -= 1000000;
         hash = tx.GetHash();
-        mempool.addUnchecked(hash, CTxMemPoolEntry(tx, 11, GetTime(), 111.0, 11));
+        mempool.addUnchecked(hash, CTxMemPoolEntry(tx, 11, GetTime(), 111.0, 11, 80));
         tx.vin[0].prevout.hash = hash;
     }
     BOOST_CHECK(pblocktemplate = CreateNewBlock(scriptPubKey, pwalletMain, false));
@@ -117,10 +118,11 @@ BOOST_AUTO_TEST_CASE(CreateNewBlock_validity) {
     tx.vin[0].scriptSig << OP_1;
     tx.vin[0].prevout.hash = txFirst[0]->GetHash();
     tx.vout[0].nValue = 5000000000LL;
-    for (unsigned int i = 0; i < 128; ++i) {
+    for (unsigned int i = 0; i < 128; ++i)
+    {
         tx.vout[0].nValue -= 10000000;
         hash = tx.GetHash();
-        mempool.addUnchecked(hash, CTxMemPoolEntry(tx, 11, GetTime(), 111.0, 11));
+        mempool.addUnchecked(hash, CTxMemPoolEntry(tx, 11, GetTime(), 111.0, 11, 80));
         tx.vin[0].prevout.hash = hash;
     }
     BOOST_CHECK(pblocktemplate = CreateNewBlock(scriptPubKey, pwalletMain, false));
@@ -254,9 +256,8 @@ BOOST_AUTO_TEST_CASE(CreateNewBlock_validity) {
     SetMockTime(0);
     mempool.clear();
 
-    BOOST_FOREACH(CTransaction *tx, txFirst) {
+    BOOST_FOREACH(CTransaction *tx, txFirst)
         delete tx;
-    }
 
     Checkpoints::fEnabled = true;
 }

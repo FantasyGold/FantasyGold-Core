@@ -1,7 +1,6 @@
 // Copyright (c) 2011-2014 The Bitcoin developers
 // Copyright (c) 2014-2015 The Dash developers
 // Copyright (c) 2015-2017 The PIVX developers
-// Copyright (c) 2017-2018 The Bulwark Core Developers
 // Copyright (c) 2017-2018 The FantasyGold developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
@@ -67,9 +66,7 @@ struct X509StoreDeleter {
 };
 
 struct X509Deleter {
-    void operator()(X509* b) {
-        X509_free(b);
-    }
+      void operator()(X509* b) { X509_free(b); }
 };
 
 namespace { // Anon namespace
@@ -102,7 +99,7 @@ static QString ipcServerName() {
 static QList<QString> savedPaymentRequests;
 
 static void ReportInvalidCertificate(const QSslCertificate& cert) {
-    qDebug() << QString("%1: Payment server found an invalid certificate: ").arg(__func__) << cert.serialNumber() << cert.subjectInfo(QSslCertificate::CommonName) << cert.subjectInfo(QSslCertificate::DistinguishedNameQualifier) << cert.subjectInfo(QSslCertificate::OrganizationalUnitName);
+    qDebug() << "ReportInvalidCertificate : Payment server found an invalid certificate: " << cert.subjectInfo(QSslCertificate::CommonName);
 }
 
 //
@@ -196,11 +193,9 @@ void PaymentServer::ipcParseCommandLine(int argc, char* argv[]) {
 
             SendCoinsRecipient r;
             if (GUIUtil::parseBitcoinURI(arg, &r) && !r.address.isEmpty()) {
-                CBitcoinAddress address(r.address.toStdString());
-
-                if (address.IsValid(Params(CBaseChainParams::MAIN))) {
+                if (IsValidDestinationString(r.address.toStdString(), Params(CBaseChainParams::MAIN))) {
                     SelectParams(CBaseChainParams::MAIN);
-                } else if (address.IsValid(Params(CBaseChainParams::TESTNET))) {
+                } else if (IsValidDestinationString(r.address.toStdString(), Params(CBaseChainParams::TESTNET))) {
                     SelectParams(CBaseChainParams::TESTNET);
                 }
             }
@@ -379,8 +374,9 @@ void PaymentServer::handleURIOrFile(const QString& s) {
         } else { // normal URI
             SendCoinsRecipient recipient;
             if (GUIUtil::parseBitcoinURI(s, &recipient)) {
-                CBitcoinAddress address(recipient.address.toStdString());
-                if (!address.IsValid()) {
+
+                if (!IsValidDestinationString(recipient.address.toStdString())) {
+
                     emit message(tr("URI handling"), tr("Invalid payment address %1").arg(recipient.address),
                                  CClientUIInterface::MSG_ERROR);
                 } else
@@ -496,7 +492,7 @@ bool PaymentServer::processPaymentRequest(PaymentRequestPlus& request, SendCoins
         CTxDestination dest;
         if (ExtractDestination(sendingTo.first, dest)) {
             // Append destination address
-            addresses.append(QString::fromStdString(CBitcoinAddress(dest).ToString()));
+            addresses.append(QString::fromStdString(EncodeDestination(dest)));
         } else if (!recipient.authenticatedMerchant.isEmpty()) {
             // Insecure payments to custom fantasygold addresses are not supported
             // (there is no good way to tell the user where they are paying in a way
@@ -558,18 +554,18 @@ void PaymentServer::fetchPaymentACK(CWallet* wallet, SendCoinsRecipient recipien
     // Create a new refund address, or re-use:
     QString account = tr("Refund from %1").arg(recipient.authenticatedMerchant);
     std::string strAccount = account.toStdString();
-    set<CTxDestination> refundAddresses = wallet->GetAccountAddresses(strAccount);
-    if (!refundAddresses.empty()) {
-        CScript s = GetScriptForDestination(*refundAddresses.begin());
-        payments::Output* refund_to = payment.add_refund_to();
-        refund_to->set_script(&s[0], s.size());
-    } else {
         CPubKey newKey;
         if (wallet->GetKeyFromPool(newKey)) {
-            CKeyID keyID = newKey.GetID();
-            wallet->SetAddressBook(keyID, strAccount, "refund");
+        // BIP70 requests encode the scriptPubKey directly, so we are not restricted to address
+        // types supported by the receiver. As a result, we choose the address format we also
+        // use for change. Despite an actual payment and not change, this is a close match:
+        // it's the output type we use subject to privacy issues, but not restricted by what
+        // other software supports.
+        wallet->LearnRelatedScripts(newKey, g_change_type);
+        CTxDestination dest = GetDestinationForKey(newKey, g_change_type);
+        wallet->SetAddressBook(dest, strAccount, "refund");
 
-            CScript s = GetScriptForDestination(keyID);
+        CScript s = GetScriptForDestination(dest);
             payments::Output* refund_to = payment.add_refund_to();
             refund_to->set_script(&s[0], s.size());
         } else {
@@ -577,7 +573,6 @@ void PaymentServer::fetchPaymentACK(CWallet* wallet, SendCoinsRecipient recipien
             // just unlocked the wallet and refilled the keypool.
             qWarning() << "PaymentServer::fetchPaymentACK : Error getting refund key, refund_to not set";
         }
-    }
 
     int length = payment.ByteSize();
     netRequest.setHeader(QNetworkRequest::ContentLengthHeader, length);

@@ -8,6 +8,7 @@
 
 #include "main.h"
 #include "pow.h"
+#include "random.h"
 #include "uint256.h"
 #include "accumulators.h"
 
@@ -68,6 +69,10 @@ bool CCoinsViewDB::BatchWrite(CCoinsMap& mapCoins, const uint256& hashBlock) {
 }
 
 CBlockTreeDB::CBlockTreeDB(size_t nCacheSize, bool fMemory, bool fWipe) : CLevelDBWrapper(GetDataDir() / "blocks" / "index", nCacheSize, fMemory, fWipe) {
+    if (!Read('S', salt)) {
+        salt = GetRandHash();
+        Write('S', salt);
+    }
 }
 
 bool CBlockTreeDB::WriteBlockIndex(const CDiskBlockIndex& blockindex) {
@@ -166,6 +171,55 @@ bool CBlockTreeDB::WriteTxIndex(const std::vector<std::pair<uint256, CDiskTxPos>
     return WriteBatch(batch);
 }
 
+bool CBlockTreeDB::ReadAddrIndex(uint160 addrid, std::vector<CExtDiskTxPos> &list) {
+    boost::scoped_ptr<leveldb::Iterator> pcursor(NewIterator());
+
+    uint64_t lookupid;
+    {
+        CHashWriter ss(SER_GETHASH, 0);
+        ss << salt;
+        ss << addrid;
+        lookupid = (ss.GetHash()).GetLow64();
+    }
+
+    CDataStream firstKey(SER_DISK, CLIENT_VERSION);
+    firstKey << make_pair('a', lookupid);
+    pcursor->Seek(firstKey.str());
+
+    for(pcursor->Seek(firstKey.str()); pcursor->Valid(); pcursor->Next()) {
+        leveldb::Slice key = pcursor->key();
+        CDataStream ssKey(key.data(), key.data() + key.size(), SER_DISK, CLIENT_VERSION);
+        char id;
+        ssKey >> id;
+        if(id == 'a') {
+            uint64_t lid;
+            ssKey >> lid;
+            if(lid == lookupid) {
+                CExtDiskTxPos position;
+                ssKey >> position;
+                list.push_back(position);
+            } else {
+                break;
+            }
+        } else {
+            break;
+        }
+    }
+    return true;
+}
+
+bool CBlockTreeDB::AddAddrIndex(const std::vector<std::pair<uint160, CExtDiskTxPos> > &list) {
+    unsigned char foo[0];
+    CLevelDBBatch batch;
+    for (std::vector<std::pair<uint160, CExtDiskTxPos> >::const_iterator it=list.begin(); it!=list.end(); it++) {
+        CHashWriter ss(SER_GETHASH, 0);
+        ss << salt;
+        ss << it->first;
+        batch.Write(make_pair(make_pair('a', (ss.GetHash()).GetLow64()), it->second), FLATDATA(foo));
+    }
+    return WriteBatch(batch, true);
+}
+
 bool CBlockTreeDB::WriteFlag(const std::string& name, bool fValue) {
     return Write(std::make_pair('F', name), fValue ? '1' : '0');
 }
@@ -238,8 +292,6 @@ bool CBlockTreeDB::LoadBlockIndexGuts() {
                 pindexNew->nStakeTime = diskindex.nStakeTime;
                 pindexNew->hashProofOfStake = diskindex.hashProofOfStake;
 
-                //if (fDebug) LogPrintf("%s: %s\n", pindexNew->hashMerkleRoot.ToString().c_str(), pindexNew->GetBlockHash().ToString().c_str());
-
                 if (pindexNew->nHeight <= Params().LAST_POW_BLOCK()) {
                     if (!CheckProofOfWork(pindexNew->GetBlockHash(), pindexNew->nBits))
                         return error("LoadBlockIndex() : CheckProofOfWork failed: %s", pindexNew->ToString());
@@ -251,6 +303,8 @@ bool CBlockTreeDB::LoadBlockIndexGuts() {
 
                 //populate accumulator checksum map in memory
                 if(pindexNew->nAccumulatorCheckpoint != 0 && pindexNew->nAccumulatorCheckpoint != nPreviousCheckpoint) {
+                    //Don't load any checkpoints that exist before v2 zfgc. The accumulator is invalid for v1 and not used.
+                    if (pindexNew->nHeight > Params().Zerocoin_LastOldParams())
                     LoadAccumulatorValuesFromDB(pindexNew->nAccumulatorCheckpoint);
                     nPreviousCheckpoint = pindexNew->nAccumulatorCheckpoint;
                 }
@@ -271,27 +325,20 @@ CZerocoinDB::CZerocoinDB(size_t nCacheSize, bool fMemory, bool fWipe) : CLevelDB
 }
 
 bool CZerocoinDB::WriteCoinMint(const PublicCoin& pubCoin, const uint256& hashTx) {
-    CBigNum bnValue = pubCoin.getValue();
-    CDataStream ss(SER_GETHASH, 0);
-    ss << pubCoin.getValue();
-    uint256 hash = Hash(ss.begin(), ss.end());
-
+    uint256 hash = GetPubCoinHash(pubCoin.getValue());
     return Write(make_pair('m', hash), hashTx, true);
 }
 
 bool CZerocoinDB::ReadCoinMint(const CBigNum& bnPubcoin, uint256& hashTx) {
-    CDataStream ss(SER_GETHASH, 0);
-    ss << bnPubcoin;
-    uint256 hash = Hash(ss.begin(), ss.end());
+    return ReadCoinMint(GetPubCoinHash(bnPubcoin), hashTx);
+}
 
-    return Read(make_pair('m', hash), hashTx);
+bool CZerocoinDB::ReadCoinMint(const uint256& hashPubcoin, uint256& hashTx) {
+    return Read(make_pair('m', hashPubcoin), hashTx);
 }
 
 bool CZerocoinDB::EraseCoinMint(const CBigNum& bnPubcoin) {
-    CDataStream ss(SER_GETHASH, 0);
-    ss << bnPubcoin;
-    uint256 hash = Hash(ss.begin(), ss.end());
-
+    uint256 hash = GetPubCoinHash(bnPubcoin);
     return Erase(make_pair('m', hash));
 }
 
@@ -311,6 +358,10 @@ bool CZerocoinDB::ReadCoinSpend(const CBigNum& bnSerial, uint256& txHash) {
     return Read(make_pair('s', hash), txHash);
 }
 
+bool CZerocoinDB::ReadCoinSpend(const uint256& hashSerial, uint256 &txHash) {
+    return Read(make_pair('s', hashSerial), txHash);
+}
+
 bool CZerocoinDB::EraseCoinSpend(const CBigNum& bnSerial) {
     CDataStream ss(SER_GETHASH, 0);
     ss << bnSerial;
@@ -319,16 +370,58 @@ bool CZerocoinDB::EraseCoinSpend(const CBigNum& bnSerial) {
     return Erase(make_pair('s', hash));
 }
 
+bool CZerocoinDB::WipeCoins(std::string strType) {
+    if (strType != "spends" && strType != "mints")
+        return error("%s: did not recognize type %s", __func__, strType);
+
+    boost::scoped_ptr<leveldb::Iterator> pcursor(NewIterator());
+
+    char type = (strType == "spends" ? 's' : 'm');
+    CDataStream ssKeySet(SER_DISK, CLIENT_VERSION);
+    ssKeySet << make_pair(type, uint256(0));
+    pcursor->Seek(ssKeySet.str());
+    // Load mapBlockIndex
+    std::set<uint256> setDelete;
+    while (pcursor->Valid()) {
+        boost::this_thread::interruption_point();
+        try {
+            leveldb::Slice slKey = pcursor->key();
+            CDataStream ssKey(slKey.data(), slKey.data() + slKey.size(), SER_DISK, CLIENT_VERSION);
+            char chType;
+            ssKey >> chType;
+            if (chType == type) {
+                leveldb::Slice slValue = pcursor->value();
+                CDataStream ssValue(slValue.data(), slValue.data() + slValue.size(), SER_DISK, CLIENT_VERSION);
+                uint256 hash;
+                ssValue >> hash;
+                setDelete.insert(hash);
+                pcursor->Next();
+            } else {
+                break; // if shutdown requested or finished loading block index
+            }
+        } catch (std::exception& e) {
+            return error("%s : Deserialize or I/O error - %s", __func__, e.what());
+        }
+    }
+
+    for (auto& hash : setDelete) {
+        if (!Erase(make_pair(type, hash)))
+            LogPrintf("%s: error failed to delete %s\n", __func__, hash.GetHex());
+    }
+
+    return true;
+}
+
 bool CZerocoinDB::WriteAccumulatorValue(const uint32_t& nChecksum, const CBigNum& bnValue) {
     LogPrint("zero","%s : checksum:%d val:%s\n", __func__, nChecksum, bnValue.GetHex());
-    return Write(make_pair('a', nChecksum), bnValue);
+    return Write(make_pair('2', nChecksum), bnValue);
 }
 
 bool CZerocoinDB::ReadAccumulatorValue(const uint32_t& nChecksum, CBigNum& bnValue) {
-    return Read(make_pair('a', nChecksum), bnValue);
+    return Read(make_pair('2', nChecksum), bnValue);
 }
 
 bool CZerocoinDB::EraseAccumulatorValue(const uint32_t& nChecksum) {
     LogPrint("zero", "%s : checksum:%d\n", __func__, nChecksum);
-    return Erase(make_pair('a', nChecksum));
+    return Erase(make_pair('2', nChecksum));
 }

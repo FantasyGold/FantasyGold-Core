@@ -1,7 +1,6 @@
 // Copyright (c) 2011-2014 The Bitcoin developers
 // Copyright (c) 2014-2015 The Dash developers
 // Copyright (c) 2015-2017 The PIVX developers
-// Copyright (c) 2017-2018 The Bulwark Core Developers
 // Copyright (c) 2017-2018 The FantasyGold developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
@@ -121,8 +120,8 @@ QString TransactionDesc::toHTML(CWallet* wallet, CWalletTx& wtx, TransactionReco
         // Offline transaction
         if (nNet > 0) {
             // Credit
-            if (CBitcoinAddress(rec->address).IsValid()) {
-                CTxDestination address = CBitcoinAddress(rec->address).Get();
+            if (IsValidDestinationString(rec->address)) {
+                CTxDestination address = DecodeDestination(rec->address);
                 if (wallet->mapAddressBook.count(address)) {
                     strHTML += "<b>" + tr("From") + ":</b> " + tr("unknown") + "<br>";
                     strHTML += "<b>" + tr("To") + ":</b> ";
@@ -145,7 +144,7 @@ QString TransactionDesc::toHTML(CWallet* wallet, CWalletTx& wtx, TransactionReco
         // Online transaction
         std::string strAddress = wtx.mapValue["to"];
         strHTML += "<b>" + tr("To") + ":</b> ";
-        CTxDestination dest = CBitcoinAddress(strAddress).Get();
+        CTxDestination dest = DecodeDestination(strAddress);
         if (wallet->mapAddressBook.count(dest) && !wallet->mapAddressBook[dest].name.empty())
             strHTML += GUIUtil::HtmlEscape(wallet->mapAddressBook[dest].name) + " ";
         strHTML += GUIUtil::HtmlEscape(strAddress) + "<br>";
@@ -206,7 +205,7 @@ QString TransactionDesc::toHTML(CWallet* wallet, CWalletTx& wtx, TransactionReco
                         strHTML += "<b>" + tr("To") + ":</b> ";
                         if (wallet->mapAddressBook.count(address) && !wallet->mapAddressBook[address].name.empty())
                             strHTML += GUIUtil::HtmlEscape(wallet->mapAddressBook[address].name) + " ";
-                        strHTML += GUIUtil::HtmlEscape(CBitcoinAddress(address).ToString());
+                        strHTML += GUIUtil::HtmlEscape(EncodeDestination(address));
                         if (toSelf == ISMINE_SPENDABLE)
                             strHTML += " (own address)";
                         else if (toSelf == ISMINE_WATCH_ONLY)
@@ -314,7 +313,7 @@ QString TransactionDesc::toHTML(CWallet* wallet, CWalletTx& wtx, TransactionReco
                     if (ExtractDestination(vout.scriptPubKey, address)) {
                         if (wallet->mapAddressBook.count(address) && !wallet->mapAddressBook[address].name.empty())
                             strHTML += GUIUtil::HtmlEscape(wallet->mapAddressBook[address].name) + " ";
-                        strHTML += QString::fromStdString(CBitcoinAddress(address).ToString());
+                        strHTML += QString::fromStdString(EncodeDestination(address));
                     }
                     strHTML = strHTML + " " + tr("Amount") + "=" + BitcoinUnits::formatHtmlWithUnit(unit, vout.nValue);
                     strHTML = strHTML + " IsMine=" + (wallet->IsMine(vout) & ISMINE_SPENDABLE ? tr("true") : tr("false"));

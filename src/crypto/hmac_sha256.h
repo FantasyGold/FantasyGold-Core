@@ -12,11 +12,11 @@
 
 /** A hasher class for HMAC-SHA-256. */
 class CHMAC_SHA256 {
-private:
+  private:
     CSHA256 outer;
     CSHA256 inner;
 
-public:
+  public:
     static const size_t OUTPUT_SIZE = 32;
 
     CHMAC_SHA256(const unsigned char* key, size_t keylen);

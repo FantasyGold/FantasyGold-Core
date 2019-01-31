@@ -1,7 +1,6 @@
 // Copyright (c) 2011-2014 The Bitcoin developers
 // Copyright (c) 2014-2015 The Dash developers
 // Copyright (c) 2015-2017 The PIVX developers
-// Copyright (c) 2017-2018 The Bulwark Core Developers
 // Copyright (c) 2017-2018 The FantasyGold developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
@@ -27,6 +26,10 @@ AskPassphraseDialog::AskPassphraseDialog(Mode mode, QWidget* parent, WalletModel
     fCapsLock(false) {
     ui->setupUi(this);
     this->setStyleSheet(GUIUtil::loadStyleSheet());
+
+    ui->passEdit1->setAttribute(Qt::WA_MacShowFocusRect, 0);
+    ui->passEdit2->setAttribute(Qt::WA_MacShowFocusRect, 0);
+    ui->passEdit3->setAttribute(Qt::WA_MacShowFocusRect, 0);
 
     ui->passEdit1->setMinimumSize(ui->passEdit1->sizeHint());
     ui->passEdit2->setMinimumSize(ui->passEdit2->sizeHint());
@@ -207,7 +210,7 @@ void AskPassphraseDialog::textChanged() {
         acceptable = !ui->passEdit1->text().isEmpty() && !ui->passEdit2->text().isEmpty() && !ui->passEdit3->text().isEmpty();
         break;
     }
-    ui->acceptButton->setEnabled(acceptable);
+    ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(acceptable);
 }
 
 bool AskPassphraseDialog::event(QEvent* event) {

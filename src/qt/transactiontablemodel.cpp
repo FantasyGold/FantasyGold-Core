@@ -246,10 +246,6 @@ int TransactionTableModel::columnCount(const QModelIndex& parent) const {
 QString TransactionTableModel::formatTxStatus(const TransactionRecord* wtx) const {
     QString status;
 
-    int depth = wtx->status.depth;
-    int required = TransactionRecord::RecommendedNumConfirmations;
-    if (wtx->type == TransactionRecord::ZerocoinMint) required = Params().Zerocoin_MintRequiredConfirmations();
-
     switch (wtx->status.status) {
     case TransactionStatus::OpenUntilBlock:
         status = tr("Open for %n more block(s)", "", wtx->status.open_for);
@@ -264,16 +260,16 @@ QString TransactionTableModel::formatTxStatus(const TransactionRecord* wtx) cons
         status = tr("Unconfirmed");
         break;
     case TransactionStatus::Confirming:
-        status = tr("Confirming (%1 of %2 recommended confirmations)").arg(depth).arg(required);
+        status = tr("Confirming (%1 of %2 recommended confirmations)").arg(wtx->status.depth).arg(TransactionRecord::RecommendedNumConfirmations);
         break;
     case TransactionStatus::Confirmed:
-        status = tr("Confirmed (%1 confirmations)").arg(depth);
+        status = tr("Confirmed (%1 confirmations)").arg(wtx->status.depth);
         break;
     case TransactionStatus::Conflicted:
         status = tr("Conflicted");
         break;
     case TransactionStatus::Immature:
-        status = tr("Immature (%1 confirmations, will be available after %2)").arg(depth).arg(wtx->status.depth + wtx->status.matures_in);
+        status = tr("Immature (%1 confirmations, will be available after %2)").arg(wtx->status.depth).arg(wtx->status.depth + wtx->status.matures_in);
         break;
     case TransactionStatus::MaturesWarning:
         status = tr("This block was not received by any other nodes and will probably not be accepted!");
@@ -357,9 +353,9 @@ QVariant TransactionTableModel::txAddressDecoration(const TransactionRecord* wtx
     switch (wtx->type) {
     case TransactionRecord::Generated:
     case TransactionRecord::StakeMint:
-        return QIcon(":/icons/stakemint");
+        return QIcon(":/icons/tx_staked");
     case TransactionRecord::MNReward:
-        return QIcon(":/icons/masternodes");
+        return QIcon(":/icons/tx_mined");
     case TransactionRecord::RecvWithObfuscation:
     case TransactionRecord::RecvWithAddress:
     case TransactionRecord::RecvFromOther:
@@ -417,8 +413,8 @@ QVariant TransactionTableModel::addressColor(const TransactionRecord* wtx) const
     case TransactionRecord::Generated:
     case TransactionRecord::MNReward: {
         QString label = walletModel->getAddressTableModel()->labelForAddress(QString::fromStdString(wtx->address));
-        if (label.isEmpty()) return COLOR_BAREADDRESS;
-        return COLOR_BLACK;
+        if (label.isEmpty())
+            return COLOR_BAREADDRESS;
     }
     default:
         // To avoid overriding above conditional formats a default text color for this QTableView is not defined in stylesheet,
@@ -543,11 +539,11 @@ QVariant TransactionTableModel::data(const QModelIndex& index, int role) const {
         return column_alignments[index.column()];
     case Qt::ForegroundRole:
         // Conflicted, most probably orphaned
-        if (rec->status.status == TransactionStatus::NotAccepted) {
+        if (rec->status.status == TransactionStatus::Conflicted || rec->status.status == TransactionStatus::NotAccepted) {
             return COLOR_CONFLICTED;
         }
-        // Non-confirmed (but not immature) as transactions are grey
-        if (!rec->status.countsForBalance && rec->status.status != TransactionStatus::Immature) {
+        // Unconfimed or immature
+        if ((rec->status.status == TransactionStatus::Unconfirmed) || (rec->status.status == TransactionStatus::Immature)) {
             return COLOR_UNCONFIRMED;
         }
         if (index.column() == Amount && (rec->credit + rec->debit) < 0) {

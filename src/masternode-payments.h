@@ -36,11 +36,11 @@ void DumpMasternodePayments();
 /** Save Masternode Payment Data (mnpayments.dat)
  */
 class CMasternodePaymentDB {
-private:
+  private:
     boost::filesystem::path pathDB;
     std::string strMagicMessage;
 
-public:
+  public:
     enum ReadResult {
         Ok,
         FileError,
@@ -57,7 +57,7 @@ public:
 };
 
 class CMasternodePayee {
-public:
+  public:
     CScript scriptPubKey;
     int nVotes;
 
@@ -82,7 +82,7 @@ public:
 
 // Keep track of votes for payees from masternodes
 class CMasternodeBlockPayees {
-public:
+  public:
     int nBlockHeight;
     std::vector<CMasternodePayee> vecPayments;
 
@@ -98,7 +98,7 @@ public:
     void AddPayee(CScript payeeIn, int nIncrement) {
         LOCK(cs_vecPayments);
 
-        BOOST_FOREACH (CMasternodePayee& payee, vecPayments) {
+        BOOST_FOREACH(CMasternodePayee& payee, vecPayments) {
             if (payee.scriptPubKey == payeeIn) {
                 payee.nVotes += nIncrement;
                 return;
@@ -113,7 +113,7 @@ public:
         LOCK(cs_vecPayments);
 
         int nVotes = -1;
-        BOOST_FOREACH (CMasternodePayee& p, vecPayments) {
+        BOOST_FOREACH(CMasternodePayee& p, vecPayments) {
             if (p.nVotes > nVotes) {
                 payee = p.scriptPubKey;
                 nVotes = p.nVotes;
@@ -126,7 +126,7 @@ public:
     bool HasPayeeWithVotes(CScript payee, int nVotesReq) {
         LOCK(cs_vecPayments);
 
-        BOOST_FOREACH (CMasternodePayee& p, vecPayments) {
+        BOOST_FOREACH(CMasternodePayee& p, vecPayments) {
             if (p.nVotes >= nVotesReq && p.scriptPubKey == payee) return true;
         }
 
@@ -147,7 +147,7 @@ public:
 
 // for storing the winning payments
 class CMasternodePaymentWinner {
-public:
+  public:
     CTxIn vinMasternode;
 
     int nBlockHeight;
@@ -211,11 +211,11 @@ public:
 //
 
 class CMasternodePayments {
-private:
+  private:
     int nSyncedFromPeer;
     int nLastBlockHeight;
 
-public:
+  public:
     std::map<uint256, CMasternodePaymentWinner> mapMasternodePayeeVotes;
     std::map<int, CMasternodeBlockPayees> mapMasternodeBlocks;
     std::map<uint256, int> mapMasternodesLastVote; //prevout.hash + prevout.n, nBlockHeight

@@ -10,17 +10,16 @@
 #include "keystore.h"
 #include "script/script.h"
 #include "script/standard.h"
-#include "util.h"
+#include "script/sign.h"
 
 #include <boost/foreach.hpp>
 
-using namespace std;
+typedef std::vector<unsigned char> valtype;
 
-typedef vector<unsigned char> valtype;
-
-unsigned int HaveKeys(const vector<valtype>& pubkeys, const CKeyStore& keystore) {
+unsigned int HaveKeys(const std::vector<valtype>& pubkeys, const CKeyStore& keystore) {
     unsigned int nResult = 0;
-    BOOST_FOREACH (const valtype& pubkey, pubkeys) {
+    for (const valtype& pubkey : pubkeys)
+    {
         CKeyID keyID = CPubKey(pubkey).GetID();
         if(keystore.HaveKey(keyID))
             ++nResult;
@@ -28,25 +27,29 @@ unsigned int HaveKeys(const vector<valtype>& pubkeys, const CKeyStore& keystore)
     return nResult;
 }
 
-isminetype IsMine(const CKeyStore& keystore, const CTxDestination& dest) {
-    CScript script = GetScriptForDestination(dest);
-    return IsMine(keystore, script);
+isminetype IsMine(const CKeyStore& keystore, const CScript& scriptPubKey, SigVersion sigversion) {
+    bool isInvalid = false;
+    return IsMine(keystore, scriptPubKey, isInvalid, sigversion);
 }
 
-isminetype IsMine(const CKeyStore& keystore, const CScript& scriptPubKey) {
-	if(keystore.HaveWatchOnly(scriptPubKey))
-		    return ISMINE_WATCH_ONLY;
-	   if(keystore.HaveMultiSig(scriptPubKey))
-		    return ISMINE_MULTISIG;
+isminetype IsMine(const CKeyStore& keystore, const CTxDestination& dest, SigVersion sigversion) {
+    bool isInvalid = false;
+    return IsMine(keystore, dest, isInvalid, sigversion);
+}
 
-    vector<valtype> vSolutions;
+isminetype IsMine(const CKeyStore &keystore, const CTxDestination& dest, bool& isInvalid, SigVersion sigversion) {
+    CScript script = GetScriptForDestination(dest);
+    return IsMine(keystore, script, isInvalid, sigversion);
+}
+
+isminetype IsMine(const CKeyStore &keystore, const CScript& scriptPubKey, bool& isInvalid, SigVersion sigversion) {
+    isInvalid = false;
+
+    std::vector<valtype> vSolutions;
     txnouttype whichType;
     if(!Solver(scriptPubKey, whichType, vSolutions)) {
         if(keystore.HaveWatchOnly(scriptPubKey))
-            return ISMINE_WATCH_ONLY;
-		if(keystore.HaveMultiSig(scriptPubKey))
-			    return ISMINE_MULTISIG;
-
+            return ISMINE_WATCH_UNSOLVABLE;
         return ISMINE_NO;
     }
 
@@ -54,15 +57,40 @@ isminetype IsMine(const CKeyStore& keystore, const CScript& scriptPubKey) {
     switch (whichType) {
     case TX_NONSTANDARD:
     case TX_NULL_DATA:
-        break;
+    case TX_WITNESS_UNKNOWN:
     case TX_ZEROCOINMINT:
+        break;
     case TX_PUBKEY:
         keyID = CPubKey(vSolutions[0]).GetID();
+        if (sigversion != SIGVERSION_BASE && vSolutions[0].size() != 33) {
+            isInvalid = true;
+            return ISMINE_NO;
+        }
         if(keystore.HaveKey(keyID))
             return ISMINE_SPENDABLE;
         break;
+    case TX_WITNESS_V0_KEYHASH:
+    {
+        if (!keystore.HaveCScript(CScriptID(CScript() << OP_0 << vSolutions[0]))) {
+            // We do not support bare witness outputs unless the P2SH version of it would be
+            // acceptable as well. This protects against matching before segwit activates.
+            // This also applies to the P2WSH case.
+            break;
+        }
+        isminetype ret = ::IsMine(keystore, GetScriptForDestination(CKeyID(uint160(vSolutions[0]))), isInvalid, SIGVERSION_WITNESS_V0);
+        if (ret == ISMINE_SPENDABLE || ret == ISMINE_WATCH_SOLVABLE || (ret == ISMINE_NO && isInvalid))
+            return ret;
+        break;
+    }
     case TX_PUBKEYHASH:
         keyID = CKeyID(uint160(vSolutions[0]));
+        if (sigversion != SIGVERSION_BASE) {
+            CPubKey pubkey;
+            if (keystore.GetPubKey(keyID, pubkey) && !pubkey.IsCompressed()) {
+                isInvalid = true;
+                return ISMINE_NO;
+            }
+        }
         if(keystore.HaveKey(keyID))
             return ISMINE_SPENDABLE;
         break;
@@ -70,8 +98,24 @@ isminetype IsMine(const CKeyStore& keystore, const CScript& scriptPubKey) {
         CScriptID scriptID = CScriptID(uint160(vSolutions[0]));
         CScript subscript;
         if(keystore.GetCScript(scriptID, subscript)) {
-            isminetype ret = IsMine(keystore, subscript);
-            if (ret != ISMINE_NO)
+            isminetype ret = IsMine(keystore, subscript, isInvalid);
+            if (ret == ISMINE_SPENDABLE || ret == ISMINE_WATCH_SOLVABLE || (ret == ISMINE_NO && isInvalid))
+                return ret;
+        }
+        break;
+    }
+    case TX_WITNESS_V0_SCRIPTHASH:
+    {
+        if (!keystore.HaveCScript(CScriptID(CScript() << OP_0 << vSolutions[0]))) {
+            break;
+        }
+        uint160 hash;
+        CRIPEMD160().Write(&vSolutions[0][0], vSolutions[0].size()).Finalize(hash.begin());
+        CScriptID scriptID = CScriptID(hash);
+        CScript subscript;
+        if (keystore.GetCScript(scriptID, subscript)) {
+            isminetype ret = IsMine(keystore, subscript, isInvalid, SIGVERSION_WITNESS_V0);
+            if (ret == ISMINE_SPENDABLE || ret == ISMINE_WATCH_SOLVABLE || (ret == ISMINE_NO && isInvalid))
                 return ret;
         }
         break;
@@ -82,17 +126,25 @@ isminetype IsMine(const CKeyStore& keystore, const CScript& scriptPubKey) {
         // partially owned (somebody else has a key that can spend
         // them) enable spend-out-from-under-you attacks, especially
         // in shared-wallet situations.
-        vector<valtype> keys(vSolutions.begin() + 1, vSolutions.begin() + vSolutions.size() - 1);
+        std::vector<valtype> keys(vSolutions.begin()+1, vSolutions.begin()+vSolutions.size()-1);
+        if (sigversion != SIGVERSION_BASE) {
+            for (size_t i = 0; i < keys.size(); i++) {
+                if (keys[i].size() != 33) {
+                    isInvalid = true;
+                    return ISMINE_NO;
+                }
+            }
+        }
         if(HaveKeys(keys, keystore) == keys.size())
             return ISMINE_SPENDABLE;
         break;
     }
     }
 
-    if(keystore.HaveWatchOnly(scriptPubKey))
-        return ISMINE_WATCH_ONLY;
-	if(keystore.HaveMultiSig(scriptPubKey))
-		return ISMINE_MULTISIG;
-
+    if (keystore.HaveWatchOnly(scriptPubKey)) {
+        // TODO: This could be optimized some by doing some work after the above solver
+        SignatureData sigs;
+        return ProduceSignature(DummySignatureCreator(&keystore), scriptPubKey, sigs) ? ISMINE_WATCH_SOLVABLE : ISMINE_WATCH_UNSOLVABLE;
+    }
     return ISMINE_NO;
 }

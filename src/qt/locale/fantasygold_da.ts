@@ -4243,10 +4243,6 @@ Enten mint højere nomineringer (så færre input er nødvendige) eller reducere
         <source>The Dash Core developers</source>
         <translation>DASH "core" udviklerne</translation>
     </message>
-	<message>
-        <source>The Bulwark Core developers</source>
-        <translation>Bulwark "core" udviklerne</translation>
-    </message>
     <message>
         <source>The FantasyGold Core developers</source>
         <translation>FantasyGold "core" udviklerne</translation>

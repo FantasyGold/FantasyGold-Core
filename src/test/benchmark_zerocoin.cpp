@@ -321,7 +321,7 @@ Testb_MintAndSpend() {
 
         // Now spend the coin
         timer.start();
-        CoinSpend spend(gg_Params, *(ggCoins[0]), acc, 0, wAcc, 0); //(0) presstab
+		CoinSpend spend(gg_Params, gg_Params, *(ggCoins[0]), acc, 0, wAcc, 0, SpendType::SPEND); //(0) presstab
         timer.stop();
 
         cout << "\tSPEND ELAPSED TIME: " << timer.duration() << " ms\t" << timer.duration()*0.001 << " s" << endl;
@@ -333,7 +333,7 @@ Testb_MintAndSpend() {
         ss << spend;
         timer.stop();
 
-        CoinSpend newSpend(gg_Params, ss);
+		CoinSpend newSpend(gg_Params, gg_Params, ss);
 
         cout << "\tSERIALIZE ELAPSED TIME: " << timer.duration() << " ms\t" << timer.duration()*0.001 << " s" << endl;
 
@@ -354,7 +354,8 @@ Testb_MintAndSpend() {
 }
 
 void
-Testb_RunAllTests() {
+Testb_RunAllTests()
+{
     // Make a new set of parameters from a random RSA modulus
     gg_Params = new ZerocoinParams(gGetTestModulus());
 
@@ -387,7 +388,8 @@ Testb_RunAllTests() {
 }
 BOOST_AUTO_TEST_SUITE(benchmark_zerocoin)
 
-BOOST_AUTO_TEST_CASE(benchmark_test) {
+BOOST_AUTO_TEST_CASE(benchmark_test)
+{
     cout << "libzerocoin v" << ZEROCOIN_VERSION_STRING << " benchmark utility." << endl << endl;
 
     Testb_RunAllTests();

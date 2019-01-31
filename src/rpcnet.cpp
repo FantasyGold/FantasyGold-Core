@@ -1,14 +1,12 @@
 // Copyright (c) 2009-2014 The Bitcoin developers
 // Copyright (c) 2014-2015 The Dash developers
 // Copyright (c) 2015-2017 The PIVX developers
-// Copyright (c) 2017-2018 The Bulwark Core Developers
 // Copyright (c) 2017-2018 The FantasyGold developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
 #include "rpcserver.h"
 
-#include "addrdb.h"
 #include "clientversion.h"
 #include "main.h"
 #include "net.h"
@@ -16,6 +14,7 @@
 #include "protocol.h"
 #include "sync.h"
 #include "timedata.h"
+#include "ui_interface.h"
 #include "util.h"
 #include "version.h"
 
@@ -35,7 +34,8 @@ UniValue getconnectioncount(const UniValue& params, bool fHelp) {
             "\nExamples:\n" +
             HelpExampleCli("getconnectioncount", "") + HelpExampleRpc("getconnectioncount", ""));
 
-    LOCK(cs_vNodes);
+    LOCK2(cs_main, cs_vNodes);
+
     return (int)vNodes.size();
 }
 
@@ -50,8 +50,9 @@ UniValue ping(const UniValue& params, bool fHelp) {
             HelpExampleCli("ping", "") + HelpExampleRpc("ping", ""));
 
     // Request that each node send a ping during next message processing pass
-    LOCK(cs_vNodes);
-    BOOST_FOREACH (CNode* pNode, vNodes) {
+    LOCK2(cs_main, cs_vNodes);
+
+    BOOST_FOREACH(CNode* pNode, vNodes) {
         pNode->fPingQueued = true;
     }
 
@@ -63,7 +64,7 @@ static void CopyNodeStats(std::vector<CNodeStats>& vstats) {
 
     LOCK(cs_vNodes);
     vstats.reserve(vNodes.size());
-    BOOST_FOREACH (CNode* pnode, vNodes) {
+    BOOST_FOREACH(CNode* pnode, vNodes) {
         CNodeStats stats;
         pnode->copyStats(stats);
         vstats.push_back(stats);
@@ -87,6 +88,7 @@ UniValue getpeerinfo(const UniValue& params, bool fHelp) {
             "    \"bytessent\": n,            (numeric) The total bytes sent\n"
             "    \"bytesrecv\": n,            (numeric) The total bytes received\n"
             "    \"conntime\": ttt,           (numeric) The connection time in seconds since epoch (Jan 1 1970 GMT)\n"
+            "    \"timeoffset\": ttt,         (numeric) The time offset in seconds\n"
             "    \"pingtime\": n,             (numeric) ping time\n"
             "    \"pingwait\": n,             (numeric) ping wait\n"
             "    \"version\": v,              (numeric) The peer version, such as 7001\n"
@@ -106,12 +108,14 @@ UniValue getpeerinfo(const UniValue& params, bool fHelp) {
             "\nExamples:\n" +
             HelpExampleCli("getpeerinfo", "") + HelpExampleRpc("getpeerinfo", ""));
 
+    LOCK(cs_main);
+
     vector<CNodeStats> vstats;
     CopyNodeStats(vstats);
 
     UniValue ret(UniValue::VARR);
 
-    BOOST_FOREACH (const CNodeStats& stats, vstats) {
+    BOOST_FOREACH(const CNodeStats& stats, vstats) {
         UniValue obj(UniValue::VOBJ);
         CNodeStateStats statestats;
         bool fStateStats = GetNodeStateStats(stats.nodeid, statestats);
@@ -125,6 +129,7 @@ UniValue getpeerinfo(const UniValue& params, bool fHelp) {
         obj.push_back(Pair("bytessent", stats.nSendBytes));
         obj.push_back(Pair("bytesrecv", stats.nRecvBytes));
         obj.push_back(Pair("conntime", stats.nTimeConnected));
+        obj.push_back(Pair("timeoffset", stats.nTimeOffset));
         obj.push_back(Pair("pingtime", stats.dPingTime));
         if (stats.dPingWait > 0.0)
             obj.push_back(Pair("pingwait", stats.dPingWait));
@@ -140,7 +145,7 @@ UniValue getpeerinfo(const UniValue& params, bool fHelp) {
             obj.push_back(Pair("synced_headers", statestats.nSyncHeight));
             obj.push_back(Pair("synced_blocks", statestats.nCommonHeight));
             UniValue heights(UniValue::VARR);
-            BOOST_FOREACH (int height, statestats.vHeightInFlight) {
+            BOOST_FOREACH(int height, statestats.vHeightInFlight) {
                 heights.push_back(height);
             }
             obj.push_back(Pair("inflight", heights));
@@ -158,7 +163,7 @@ UniValue addnode(const UniValue& params, bool fHelp) {
     if (params.size() == 2)
         strCommand = params[1].get_str();
     if (fHelp || params.size() != 2 ||
-        (strCommand != "onetry" && strCommand != "add" && strCommand != "remove"))
+            (strCommand != "onetry" && strCommand != "add" && strCommand != "remove"))
         throw runtime_error(
             "addnode \"node\" \"add|remove|onetry\"\n"
             "\nAttempts add or remove a node from the addnode list.\n"
@@ -192,6 +197,27 @@ UniValue addnode(const UniValue& params, bool fHelp) {
             throw JSONRPCError(RPC_CLIENT_NODE_NOT_ADDED, "Error: Node has not been added.");
         vAddedNodes.erase(it);
     }
+
+    return NullUniValue;
+}
+
+UniValue disconnectnode(const UniValue& params, bool fHelp) {
+    if (fHelp || params.size() != 1)
+        throw runtime_error(
+            "disconnectnode \"node\" \n"
+            "\nImmediately disconnects from the specified node.\n"
+            "\nArguments:\n"
+            "1. \"node\"     (string, required) The node (see getpeerinfo for nodes)\n"
+            "\nExamples:\n"
+            + HelpExampleCli("disconnectnode", "\"192.168.0.6:8333\"")
+            + HelpExampleRpc("disconnectnode", "\"192.168.0.6:8333\"")
+        );
+
+    CNode* pNode = FindNode(params[0].get_str());
+    if (pNode == NULL)
+        throw JSONRPCError(RPC_CLIENT_NODE_NOT_CONNECTED, "Node not found in connected nodes");
+
+    pNode->CloseSocketDisconnect();
 
     return NullUniValue;
 }
@@ -248,7 +274,7 @@ UniValue getaddednodeinfo(const UniValue& params, bool fHelp) {
 
     UniValue ret(UniValue::VARR);
     if (!fDns) {
-        BOOST_FOREACH (string& strAddNode, laddedNodes) {
+        BOOST_FOREACH(string& strAddNode, laddedNodes) {
             UniValue obj(UniValue::VOBJ);
             obj.push_back(Pair("addednode", strAddNode));
             ret.push_back(obj);
@@ -257,7 +283,7 @@ UniValue getaddednodeinfo(const UniValue& params, bool fHelp) {
     }
 
     list<pair<string, vector<CService> > > laddedAddreses(0);
-    BOOST_FOREACH (string& strAddNode, laddedNodes) {
+    BOOST_FOREACH(string& strAddNode, laddedNodes) {
         vector<CService> vservNode(0);
         if (Lookup(strAddNode.c_str(), vservNode, Params().GetDefaultPort(), fNameLookup, 0))
             laddedAddreses.push_back(make_pair(strAddNode, vservNode));
@@ -277,7 +303,7 @@ UniValue getaddednodeinfo(const UniValue& params, bool fHelp) {
 
         UniValue addresses(UniValue::VARR);
         bool fConnected = false;
-        BOOST_FOREACH (CService& addrNode, it->second) {
+        BOOST_FOREACH(CService& addrNode, it->second) {
             bool fFound = false;
             UniValue node(UniValue::VOBJ);
             node.push_back(Pair("address", addrNode.ToString()));
@@ -377,10 +403,12 @@ UniValue getnetworkinfo(const UniValue& params, bool fHelp) {
             "\nExamples:\n" +
             HelpExampleCli("getnetworkinfo", "") + HelpExampleRpc("getnetworkinfo", ""));
 
+    LOCK(cs_main);
+
     UniValue obj(UniValue::VOBJ);
     obj.push_back(Pair("version", CLIENT_VERSION));
     obj.push_back(Pair("subversion",
-        FormatSubVersion(CLIENT_NAME, CLIENT_VERSION, std::vector<string>())));
+                       FormatSubVersion(CLIENT_NAME, CLIENT_VERSION, std::vector<string>())));
     obj.push_back(Pair("protocolversion", PROTOCOL_VERSION));
     obj.push_back(Pair("localservices", strprintf("%016x", nLocalServices)));
     obj.push_back(Pair("timeoffset", GetTimeOffset()));
@@ -390,7 +418,7 @@ UniValue getnetworkinfo(const UniValue& params, bool fHelp) {
     UniValue localAddresses(UniValue::VARR);
     {
         LOCK(cs_mapLocalHost);
-        BOOST_FOREACH (const PAIRTYPE(CNetAddr, LocalServiceInfo) & item, mapLocalHost) {
+        BOOST_FOREACH(const PAIRTYPE(CNetAddr, LocalServiceInfo) & item, mapLocalHost) {
             UniValue rec(UniValue::VOBJ);
             rec.push_back(Pair("address", item.first.ToString()));
             rec.push_back(Pair("port", item.second.nPort));
@@ -442,22 +470,27 @@ UniValue setban(const UniValue& params, bool fHelp) {
             throw JSONRPCError(RPC_CLIENT_NODE_ALREADY_ADDED, "Error: IP/Subnet already banned");
 
         int64_t banTime = 0; //use standard bantime if not specified
-        if (params.size() >= 3 && params[2].get_str() != "")
+        if (params.size() >= 3 && !params[2].isNull())
             banTime = params[2].get_int64();
 
         bool absolute = false;
-        if (params.size() == 4 && params[3].get_str() == "true")
-            absolute = true;
+        if (params.size() == 4)
+            absolute = params[3].get_bool();
 
-        isSubnet ? CNode::Ban(subNet, banTime, absolute) : CNode::Ban(netAddr, banTime, absolute);
+        isSubnet ? CNode::Ban(subNet, BanReasonManuallyAdded, banTime, absolute) : CNode::Ban(netAddr, BanReasonManuallyAdded, banTime, absolute);
 
         //disconnect possible nodes
         while(CNode *bannedNode = (isSubnet ? FindNode(subNet) : FindNode(netAddr)))
             bannedNode->CloseSocketDisconnect();
-    } else if(strCommand == "remove") {
+    }
+    else if(strCommand == "remove")
+    {
         if (!( isSubnet ? CNode::Unban(subNet) : CNode::Unban(netAddr) ))
             throw JSONRPCError(RPC_MISC_ERROR, "Error: Unban failed");
     }
+
+    DumpBanlist(); //store banlist to disk
+    uiInterface.BannedListChanged();
 
     return NullUniValue;
 }
@@ -476,10 +509,15 @@ UniValue listbanned(const UniValue& params, bool fHelp) {
     CNode::GetBanned(banMap);
 
     UniValue bannedAddresses(UniValue::VARR);
-    for (banmap_t::iterator it = banMap.begin(); it != banMap.end(); it++) {
+    for (banmap_t::iterator it = banMap.begin(); it != banMap.end(); it++)
+    {
+        CBanEntry banEntry = (*it).second;
         UniValue rec(UniValue::VOBJ);
         rec.push_back(Pair("address", (*it).first.ToString()));
-        rec.push_back(Pair("banned_untill", (*it).second.nBanUntil));
+        rec.push_back(Pair("banned_until", banEntry.nBanUntil));
+        rec.push_back(Pair("ban_created", banEntry.nCreateTime));
+        rec.push_back(Pair("ban_reason", banEntry.banReasonToString()));
+
         bannedAddresses.push_back(rec);
     }
 
@@ -497,6 +535,8 @@ UniValue clearbanned(const UniValue& params, bool fHelp) {
         );
 
     CNode::ClearBanned();
+    DumpBanlist(); //store banlist to disk
+    uiInterface.BannedListChanged();
 
     return NullUniValue;
 }

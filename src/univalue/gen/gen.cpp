@@ -20,8 +20,7 @@ static std::string escapes[256];
 static void initJsonEscape()
 {
     // Escape all lower control characters (some get overridden with smaller sequences below)
-    for (int ch=0x00; ch<0x20; ++ch)
-    {
+    for (int ch=0x00; ch<0x20; ++ch) {
         char tmpbuf[20];
         snprintf(tmpbuf, sizeof(tmpbuf), "\\u%04x", ch);
         escapes[ch] = std::string(tmpbuf);
@@ -46,22 +45,16 @@ static void outputEscape()
             "#define BITCOIN_UNIVALUE_UNIVALUE_ESCAPES_H\n"
             "static const char *escapes[256] = {\n");
 
-    for (unsigned int i = 0; i < 256; i++)
-    {
-        if (escapes[i].empty())
-        {
+	for (unsigned int i = 0; i < 256; i++) {
+		if (escapes[i].empty()) {
             printf("\tNULL,\n");
-        }
-        else
-        {
+		} else {
             printf("\t\"");
 
             unsigned int si;
-            for (si = 0; si < escapes[i].size(); si++)
-            {
+			for (si = 0; si < escapes[i].size(); si++) {
                 char ch = escapes[i][si];
-                switch (ch)
-                {
+				switch (ch) {
                 case '"':
                     printf("\\\"");
                     break;

@@ -1,16 +1,39 @@
-// Copyright (c) 2017 The PIVX developers
+// Copyright (c) 2017-2018 The PIVX developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
-#ifndef FGC_ZEROCOIN_H
-#define FGC_ZEROCOIN_H
 
-#include <amount.h>
-#include <limits.h>
+#ifndef FANTASYGOLD_ZEROCOIN_H
+#define FANTASYGOLD_ZEROCOIN_H
+
+#include "amount.h"
+#include "limits.h"
 #include "libzerocoin/bignum.h"
 #include "libzerocoin/Denominations.h"
+#include "key.h"
 #include "serialize.h"
 
-class CZerocoinMint {
+//struct that is safe to store essential mint data, without holding any information that allows for actual spending (serial, randomness, private key)
+struct CMintMeta
+{
+    int nHeight;
+    uint256 hashSerial;
+    uint256 hashPubcoin;
+    uint256 hashStake; //requires different hashing method than hashSerial above
+    uint8_t nVersion;
+    libzerocoin::CoinDenomination denom;
+    uint256 txid;
+    bool isUsed;
+    bool isArchived;
+    bool isDeterministic;
+
+    bool operator <(const CMintMeta& a) const;
+};
+
+uint256 GetSerialHash(const CBigNum& bnSerial);
+uint256 GetPubCoinHash(const CBigNum& bnValue);
+
+class CZerocoinMint
+{
   private:
     libzerocoin::CoinDenomination denomination;
     int nHeight;
@@ -18,20 +41,30 @@ class CZerocoinMint {
     CBigNum randomness;
     CBigNum serialNumber;
     uint256 txid;
+    CPrivKey privkey;
+    uint8_t version;
     bool isUsed;
 
   public:
-    CZerocoinMint() {
+    static const int STAKABLE_VERSION = 2;
+    static const int CURRENT_VERSION = 2;
+
+    CZerocoinMint()
+    {
         SetNull();
     }
 
-    CZerocoinMint(libzerocoin::CoinDenomination denom, CBigNum value, CBigNum randomness, CBigNum serialNumber, bool isUsed) {
+    CZerocoinMint(libzerocoin::CoinDenomination denom, const CBigNum& value, const CBigNum& randomness, const CBigNum& serialNumber, bool isUsed, const uint8_t& nVersion, CPrivKey* privkey = nullptr)
+    {
         SetNull();
         this->denomination = denom;
         this->value = value;
         this->randomness = randomness;
         this->serialNumber = serialNumber;
         this->isUsed = isUsed;
+        this->version = nVersion;
+        if (nVersion >= 2 && privkey)
+            this->privkey = *privkey;
     }
 
     void SetNull() {
@@ -41,59 +74,34 @@ class CZerocoinMint {
         denomination = libzerocoin::ZQ_ERROR;
         nHeight = 0;
         txid = 0;
+        version = 1;
+        privkey.clear();
     }
 
     uint256 GetHash() const;
 
-    CBigNum GetValue() const {
-        return value;
-    }
-    void SetValue(CBigNum value) {
-        this->value = value;
-    }
-    libzerocoin::CoinDenomination GetDenomination() const {
-        return denomination;
-    }
-    int64_t GetDenominationAsAmount() const {
-        return denomination * COIN;
-    }
-    void SetDenomination(libzerocoin::CoinDenomination denom) {
-        this->denomination = denom;
-    }
-    int GetHeight() const {
-        return nHeight;
-    }
-    void SetHeight(int nHeight) {
-        this->nHeight = nHeight;
-    }
-    bool IsUsed() const {
-        return this->isUsed;
-    }
-    void SetUsed(bool isUsed) {
-        this->isUsed = isUsed;
-    }
-    CBigNum GetRandomness() const {
-        return randomness;
-    }
-    void SetRandomness(CBigNum rand) {
-        this->randomness = rand;
-    }
-    CBigNum GetSerialNumber() const {
-        return serialNumber;
-    }
-    void SetSerialNumber(CBigNum serial) {
-        this->serialNumber = serial;
-    }
-    uint256 GetTxHash() const {
-        return this->txid;
-    }
-    void SetTxHash(uint256 txid) {
-        this->txid = txid;
-    }
+    CBigNum GetValue() const { return value; }
+    void SetValue(CBigNum value){ this->value = value; }
+    libzerocoin::CoinDenomination GetDenomination() const { return denomination; }
+    int64_t GetDenominationAsAmount() const { return denomination * COIN; }
+    void SetDenomination(libzerocoin::CoinDenomination denom){ this->denomination = denom; }
+    int GetHeight() const { return nHeight; }
+    void SetHeight(int nHeight){ this->nHeight = nHeight; }
+    bool IsUsed() const { return this->isUsed; }
+    void SetUsed(bool isUsed){ this->isUsed = isUsed; }
+    CBigNum GetRandomness() const{ return randomness; }
+    void SetRandomness(CBigNum rand){ this->randomness = rand; }
+    CBigNum GetSerialNumber() const { return serialNumber; }
+    void SetSerialNumber(CBigNum serial){ this->serialNumber = serial; }
+    uint256 GetTxHash() const { return this->txid; }
+    void SetTxHash(uint256 txid) { this->txid = txid; }
+    uint8_t GetVersion() const { return this->version; }
+    void SetVersion(const uint8_t nVersion) { this->version = nVersion; }
+    CPrivKey GetPrivKey() const { return this->privkey; }
+    void SetPrivKey(const CPrivKey& privkey) { this->privkey = privkey; }
+    bool GetKeyPair(CKey& key) const;
 
-    inline bool operator <(const CZerocoinMint& a) const {
-        return GetHeight() < a.GetHeight();
-    }
+    inline bool operator <(const CZerocoinMint& a) const { return GetHeight() < a.GetHeight(); }
 
     CZerocoinMint(const CZerocoinMint& other) {
         denomination = other.GetDenomination();
@@ -103,9 +111,14 @@ class CZerocoinMint {
         serialNumber = other.GetSerialNumber();
         txid = other.GetTxHash();
         isUsed = other.IsUsed();
+        version = other.GetVersion();
+        privkey = other.privkey;
     }
 
-    bool operator == (const CZerocoinMint& other) const {
+    std::string ToString() const;
+
+    bool operator == (const CZerocoinMint& other) const
+    {
         return this->GetValue() == other.GetValue();
     }
 
@@ -118,6 +131,8 @@ class CZerocoinMint {
         serialNumber = other.GetSerialNumber();
         txid = other.GetTxHash();
         isUsed = other.IsUsed();
+        version = other.GetVersion();
+        privkey = other.GetPrivKey();
         return *this;
     }
 
@@ -141,6 +156,21 @@ class CZerocoinMint {
         READWRITE(denomination);
         READWRITE(nHeight);
         READWRITE(txid);
+
+        bool fVersionedMint = true;
+        try {
+            READWRITE(version);
+        } catch (...) {
+            fVersionedMint = false;
+        }
+
+        if (version > CURRENT_VERSION) {
+            version = 1;
+            fVersionedMint = false;
+        }
+
+        if (fVersionedMint)
+            READWRITE(privkey);
     };
 };
 
@@ -158,7 +188,8 @@ class CZerocoinSpend {
         SetNull();
     }
 
-    CZerocoinSpend(CBigNum coinSerial, uint256 hashTx, CBigNum pubCoin, libzerocoin::CoinDenomination denomination, unsigned int nAccumulatorChecksum) {
+    CZerocoinSpend(CBigNum coinSerial, uint256 hashTx, CBigNum pubCoin, libzerocoin::CoinDenomination denomination, unsigned int nAccumulatorChecksum)
+    {
         this->coinSerial = coinSerial;
         this->hashTx = hashTx;
         this->pubCoin = pubCoin;
@@ -173,31 +204,15 @@ class CZerocoinSpend {
         denomination = libzerocoin::ZQ_ERROR;
     }
 
-    CBigNum GetSerial() const {
-        return coinSerial;
-    }
-    uint256 GetTxHash() const {
-        return hashTx;
-    }
-    void SetTxHash(uint256 hash) {
-        this->hashTx = hash;
-    }
-    CBigNum GetPubCoin() const {
-        return pubCoin;
-    }
-    libzerocoin::CoinDenomination GetDenomination() const {
-        return denomination;
-    }
-    unsigned int GetAccumulatorChecksum() const {
-        return this->nAccumulatorChecksum;
-    }
+    CBigNum GetSerial() const { return coinSerial; }
+    uint256 GetTxHash() const { return hashTx; }
+    void SetTxHash(uint256 hash) { this->hashTx = hash; }
+    CBigNum GetPubCoin() const { return pubCoin; }
+    libzerocoin::CoinDenomination GetDenomination() const { return denomination; }
+    unsigned int GetAccumulatorChecksum() const { return this->nAccumulatorChecksum; }
     uint256 GetHash() const;
-    void SetMintCount(int nMintsAdded) {
-        this->nMintCount = nMintsAdded;
-    }
-    int GetMintCount() const {
-        return nMintCount;
-    }
+    void SetMintCount(int nMintsAdded) { this->nMintCount = nMintsAdded; }
+    int GetMintCount() const { return nMintCount; }
 
     ADD_SERIALIZE_METHODS;
 
@@ -227,4 +242,4 @@ class CZerocoinSpendReceipt {
     int GetNeededSpends();
 };
 
-#endif //FGC_ZEROCOIN_H
+#endif //FANTASYGOLD_ZEROCOIN_H

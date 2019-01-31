@@ -2,7 +2,6 @@
 // Copyright (c) 2009-2014 The Bitcoin developers
 // Copyright (c) 2014-2015 The Dash developers
 // Copyright (c) 2015-2017 The PIVX developers
-// Copyright (c) 2017-2018 The Bulwark Core Developers
 // Copyright (c) 2017-2018 The FantasyGold developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
@@ -10,6 +9,7 @@
 #include "amount.h"
 #include "base58.h"
 #include "chainparams.h"
+#include "consensus/validation.h"
 #include "core_io.h"
 #include "init.h"
 #include "main.h"
@@ -18,7 +18,7 @@
 #include "pow.h"
 #include "rpcserver.h"
 #include "util.h"
-#include "spork.h"
+#include "validationinterface.h"
 #ifdef ENABLE_WALLET
 #include "db.h"
 #include "wallet.h"
@@ -32,40 +32,13 @@
 
 using namespace std;
 
-#ifdef ENABLE_WALLET
-// Key used by getwork miners.
-// Allocated in InitRPCMining, free'd in ShutdownRPCMining
-static CReserveKey* pMiningKey = NULL;
-
-void InitRPCMining() {
-    if (!pwalletMain)
-        return;
-
-    // getwork/getblocktemplate mining rewards paid here:
-    pMiningKey = new CReserveKey(pwalletMain);
-}
-
-void ShutdownRPCMining() {
-    if (!pMiningKey)
-        return;
-
-    delete pMiningKey;
-    pMiningKey = NULL;
-}
-#else
-void InitRPCMining() {
-}
-void ShutdownRPCMining() {
-}
-#endif
-
 /**
  * Return average network hashes per second based on the last 'lookup' blocks,
  * or from the last difficulty change if 'lookup' is nonpositive.
  * If 'height' is nonnegative, compute the estimate at the time when a given block was found.
  */
 UniValue GetNetworkHashPS(int lookup, int height) {
-    CBlockIndex* pb = chainActive.Tip();
+    CBlockIndex *pb = chainActive.Tip();
 
     if (height >= 0 && height < chainActive.Height())
         pb = chainActive[height];
@@ -116,6 +89,7 @@ UniValue getnetworkhashps(const UniValue& params, bool fHelp) {
             "\nExamples:\n" +
             HelpExampleCli("getnetworkhashps", "") + HelpExampleRpc("getnetworkhashps", ""));
 
+    LOCK(cs_main);
     return GetNetworkHashPS(params.size() > 0 ? params[0].get_int() : 120, params.size() > 1 ? params[1].get_int() : -1);
 }
 
@@ -132,6 +106,7 @@ UniValue getgenerate(const UniValue& params, bool fHelp) {
             "\nExamples:\n" +
             HelpExampleCli("getgenerate", "") + HelpExampleRpc("getgenerate", ""));
 
+    LOCK(cs_main);
     return GetBoolArg("-gen", false);
 }
 
@@ -188,9 +163,17 @@ UniValue setgenerate(const UniValue& params, bool fHelp) {
         unsigned int nExtraNonce = 0;
         UniValue blockHashes(UniValue::VARR);
         while (nHeight < nHeightEnd) {
-            unique_ptr<CBlockTemplate> pblocktemplate(CreateNewBlockWithKey(reservekey, pwalletMain, false));
-            if (!pblocktemplate.get())
+            CPubKey pubkey;
+            if (!reservekey.GetReservedKey(pubkey))
                 throw JSONRPCError(RPC_INTERNAL_ERROR, "Wallet keypool empty");
+
+            CScript scriptPubKey = CScript() << ToByteVector(pubkey) << OP_CHECKSIG;
+            CBlockTemplate* pblocktemplate;
+            try {
+                pblocktemplate = CreateNewBlock(scriptPubKey, pwalletMain, false);
+            } catch(std::runtime_error err) {
+                throw JSONRPCError(RPC_MISC_ERROR, err.what());
+            }
             CBlock* pblock = &pblocktemplate->block;
             {
                 LOCK(cs_main);
@@ -257,9 +240,11 @@ UniValue getmininginfo(const UniValue& params, bool fHelp) {
             "\nExamples:\n" +
             HelpExampleCli("getmininginfo", "") + HelpExampleRpc("getmininginfo", ""));
 
+    LOCK(cs_main);
+
     UniValue obj(UniValue::VOBJ);
     obj.push_back(Pair("blocks", (int)chainActive.Height()));
-    obj.push_back(Pair("currentblocksize", (uint64_t)nLastBlockSize));
+    obj.push_back(Pair("currentblocksize", (uint64_t)nLastBlockCost));
     obj.push_back(Pair("currentblocktx", (uint64_t)nLastBlockTx));
     obj.push_back(Pair("difficulty", (double)GetDifficulty()));
     obj.push_back(Pair("errors", GetWarnings("statusbar")));
@@ -295,6 +280,8 @@ UniValue prioritisetransaction(const UniValue& params, bool fHelp) {
             "\nExamples:\n" +
             HelpExampleCli("prioritisetransaction", "\"txid\" 0.0 10000") + HelpExampleRpc("prioritisetransaction", "\"txid\", 0.0, 10000"));
 
+    LOCK(cs_main);
+
     uint256 hash = ParseHashStr(params[0].get_str(), "txid");
 
     CAmount nAmount = params[2].get_int64();
@@ -322,14 +309,14 @@ static UniValue BIP22ValidationResult(const CValidationState& state) {
 }
 
 UniValue getblocktemplate(const UniValue& params, bool fHelp) {
-    int lastPoWBlock = Params().LAST_POW_BLOCK();
-
     if (fHelp || params.size() > 1)
         throw runtime_error(
             "getblocktemplate ( \"jsonrequestobject\" )\n"
             "\nIf the request parameters include a 'mode' key, that is used to explicitly select between the default 'template' request or a 'proposal'.\n"
             "It returns data needed to construct a block to work on.\n"
-            "See https://en.bitcoin.it/wiki/BIP_0022 for full specification.\n"
+            "For full specification, see BIP 22 and BIP 145:\n"
+            "    https://github.com/bitcoin/bips/blob/master/bip-0022.mediawiki\n"
+            "    https://github.com/bitcoin/bips/blob/master/bip-0145.mediawiki\n"
 
             "\nArguments:\n"
             "1. \"jsonrequestobject\"       (string, optional) A json object in the following spec\n"
@@ -349,13 +336,15 @@ UniValue getblocktemplate(const UniValue& params, bool fHelp) {
             "  \"transactions\" : [                (array) contents of non-coinbase transactions that should be included in the next block\n"
             "      {\n"
             "         \"data\" : \"xxxx\",          (string) transaction data encoded in hexadecimal (byte-for-byte)\n"
-            "         \"hash\" : \"xxxx\",          (string) hash/id encoded in little-endian hexadecimal\n"
+            "         \"txid\" : \"xxxx\",          (string) transaction id encoded in little-endian hexadecimal\n"
+            "         \"hash\" : \"xxxx\",          (string) hash encoded in little-endian hexadecimal (including witness data)\n"
             "         \"depends\" : [              (array) array of numbers \n"
             "             n                        (numeric) transactions before this one (by 1-based index in 'transactions' list) that must be present in the final block if this one is\n"
             "             ,...\n"
             "         ],\n"
-            "         \"fee\": n,                   (numeric) difference in value between transaction inputs and outputs (in ufgc); for coinbase transactions, this is a negative Number of the total collected block fees (ie, not including the block subsidy); if key is not present, fee is unknown and clients MUST NOT assume there isn't one\n"
-            "         \"sigops\" : n,               (numeric) total number of SigOps, as counted for purposes of block limits; if key is not present, sigop count is unknown and clients MUST NOT assume there aren't any\n"
+            "         \"fee\": n,                   (numeric) difference in value between transaction inputs and outputs (in Satoshis); for coinbase transactions, this is a negative Number of the total collected block fees (ie, not including the block subsidy); if key is not present, fee is unknown and clients MUST NOT assume there isn't one\n"
+            "         \"sigops\" : n,               (numeric) total SigOps cost, as counted for purposes of block limits; if key is not present, sigop cost is unknown and clients MUST NOT assume it is zero\n"
+            "         \"cost\" : n,                 (numeric) total transaction size cost, as counted for purposes of block limits\n"
             "         \"required\" : true|false     (boolean) if provided and true, this transaction must be in the final block\n"
             "      }\n"
             "      ,...\n"
@@ -363,7 +352,7 @@ UniValue getblocktemplate(const UniValue& params, bool fHelp) {
             "  \"coinbaseaux\" : {                  (json object) data that should be included in the coinbase's scriptSig content\n"
             "      \"flags\" : \"flags\"            (string) \n"
             "  },\n"
-            "  \"coinbasevalue\" : n,               (numeric) maximum allowable input to coinbase transaction, including the generation award and transaction fees (in ufgc)\n"
+            "  \"coinbasevalue\" : n,               (numeric) maximum allowable input to coinbase transaction, including the generation award and transaction fees (in uFGC)\n"
             "  \"coinbasetxn\" : { ... },           (json object) information for coinbase transaction\n"
             "  \"target\" : \"xxxx\",               (string) The hash target\n"
             "  \"mintime\" : xxx,                   (numeric) The minimum timestamp appropriate for next block time in seconds since epoch (Jan 1 1970 GMT)\n"
@@ -372,8 +361,9 @@ UniValue getblocktemplate(const UniValue& params, bool fHelp) {
             "     ,...\n"
             "  ],\n"
             "  \"noncerange\" : \"00000000ffffffff\",   (string) A range of valid nonces\n"
-            "  \"sigoplimit\" : n,                 (numeric) limit of sigops in blocks\n"
+            "  \"sigoplimit\" : n,                 (numeric) cost limit of sigops in blocks\n"
             "  \"sizelimit\" : n,                  (numeric) limit of block size\n"
+            "  \"costlimit\" : n,                  (numeric) limit of block cost\n"
             "  \"curtime\" : ttt,                  (numeric) current timestamp in seconds since epoch (Jan 1 1970 GMT)\n"
             "  \"bits\" : \"xxx\",                 (string) compressed target of next block\n"
             "  \"height\" : n                      (numeric) The height of the next block\n"
@@ -390,8 +380,7 @@ UniValue getblocktemplate(const UniValue& params, bool fHelp) {
             "\nExamples:\n" +
             HelpExampleCli("getblocktemplate", "") + HelpExampleRpc("getblocktemplate", ""));
 
-    if (chainActive.Tip()->nHeight >= lastPoWBlock)
-        throw JSONRPCError(RPC_GBT_POS_ERROR, "No mining during Proof-of-Stake");
+    LOCK(cs_main);
 
     std::string strMode = "template";
     UniValue lpval = NullUniValue;
@@ -439,10 +428,10 @@ UniValue getblocktemplate(const UniValue& params, bool fHelp) {
     if (strMode != "template")
         throw JSONRPCError(RPC_INVALID_PARAMETER, "Invalid mode");
 
-    if (vNodes.empty())
+    if (vNodes.empty() && Params().NetworkID() != CBaseChainParams::REGTEST)
         throw JSONRPCError(RPC_CLIENT_NOT_CONNECTED, "FantasyGold is not connected!");
 
-    if (IsInitialBlockDownload())
+    if (IsInitialBlockDownload() && Params().NetworkID() != CBaseChainParams::REGTEST)
         throw JSONRPCError(RPC_CLIENT_IN_INITIAL_DOWNLOAD, "FantasyGold is downloading blocks...");
 
     static unsigned int nTransactionsUpdatedLast;
@@ -466,10 +455,6 @@ UniValue getblocktemplate(const UniValue& params, bool fHelp) {
         }
 
 // Release the wallet and main lock while waiting
-#ifdef ENABLE_WALLET
-        if (pwalletMain)
-            LEAVE_CRITICAL_SECTION(pwalletMain->cs_wallet);
-#endif
         LEAVE_CRITICAL_SECTION(cs_main);
         {
             checktxtime = boost::get_system_time() + boost::posix_time::minutes(1);
@@ -485,10 +470,6 @@ UniValue getblocktemplate(const UniValue& params, bool fHelp) {
             }
         }
         ENTER_CRITICAL_SECTION(cs_main);
-#ifdef ENABLE_WALLET
-        if (pwalletMain)
-            ENTER_CRITICAL_SECTION(pwalletMain->cs_wallet);
-#endif
 
         if (!IsRPCRunning())
             throw JSONRPCError(RPC_CLIENT_NOT_CONNECTED, "Shutting down");
@@ -500,7 +481,7 @@ UniValue getblocktemplate(const UniValue& params, bool fHelp) {
     static int64_t nStart;
     static CBlockTemplate* pblocktemplate;
     if (pindexPrev != chainActive.Tip() ||
-        (mempool.GetTransactionsUpdated() != nTransactionsUpdatedLast && GetTime() - nStart > 5)) {
+            (mempool.GetTransactionsUpdated() != nTransactionsUpdatedLast && GetTime() - nStart > 5)) {
         // Clear pindexPrev so future calls make a new block, despite any failures from here on
         pindexPrev = NULL;
 
@@ -514,8 +495,8 @@ UniValue getblocktemplate(const UniValue& params, bool fHelp) {
             delete pblocktemplate;
             pblocktemplate = NULL;
         }
-		
-	CScript scriptDummy = CScript() << OP_TRUE;
+
+        CScript scriptDummy = CScript() << OP_TRUE;
         pblocktemplate = CreateNewBlock(scriptDummy, pwalletMain, false);
         if (!pblocktemplate)
             throw JSONRPCError(RPC_OUT_OF_MEMORY, "Out of memory");
@@ -523,21 +504,20 @@ UniValue getblocktemplate(const UniValue& params, bool fHelp) {
         // Need to update only after we know CreateNewBlock succeeded
         pindexPrev = pindexPrevNew;
     }
-	
-	
+
+
     CBlock* pblock = &pblocktemplate->block; // pointer for convenience
 
     // Update nTime
     UpdateTime(pblock, pindexPrev);
     pblock->nNonce = 0;
 
-    UniValue aCaps(UniValue::VARR);
-    aCaps.push_back("proposal");
+    UniValue aCaps(UniValue::VARR); aCaps.push_back("proposal");
 
     UniValue transactions(UniValue::VARR);
     map<uint256, int64_t> setTxIndex;
     int i = 0;
-    BOOST_FOREACH (CTransaction& tx, pblock->vtx) {
+    BOOST_FOREACH(CTransaction& tx, pblock->vtx) {
         uint256 txHash = tx.GetHash();
         setTxIndex[txHash] = i++;
 
@@ -546,12 +526,12 @@ UniValue getblocktemplate(const UniValue& params, bool fHelp) {
 
         UniValue entry(UniValue::VOBJ);
 
-        entry.push_back(Pair("data", EncodeHexTx(tx)));
-
-        entry.push_back(Pair("hash", txHash.GetHex()));
+        entry.push_back(Pair("data", EncodeHexTx(tx, PROTOCOL_VERSION | RPCSerializationFlags())));
+        entry.push_back(Pair("txid", txHash.GetHex()));
+        entry.push_back(Pair("hash", tx.GetWitnessHash().GetHex()));
 
         UniValue deps(UniValue::VARR);
-        BOOST_FOREACH (const CTxIn& in, tx.vin) {
+        BOOST_FOREACH(const CTxIn& in, tx.vin) {
             if (setTxIndex.count(in.prevout.hash))
                 deps.push_back(setTxIndex[in.prevout.hash]);
         }
@@ -559,41 +539,10 @@ UniValue getblocktemplate(const UniValue& params, bool fHelp) {
 
         int index_in_template = i - 1;
         entry.push_back(Pair("fee", pblocktemplate->vTxFees[index_in_template]));
-        entry.push_back(Pair("sigops", pblocktemplate->vTxSigOps[index_in_template]));
+        entry.push_back(Pair("sigops", pblocktemplate->vTxSigOpsCost[index_in_template]));
+        entry.push_back(Pair("cost", GetTransactionCost(tx)));
 
         transactions.push_back(entry);
-    }
-	
-    UniValue coinbasetxn(UniValue::VARR);
-    map<uint256, int64_t> setTxIndex1;
-    int j = 0;
-    BOOST_FOREACH (CTransaction& tx, pblock->vtx) {//Incase if multi coinbase
-		if(tx.IsCoinBase()){
-			uint256 txHash = tx.GetHash();
-			setTxIndex1[txHash] = j++;
-
-			/* if (tx.IsCoinBase())
-            continue; */
-
-            UniValue entry(UniValue::VOBJ);
-
-			entry.push_back(Pair("data", EncodeHexTx(tx)));
-
-			entry.push_back(Pair("hash", txHash.GetHex()));
-
-            UniValue deps(UniValue::VARR);
-			BOOST_FOREACH (const CTxIn& in, tx.vin) {
-				if (setTxIndex.count(in.prevout.hash))
-                deps.push_back(setTxIndex[in.prevout.hash]);
-			}
-			entry.push_back(Pair("depends", deps));
-
-			int index_in_template = j - 1;
-			entry.push_back(Pair("fee", pblocktemplate->vTxFees[index_in_template]));
-			entry.push_back(Pair("sigops", pblocktemplate->vTxSigOps[index_in_template]));
-
-			coinbasetxn.push_back(entry);
-		}
     }
 
     UniValue aux(UniValue::VOBJ);
@@ -617,14 +566,14 @@ UniValue getblocktemplate(const UniValue& params, bool fHelp) {
     result.push_back(Pair("transactions", transactions));
     result.push_back(Pair("coinbaseaux", aux));
     result.push_back(Pair("coinbasevalue", (int64_t)pblock->vtx[0].GetValueOut()));
-	result.push_back(Pair("coinbasetxn", coinbasetxn[0]));
     result.push_back(Pair("longpollid", chainActive.Tip()->GetBlockHash().GetHex() + i64tostr(nTransactionsUpdatedLast)));
     result.push_back(Pair("target", hashTarget.GetHex()));
     result.push_back(Pair("mintime", (int64_t)pindexPrev->GetMedianTimePast() + 1));
     result.push_back(Pair("mutable", aMutable));
     result.push_back(Pair("noncerange", "00000000ffffffff"));
-//    result.push_back(Pair("sigoplimit", (int64_t)MAX_BLOCK_SIGOPS));
-//    result.push_back(Pair("sizelimit", (int64_t)MAX_BLOCK_SIZE));
+    result.push_back(Pair("sigoplimit", (int64_t)MAX_BLOCK_SIGOPS_COST));
+    result.push_back(Pair("sizelimit", (int64_t)MAX_BLOCK_SERIALIZED_SIZE));
+    result.push_back(Pair("costlimit", (int64_t)MAX_BLOCK_COST));
     result.push_back(Pair("curtime", pblock->GetBlockTime()));
     result.push_back(Pair("bits", strprintf("%08x", pblock->nBits)));
     result.push_back(Pair("height", (int64_t)(pindexPrev->nHeight + 1)));
@@ -634,29 +583,32 @@ UniValue getblocktemplate(const UniValue& params, bool fHelp) {
     if (pblock->payee != CScript()) {
         CTxDestination address1;
         ExtractDestination(pblock->payee, address1);
-        CBitcoinAddress address2(address1);
-        result.push_back(Pair("payee", address2.ToString().c_str()));
+        result.push_back(Pair("payee", EncodeDestination(address1).c_str()));
         result.push_back(Pair("payee_amount", (int64_t)pblock->vtx[0].vout[1].nValue));
     } else {
         result.push_back(Pair("payee", ""));
         result.push_back(Pair("payee_amount", ""));
     }
 
-    result.push_back(Pair("masternode_payments", pblock->nTime > Params().StartMasternodePayments()));
+    result.push_back(Pair("masternode_payments", true));
     result.push_back(Pair("enforce_masternode_payments", true));
+
+    if (!pblocktemplate->vchCoinbaseCommitment.empty()) {
+        result.push_back(Pair("default_witness_commitment", HexStr(pblocktemplate->vchCoinbaseCommitment.begin(), pblocktemplate->vchCoinbaseCommitment.end())));
+    }
 
     return result;
 }
 
 class submitblock_StateCatcher : public CValidationInterface {
-public:
+  public:
     uint256 hash;
     bool found;
     CValidationState state;
 
-    submitblock_StateCatcher(const uint256& hashIn) : hash(hashIn), found(false), state(){};
+    submitblock_StateCatcher(const uint256& hashIn) : hash(hashIn), found(false), state() {};
 
-protected:
+  protected:
     virtual void BlockChecked(const CBlock& block, const CValidationState& stateIn) {
         if (block.GetHash() != hash)
             return;
@@ -700,6 +652,14 @@ UniValue submitblock(const UniValue& params, bool fHelp) {
                 return "duplicate-invalid";
             // Otherwise, we might only have the header - process the block before returning
             fBlockPresent = true;
+        }
+    }
+
+    {
+        LOCK(cs_main);
+        BlockMap::iterator mi = mapBlockIndex.find(block.hashPrevBlock);
+        if (mi != mapBlockIndex.end()) {
+            UpdateUncommittedBlockStructures(block, mi->second);
         }
     }
 

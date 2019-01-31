@@ -1,7 +1,6 @@
 // Copyright (c) 2011-2014 The Bitcoin developers
 // Copyright (c) 2014-2015 The Dash developers
 // Copyright (c) 2015-2017 The PIVX developers
-// Copyright (c) 2017-2018 The Bulwark Core Developers
 // Copyright (c) 2017-2018 The FantasyGold developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
@@ -95,7 +94,10 @@ class BitcoinUnits : public QAbstractListModel {
     static QString formatHtmlWithUnit(int unit, const CAmount& amount, bool plussign = false, SeparatorStyle separators = separatorStandard);
     //! Format as string (with unit) but floor value up to "digits" settings
     static QString floorWithUnit(int unit, const CAmount& amount, bool plussign = false, SeparatorStyle separators = separatorStandard);
+    static QString floorWithOutUnit(int unit, const CAmount& amount, bool plussign = false, SeparatorStyle separators = separatorStandard);
     static QString floorHtmlWithUnit(int unit, const CAmount& amount, bool plussign = false, SeparatorStyle separators = separatorStandard);
+    //! Format as string (with unit) but floor value up to "digits" settings adding a comma for US / English Language Settings
+    static QString floorHtmlWithUnitComma(int unit, const CAmount& amount, bool plussign = false, SeparatorStyle separators = separatorStandard);
     //! Parse string to coin amount
     static bool parse(int unit, const QString& value, CAmount* val_out);
     //! Gets title for amount column including current display unit if optionsModel reference available */

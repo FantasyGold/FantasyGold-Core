@@ -13,7 +13,7 @@
  * of a given instance of the FantasyGold system.
  */
 class CBaseChainParams {
-public:
+  public:
     enum Network {
         MAIN,
         TESTNET,
@@ -23,14 +23,10 @@ public:
         MAX_NETWORK_TYPES
     };
 
-    const std::string& DataDir() const {
-        return strDataDir;
-    }
-    int RPCPort() const {
-        return nRPCPort;
-    }
+    const std::string& DataDir() const { return strDataDir; }
+    int RPCPort() const { return nRPCPort; }
 
-protected:
+  protected:
     CBaseChainParams() {}
 
     int nRPCPort;

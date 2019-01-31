@@ -12,11 +12,11 @@
 
 /** A hasher class for HMAC-SHA-512. */
 class CHMAC_SHA512 {
-private:
+  private:
     CSHA512 outer;
     CSHA512 inner;
 
-public:
+  public:
     static const size_t OUTPUT_SIZE = 64;
 
     CHMAC_SHA512(const unsigned char* key, size_t keylen);

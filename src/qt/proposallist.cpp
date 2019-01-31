@@ -4,15 +4,9 @@
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#include "activemasternode.h"
-#include "db.h"
-#include "guiutil.h"
-#include "init.h"
-#include "main.h"
-#include "obfuscation.h"
-#include "optionsmodel.h"
-#include "proposaldialog.h"
 #include "proposallist.h"
+#include "guiutil.h"
+#include "optionsmodel.h"
 #include "proposalfilterproxy.h"
 #include "proposalrecord.h"
 #include "proposaltablemodel.h"
@@ -22,9 +16,18 @@
 #include "masternodeconfig.h"
 #include "masternodeman.h"
 #include "rpcserver.h"
-#include "ui_interface.h"
+#include "activemasternode.h"
+#include "db.h"
+#include "init.h"
+#include "main.h"
 #include "utilmoneystr.h"
+
+#include "rpcserver.h"
 #include "util.h"
+#include "obfuscation.h"
+//#include "governance.h"
+
+#include "ui_interface.h"
 
 #include <QComboBox>
 #include <QDateTimeEdit>
@@ -33,11 +36,11 @@
 #include <QHBoxLayout>
 #include <QHeaderView>
 #include <QLabel>
+#include <QPushButton>
 #include <QLineEdit>
 #include <QMenu>
 #include <QPainter>
 #include <QPoint>
-#include <QPushButton>
 #include <QScrollBar>
 #include <QSettings>
 #include <QTableView>
@@ -45,38 +48,39 @@
 #include <QVBoxLayout>
 
 ProposalList::ProposalList(QWidget *parent) :
-    QWidget(parent),
-    proposalTableModel(0),
-    proposalProxyModel(0),
-    proposalList(0),
-    columnResizingFixer(0) {
+    QWidget(parent), proposalTableModel(0), proposalProxyModel(0),
+    proposalList(0), columnResizingFixer(0) {
     proposalTableModel = new ProposalTableModel(this);
     QSettings settings;
 
-    setContentsMargins(0,0,0,0);
+    setContentsMargins(20,0,20,0);
 
     hlayout = new ColumnAlignedLayout();
     hlayout->setContentsMargins(0,0,0,0);
     hlayout->setSpacing(0);
 
     proposalWidget = new QLineEdit(this);
+    proposalWidget->setAttribute(Qt::WA_MacShowFocusRect, 0);
     proposalWidget->setPlaceholderText(tr("Enter proposal name"));
     proposalWidget->setObjectName("proposalWidget");
     hlayout->addWidget(proposalWidget);
 
     amountWidget = new QLineEdit(this);
+    amountWidget->setAttribute(Qt::WA_MacShowFocusRect, 0);
     amountWidget->setPlaceholderText(tr("Min amount"));
     amountWidget->setValidator(new QDoubleValidator(0, 1e20, 0, this));
     amountWidget->setObjectName("amountWidget");
     hlayout->addWidget(amountWidget);
 
     startDateWidget = new QLineEdit(this);
+	   startDateWidget->setAttribute(Qt::WA_MacShowFocusRect, 0);
     startDateWidget->setPlaceholderText(tr("Start Block"));
     startDateWidget->setValidator(new QIntValidator(0, INT_MAX, this));
     startDateWidget->setObjectName("startDateWidget");
     hlayout->addWidget(startDateWidget);
 
     endDateWidget = new QLineEdit(this);
+	   endDateWidget->setAttribute(Qt::WA_MacShowFocusRect, 0);
     endDateWidget->setPlaceholderText(tr("End Block"));
     endDateWidget->setValidator(new QIntValidator(0, INT_MAX, this));
     endDateWidget->setObjectName("endDateWidget");
@@ -95,59 +99,76 @@ ProposalList::ProposalList(QWidget *parent) :
     hlayout->addWidget(remainingPaymentCountWidget);
 
     yesVotesWidget = new QLineEdit(this);
+	  yesVotesWidget->setAttribute(Qt::WA_MacShowFocusRect, 0);
     yesVotesWidget->setPlaceholderText(tr("Min yes votes"));
     yesVotesWidget->setValidator(new QIntValidator(0, INT_MAX, this));
     yesVotesWidget->setObjectName("yesVotesWidget");
     hlayout->addWidget(yesVotesWidget);
 
     noVotesWidget = new QLineEdit(this);
+	  noVotesWidget->setAttribute(Qt::WA_MacShowFocusRect, 0);
     noVotesWidget->setPlaceholderText(tr("Min no votes"));
     noVotesWidget->setValidator(new QIntValidator(0, INT_MAX, this));
     noVotesWidget->setObjectName("noVotesWidget");
     hlayout->addWidget(noVotesWidget);
 
     abstainVotesWidget = new QLineEdit(this);
+	abstainVotesWidget->setAttribute(Qt::WA_MacShowFocusRect, 0);
     abstainVotesWidget->setPlaceholderText(tr("Min abstain votes"));
     abstainVotesWidget->setValidator(new QIntValidator(0, INT_MAX, this));
     abstainVotesWidget->setObjectName("abstainVotesWidget");
     hlayout->addWidget(abstainVotesWidget);
 
-    percentageWidget = new QLineEdit(this);
-    percentageWidget->setPlaceholderText(tr("Min percentage"));
-    percentageWidget->setValidator(new QIntValidator(-100, 100, this));
-    percentageWidget->setObjectName("percentageWidget");
-    hlayout->addWidget(percentageWidget);
+    votesNeededWidget = new QLineEdit(this);
+    votesNeededWidget->setAttribute(Qt::WA_MacShowFocusRect, 0);
 
-    /* Header - Info/Projection */
-    QtMaterialFlatButton *createButton = new QtMaterialFlatButton(this);
-    createButton->setIcon(QIcon(":/icons/add"));
-    createButton->setText("Create");
-    createButton->setToolTip(tr("Create budget proposal."));
+    votesNeededWidget->setPlaceholderText(tr("Min votes needed"));
 
-    proposalTypeCombo = new QComboBox(this);
-    proposalTypeCombo->setFixedWidth(240);
-    proposalTypeCombo->addItem("All Proposals", 0);
-    proposalTypeCombo->addItem("Budget Projection", 1);
-
-    headLayout = new QHBoxLayout();
-    headLayout->setContentsMargins(0, 0, 0, 10);
-    headLayout->addWidget(createButton);
-    headLayout->addStretch(1);
-    headLayout->addWidget(proposalTypeCombo);
-    /* End Header - Info/Projection */
+    votesNeededWidget->setValidator(new QIntValidator(-100, 100, this));
+    votesNeededWidget->setObjectName("votesNeededWidget");
+    hlayout->addWidget(votesNeededWidget);
 
     QVBoxLayout *vlayout = new QVBoxLayout(this);
     vlayout->setSpacing(0);
 
+    QHBoxLayout* horizontalLayout_Header = new QHBoxLayout();
+    horizontalLayout_Header->setObjectName(QStringLiteral("horizontalLayout_Header"));
+
+    QLabel* labelOverviewHeaderLeft = new QLabel();
+    labelOverviewHeaderLeft->setObjectName(QStringLiteral("labelOverviewHeaderLeft"));
+    labelOverviewHeaderLeft->setMinimumSize(QSize(464, 60));
+    labelOverviewHeaderLeft->setMaximumSize(QSize(16777215, 60));
+    labelOverviewHeaderLeft->setText(tr("Proposals"));
+    labelOverviewHeaderLeft->setAlignment(Qt::AlignCenter);
+    QFont fontHeaderLeft;
+    fontHeaderLeft.setPointSize(20);
+    fontHeaderLeft.setBold(true);
+    fontHeaderLeft.setWeight(75);
+    labelOverviewHeaderLeft->setFont(fontHeaderLeft);
+
+    horizontalLayout_Header->addWidget(labelOverviewHeaderLeft);
+    // QSpacerItem* horizontalSpacer_3 = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
+    // horizontalLayout_Header->addItem(horizontalSpacer_3);
+
+
+
     QTableView *view = new QTableView(this);
-    view->setAlternatingRowColors(true);
-    view->setSelectionBehavior(QAbstractItemView::SelectionBehavior::SelectRows);
-    view->setSelectionMode(QAbstractItemView::SelectionMode::SingleSelection);
 
-    vlayout->addLayout(headLayout);
+    //view->horizontalHeaderview->setDefaultAlignment(Qt::AlignLeft);
+
+    view->setShowGrid(false);
+    //view->setTextAlignment(Qt::AlignLeft);
+
+
+    vlayout->addLayout(horizontalLayout_Header);
+
+    QSpacerItem* verticalSpacer_3 = new QSpacerItem(20, 20, QSizePolicy::Minimum, QSizePolicy::Preferred);
+    vlayout->addItem(verticalSpacer_3);
     vlayout->addLayout(hlayout);
+    QSpacerItem* verticalSpacer_5 = new QSpacerItem(20, 20, QSizePolicy::Minimum, QSizePolicy::Preferred);
+    vlayout->addItem(verticalSpacer_5);
     vlayout->addWidget(view);
-
+    vlayout->setSpacing(0);
     int width = view->verticalScrollBar()->sizeHint().width();
     hlayout->addSpacing(width);
     hlayout->setTableColumnsToTrack(view->horizontalHeader());
@@ -155,7 +176,8 @@ ProposalList::ProposalList(QWidget *parent) :
     connect(view->horizontalHeader(), SIGNAL(sectionResized(int,int,int)), SLOT(invalidateAlignedLayout()));
     connect(view->horizontalScrollBar(), SIGNAL(valueChanged(int)), SLOT(invalidateAlignedLayout()));
 
-    view->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
+    // view->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
+    view->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
     view->setTabKeyNavigation(false);
     view->setContextMenuPolicy(Qt::CustomContextMenu);
 
@@ -163,7 +185,7 @@ ProposalList::ProposalList(QWidget *parent) :
 
     QHBoxLayout *actionBar = new QHBoxLayout();
     actionBar->setSpacing(11);
-    actionBar->setContentsMargins(0,20,0,20);
+    actionBar->setContentsMargins(0,20,0,4);
 
     QtMaterialFlatButton *voteYesButton = new QtMaterialFlatButton(tr("Vote Yes"), this);
     voteYesButton->setToolTip(tr("Yote Yes on the selected proposal"));
@@ -183,72 +205,68 @@ ProposalList::ProposalList(QWidget *parent) :
 
     vlayout->addLayout(actionBar);
 
-    QAction *voteYesAction = new QAction(tr("Vote Yes"), this);
-    QAction *voteAbstainAction = new QAction(tr("Vote Abstain"), this);
-    QAction *voteNoAction = new QAction(tr("Vote No"), this);
-    QAction *copyUrlAction = new QAction(tr("Copy proposal URL"), this);
+    QAction *voteYesAction = new QAction(tr("Vote yes"), this);
+    QAction *voteAbstainAction = new QAction(tr("Vote abstain"), this);
+    QAction *voteNoAction = new QAction(tr("Vote no"), this);
+    QAction *openUrlAction = new QAction(tr("Visit proposal website"), this);
 
     contextMenu = new QMenu(this);
     contextMenu->addAction(voteYesAction);
     contextMenu->addAction(voteAbstainAction);
     contextMenu->addAction(voteNoAction);
     contextMenu->addSeparator();
-    contextMenu->addAction(copyUrlAction);
-
-    connect(view, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(contextualMenu(QPoint)));
-
-    connect(createButton, SIGNAL(clicked()), this, SLOT(createProposal()));
-    connect(proposalTypeCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(proposalType(int)));
+    contextMenu->addAction(openUrlAction);
 
     connect(voteYesButton, SIGNAL(clicked()), this, SLOT(voteYes()));
     connect(voteAbstainButton, SIGNAL(clicked()), this, SLOT(voteAbstain()));
     connect(voteNoButton, SIGNAL(clicked()), this, SLOT(voteNo()));
 
-    connect(voteYesAction, SIGNAL(triggered()), this, SLOT(voteYes()));
-    connect(voteNoAction, SIGNAL(triggered()), this, SLOT(voteNo()));
-    connect(voteAbstainAction, SIGNAL(triggered()), this, SLOT(voteAbstain()));
-    connect(copyUrlAction, SIGNAL(triggered()), this, SLOT(copyProposalUrl()));
-
     connect(proposalWidget, SIGNAL(textChanged(QString)), this, SLOT(changedProposal(QString)));
     connect(startDateWidget, SIGNAL(textChanged(QString)), this, SLOT(chooseStartDate(QString)));
     connect(endDateWidget, SIGNAL(textChanged(QString)), this, SLOT(chooseEndDate(QString)));
-    connect(totalPaymentCountWidget, SIGNAL(textChanged(QString)), this, SLOT(changedTotalPaymentCount(QString)));
-    connect(remainingPaymentCountWidget, SIGNAL(textChanged(QString)), this, SLOT(changedRemainingPaymentCount(QString)));
     connect(yesVotesWidget, SIGNAL(textChanged(QString)), this, SLOT(changedYesVotes(QString)));
     connect(noVotesWidget, SIGNAL(textChanged(QString)), this, SLOT(changedNoVotes(QString)));
     connect(abstainVotesWidget, SIGNAL(textChanged(QString)), this, SLOT(changedAbstainVotes(QString)));
     connect(amountWidget, SIGNAL(textChanged(QString)), this, SLOT(changedAmount(QString)));
-    connect(percentageWidget, SIGNAL(textChanged(QString)), this, SLOT(changedPercentage(QString)));
+    connect(votesNeededWidget, SIGNAL(textChanged(QString)), this, SLOT(changedVotesNeeded(QString)));
+
+    connect(view, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(openProposalUrl()));
+    connect(view, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(contextualMenu(QPoint)));
+
+    connect(voteYesAction, SIGNAL(triggered()), this, SLOT(voteYes()));
+    connect(voteNoAction, SIGNAL(triggered()), this, SLOT(voteNo()));
+    connect(voteAbstainAction, SIGNAL(triggered()), this, SLOT(voteAbstain()));
+
+    connect(openUrlAction, SIGNAL(triggered()), this, SLOT(openProposalUrl()));
 
     proposalProxyModel = new ProposalFilterProxy(this);
-    proposalProxyModel->setDynamicSortFilter(true);
-    proposalProxyModel->setFilterCaseSensitivity(Qt::CaseInsensitive);
-    proposalProxyModel->setSortCaseSensitivity(Qt::CaseInsensitive);
-    proposalProxyModel->setSortRole(Qt::EditRole);
     proposalProxyModel->setSourceModel(proposalTableModel);
+    proposalProxyModel->setDynamicSortFilter(true);
+    proposalProxyModel->setSortCaseSensitivity(Qt::CaseInsensitive);
+    proposalProxyModel->setFilterCaseSensitivity(Qt::CaseInsensitive);
 
-    proposalList->setAlternatingRowColors(true);
+    proposalProxyModel->setSortRole(Qt::EditRole);
+
     proposalList->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     proposalList->setModel(proposalProxyModel);
+    proposalList->setAlternatingRowColors(true);
     proposalList->setSelectionBehavior(QAbstractItemView::SelectRows);
     proposalList->setSortingEnabled(true);
-    proposalList->sortByColumn(ProposalTableModel::YesVotes, Qt::DescendingOrder);
+    proposalList->sortByColumn(ProposalTableModel::StartDate, Qt::DescendingOrder);
     proposalList->verticalHeader()->hide();
 
     proposalList->setColumnWidth(ProposalTableModel::Proposal, PROPOSAL_COLUMN_WIDTH);
     proposalList->setColumnWidth(ProposalTableModel::Amount, AMOUNT_COLUMN_WIDTH);
     proposalList->setColumnWidth(ProposalTableModel::StartDate, START_DATE_COLUMN_WIDTH);
     proposalList->setColumnWidth(ProposalTableModel::EndDate, END_DATE_COLUMN_WIDTH);
-    proposalList->setColumnWidth(ProposalTableModel::TotalPaymentCount, TOTAL_PAYMENT_COLUMN_WIDTH);
-    proposalList->setColumnWidth(ProposalTableModel::RemainingPaymentCount, REMAINING_PAYMENT_COLUMN_WIDTH);
     proposalList->setColumnWidth(ProposalTableModel::YesVotes, YES_VOTES_COLUMN_WIDTH);
     proposalList->setColumnWidth(ProposalTableModel::NoVotes, NO_VOTES_COLUMN_WIDTH);
     proposalList->setColumnWidth(ProposalTableModel::AbstainVotes, ABSTAIN_COLUMN_WIDTH);
-    proposalList->setColumnWidth(ProposalTableModel::Percentage, PERCENTAGE_COLUMN_WIDTH);
+    proposalList->setColumnWidth(ProposalTableModel::VotesNeeded, VOTES_NEEDED_COLUMN_WIDTH);
 
-    //connect(proposalList->selectionModel(), SIGNAL(selectionChanged(QItemSelection, QItemSelection)), this, SLOT(computeSum()));
+    columnResizingFixer = new GUIUtil::TableViewLastColumnResizingFixer(proposalList, VOTES_NEEDED_COLUMN_WIDTH, MINIMUM_COLUMN_WIDTH);
 
-    columnResizingFixer = new GUIUtil::TableViewLastColumnResizingFixer(proposalList, PROPOSAL_COLUMN_WIDTH, MINIMUM_COLUMN_WIDTH);
+
 
     nLastUpdate = GetTime();
 
@@ -257,18 +275,6 @@ ProposalList::ProposalList(QWidget *parent) :
     timer->start(1000);
 
     setLayout(vlayout);
-}
-
-void ProposalList::createProposal() {
-    ProposalDialog dlg(ProposalDialog::PrepareProposal, this);
-    if (QDialog::Accepted == dlg.exec()) {
-        refreshProposals(true);
-    }
-}
-
-void ProposalList::proposalType(int type) {
-    proposalTableModel->setProposalType(type);
-    refreshProposals(true);
 }
 
 void ProposalList::invalidateAlignedLayout() {
@@ -296,13 +302,13 @@ void ProposalList::changedAmount(const QString &minAmount) {
     proposalProxyModel->setMinAmount(minAmount.toInt());
 }
 
-void ProposalList::changedPercentage(const QString &minPercentage) {
+void ProposalList::changedVotesNeeded(const QString &votesNeeded) {
     if(!proposalProxyModel)
         return;
 
-    int value = minPercentage == "" ? -100 : minPercentage.toInt();
+    int value = votesNeeded == "" ? 0 : votesNeeded.toInt();
 
-    proposalProxyModel->setMinPercentage(value);
+    proposalProxyModel->setVotesNeeded(value);
 }
 
 void ProposalList::changedProposal(const QString &proposal) {
@@ -331,16 +337,6 @@ void ProposalList::chooseEndDate(const QString &endDate) {
         return;
 
     proposalProxyModel->setMinYesVotes(endDate.toInt());
-}
-
-void ProposalList::changedTotalPaymentCount(const QString &totalPaymentCount) {
-    if (!proposalProxyModel) return;
-    proposalProxyModel->setTotalPaymentCount(totalPaymentCount.toInt());
-}
-
-void ProposalList::changedRemainingPaymentCount(const QString &remainingPaymentCount) {
-    if (!proposalProxyModel) return;
-    proposalProxyModel->setRemainingPaymentCount(remainingPaymentCount.toInt());
 }
 
 void ProposalList::changedNoVotes(const QString &minNoVotes) {
@@ -407,6 +403,7 @@ void ProposalList::vote_click_handler(const std::string voteString) {
     if (strVote == "yes") nVote = VOTE_YES;
     if (strVote == "no") nVote = VOTE_NO;
 
+
     for (const auto& mne : masternodeConfig.getEntries()) {
         std::string errorMessage;
         std::vector<unsigned char> vchMasterNodeSignature;
@@ -416,6 +413,7 @@ void ProposalList::vote_click_handler(const std::string voteString) {
         CKey keyCollateralAddress;
         CPubKey pubKeyMasternode;
         CKey keyMasternode;
+
 
         UniValue statusObj(UniValue::VOBJ);
 
@@ -452,14 +450,13 @@ void ProposalList::vote_click_handler(const std::string voteString) {
     refreshProposals(true);
 }
 
-void ProposalList::copyProposalUrl() {
+void ProposalList::openProposalUrl() {
     if(!proposalList || !proposalList->selectionModel())
         return;
 
-    GUIUtil::copyEntryData(proposalList, 0, ProposalTableModel::ProposalUrlRole);
-    QMessageBox Msgbox;
-    Msgbox.setText(tr("The proposal URL has been copied to the clipboard. You can use it to visit the proposal website.\nHowever, be very careful when doing so. Some websites can try to extract your wallet information in the background or to lure you into a scam. Prefer using different devices to hold funds and to visit proposals URLs."));
-    Msgbox.exec();
+    QModelIndexList selection = proposalList->selectionModel()->selectedRows(0);
+    if(!selection.isEmpty())
+         QDesktopServices::openUrl(selection.at(0).data(ProposalTableModel::ProposalUrlRole).toString());
 }
 
 void ProposalList::resizeEvent(QResizeEvent* event) {

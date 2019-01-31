@@ -1,7 +1,6 @@
 // Copyright (c) 2011-2014 The Bitcoin developers
 // Copyright (c) 2014-2015 The Dash developers
 // Copyright (c) 2015-2017 The PIVX developers
-// Copyright (c) 2017-2018 The Bulwark Core Developers
 // Copyright (c) 2017-2018 The FantasyGold developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
@@ -59,14 +58,21 @@ QValidator::State BitcoinAddressEntryValidator::validate(QString& input, int& po
 
     // Validation
     QValidator::State state = QValidator::Acceptable;
+    bool isBech32 = false;
+    if(input.size() > 2
+        && input.at(0).unicode() == 'p'
+        && input.at(1).unicode() == 'h') {
+        isBech32 = true;
+    }
     for (int idx = 0; idx < input.size(); ++idx) {
-        int ch = input.at(idx).unicode();
+        const int ch = input.at(idx).unicode();
 
         if (((ch >= '0' && ch <= '9') ||
                 (ch >= 'a' && ch <= 'z') ||
                 (ch >= 'A' && ch <= 'Z')) &&
                 ch != 'l' && ch != 'I' && ch != '0' && ch != 'O') {
             // Alphanumeric and not a 'forbidden' character
+        } else if(isBech32 && (ch == 'l' || ch == 'I' || ch == '0' || ch == 'O')) {
         } else {
             state = QValidator::Invalid;
         }
@@ -81,8 +87,7 @@ BitcoinAddressCheckValidator::BitcoinAddressCheckValidator(QObject* parent) : QV
 QValidator::State BitcoinAddressCheckValidator::validate(QString& input, int& pos) const {
     Q_UNUSED(pos);
     // Validate the passed FantasyGold address
-    CBitcoinAddress addr(input.toStdString());
-    if (addr.IsValid())
+    if (IsValidDestinationString(input.toStdString()))
         return QValidator::Acceptable;
 
     return QValidator::Invalid;

@@ -16,7 +16,7 @@
 //! anonymous namespace
 namespace {
 class CSecp256k1Init {
-public:
+  public:
     CSecp256k1Init() {
         secp256k1_start(SECP256K1_START_SIGN);
     }
@@ -34,7 +34,7 @@ bool CKey::Check(const unsigned char* vch) {
 
 void CKey::MakeNewKey(bool fCompressedIn) {
     do {
-        GetRandBytes(vch, sizeof(vch));
+        GetStrongRandBytes(vch, sizeof(vch));
     } while (!Check(vch));
     fValid = true;
     fCompressed = fCompressedIn;

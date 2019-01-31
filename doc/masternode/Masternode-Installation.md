@@ -6,7 +6,7 @@ The VPS you plan to install your masternode on needs to have at least 1GB of RAM
 
 ## Funding your masternode
 
-* First, we will do the initial collateral TX and send exactly 5000 FGC to one of our addresses. To keep things sorted in case we setup more masternodes we will label the addresses we use.
+* First, we will do the initial collateral TX and send exactly 10000 FGC to one of our addresses. To keep things sorted in case we setup more masternodes we will label the addresses we use.
 
   - Open your FGC wallet and switch to the "Receive" tab.
 
@@ -16,7 +16,7 @@ The VPS you plan to install your masternode on needs to have at least 1GB of RAM
 
   - The generated address will now be labelled as MN1 If you want to setup more masternodes just repeat the steps so you end up with several addresses for the total number of nodes you wish to setup. Example: For 10 nodes you will need 10 addresses, label them all.
 
-  - Once all addresses are created send 5000 FGC each to them. Ensure that you send exactly 5000 FGC and do it in a single transaction. You can double check where the coins are coming from by checking it via coin control usually, that's not an issue.
+  - Once all addresses are created send 10000 FGC each to them. Ensure that you send exactly 10000 FGC and do it in a single transaction. You can double check where the coins are coming from by checking it via coin control usually, that's not an issue.
 
 As soon as all 5k transactions are done, we will wait for 15 confirmations. You can check this in your wallet or use the explorer.
 It should take around 30 minutes if all transaction have 15 confirmations.
@@ -55,13 +55,13 @@ _Press Cmd+Space, type ~/Library/Application Support/FantasyGold and press Enter
 In your appdata folder, open masternode.conf with a text editor and add a new line in this format to the bottom of the file:
 
 ```bash
-masternodename ipaddress:57814 genkey collateralTxID outputID
+masternodename ipaddress:57810 genkey collateralTxID outputID
 ```
 
 An example would be
 
 ```
-mn1 127.0.0.2:57814 93HaYBVUCYjEMeeH1sBGLALQZE1Y1K6xiqgX37tGBDQL8Xg 2bcd3c84c84f7ea86e4e56834c2927a07f9e1871810b92e0d0324456a67c 0
+mn1 127.0.0.2:57810 93HaYBVUCYjEMeeH1sBGLALQZE1Y1K6xiqgX37tGBDQL8Xg 2bcd3c84c84f7ea86e4e56834c2927a07f9e1871810b92e0d0324456a67c 0
 ```
 
 _masternodename_ is a name you choose, _ipaddress_ is the public IP of your VPS, masternodeprivatekey is the output from `masternode genkey`, and _collateralTxID_ & _outputID_ come from `masternode outputs`.

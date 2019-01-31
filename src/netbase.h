@@ -40,14 +40,15 @@ enum Network {
 
 /** IP address (IPv6, or IPv4 using mapped IPv6 range (::FFFF:0:0/96)) */
 class CNetAddr {
-protected:
+  protected:
     unsigned char ip[16]; // in network byte order
+        uint32_t scopeId; // for scoped/link-local ipv6 addresses
 
-public:
+  public:
     CNetAddr();
     CNetAddr(const struct in_addr& ipv4Addr);
-    explicit CNetAddr(const char* pszIp, bool fAllowLookup = false);
-    explicit CNetAddr(const std::string& strIp, bool fAllowLookup = false);
+        explicit CNetAddr(const char *pszIp);
+        explicit CNetAddr(const std::string &strIp);
     void Init();
     void SetIP(const CNetAddr& ip);
 
@@ -87,7 +88,7 @@ public:
     std::vector<unsigned char> GetGroup() const;
     int GetReachabilityFrom(const CNetAddr* paddrPartner = NULL) const;
 
-    CNetAddr(const struct in6_addr& pipv6Addr);
+        CNetAddr(const struct in6_addr& pipv6Addr, const uint32_t scope = 0);
     bool GetIn6Addr(struct in6_addr* pipv6Addr) const;
 
     friend bool operator==(const CNetAddr& a, const CNetAddr& b);
@@ -105,7 +106,7 @@ public:
 };
 
 class CSubNet {
-protected:
+  protected:
     /// Network (base) address
     CNetAddr network;
     /// Netmask, in network byte order
@@ -113,9 +114,11 @@ protected:
     /// Is this value valid? (only used to signal parse errors)
     bool valid;
 
-public:
+  public:
     CSubNet();
-    explicit CSubNet(const std::string& strSubnet, bool fAllowLookup = false);
+        explicit CSubNet(const std::string &strSubnet);
+
+        //constructor for single ip subnet (<ipv4>/32 or <ipv6>/128)
     explicit CSubNet(const CNetAddr &addr);
 
     bool Match(const CNetAddr& addr) const;
@@ -133,24 +136,24 @@ public:
     inline void SerializationOp(Stream& s, Operation ser_action, int nType, int nVersion) {
         READWRITE(network);
         READWRITE(FLATDATA(netmask));
-        READWRITE(valid);
+            READWRITE(FLATDATA(valid));
     }
 };
 
 /** A combination of a network address (CNetAddr) and a (TCP) port */
 class CService : public CNetAddr {
-protected:
+  protected:
     unsigned short port; // host order
 
-public:
+  public:
     CService();
     CService(const CNetAddr& ip, unsigned short port);
     CService(const struct in_addr& ipv4Addr, unsigned short port);
     CService(const struct sockaddr_in& addr);
-    explicit CService(const char* pszIpPort, int portDefault, bool fAllowLookup = false);
-    explicit CService(const char* pszIpPort, bool fAllowLookup = false);
-    explicit CService(const std::string& strIpPort, int portDefault, bool fAllowLookup = false);
-    explicit CService(const std::string& strIpPort, bool fAllowLookup = false);
+        explicit CService(const char *pszIpPort, int portDefault);
+        explicit CService(const char *pszIpPort);
+        explicit CService(const std::string& strIpPort, int portDefault);
+        explicit CService(const std::string& strIpPort);
     void Init();
     void SetPort(unsigned short portIn);
     unsigned short GetPort() const;
@@ -173,7 +176,7 @@ public:
     inline void SerializationOp(Stream& s, Operation ser_action, int nType, int nVersion) {
         READWRITE(FLATDATA(ip));
         unsigned short portN = htons(port);
-        READWRITE(portN);
+            READWRITE(FLATDATA(portN));
         if (ser_action.ForRead())
             port = ntohs(portN);
     }
@@ -184,9 +187,7 @@ class proxyType {
     proxyType(): randomize_credentials(false) {}
     proxyType(const CService &proxy, bool randomize_credentials=false): proxy(proxy), randomize_credentials(randomize_credentials) {}
 
-    bool IsValid() const {
-        return proxy.IsValid();
-    }
+    bool IsValid() const { return proxy.IsValid(); }
 
     CService proxy;
     bool randomize_credentials;
@@ -200,9 +201,9 @@ bool GetProxy(enum Network net, proxyType& proxyInfoOut);
 bool IsProxy(const CNetAddr& addr);
 bool SetNameProxy(const proxyType &addrProxy);
 bool HaveNameProxy();
-bool LookupHost(const char* pszName, std::vector<CNetAddr>& vIP, unsigned int nMaxSolutions = 0, bool fAllowLookup = true);
-bool Lookup(const char* pszName, CService& addr, int portDefault = 0, bool fAllowLookup = true);
-bool Lookup(const char* pszName, std::vector<CService>& vAddr, int portDefault = 0, bool fAllowLookup = true, unsigned int nMaxSolutions = 0);
+bool LookupHost(const char *pszName, std::vector<CNetAddr>& vIP, unsigned int nMaxSolutions, bool fAllowLookup);
+bool Lookup(const char *pszName, CService& addr, int portDefault, bool fAllowLookup);
+bool Lookup(const char *pszName, std::vector<CService>& vAddr, int portDefault, bool fAllowLookup, unsigned int nMaxSolutions);
 bool LookupNumeric(const char* pszName, CService& addr, int portDefault = 0);
 bool ConnectSocket(const CService& addr, SOCKET& hSocketRet, int nTimeout, bool* outProxyConnectionFailed = 0);
 bool ConnectSocketByName(CService& addr, SOCKET& hSocketRet, const char* pszDest, int portDefault, int nTimeout, bool* outProxyConnectionFailed = 0);
@@ -212,5 +213,9 @@ std::string NetworkErrorString(int err);
 bool CloseSocket(SOCKET& hSocket);
 /** Disable or enable blocking-mode for a socket */
 bool SetSocketNonBlocking(SOCKET& hSocket, bool fNonBlocking);
+/**
+ * Convert milliseconds to a struct timeval for e.g. select.
+ */
+struct timeval MillisToTimeval(int64_t nTimeout);
 
 #endif // BITCOIN_NETBASE_H

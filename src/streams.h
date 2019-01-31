@@ -6,8 +6,8 @@
 #ifndef BITCOIN_STREAMS_H
 #define BITCOIN_STREAMS_H
 
-#include "allocators.h"
 #include "serialize.h"
+#include "support/allocators/zeroafterfree.h"
 
 #include <algorithm>
 #include <assert.h>
@@ -21,18 +21,49 @@
 #include <utility>
 #include <vector>
 
+template<typename Stream>
+class OverrideStream{
+    Stream* stream;
+public:
+    const int nType;
+    const int nVersion;
+
+    OverrideStream(Stream* stream_, int nType_, int nVersion_) : stream(stream_), nType(nType_), nVersion(nVersion_) {}
+
+    template<typename T>
+    OverrideStream<Stream>& operator<<(const T& obj)
+    {
+        // Serialize to this stream
+        ::Serialize(*this->stream, obj, nType, nVersion);
+        return (*this);
+    }
+
+    template<typename T>
+    OverrideStream<Stream>& operator>>(T& obj)
+    {
+        // Unserialize from this stream
+        ::Unserialize(*this->stream, obj, nType, nVersion);
+        return (*this);
+    }
+};
+
+template<typename S>
+OverrideStream<S> WithOrVersion(S* s, int nVersionFlag) {
+    return OverrideStream<S>(s, s->GetType(), s->GetVersion() | nVersionFlag);
+}
+
 /** Double ended buffer combining vector and stream-like interfaces.
  *
  * >> and << read and write unformatted data using the above serialization templates.
  * Fills with data in linear time; some stringstream implementations take N^2 time.
  */
 class CDataStream {
-protected:
+  protected:
     typedef CSerializeData vector_type;
     vector_type vch;
     unsigned int nReadPos;
 
-public:
+  public:
     int nType;
     int nVersion;
 
@@ -97,46 +128,23 @@ public:
     //
     // Vector subset
     //
-    const_iterator begin() const {
-        return vch.begin() + nReadPos;
-    }
-    iterator begin() {
-        return vch.begin() + nReadPos;
-    }
-    const_iterator end() const {
-        return vch.end();
-    }
-    iterator end() {
-        return vch.end();
-    }
-    size_type size() const {
-        return vch.size() - nReadPos;
-    }
-    bool empty() const {
-        return vch.size() == nReadPos;
-    }
-    void resize(size_type n, value_type c = 0) {
-        vch.resize(n + nReadPos, c);
-    }
-    void reserve(size_type n) {
-        vch.reserve(n + nReadPos);
-    }
-    const_reference operator[](size_type pos) const {
-        return vch[pos + nReadPos];
-    }
-    reference operator[](size_type pos) {
-        return vch[pos + nReadPos];
-    }
-    void clear() {
+    const_iterator begin() const { return vch.begin() + nReadPos; }
+    iterator begin() { return vch.begin() + nReadPos; }
+    const_iterator end() const { return vch.end(); }
+    iterator end() { return vch.end(); }
+    size_type size() const { return vch.size() - nReadPos; }
+    bool empty() const { return vch.size() == nReadPos; }
+    void resize(size_type n, value_type c = 0) { vch.resize(n + nReadPos, c); }
+    void reserve(size_type n) { vch.reserve(n + nReadPos); }
+    const_reference operator[](size_type pos) const { return vch[pos + nReadPos]; }
+    reference operator[](size_type pos) { return vch[pos + nReadPos]; }
+    void clear()
+    {
         vch.clear();
         nReadPos = 0;
     }
-    iterator insert(iterator it, const char& x = char()) {
-        return vch.insert(it, x);
-    }
-    void insert(iterator it, size_type n, const char& x) {
-        vch.insert(it, n, x);
-    }
+    iterator insert(iterator it, const char& x = char()) { return vch.insert(it, x); }
+    void insert(iterator it, size_type n, const char& x) { vch.insert(it, n, x); }
 
     void insert(iterator it, std::vector<char>::const_iterator first, std::vector<char>::const_iterator last) {
         assert(last - first >= 0);
@@ -204,36 +212,19 @@ public:
     //
     // Stream subset
     //
-    bool eof() const {
-        return size() == 0;
-    }
-    CDataStream* rdbuf() {
-        return this;
-    }
-    int in_avail() {
-        return size();
-    }
+    bool eof() const { return size() == 0; }
+    CDataStream* rdbuf() { return this; }
+    int in_avail() { return size(); }
 
-    void SetType(int n) {
-        nType = n;
-    }
-    int GetType() {
-        return nType;
-    }
-    void SetVersion(int n) {
-        nVersion = n;
-    }
-    int GetVersion() {
-        return nVersion;
-    }
-    void ReadVersion() {
-        *this >> nVersion;
-    }
-    void WriteVersion() {
-        *this << nVersion;
-    }
+    void SetType(int n) { nType = n; }
+    int GetType() { return nType; }
+    void SetVersion(int n) { nVersion = n; }
+    int GetVersion() { return nVersion; }
+    void ReadVersion() { *this >> nVersion; }
+    void WriteVersion() { *this << nVersion; }
 
-    CDataStream& read(char* pch, size_t nSize) {
+    CDataStream& read(char* pch, size_t nSize)
+    {
         // Read from the beginning of the buffer
         unsigned int nReadPosNext = nReadPos + nSize;
         if (nReadPosNext >= vch.size()) {
@@ -312,7 +303,7 @@ public:
  * If you need to close the file early, use file.fclose() instead of fclose(file).
  */
 class CAutoFile {
-private:
+  private:
     // Disallow copies
     CAutoFile(const CAutoFile&);
     CAutoFile& operator=(const CAutoFile&);
@@ -322,7 +313,7 @@ private:
 
     FILE* file;
 
-public:
+  public:
     CAutoFile(FILE* filenew, int nTypeIn, int nVersionIn) {
         file = filenew;
         nType = nTypeIn;
@@ -354,39 +345,24 @@ public:
      * @note Ownership of the FILE* will remain with this class. Use this only if the scope of the
      * CAutoFile outlives use of the passed pointer.
      */
-    FILE* Get() const {
-        return file;
-    }
+    FILE* Get() const { return file; }
 
     /** Return true if the wrapped FILE* is NULL, false otherwise.
      */
-    bool IsNull() const {
-        return (file == NULL);
-    }
+    bool IsNull() const { return (file == NULL); }
 
     //
     // Stream subset
     //
-    void SetType(int n) {
-        nType = n;
-    }
-    int GetType() {
-        return nType;
-    }
-    void SetVersion(int n) {
-        nVersion = n;
-    }
-    int GetVersion() {
-        return nVersion;
-    }
-    void ReadVersion() {
-        *this >> nVersion;
-    }
-    void WriteVersion() {
-        *this << nVersion;
-    }
+    void SetType(int n) { nType = n; }
+    int GetType() { return nType; }
+    void SetVersion(int n) { nVersion = n; }
+    int GetVersion() { return nVersion; }
+    void ReadVersion() { *this >> nVersion; }
+    void WriteVersion() { *this << nVersion; }
 
-    CAutoFile& read(char* pch, size_t nSize) {
+    CAutoFile& read(char* pch, size_t nSize)
+    {
         if (!file)
             throw std::ios_base::failure("CAutoFile::read : file handle is NULL");
         if (fread(pch, 1, nSize, file) != nSize)
@@ -434,7 +410,7 @@ public:
  *  If you need to close the file early, use file.fclose() instead of fclose(file).
  */
 class CBufferedFile {
-private:
+  private:
     // Disallow copies
     CBufferedFile(const CBufferedFile&);
     CBufferedFile& operator=(const CBufferedFile&);
@@ -449,7 +425,7 @@ private:
     uint64_t nRewind;         // how many bytes we guarantee to rewind
     std::vector<char> vchBuf; // the buffer
 
-protected:
+  protected:
     // read data from the source to fill the buffer
     bool Fill() {
         unsigned int pos = nSrcPos % vchBuf.size();
@@ -468,7 +444,7 @@ protected:
         }
     }
 
-public:
+  public:
     CBufferedFile(FILE* fileIn, uint64_t nBufSize, uint64_t nRewindIn, int nTypeIn, int nVersionIn) : nSrcPos(0), nReadPos(0), nReadLimit((uint64_t)(-1)), nRewind(nRewindIn), vchBuf(nBufSize, 0) {
         src = fileIn;
         nType = nTypeIn;
@@ -571,6 +547,14 @@ public:
             nReadPos++;
         }
     }
+
+    //
+    // Stream subset
+    //
+    void SetType(int n) { nType = n; }
+    int GetType() { return nType; }
+    void SetVersion(int n) { nVersion = n; }
+    int GetVersion() { return nVersion; }
 };
 
 #endif // BITCOIN_STREAMS_H

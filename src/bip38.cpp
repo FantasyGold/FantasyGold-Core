@@ -49,7 +49,8 @@ bool ComputePasspoint(uint256 passfactor, CPubKey& passpoint) {
     return secp256k1_ec_pubkey_create(UBEGIN(passpoint), &clen, passfactor.begin(), true) != 0;
 }
 
-void ComputeSeedBPass(CPubKey passpoint, std::string strAddressHash, std::string strOwnerSalt, uint512& seedBPass) {
+void ComputeSeedBPass(CPubKey passpoint, std::string strAddressHash, std::string strOwnerSalt, uint512& seedBPass)
+{
     // Derive decryption key for seedb using scrypt with passpoint, addresshash, and ownerentropy
     string salt = ReverseEndianString(strAddressHash + strOwnerSalt);
     uint256 s2(salt);
@@ -70,7 +71,8 @@ std::string AddressToBip38Hash(std::string address) {
     return HexStr(addrCheck).substr(0, 8);
 }
 
-std::string BIP38_Encrypt(std::string strAddress, std::string strPassphrase, uint256 privKey, bool fCompressed) {
+std::string BIP38_Encrypt(std::string strAddress, std::string strPassphrase, uint256 privKey, bool fCompressed)
+{
     string strAddressHash = AddressToBip38Hash(strAddress);
 
     uint512 hashed;
@@ -120,9 +122,8 @@ std::string BIP38_Encrypt(std::string strAddress, std::string strPassphrase, uin
     return EncodeBase58(encryptedKey.begin(), encryptedKey.begin() + 43);
 }
 
-bool BIP38_Decrypt(std::string strPassphrase, std::string strEncryptedKey, uint256& privKey, bool& fCompressed) {
-    std::string strKey = DecodeBase58(strEncryptedKey.c_str());
-
+bool BIP38_Decrypt(std::string strPassphrase, std::string strKey, uint256& privKey, bool& fCompressed)
+{
     //incorrect encoding of key, it must be 39 bytes - and another 4 bytes for base58 checksum
     if (strKey.size() != (78 + 8))
         return false;
@@ -226,7 +227,7 @@ bool BIP38_Decrypt(std::string strPassphrase, std::string strEncryptedKey, uint2
     CKey k;
     k.Set(privKey.begin(), privKey.end(), fCompressed);
     CPubKey pubkey = k.GetPubKey();
-    string address = CBitcoinAddress(pubkey.GetID()).ToString();
+    string address = EncodeDestination(pubkey.GetID());
 
     return strAddressHash == AddressToBip38Hash(address);
 }

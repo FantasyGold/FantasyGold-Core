@@ -4,8 +4,8 @@
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef FANTASYGOLD_QT_PROPOSALFILTERPROXY_H
-#define FANTASYGOLD_QT_PROPOSALFILTERPROXY_H
+#ifndef BITCOIN_QT_PROPOSALFILTERPROXY_H
+#define BITCOIN_QT_PROPOSALFILTERPROXY_H
 
 #include "amount.h"
 
@@ -23,11 +23,10 @@ class ProposalFilterProxy : public QSortFilterProxyModel {
 
     void setProposalStart(const CAmount& minimum);
     void setProposalEnd(const CAmount& minimum);
-    void setTotalPaymentCount(const int& count);
-    void setRemainingPaymentCount(const int& count);
     void setProposal(const QString &proposal);
+    
     void setMinAmount(const CAmount& minimum);
-    void setMinPercentage(const CAmount& minimum);
+    void setVotesNeeded(const CAmount& minimum);
     void setMinYesVotes(const CAmount& minimum);
     void setMinNoVotes(const CAmount& minimum);
     void setMinAbstainVotes(const CAmount& minimum);
@@ -40,13 +39,12 @@ class ProposalFilterProxy : public QSortFilterProxyModel {
   private:
     CAmount startDate;
     CAmount endDate;
-    int totalPaymentCount;
-    int remainingPaymentCount;
     QString proposalName;
     CAmount minAmount;
-    CAmount minPercentage;
+    CAmount votesNeeded;
     CAmount minYesVotes;
     CAmount minNoVotes;
     CAmount minAbstainVotes;
 };
-#endif // FANTASYGOLD_QT_PROPOSALFILTERPROXY_H
+
+#endif // BITCOIN_QT_PROPOSALFILTERPROXY_H

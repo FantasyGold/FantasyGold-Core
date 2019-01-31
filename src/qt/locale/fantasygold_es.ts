@@ -4244,10 +4244,6 @@ O mint las denominaciones más altas (por lo tanto, se necesitan menos datos) o 
         <source>The Dash Core developers</source>
         <translation>Los desarrolladores de Dash Core</translation>
     </message>
-	 <message>
-        <source>The Bulwark Core developers</source>
-        <translation>Los desarrolladores de Bulwark Core</translation>
-    </message>
     <message>
         <source>The FantasyGold Core developers</source>
         <translation>Los desarrolladores de FantasyGold Core</translation>

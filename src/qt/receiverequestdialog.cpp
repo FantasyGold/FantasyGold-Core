@@ -122,7 +122,7 @@ void ReceiveRequestDialog::update() {
     ui->btnSaveAs->setEnabled(false);
     QString html;
     html += "<html><font face='verdana, arial, helvetica, sans-serif'>";
-    html += "<b>" + tr("Payment information") + "</b><br>";
+    html += "<h1 style='font-weight:normal; text-align:center;user-select:none;-webkit-user-select: none;'>" + tr("Payment information") + "</h1><br>";
     html += "<b>" + tr("URI") + "</b>: ";
     html += "<a style=\"color:#000000;\" href=\"" + uri + "\">" + GUIUtil::HtmlEscape(uri) + "</a><br>";
     html += "<b>" + tr("Address") + "</b>: " + GUIUtil::HtmlEscape(info.address) + "<br>";
@@ -166,10 +166,6 @@ void ReceiveRequestDialog::update() {
 
 void ReceiveRequestDialog::on_btnCopyURI_clicked() {
     GUIUtil::setClipboard(GUIUtil::formatBitcoinURI(info));
-}
-
-void ReceiveRequestDialog::on_closeButton_clicked() {
-    this->close();
 }
 
 void ReceiveRequestDialog::on_btnCopyAddress_clicked() {

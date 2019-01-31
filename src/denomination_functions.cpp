@@ -16,7 +16,8 @@ using namespace libzerocoin;
 // Number of coins used for either change or a spend given a map of coins used
 // -------------------------------------------------------------------------------------------------------
 int getNumberOfCoinsUsed(
-    const std::map<CoinDenomination, CAmount>& mapChange) {
+    const std::map<CoinDenomination, CAmount>& mapChange)
+{
     int nChangeCount = 0;
     for (const auto& denom : zerocoinDenomList) {
         nChangeCount += mapChange.at(denom);
@@ -28,7 +29,8 @@ int getNumberOfCoinsUsed(
 // Find the max CoinDenomination amongst held coins
 // -------------------------------------------------------------------------------------------------------
 CoinDenomination getMaxDenomHeld(
-    const std::map<CoinDenomination, CAmount>& mapCoinsHeld) {
+    const std::map<CoinDenomination, CAmount>& mapCoinsHeld)
+{
     CoinDenomination maxDenom = ZQ_ERROR;
     for (auto& coin : reverse_iterate(zerocoinDenomList)) {
         if (mapCoinsHeld.at(coin)) {
@@ -68,7 +70,8 @@ std::map<CoinDenomination, CAmount> getSpendCoins(const CAmount nValueTarget,
 // -------------------------------------------------------------------------------------------------------
 // Get change (no limits)
 // -------------------------------------------------------------------------------------------------------
-std::map<CoinDenomination, CAmount> getChange(const CAmount nValueTarget) {
+std::map<CoinDenomination, CAmount> getChange(const CAmount nValueTarget)
+{
     std::map<CoinDenomination, CAmount> mapChange;
     CAmount nRemainingValue = nValueTarget;
     // Initialize
@@ -95,9 +98,10 @@ std::map<CoinDenomination, CAmount> getChange(const CAmount nValueTarget) {
 // -------------------------------------------------------------------------------------------------------
 bool getIdealSpends(
     const CAmount nValueTarget,
-    const std::list<CZerocoinMint>& listMints,
+    const std::list<CMintMeta>& listMints,
     const std::map<CoinDenomination, CAmount> mapOfDenomsHeld,
-    std::map<CoinDenomination, CAmount>& mapOfDenomsUsed) {
+    std::map<CoinDenomination, CAmount>& mapOfDenomsUsed)
+{
     CAmount nRemainingValue = nValueTarget;
     // Initialize
     for (const auto& denom : zerocoinDenomList)
@@ -106,11 +110,11 @@ bool getIdealSpends(
     // Start with the Highest Denomination coin and grab coins as long as the remaining amount is greater than the
     // current denomination value
     for (auto& coin : reverse_iterate(zerocoinDenomList)) {
-        for (const CZerocoinMint mint : listMints) {
-            if (mint.IsUsed()) continue;
-            if (nRemainingValue >= ZerocoinDenominationToAmount(coin) && coin == mint.GetDenomination()) {
+        for (const CMintMeta mint : listMints) {
+            if (mint.isUsed) continue;
+            if (nRemainingValue >= ZerocoinDenominationToAmount(coin) && coin == mint.denom) {
                 mapOfDenomsUsed.at(coin)++;
-                nRemainingValue -= mint.GetDenominationAsAmount();
+                nRemainingValue -= ZerocoinDenominationToAmount(mint.denom);
             }
             if (nRemainingValue < ZerocoinDenominationToAmount(coin)) break;
         }
@@ -121,17 +125,18 @@ bool getIdealSpends(
 // -------------------------------------------------------------------------------------------------------
 // Return a list of Mint coins based on mapOfDenomsUsed and the overall value in nCoinsSpentValue
 // -------------------------------------------------------------------------------------------------------
-std::vector<CZerocoinMint> getSpends(
-    const std::list<CZerocoinMint>& listMints,
+std::vector<CMintMeta> getSpends(
+    const std::list<CMintMeta>& listMints,
     std::map<CoinDenomination, CAmount>& mapOfDenomsUsed,
-    CAmount& nCoinsSpentValue) {
-    std::vector<CZerocoinMint> vSelectedMints;
+    CAmount& nCoinsSpentValue)
+{
+    std::vector<CMintMeta> vSelectedMints;
     nCoinsSpentValue = 0;
     for (auto& coin : reverse_iterate(zerocoinDenomList)) {
         do {
-            for (const CZerocoinMint mint : listMints) {
-                if (mint.IsUsed()) continue;
-                if (coin == mint.GetDenomination() && mapOfDenomsUsed.at(coin)) {
+            for (const CMintMeta mint : listMints) {
+                if (mint.isUsed) continue;
+                if (coin == mint.denom && mapOfDenomsUsed.at(coin)) {
                     vSelectedMints.push_back(mint);
                     nCoinsSpentValue += ZerocoinDenominationToAmount(coin);
                     mapOfDenomsUsed.at(coin)--;
@@ -144,7 +149,8 @@ std::vector<CZerocoinMint> getSpends(
 // -------------------------------------------------------------------------------------------------------
 // Just for printing/debuggin
 // -------------------------------------------------------------------------------------------------------
-void listSpends(const std::vector<CZerocoinMint>& vSelectedMints) {
+void listSpends(const std::vector<CZerocoinMint>& vSelectedMints)
+{
     std::map<libzerocoin::CoinDenomination, int64_t> mapZerocoinSupply;
     for (auto& denom : libzerocoin::zerocoinDenomList)
         mapZerocoinSupply.insert(std::make_pair(denom, 0));
@@ -166,7 +172,8 @@ void listSpends(const std::vector<CZerocoinMint>& vSelectedMints) {
 // Find the CoinDenomination with the most number for a given amount
 // -------------------------------------------------------------------------------------------------------
 CoinDenomination getDenomWithMostCoins(
-    const std::map<CoinDenomination, CAmount>& mapOfDenomsUsed) {
+    const std::map<CoinDenomination, CAmount>& mapOfDenomsUsed)
+{
     CoinDenomination maxCoins = ZQ_ERROR;
     CAmount nMaxNumber = 0;
     for (const auto& denom : zerocoinDenomList) {
@@ -181,7 +188,8 @@ CoinDenomination getDenomWithMostCoins(
 // -------------------------------------------------------------------------------------------------------
 // Get the next denomination above the current one. Return ZQ_ERROR if already at the highest
 // -------------------------------------------------------------------------------------------------------
-CoinDenomination getNextHighestDenom(const CoinDenomination& this_denom) {
+CoinDenomination getNextHighestDenom(const CoinDenomination& this_denom)
+{
     CoinDenomination nextValue = ZQ_ERROR;
     for (const auto& denom : zerocoinDenomList) {
         if (ZerocoinDenominationToAmount(denom) > ZerocoinDenominationToAmount(this_denom)) {
@@ -196,7 +204,8 @@ CoinDenomination getNextHighestDenom(const CoinDenomination& this_denom) {
 // Return ZQ_ERROR if none found
 // -------------------------------------------------------------------------------------------------------
 CoinDenomination getNextLowerDenomHeld(const CoinDenomination& this_denom,
-                                       const std::map<CoinDenomination, CAmount>& mapCoinsHeld) {
+    const std::map<CoinDenomination, CAmount>& mapCoinsHeld)
+{
     CoinDenomination nextValue = ZQ_ERROR;
     for (auto& denom : reverse_iterate(zerocoinDenomList)) {
         if ((denom < this_denom) && (mapCoinsHeld.at(denom) != 0)) {
@@ -213,7 +222,8 @@ int minimizeChange(
     const CoinDenomination nextToMaxDenom,
     const CAmount nValueTarget,
     const std::map<CoinDenomination, CAmount>& mapOfDenomsHeld,
-    std::map<CoinDenomination, CAmount>& mapOfDenomsUsed) {
+    std::map<CoinDenomination, CAmount>& mapOfDenomsUsed)
+{
     // Now find out if possible without using 1 coin such that we have more spends but less change
     // First get set of coins close to value but still less than value (since not exact)
     CAmount nRemainingValue = nValueTarget;
@@ -308,7 +318,8 @@ int calculateChange(
     bool fMinimizeChange,
     const CAmount nValueTarget,
     const std::map<CoinDenomination, CAmount>& mapOfDenomsHeld,
-    std::map<CoinDenomination, CAmount>& mapOfDenomsUsed) {
+    std::map<CoinDenomination, CAmount>& mapOfDenomsUsed)
+{
     CoinDenomination minDenomOverTarget = ZQ_ERROR;
     // Initialize
     mapOfDenomsUsed.clear();
@@ -397,10 +408,11 @@ int calculateChange(
 // Given a Target Spend Amount, attempt to meet it with a set of coins where less than nMaxNumberOfSpends
 // 'spends' are required
 // -------------------------------------------------------------------------------------------------------
-std::vector<CZerocoinMint> SelectMintsFromList(const CAmount nValueTarget, CAmount& nSelectedValue, int nMaxNumberOfSpends, bool fMinimizeChange,
-        int& nCoinsReturned, const std::list<CZerocoinMint>& listMints,
-        const std::map<CoinDenomination, CAmount> mapOfDenomsHeld, int& nNeededSpends) {
-    std::vector<CZerocoinMint> vSelectedMints;
+std::vector<CMintMeta> SelectMintsFromList(const CAmount nValueTarget, CAmount& nSelectedValue, int nMaxNumberOfSpends, bool fMinimizeChange,
+                                               int& nCoinsReturned, const std::list<CMintMeta>& listMints, 
+                                               const std::map<CoinDenomination, CAmount> mapOfDenomsHeld, int& nNeededSpends)
+{
+    std::vector<CMintMeta> vSelectedMints;
     std::map<CoinDenomination, CAmount> mapOfDenomsUsed;
 
     nNeededSpends = 0;
@@ -412,7 +424,8 @@ std::vector<CZerocoinMint> SelectMintsFromList(const CAmount nValueTarget, CAmou
         // If true, we are good and done!
         if (vSelectedMints.size() <= (size_t)nMaxNumberOfSpends) {
             return vSelectedMints;
-        } else {
+        }
+        else {
             nNeededSpends = vSelectedMints.size();
         }
     }

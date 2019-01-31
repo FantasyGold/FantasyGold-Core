@@ -21,13 +21,13 @@ namespace {
  * again when accepted into the block chain)
  */
 class CSignatureCache {
-private:
-     //! sigdata_type is (signature hash, signature, public key):
+  private:
+    //! sigdata_type is (signature hash, signature, public key):
     typedef boost::tuple<uint256, std::vector<unsigned char>, CPubKey> sigdata_type;
     std::set< sigdata_type> setValid;
     boost::shared_mutex cs_sigcache;
 
-public:
+  public:
     bool
     Get(const uint256 &hash, const std::vector<unsigned char>& vchSig, const CPubKey& pubKey) {
         boost::shared_lock<boost::shared_mutex> lock(cs_sigcache);

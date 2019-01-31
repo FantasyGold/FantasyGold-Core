@@ -48,7 +48,7 @@ LEAVE_CRITICAL_SECTION(mutex); // no RAII
  */
 template <typename PARENT>
 class LOCKABLE AnnotatedMixin : public PARENT {
-public:
+  public:
     void lock() EXCLUSIVE_LOCK_FUNCTION() {
         PARENT::lock();
     }
@@ -87,7 +87,6 @@ class CCriticalSection : public AnnotatedMixin<boost::recursive_mutex> {
     }
 };
 
-typedef CCriticalSection CDynamicCriticalSection;
 /** Wrapped boost mutex: supports waiting but not recursive locking */
 typedef AnnotatedMixin<boost::mutex> CWaitableCriticalSection;
 
@@ -98,10 +97,10 @@ typedef boost::condition_variable CConditionVariable;
 void PrintLockContention(const char* pszName, const char* pszFile, int nLine);
 #endif
 
-/** Wrapper around boost::unique_lock<Mutex> */
+/** Wrapper around boost::unique_lock<CCriticalSection> */
 template <typename Mutex>
 class SCOPED_LOCKABLE CMutexLock {
-private:
+  private:
     boost::unique_lock<Mutex> lock;
 
     void Enter(const char* pszName, const char* pszFile, int nLine) {
@@ -124,7 +123,7 @@ private:
         return lock.owns_lock();
     }
 
-public:
+  public:
     CMutexLock(Mutex& mutexIn, const char* pszName, const char* pszFile, int nLine, bool fTry = false) EXCLUSIVE_LOCK_FUNCTION(mutexIn) : lock(mutexIn, boost::defer_lock) {
         if (fTry)
             TryEnter(pszName, pszFile, nLine);
@@ -154,7 +153,10 @@ public:
 
 typedef CMutexLock<CCriticalSection> CCriticalBlock;
 
-#define LOCK(cs) CCriticalBlock criticalblock(cs, #cs, __FILE__, __LINE__)
+#define PASTE(x, y) x ## y
+#define PASTE2(x, y) PASTE(x, y)
+
+#define LOCK(cs) CCriticalBlock PASTE2(criticalblock, __COUNTER__)(cs, #cs, __FILE__, __LINE__)
 #define LOCK2(cs1, cs2) CCriticalBlock criticalblock1(cs1, #cs1, __FILE__, __LINE__), criticalblock2(cs2, #cs2, __FILE__, __LINE__)
 #define TRY_LOCK(cs, name) CCriticalBlock name(cs, #cs, __FILE__, __LINE__, true)
 
@@ -171,12 +173,12 @@ typedef CMutexLock<CCriticalSection> CCriticalBlock;
     }
 
 class CSemaphore {
-private:
+  private:
     boost::condition_variable condition;
     boost::mutex mutex;
     int value;
 
-public:
+  public:
     CSemaphore(int init) : value(init) {}
 
     void wait() {
@@ -206,11 +208,11 @@ public:
 
 /** RAII-style semaphore lock */
 class CSemaphoreGrant {
-private:
+  private:
     CSemaphore* sem;
     bool fHaveGrant;
 
-public:
+  public:
     void Acquire() {
         if (fHaveGrant)
             return;

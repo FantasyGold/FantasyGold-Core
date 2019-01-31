@@ -3292,10 +3292,6 @@ https://www.transifex.com/FantasyGold-project/FantasyGold-project-translations</
         <translation>The Dash Core developers</translation>
     </message>
     <message>
-        <source>The Bulwark Core developers</source>
-        <translation>The Bulwark Core developers</translation>
-    </message>
-    <message>
         <source>The FantasyGold Core developers</source>
         <translation>The FantasyGold Core developers</translation>
     </message>

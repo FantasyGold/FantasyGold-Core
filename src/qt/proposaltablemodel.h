@@ -42,12 +42,10 @@ class ProposalTableModel : public QAbstractTableModel {
         Amount = 1,
         StartDate = 2,
         EndDate = 3,
-        TotalPaymentCount = 4,
-        RemainingPaymentCount = 5,
-        YesVotes = 6,
-        NoVotes = 7,
-        AbstainVotes = 8,
-        Percentage = 9
+        YesVotes = 4,
+        NoVotes = 5,
+        AbstainVotes = 6,
+        VotesNeeded = 7
     };
 
     enum RoleIndex {
@@ -55,14 +53,12 @@ class ProposalTableModel : public QAbstractTableModel {
         AmountRole,
         StartDateRole,
         EndDateRole,
-        TotalPaymentCountRole,
-        RemainingPaymentCountRole,
         YesVotesRole,
         NoVotesRole,
         AbstainVotesRole,
-        PercentageRole,
+        VotesNeededRole,
         ProposalUrlRole,
-        ProposalHashRole
+        ProposalHashRole,
     };
 
     int rowCount(const QModelIndex &parent) const;
@@ -71,7 +67,6 @@ class ProposalTableModel : public QAbstractTableModel {
     QVariant data(const QModelIndex &index, int role) const;
     QVariant headerData(int section, Qt::Orientation orientation, int role) const;
     QModelIndex index(int row, int column, const QModelIndex & parent = QModelIndex()) const;
-    void setProposalType(const int &type);
 
   private:
     QNetworkAccessManager *networkManager;
@@ -80,9 +75,8 @@ class ProposalTableModel : public QAbstractTableModel {
     QList<ProposalRecord*> proposalRecords;
     QStringList columns;
 
-    int proposalType = 0;
+public Q_SLOTS:
 
-  public Q_SLOTS:
     void onResult(QNetworkReply *result);
 };
 

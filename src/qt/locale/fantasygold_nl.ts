@@ -4244,10 +4244,6 @@ Ofwel het munten van hogere denominaties (dus minder invoer nodig) of het te bes
         <source>The Dash Core developers</source>
         <translation>De Dash Kernontwikkelaars</translation>
     </message>
-	<message>
-        <source>The Bulwark Core developers</source>
-        <translation>De Bulwark Kernontwikkelaars</translation>
-    </message>
     <message>
         <source>The FantasyGold Core developers</source>
         <translation>De FantasyGold Kernontwikkelaars</translation>

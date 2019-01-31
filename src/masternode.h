@@ -37,7 +37,7 @@ bool GetBlockHash(uint256& hash, int nBlockHeight);
 //
 
 class CMasternodePing {
-public:
+  public:
     CTxIn vin;
     uint256 blockHash;
     int64_t sigTime; //mnb message times
@@ -50,25 +50,29 @@ public:
     ADD_SERIALIZE_METHODS;
 
     template <typename Stream, typename Operation>
-    inline void SerializationOp(Stream& s, Operation ser_action, int nType, int nVersion) {
+    inline void SerializationOp(Stream& s, Operation ser_action, int nType, int nVersion)
+    {
         READWRITE(vin);
         READWRITE(blockHash);
         READWRITE(sigTime);
         READWRITE(vchSig);
     }
 
-    bool CheckAndUpdate(int& nDos, bool fRequireEnabled = true);
+    bool CheckAndUpdate(int& nDos, bool fRequireEnabled = true, bool fCheckSigTimeOnly = false);
     bool Sign(CKey& keyMasternode, CPubKey& pubKeyMasternode);
+    bool VerifySignature(CPubKey& pubKeyMasternode, int &nDos);
     void Relay();
 
-    uint256 GetHash() {
+    uint256 GetHash()
+    {
         CHashWriter ss(SER_GETHASH, PROTOCOL_VERSION);
         ss << vin;
         ss << sigTime;
         return ss.GetHash();
     }
 
-    void swap(CMasternodePing& first, CMasternodePing& second) { // nothrow
+    void swap(CMasternodePing& first, CMasternodePing& second) // nothrow
+    {
         // enable ADL (not necessary in our case, but good practice)
         using std::swap;
 
@@ -80,14 +84,17 @@ public:
         swap(first.vchSig, second.vchSig);
     }
 
-    CMasternodePing& operator=(CMasternodePing from) {
+    CMasternodePing& operator=(CMasternodePing from)
+    {
         swap(*this, from);
         return *this;
     }
-    friend bool operator==(const CMasternodePing& a, const CMasternodePing& b) {
+    friend bool operator==(const CMasternodePing& a, const CMasternodePing& b)
+    {
         return a.vin == b.vin && a.blockHash == b.blockHash;
     }
-    friend bool operator!=(const CMasternodePing& a, const CMasternodePing& b) {
+    friend bool operator!=(const CMasternodePing& a, const CMasternodePing& b)
+    {
         return !(a == b);
     }
 };
@@ -97,12 +104,12 @@ public:
 // it's the one who own that ip address and code for calculating the payment election.
 //
 class CMasternode {
-private:
+  private:
     // critical section to protect the inner data structures
     mutable CCriticalSection cs;
     int64_t lastTimeChecked;
 
-public:
+  public:
     enum state {
         MASTERNODE_PRE_ENABLED,
         MASTERNODE_ENABLED,
@@ -270,7 +277,7 @@ public:
 //
 
 class CMasternodeBroadcast : public CMasternode {
-public:
+  public:
     CMasternodeBroadcast();
     CMasternodeBroadcast(CService newAddr, CTxIn newVin, CPubKey newPubkey, CPubKey newPubkey2, int protocolVersionIn);
     CMasternodeBroadcast(const CMasternode& mn);
@@ -278,7 +285,10 @@ public:
     bool CheckAndUpdate(int& nDoS);
     bool CheckInputsAndAdd(int& nDos);
     bool Sign(CKey& keyCollateralAddress);
+    bool VerifySignature();
     void Relay();
+    std::string GetOldStrMessage();
+    std::string GetNewStrMessage();
 
     ADD_SERIALIZE_METHODS;
 
@@ -305,6 +315,7 @@ public:
     /// Create Masternode broadcast, needs to be relayed manually after that
     static bool Create(CTxIn vin, CService service, CKey keyCollateralAddressNew, CPubKey pubKeyCollateralAddressNew, CKey keyMasternodeNew, CPubKey pubKeyMasternodeNew, std::string& strErrorRet, CMasternodeBroadcast& mnbRet);
     static bool Create(std::string strService, std::string strKey, std::string strTxHash, std::string strOutputIndex, std::string& strErrorRet, CMasternodeBroadcast& mnbRet, bool fOffline = false);
+    static bool CheckDefaultPort(std::string strService, std::string& strErrorRet, std::string strContext);
 };
 
 #endif

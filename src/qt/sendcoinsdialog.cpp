@@ -1,7 +1,6 @@
 // Copyright (c) 2011-2014 The Bitcoin developers
 // Copyright (c) 2014-2015 The Dash developers
 // Copyright (c) 2015-2017 The PIVX developers
-// Copyright (c) 2017-2018 The Bulwark Core Developers
 // Copyright (c) 2017-2018 The FantasyGold developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
@@ -43,6 +42,8 @@ SendCoinsDialog::SendCoinsDialog(QWidget* parent) : QDialog(parent, Qt::WindowSy
     ui->addButton->setIcon(QIcon());
     ui->clearButton->setIcon(QIcon());
     ui->sendButton->setIcon(QIcon());
+    ui->lineEditCoinControlChange->setAttribute(Qt::WA_MacShowFocusRect, 0);
+    ui->splitBlockLineEdit->setAttribute(Qt::WA_MacShowFocusRect, 0);    
 #endif
 
     GUIUtil::setupAddressWidget(ui->lineEditCoinControlChange, this);
@@ -222,7 +223,7 @@ void SendCoinsDialog::on_sendButton_clicked() {
         SendCoinsEntry* entry = qobject_cast<SendCoinsEntry*>(ui->entries->itemAt(i)->widget());
 
         //UTXO splitter - address should be our own
-        CBitcoinAddress address = entry->getValue().address.toStdString();
+        CTxDestination address = DecodeDestination(entry->getValue().address.toStdString());
         if (!model->isMine(address) && ui->splitBlockCheckBox->checkState() == Qt::Checked) {
             CoinControlDialog::coinControl->fSplitBlock = false;
             ui->splitBlockCheckBox->setCheckState(Qt::Unchecked);
@@ -260,15 +261,14 @@ void SendCoinsDialog::on_sendButton_clicked() {
     if (CoinControlDialog::coinControl->fSplitBlock)
         CoinControlDialog::coinControl->nSplitBlock = int(ui->splitBlockLineEdit->text().toInt());
 
-    QString strFunds = tr("using") + " <b>" + tr("anonymous funds") + "</b>";
+    QString strFunds = "";
     QString strFee = "";
     recipients[0].inputType = ALL_COINS;
-    strFunds = tr("using") + " <b>" + tr("any available funds (not recommended)") + "</b>";
 
     if (ui->checkSwiftTX->isChecked()) {
         recipients[0].useSwiftTX = true;
         strFunds += " ";
-        strFunds += tr("and SwiftX");
+        strFunds += tr("using SwiftX");
     } else {
         recipients[0].useSwiftTX = false;
     }
@@ -300,7 +300,7 @@ void SendCoinsDialog::on_sendButton_clicked() {
             recipientElement = tr("%1 to %2").arg(amount, address);
         }
 
-        if (fSplitBlock) {
+        if (CoinControlDialog::coinControl->fSplitBlock) {
             recipientElement.append(tr(" split into %1 outputs using the UTXO splitter.").arg(CoinControlDialog::coinControl->nSplitBlock));
         }
 
@@ -423,12 +423,6 @@ void SendCoinsDialog::clear() {
     addEntry();
 
     updateTabsAndLabels();
-
-    // Clear utxo and change address.
-    ui->checkBoxCoinControlChange->setCheckState(Qt::Unchecked);
-    ui->lineEditCoinControlChange->setText("");
-    ui->splitBlockCheckBox->setCheckState(Qt::Unchecked);
-    ui->splitBlockLineEdit->setText("");
 }
 
 void SendCoinsDialog::reject() {
@@ -836,17 +830,24 @@ void SendCoinsDialog::coinControlChangeEdited(const QString& text) {
         CoinControlDialog::coinControl->destChange = CNoDestination();
         ui->labelCoinControlChangeLabel->setStyleSheet("QLabel{color:red;}");
 
-        CBitcoinAddress addr = CBitcoinAddress(text.toStdString());
-
-        if (text.isEmpty()) { // Nothing entered
+        if (text.isEmpty()) // Nothing entered
+        {
             ui->labelCoinControlChangeLabel->setText("");
-        } else if (!addr.IsValid()) { // Invalid address
+        } else if (!IsValidDestinationString(text.toStdString())) // Invalid address
+        {
+            ui->labelCoinControlChangeLabel->setText(tr("Warning: Invalid FantasyGold address"));
+        } else // Valid address
+        {
+            CTxDestination addr = DecodeDestination(text.toStdString());
+            CKeyID* keyid = boost::get<CKeyID>(&addr);
+
+            if (!keyid) {
             ui->labelCoinControlChangeLabel->setText(tr("Warning: Invalid FantasyGold address"));
         } else { // Valid address
             CPubKey pubkey;
-            CKeyID keyid;
-            addr.GetKeyID(keyid);
-            if (!model->getPubKey(keyid, pubkey)) { // Unknown change address
+            
+            if (!model->getPubKey(*keyid, pubkey)) // Unknown change address
+            {
                 ui->labelCoinControlChangeLabel->setText(tr("Warning: Unknown change address"));
             } else { // Known change address
                 ui->labelCoinControlChangeLabel->setStyleSheet("QLabel{color:black;}");
@@ -858,7 +859,7 @@ void SendCoinsDialog::coinControlChangeEdited(const QString& text) {
                 else
                     ui->labelCoinControlChangeLabel->setText(tr("(no label)"));
 
-                CoinControlDialog::coinControl->destChange = addr.Get();
+                CoinControlDialog::coinControl->destChange = addr;
             }
         }
     }

@@ -1,5 +1,13 @@
+# Copyright (c) 2013-2016 The Bitcoin Core developers
+# Distributed under the MIT software license, see the accompanying
+# file COPYING or http://www.opensource.org/licenses/mit-license.php.
+
 DIST_SUBDIRS = secp256k1 univalue
-AM_LDFLAGS = $(PTHREAD_CFLAGS) $(LIBTOOL_LDFLAGS)
+
+AM_LDFLAGS = $(PTHREAD_CFLAGS) $(LIBTOOL_LDFLAGS) $(HARDENED_LDFLAGS)
+AM_CXXFLAGS = $(HARDENED_CXXFLAGS) $(ERROR_CXXFLAGS)
+AM_CPPFLAGS = $(HARDENED_CPPFLAGS)
+EXTRA_LIBRARIES =
 
 if EMBEDDED_UNIVALUE
 LIBUNIVALUE = univalue/libunivalue.la
@@ -10,7 +18,7 @@ else
 LIBUNIVALUE = $(UNIVALUE_LIBS)
 endif
 
-#if EMBEDDED_LEVELDB
+if EMBEDDED_LEVELDB
 LEVELDB_CPPFLAGS += -I$(srcdir)/leveldb/include
 LEVELDB_CPPFLAGS += -I$(srcdir)/leveldb/helpers/memenv
 LIBLEVELDB += $(builddir)/leveldb/libleveldb.a
@@ -22,8 +30,8 @@ $(LIBLEVELDB): $(LIBMEMENV)
 $(LIBLEVELDB) $(LIBMEMENV):
 	@echo "Building LevelDB ..." && $(MAKE) -C $(@D) $(@F) CXX="$(CXX)" \
 	  CC="$(CC)" PLATFORM=$(TARGET_OS) AR="$(AR)" $(LEVELDB_TARGET_FLAGS) \
-          OPT="$(CXXFLAGS) $(CPPFLAGS)"
-#endif
+          OPT="$(AM_CXXFLAGS) $(PIE_FLAGS) $(CXXFLAGS) $(AM_CPPFLAGS) $(CPPFLAGS) -D__STDC_LIMIT_MACROS"
+endif
 
 BITCOIN_CONFIG_INCLUDES=-I$(builddir)/config
 BITCOIN_INCLUDES=-I$(builddir) -I$(builddir)/obj $(BOOST_CPPFLAGS) $(LEVELDB_CPPFLAGS) $(CRYPTO_CFLAGS) $(SSL_CFLAGS)
@@ -32,7 +40,6 @@ BITCOIN_INCLUDES += -I$(srcdir)/secp256k1/include
 BITCOIN_INCLUDES += $(UNIVALUE_CFLAGS)
 
 LIBBITCOIN_SERVER=libbitcoin_server.a
-LIBBITCOIN_WALLET=libbitcoin_wallet.a
 LIBBITCOIN_COMMON=libbitcoin_common.a
 LIBBITCOIN_CLI=libbitcoin_cli.a
 LIBBITCOIN_UTIL=libbitcoin_util.a
@@ -41,35 +48,35 @@ LIBBITCOIN_ZEROCOIN=libzerocoin/libbitcoin_zerocoin.a
 LIBBITCOINQT=qt/libbitcoinqt.a
 LIBSECP256K1=secp256k1/libsecp256k1.la
 
+if ENABLE_ZMQ
+LIBBITCOIN_ZMQ=libbitcoin_zmq.a
+endif
+if BUILD_BITCOIN_LIBS
+LIBBITCOINCONSENSUS=libbitcoinconsensus.la
+endif
+if ENABLE_WALLET
+LIBBITCOIN_WALLET=libbitcoin_wallet.a
+endif
+
 $(LIBSECP256K1): $(wildcard secp256k1/src/*) $(wildcard secp256k1/include/*)
 	$(AM_V_at)$(MAKE) $(AM_MAKEFLAGS) -C $(@D) $(@F)
 
 # Make is not made aware of per-object dependencies to avoid limiting building parallelization
 # But to build the less dependent modules first, we manually select their order here:
-EXTRA_LIBRARIES = \
-  crypto/libbitcoin_crypto.a \
-  libbitcoin_util.a \
-  libbitcoin_common.a \
-  libzerocoin/libbitcoin_zerocoin.a \
-  libbitcoin_server.a \
-  libbitcoin_cli.a
-if ENABLE_WALLET
-BITCOIN_INCLUDES += $(BDB_CPPFLAGS)
-EXTRA_LIBRARIES += libbitcoin_wallet.a
-endif
+EXTRA_LIBRARIES += \
+  $(LIBBITCOIN_CRYPTO) \
+  $(LIBBITCOIN_UTIL) \
+  $(LIBBITCOIN_COMMON) \
+  $(LIBBITCOIN_ZEROCOIN) \
+  $(LIBBITCOIN_SERVER) \
+  $(LIBBITCOIN_CLI) \
+  $(LIBBITCOIN_WALLET) \
+  $(LIBBITCOIN_ZMQ)
 
-if ENABLE_ZMQ
-EXTRA_LIBRARIES += libbitcoin_zmq.a
-endif
-
-if BUILD_BITCOIN_LIBS
-lib_LTLIBRARIES = libbitcoinconsensus.la
-LIBBITCOIN_CONSENSUS=libbitcoinconsensus.la
-else
-LIBBITCOIN_CONSENSUS=
-endif
+lib_LTLIBRARIES = $(LIBBITCOINCONSENSUS)
 
 bin_PROGRAMS =
+noinst_PROGRAMS =
 TESTS =
 
 if BUILD_BITCOIND
@@ -85,14 +92,15 @@ endif
 BITCOIN_CORE_H = \
   activemasternode.h \
   accumulators.h \
+  accumulatorcheckpoints.h \
+  accumulatorcheckpoints.json.h \
   accumulatormap.h \
-  addrdb.h \
   addrman.h \
   alert.h \
   allocators.h \
   amount.h \
   base58.h \
-  bignum.h \
+  bech32.h \
   bip38.h \
   bloom.h \
   chain.h \
@@ -106,8 +114,11 @@ BITCOIN_CORE_H = \
   coins.h \
   compat.h \
   compat/sanity.h \
+  consensus/merkle.h \
+  consensus/validation.h \
   compressor.h \
   primitives/block.h \
+  primitives/deterministicmint.h \
   primitives/transaction.h \
   primitives/zerocoin.h \
   core_io.h \
@@ -118,8 +129,9 @@ BITCOIN_CORE_H = \
   db.h \
   eccryptoverify.h \
   ecwrapper.h \
-  fs.h \
   hash.h \
+  httprpc.h \
+  httpserver.h \
   init.h \
   kernel.h \
   swifttx.h \
@@ -136,6 +148,7 @@ BITCOIN_CORE_H = \
   masternodeconfig.h \
   merkleblock.h \
   miner.h \
+  mintpool.h \
   mruset.h \
   netbase.h \
   net.h \
@@ -144,10 +157,12 @@ BITCOIN_CORE_H = \
   protocol.h \
   pubkey.h \
   random.h \
+  reverselock.h \
   reverse_iterate.h \
   rpcclient.h \
   rpcprotocol.h \
   rpcserver.h \
+  scheduler.h \
   script/interpreter.h \
   script/script.h \
   script/sigcache.h \
@@ -155,6 +170,8 @@ BITCOIN_CORE_H = \
   script/standard.h \
   script/script_error.h \
   serialize.h \
+  support/allocators/zeroafterfree.h \
+  support/cleanse.h \
   spork.h \
   sporkdb.h \
   streams.h \
@@ -162,6 +179,7 @@ BITCOIN_CORE_H = \
   threadsafety.h \
   timedata.h \
   tinyformat.h \
+  torcontrol.h \
   txdb.h \
   txmempool.h \
   ui_interface.h \
@@ -176,28 +194,30 @@ BITCOIN_CORE_H = \
   wallet.h \
   wallet_ismine.h \
   walletdb.h \
+  zfgctracker.h \
+  zfgcwallet.h \
   zmq/zmqabstractnotifier.h \
   zmq/zmqconfig.h \
   zmq/zmqnotificationinterface.h \
-  zmq/zmqpublishnotifier.h \
-  compat/sanity.h
+  zmq/zmqpublishnotifier.h
 
 obj/build.h: FORCE
 	@$(MKDIR_P) $(builddir)/obj
-	@$(top_srcdir)/share/genbuild.sh $(abs_top_builddir)/src/obj/build.h \
-	  $(abs_top_srcdir)
+	@$(top_srcdir)/share/genbuild.sh "$(abs_top_builddir)/src/obj/build.h" \
+	  "$(abs_top_srcdir)"
 libbitcoin_util_a-clientversion.$(OBJEXT): obj/build.h
 
 # server: shared between fantasygoldd and fantasygold-qt
-libbitcoin_server_a_CPPFLAGS = $(BITCOIN_INCLUDES) $(MINIUPNPC_CPPFLAGS)
+libbitcoin_server_a_CPPFLAGS = $(AM_CPPFLAGS) $(BITCOIN_INCLUDES) $(MINIUPNPC_CPPFLAGS) $(EVENT_CFLAGS) $(EVENT_PTHREADS_CFLAGS)
+libbitcoin_server_a_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
 libbitcoin_server_a_SOURCES = \
-  addrdb.cpp \
   addrman.cpp \
   alert.cpp \
   bloom.cpp \
   chain.cpp \
   checkpoints.cpp \
-  fs.cpp \
+  httprpc.cpp \
+  httpserver.cpp \
   init.cpp \
   leveldbwrapper.cpp \
   main.cpp \
@@ -216,15 +236,15 @@ libbitcoin_server_a_SOURCES = \
   rpcrawtransaction.cpp \
   rpcserver.cpp \
   script/sigcache.cpp \
+  sporkdb.cpp \
   timedata.cpp \
+  torcontrol.cpp \
   txdb.cpp \
   txmempool.cpp \
   validationinterface.cpp \
   $(BITCOIN_CORE_H)
 
 if ENABLE_ZMQ
-LIBBITCOIN_ZMQ=libbitcoin_zmq.a
-
 libbitcoin_zmq_a_CPPFLAGS = $(BITCOIN_INCLUDES) $(ZMQ_CFLAGS)
 libbitcoin_zmq_a_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
 libbitcoin_zmq_a_SOURCES = \
@@ -235,9 +255,8 @@ endif
 
 # wallet: shared between fantasygoldd and fantasygold-qt, but only linked
 # when wallet enabled
-
-libbitcoin_wallet_a_CFLAGS = -fPIC
-libbitcoin_wallet_a_CPPFLAGS = $(BITCOIN_INCLUDES)
+libbitcoin_wallet_a_CPPFLAGS = $(AM_CPPFLAGS) $(BITCOIN_INCLUDES)
+libbitcoin_wallet_a_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
 libbitcoin_wallet_a_SOURCES = \
   activemasternode.cpp \
   bip38.cpp \
@@ -253,18 +272,22 @@ libbitcoin_wallet_a_SOURCES = \
   masternode-sync.cpp \
   masternodeconfig.cpp \
   masternodeman.cpp \
+  mintpool.cpp \
   rpcdump.cpp \
+  primitives/deterministicmint.cpp \
   primitives/zerocoin.cpp \
   rpcwallet.cpp \
   kernel.cpp \
   wallet.cpp \
   wallet_ismine.cpp \
   walletdb.cpp \
+  zfgcwallet.cpp \
+  zfgctracker.cpp \
   $(BITCOIN_CORE_H)
 
 # crypto primitives library
-crypto_libbitcoin_crypto_a_CFLAGS = -fPIC
-crypto_libbitcoin_crypto_a_CPPFLAGS = $(BITCOIN_CONFIG_INCLUDES)
+crypto_libbitcoin_crypto_a_CPPFLAGS = $(AM_CPPFLAGS)
+crypto_libbitcoin_crypto_a_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
 crypto_libbitcoin_crypto_a_SOURCES = \
   crypto/sha1.cpp \
   crypto/sha256.cpp \
@@ -276,6 +299,7 @@ crypto_libbitcoin_crypto_a_SOURCES = \
   crypto/ripemd160.cpp \
   crypto/aes_helper.c \
   crypto/blake.c \
+  crypto/bmw.c \
   crypto/groestl.c \
   crypto/jh.c \
   crypto/keccak.c \
@@ -290,13 +314,16 @@ crypto_libbitcoin_crypto_a_SOURCES = \
   crypto/sha1.h \
   crypto/ripemd160.h \
   crypto/sph_blake.h \
+  crypto/sph_bmw.h \
   crypto/sph_groestl.h \
   crypto/sph_jh.h \
   crypto/sph_keccak.h \
   crypto/sph_skein.h \
-  crypto/sph_types.h 
+  crypto/sph_types.h
 
 # libzerocoin library
+libzerocoin_libbitcoin_zerocin_a_CPPFLAGS = $(AM_CPPFLAGS)
+libzerocoin_libbitcoin_zerocin_a_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
 libzerocoin_libbitcoin_zerocoin_a_SOURCES = \
   libzerocoin/Accumulator.h \
   libzerocoin/AccumulatorProofOfKnowledge.h \
@@ -308,6 +335,7 @@ libzerocoin_libbitcoin_zerocoin_a_SOURCES = \
   libzerocoin/ParamGeneration.h \
   libzerocoin/Params.h \
   libzerocoin/SerialNumberSignatureOfKnowledge.h \
+  libzerocoin/SpendType.h \
   libzerocoin/ZerocoinDefines.h \
   libzerocoin/Accumulator.cpp \
   libzerocoin/AccumulatorProofOfKnowledge.cpp \
@@ -319,27 +347,24 @@ libzerocoin_libbitcoin_zerocoin_a_SOURCES = \
   libzerocoin/Params.cpp \
   libzerocoin/SerialNumberSignatureOfKnowledge.cpp
 
-# univalue JSON library
-univalue_libbitcoin_univalue_a_SOURCES = \
-  univalue/univalue.cpp \
-  univalue/univalue_read.cpp \
-  univalue/univalue_write.cpp \
-  univalue/univalue_escapes.h \
-  univalue/univalue.h
-
 # common: shared between fantasygoldd, and fantasygold-qt and non-server tools
-libbitcoin_common_a_CPPFLAGS = $(BITCOIN_INCLUDES)
+libbitcoin_common_a_CPPFLAGS = $(AM_CPPFLAGS) $(BITCOIN_INCLUDES)
+libbitcoin_common_a_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
 libbitcoin_common_a_SOURCES = \
   accumulators.cpp \
+  accumulatorcheckpoints.cpp \
   accumulatormap.cpp \
   allocators.cpp \
   amount.cpp \
   base58.cpp \
+  bech32.cpp \
   bip38.cpp \
   chainparams.cpp \
   coins.cpp \
   compressor.cpp \
+  consensus/merkle.cpp \
   primitives/block.cpp \
+  primitives/deterministicmint.cpp \
   primitives/transaction.cpp \
   primitives/zerocoin.cpp \
   core_read.cpp \
@@ -352,11 +377,13 @@ libbitcoin_common_a_SOURCES = \
   netbase.cpp \
   protocol.cpp \
   pubkey.cpp \
+  scheduler.cpp \
   script/interpreter.cpp \
   script/script.cpp \
   script/sign.cpp \
   script/standard.cpp \
   script/script_error.cpp \
+  support/cleanse.cpp \
   spork.cpp \
   sporkdb.cpp \
   $(BITCOIN_CORE_H)
@@ -364,7 +391,8 @@ libbitcoin_common_a_SOURCES = \
 # util: shared between all executables.
 # This library *must* be included to make sure that the glibc
 # backward-compatibility objects and their sanity checks are linked.
-libbitcoin_util_a_CPPFLAGS = $(BITCOIN_INCLUDES)
+libbitcoin_util_a_CPPFLAGS = $(AM_CPPFLAGS) $(BITCOIN_INCLUDES)
+libbitcoin_util_a_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
 libbitcoin_util_a_SOURCES = \
   allocators.cpp \
   compat/strnlen.cpp \
@@ -384,11 +412,11 @@ libbitcoin_util_a_SOURCES = \
 
 if GLIBC_BACK_COMPAT
 libbitcoin_util_a_SOURCES += compat/glibc_compat.cpp
-libbitcoin_util_a_SOURCES += compat/glibcxx_compat.cpp
 endif
 
 # cli: shared between fantasygold-cli and fantasygold-qt
-libbitcoin_cli_a_CPPFLAGS = $(BITCOIN_INCLUDES)
+libbitcoin_cli_a_CPPFLAGS = $(AM_CPPFLAGS) $(BITCOIN_INCLUDES)
+libbitcoin_cli_a_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
 libbitcoin_cli_a_SOURCES = \
   rpcclient.cpp \
   $(BITCOIN_CORE_H)
@@ -396,73 +424,71 @@ libbitcoin_cli_a_SOURCES = \
 nodist_libbitcoin_util_a_SOURCES = $(srcdir)/obj/build.h
 #
 
-# bitcoind binary #
+# fantasygoldd binary #
+fantasygoldd_SOURCES = fantasygoldd.cpp
+fantasygoldd_CPPFLAGS = $(AM_CPPFLAGS) $(BITCOIN_INCLUDES)
+fantasygoldd_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
+fantasygoldd_LDFLAGS = $(RELDFLAGS) $(AM_LDFLAGS) $(LIBTOOL_APP_LDFLAGS)
+
+if TARGET_WINDOWS
+fantasygoldd_SOURCES += fantasygoldd-res.rc
+endif
 fantasygoldd_LDADD = \
   $(LIBBITCOIN_SERVER) \
   $(LIBBITCOIN_COMMON) \
   $(LIBUNIVALUE) \
   $(LIBBITCOIN_ZEROCOIN) \
   $(LIBBITCOIN_UTIL) \
+  $(LIBBITCOIN_WALLET) \
+  $(LIBBITCOIN_ZMQ) \
   $(LIBBITCOIN_CRYPTO) \
   $(LIBLEVELDB) \
   $(LIBMEMENV) \
   $(LIBSECP256K1)
 
-if ENABLE_ZMQ
-fantasygoldd_LDADD += $(LIBBITCOIN_ZMQ) $(ZMQ_LIBS)
-endif
-
-if ENABLE_WALLET
-fantasygoldd_LDADD += libbitcoin_wallet.a
-endif
-fantasygoldd_SOURCES = fantasygoldd.cpp
-#
-
-if TARGET_WINDOWS
-fantasygoldd_SOURCES += fantasygoldd-res.rc
-endif
-
-fantasygoldd_LDADD += $(BOOST_LIBS) $(BDB_LIBS) $(SSL_LIBS) $(CRYPTO_LIBS) $(MINIUPNPC_LIBS)
-fantasygoldd_CPPFLAGS = $(BITCOIN_INCLUDES)
-fantasygoldd_LDFLAGS = $(RELDFLAGS) $(AM_LDFLAGS) $(LIBTOOL_APP_LDFLAGS)
-
+fantasygoldd_LDADD += $(BOOST_LIBS) $(BDB_LIBS) $(SSL_LIBS) $(CRYPTO_LIBS) $(MINIUPNPC_LIBS) $(EVENT_PTHREADS_LIBS) $(EVENT_LIBS) $(ZMQ_LIBS)
 
 # fantasygold-cli binary #
+fantasygold_cli_SOURCES = fantasygold-cli.cpp
+fantasygold_cli_CPPFLAGS = $(AM_CPPFLAGS) $(BITCOIN_INCLUDES) $(EVENT_CFLAGS)
+fantasygold_cli_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
+fantasygold_cli_LDFLAGS = $(RELDFLAGS) $(AM_LDFLAGS) $(LIBTOOL_APP_LDFLAGS)
+
+if TARGET_WINDOWS
+fantasygold_cli_SOURCES += fantasygold-cli-res.rc
+endif
+
 fantasygold_cli_LDADD = \
   $(LIBBITCOIN_CLI) \
   $(LIBUNIVALUE) \
   $(LIBBITCOIN_UTIL) \
-  $(BOOST_LIBS) \
-  $(SSL_LIBS) \
-  $(CRYPTO_LIBS)
+  $(LIBBITCOIN_CRYPTO)
 
-fantasygold_cli_SOURCES = \
-  fantasygold-cli.cpp
-
-fantasygold_cli_CPPFLAGS = $(BITCOIN_INCLUDES)
+fantasygold_cli_LDADD += $(BOOST_LIBS) $(SSL_LIBS) $(CRYPTO_LIBS) $(EVENT_LIBS)
 #
 
 # fantasygold-tx binary #
+fantasygold_tx_SOURCES = fantasygold-tx.cpp
+fantasygold_tx_CPPFLAGS = $(AM_CPPFLAGS) $(BITCOIN_INCLUDES)
+fantasygold_tx_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
+fantasygold_tx_LDFLAGS = $(RELDFLAGS) $(AM_LDFLAGS) $(LIBTOOL_APP_LDFLAGS)
+
+if TARGET_WINDOWS
+fantasygold_tx_SOURCES += fantasygold-tx-res.rc
+endif
+
 fantasygold_tx_LDADD = \
   $(LIBUNIVALUE) \
   $(LIBBITCOIN_COMMON) \
   $(LIBBITCOIN_ZEROCOIN) \
   $(LIBBITCOIN_UTIL) \
   $(LIBBITCOIN_CRYPTO) \
-  $(LIBSECP256K1) \
-  $(BOOST_LIBS) \
-  $(CRYPTO_LIBS)
+  $(LIBSECP256K1)
 
-fantasygold_tx_SOURCES = fantasygold-tx.cpp
-fantasygold_tx_CPPFLAGS = $(BITCOIN_INCLUDES)
+fantasygold_tx_LDADD += $(BOOST_LIBS) $(CRYPTO_LIBS)
 #
-fantasygold_tx_LDFLAGS = $(RELDFLAGS) $(AM_LDFLAGS) $(LIBTOOL_APP_LDFLAGS)
 
-if TARGET_WINDOWS
-fantasygold_cli_SOURCES += fantasygold-cli-res.rc
-endif
-fantasygold_cli_LDFLAGS = $(RELDFLAGS) $(AM_LDFLAGS) $(LIBTOOL_APP_LDFLAGS)
-
+# bitcoinconsensus library #
 if BUILD_BITCOIN_LIBS
 include_HEADERS = script/bitcoinconsensus.h
 libbitcoinconsensus_la_SOURCES = \
@@ -486,10 +512,9 @@ libbitcoinconsensus_la_SOURCES = \
 
 if GLIBC_BACK_COMPAT
   libbitcoinconsensus_la_SOURCES += compat/glibc_compat.cpp
-  libbitcoinconsensus_la_SOURCES += compat/glibcxx_compat.cpp
 endif
 
-libbitcoinconsensus_la_LDFLAGS = -no-undefined $(RELDFLAGS)
+libbitcoinconsensus_la_LDFLAGS = $(AM_LDFLAGS) -no-undefined $(RELDFLAGS)
 libbitcoinconsensus_la_LIBADD = $(CRYPTO_LIBS) $(BOOST_LIBS)
 libbitcoinconsensus_la_CPPFLAGS = $(CRYPTO_CFLAGS) -I$(builddir)/obj -DBUILD_BITCOIN_INTERNAL
 if USE_LIBSECP256K1
@@ -497,16 +522,18 @@ libbitcoinconsensus_la_LIBADD += secp256k1/libsecp256k1.la
 endif
 endif
 
-CLEANFILES = leveldb/libleveldb.a leveldb/libmemenv.a
+CLEANFILES = $(EXTRA_LIBRARIES)
+CLEANFILES += leveldb/libleveldb.a leveldb/libmemenv.a
 CLEANFILES += *.gcda *.gcno
 CLEANFILES += compat/*.gcda compat/*.gcno
 CLEANFILES += crypto/*.gcda crypto/*.gcno
 CLEANFILES += primitives/*.gcda primitives/*.gcno
+CLEANFILES += consensus/*.gcda consensus/*.gcno
 CLEANFILES += script/*.gcda script/*.gcno
 CLEANFILES += univalue/*.gcda univalue/*.gcno
 CLEANFILES += zmq/*.gcda zmq/*.gcno
+CLEANFILES += obj/build.h
 
-DISTCLEANFILES = obj/build.h
 
 EXTRA_DIST = leveldb
 
@@ -519,15 +546,13 @@ clean-local:
 
 .rc.o:
 	@test -f $(WINDRES)
-	$(AM_V_GEN) $(WINDRES) -DWINDRES_PREPROC -i $< -o $@
+	## FIXME: How to get the appropriate modulename_CPPFLAGS in here?
+	$(AM_V_GEN) $(WINDRES) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(CPPFLAGS) -DWINDRES_PREPROC -i $< -o $@
 
-.mm.o:
-	$(AM_V_CXX) $(OBJCXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
-	  $(CPPFLAGS) $(AM_CXXFLAGS) $(QT_INCLUDES) $(CXXFLAGS)  -c -o $@ $<
 
 %.pb.cc %.pb.h: %.proto
 	@test -f $(PROTOC)
-	$(AM_V_GEN) $(PROTOC) --cpp_out=$(@D) --proto_path=$(abspath $(<D) $<)
+	$(AM_V_GEN) $(PROTOC) --cpp_out=$(@D) --proto_path=$(<D) $<
 
 if ENABLE_TESTS
 include Makefile.test.include

@@ -28,7 +28,7 @@ extern CCriticalSection cs_mapAlerts;
  * versions can still relay the original data.
  */
 class CUnsignedAlert {
-public:
+  public:
     int nVersion;
     int64_t nRelayUntil; // when newer nodes stop relaying to newer nodes
     int64_t nExpiration;
@@ -73,7 +73,7 @@ public:
 
 /** An alert is a combination of a serialized CUnsignedAlert and a signature. */
 class CAlert : public CUnsignedAlert {
-public:
+  public:
     std::vector<unsigned char> vchMsg;
     std::vector<unsigned char> vchSig;
 

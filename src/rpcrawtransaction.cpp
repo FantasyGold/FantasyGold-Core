@@ -2,13 +2,13 @@
 // Copyright (c) 2009-2014 The Bitcoin developers
 // Copyright (c) 2014-2015 The Dash developers
 // Copyright (c) 2015-2017 The PIVX developers
-// Copyright (c) 2017-2018 The Bulwark Core Developers
 // Copyright (c) 2017-2018 The FantasyGold developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
 #include "base58.h"
 #include "core_io.h"
+#include "consensus/validation.h"
 #include "init.h"
 #include "keystore.h"
 #include "main.h"
@@ -16,6 +16,7 @@
 #include "primitives/transaction.h"
 #include "rpcserver.h"
 #include "script/script.h"
+#include "script/script_error.h"
 #include "script/sign.h"
 #include "script/standard.h"
 #include "swifttx.h"
@@ -53,18 +54,21 @@ void ScriptPubKeyToJSON(const CScript& scriptPubKey, UniValue& out, bool fInclud
     out.push_back(Pair("type", GetTxnOutputType(type)));
 
     UniValue a(UniValue::VARR);
-    BOOST_FOREACH(const CTxDestination& addr, addresses) {
-        a.push_back(CBitcoinAddress(addr).ToString());
-    }
+    BOOST_FOREACH (const CTxDestination& addr, addresses)
+        a.push_back(EncodeDestination(addr));
     out.push_back(Pair("addresses", a));
 }
 
-void TxToJSON(const CTransaction& tx, const uint256 hashBlock, UniValue& entry) {
+void TxToJSON(const CTransaction& tx, const uint256 hashBlock, UniValue& entry, bool include_hex, int serialize_flags) {
     entry.push_back(Pair("txid", tx.GetHash().GetHex()));
+    entry.push_back(Pair("hash", tx.GetWitnessHash().GetHex()));
+    entry.push_back(Pair("size", (int)::GetSerializeSize(tx, SER_NETWORK, PROTOCOL_VERSION)));
+    entry.push_back(Pair("vsize", (int)::GetVirtualTransactionSize(tx)));
     entry.push_back(Pair("version", tx.nVersion));
     entry.push_back(Pair("locktime", (int64_t)tx.nLockTime));
     UniValue vin(UniValue::VARR);
-    BOOST_FOREACH (const CTxIn& txin, tx.vin) {
+    for (unsigned int i = 0; i < tx.vin.size(); i++) {
+        const CTxIn& txin = tx.vin[i];
         UniValue in(UniValue::VOBJ);
         if (tx.IsCoinBase())
             in.push_back(Pair("coinbase", HexStr(txin.scriptSig.begin(), txin.scriptSig.end())));
@@ -75,6 +79,17 @@ void TxToJSON(const CTransaction& tx, const uint256 hashBlock, UniValue& entry) 
             o.push_back(Pair("asm", txin.scriptSig.ToString()));
             o.push_back(Pair("hex", HexStr(txin.scriptSig.begin(), txin.scriptSig.end())));
             in.push_back(Pair("scriptSig", o));
+        }
+        if (!tx.wit.IsNull()) {
+            if (!tx.wit.vtxinwit[i].IsNull()) {
+                UniValue txinwitness(UniValue::VARR);
+                for (unsigned int j = 0; j < tx.wit.vtxinwit[i].scriptWitness.stack.size(); j++) {
+                    std::vector<unsigned char> item = tx.wit.vtxinwit[i].scriptWitness.stack[j];
+                    txinwitness.push_back(HexStr(item.begin(), item.end()));
+                }
+                in.push_back(Pair("txinwitness", txinwitness));
+            }
+
         }
         in.push_back(Pair("sequence", (int64_t)txin.nSequence));
         vin.push_back(in);
@@ -93,7 +108,7 @@ void TxToJSON(const CTransaction& tx, const uint256 hashBlock, UniValue& entry) 
     }
     entry.push_back(Pair("vout", vout));
 
-    if (hashBlock != 0) {
+    if (!hashBlock.IsNull()) {
         entry.push_back(Pair("blockhash", hashBlock.GetHex()));
         BlockMap::iterator mi = mapBlockIndex.find(hashBlock);
         if (mi != mapBlockIndex.end() && (*mi).second) {
@@ -106,6 +121,67 @@ void TxToJSON(const CTransaction& tx, const uint256 hashBlock, UniValue& entry) 
                 entry.push_back(Pair("confirmations", 0));
         }
     }
+
+    if (include_hex) {
+        entry.pushKV("hex", EncodeHexTx(tx, serialize_flags)); // The hex-encoded transaction. Used the name "hex" to be consistent with the verbose output of "getrawtransaction".
+    }
+}
+
+UniValue searchrawtransactions(const UniValue& params, bool fHelp) {
+    if (fHelp || params.size() < 1 || params.size() > 4)
+        throw runtime_error("searchrawtransactions <address> [verbose=1] [skip=0] [count=100]\n");
+    
+    if (!fAddrIndex)
+        throw JSONRPCError(RPC_MISC_ERROR, "Address index not enabled");
+    
+    if (!IsValidDestinationString(params[0].get_str()))
+        throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, "Invalid address");
+
+    CTxDestination dest = DecodeDestination(params[0].get_str());
+    
+    std::set<CExtDiskTxPos> setpos;
+    if (!FindTransactionsByDestination(dest, setpos))
+        throw JSONRPCError(RPC_DATABASE_ERROR, "Cannot search for address");
+    
+    int nSkip = 0;
+    int nCount = 100;
+    bool fVerbose = true;
+    if (params.size() > 1)
+        fVerbose = (params[1].get_int() != 0);
+    if (params.size() > 2)
+        nSkip = params[2].get_int();
+    if (params.size() > 3)
+        nCount = params[3].get_int();
+    
+    if (nSkip < 0)
+        nSkip += setpos.size();
+    if (nSkip < 0)
+        nSkip = 0;
+    if (nCount < 0)
+        nCount = 0;
+    
+    std::set<CExtDiskTxPos>::const_iterator it = setpos.begin();
+    while (it != setpos.end() && nSkip--) it++;
+    
+    UniValue result(UniValue::VARR);
+    while (it != setpos.end() && nCount--) {
+        CTransaction tx;
+        uint256 hashBlock;
+        if (!ReadTransaction(tx, *it, hashBlock))
+            throw JSONRPCError(RPC_DESERIALIZATION_ERROR, "Cannot read transaction from disk");
+        if (fVerbose) {
+            UniValue object(UniValue::VOBJ);
+            TxToJSON(tx, hashBlock, object, true, RPCSerializationFlags());
+            result.push_back(object);
+        } else {
+            CDataStream ssTx(SER_NETWORK, PROTOCOL_VERSION | RPCSerializationFlags());
+            ssTx << tx;
+            string strHex = HexStr(ssTx.begin(), ssTx.end());
+            result.push_back(strHex);
+        }
+        it++;
+    }
+    return result;
 }
 
 UniValue getrawtransaction(const UniValue& params, bool fHelp) {
@@ -130,6 +206,9 @@ UniValue getrawtransaction(const UniValue& params, bool fHelp) {
             "{\n"
             "  \"hex\" : \"data\",       (string) The serialized, hex-encoded data for 'txid'\n"
             "  \"txid\" : \"id\",        (string) The transaction id (same as provided)\n"
+            "  \"hash\" : \"id\",        (string) The transaction hash (differs from txid for witness transactions)\n"
+            "  \"size\" : n,             (numeric) The serialized transaction size\n"
+            "  \"vsize\" : n,            (numeric) The virtual transaction size (differs from size for witness transactions)\n"
             "  \"version\" : n,          (numeric) The version\n"
             "  \"locktime\" : ttt,       (numeric) The lock time\n"
             "  \"vin\" : [               (array of json objects)\n"
@@ -141,12 +220,13 @@ UniValue getrawtransaction(const UniValue& params, bool fHelp) {
             "         \"hex\": \"hex\"   (string) hex\n"
             "       },\n"
             "       \"sequence\": n      (numeric) The script sequence number\n"
+            "       \"txinwitness\": [\"hex\", ...] (array of string) hex-encoded witness data (if any)\n"
             "     }\n"
             "     ,...\n"
             "  ],\n"
             "  \"vout\" : [              (array of json objects)\n"
             "     {\n"
-            "       \"value\" : x.xxx,            (numeric) The value in btc\n"
+            "       \"value\" : x.xxx,            (numeric) The value in fantasygold\n"
             "       \"n\" : n,                    (numeric) index\n"
             "       \"scriptPubKey\" : {          (json object)\n"
             "         \"asm\" : \"asm\",          (string) the asm\n"
@@ -170,6 +250,8 @@ UniValue getrawtransaction(const UniValue& params, bool fHelp) {
             "\nExamples:\n" +
             HelpExampleCli("getrawtransaction", "\"mytxid\"") + HelpExampleCli("getrawtransaction", "\"mytxid\" 1") + HelpExampleRpc("getrawtransaction", "\"mytxid\", 1"));
 
+    LOCK(cs_main);
+
     uint256 hash = ParseHashV(params[0], "parameter 1");
 
     bool fVerbose = false;
@@ -181,20 +263,19 @@ UniValue getrawtransaction(const UniValue& params, bool fHelp) {
     if (!GetTransaction(hash, tx, hashBlock, true))
         throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, "No information available about transaction");
 
-    string strHex = EncodeHexTx(tx);
-
-    if (!fVerbose)
+    if (!fVerbose) {
+        string strHex = EncodeHexTx(tx, PROTOCOL_VERSION | RPCSerializationFlags()); 
         return strHex;
+    }
 
     UniValue result(UniValue::VOBJ);
-    result.push_back(Pair("hex", strHex));
-    TxToJSON(tx, hashBlock, result);
+    TxToJSON(tx, hashBlock, result, true, RPCSerializationFlags());
     return result;
 }
 
 #ifdef ENABLE_WALLET
 UniValue listunspent(const UniValue& params, bool fHelp) {
-    if (fHelp || params.size() > 3)
+    if (fHelp || params.size() > 4)
         throw runtime_error(
             "listunspent ( minconf maxconf  [\"address\",...] )\n"
             "\nReturns array of unspent transaction outputs\n"
@@ -210,6 +291,7 @@ UniValue listunspent(const UniValue& params, bool fHelp) {
             "      \"address\"   (string) fantasygold address\n"
             "      ,...\n"
             "    ]\n"
+            "4. watchonlyconfig  (numberic, optional, default=1) 1 = list regular unspent transactions, 2 = list only watchonly transactions,  3 = list all unspent transactions (including watchonly)\n"
             "\nResult\n"
             "[                   (array of json object)\n"
             "  {\n"
@@ -218,7 +300,7 @@ UniValue listunspent(const UniValue& params, bool fHelp) {
             "    \"address\" : \"address\",  (string) the fantasygold address\n"
             "    \"account\" : \"account\",  (string) The associated account, or \"\" for the default account\n"
             "    \"scriptPubKey\" : \"key\", (string) the script key\n"
-            "    \"amount\" : x.xxx,         (numeric) the transaction amount in btc\n"
+            "    \"amount\" : x.xxx,         (numeric) the transaction amount in fantasygold\n"
             "    \"confirmations\" : n       (numeric) The number of confirmations\n"
             "  }\n"
             "  ,...\n"
@@ -227,7 +309,7 @@ UniValue listunspent(const UniValue& params, bool fHelp) {
             "\nExamples\n" +
             HelpExampleCli("listunspent", "") + HelpExampleCli("listunspent", "6 9999999 \"[\\\"1PGFqEzfmQch1gKD3ra4k18PNj3tTUUSqg\\\",\\\"1LtvqCaApEdUGFkpKMM4MstjcaL4dKg8SP\\\"]\"") + HelpExampleRpc("listunspent", "6, 9999999 \"[\\\"1PGFqEzfmQch1gKD3ra4k18PNj3tTUUSqg\\\",\\\"1LtvqCaApEdUGFkpKMM4MstjcaL4dKg8SP\\\"]\""));
 
-    RPCTypeCheck(params, boost::assign::list_of(UniValue::VNUM)(UniValue::VNUM)(UniValue::VARR));
+    RPCTypeCheck(params, boost::assign::list_of(UniValue::VNUM)(UniValue::VNUM)(UniValue::VARR)(UniValue::VNUM));
 
     int nMinDepth = 1;
     if (params.size() > 0)
@@ -237,25 +319,34 @@ UniValue listunspent(const UniValue& params, bool fHelp) {
     if (params.size() > 1)
         nMaxDepth = params[1].get_int();
 
-    set<CBitcoinAddress> setAddress;
+    set<CTxDestination> setAddress;
     if (params.size() > 2) {
         UniValue inputs = params[2].get_array();
         for (unsigned int inx = 0; inx < inputs.size(); inx++) {
             const UniValue& input = inputs[inx];
-            CBitcoinAddress address(input.get_str());
-            if (!address.IsValid())
+            if (!IsValidDestinationString(input.get_str()))
                 throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, string("Invalid FantasyGold address: ") + input.get_str());
+            
+            CTxDestination address = DecodeDestination(input.get_str());
             if (setAddress.count(address))
                 throw JSONRPCError(RPC_INVALID_PARAMETER, string("Invalid parameter, duplicated address: ") + input.get_str());
             setAddress.insert(address);
         }
     }
 
+    int nWatchonlyConfig = 1;
+    if(params.size() > 3) {
+        nWatchonlyConfig = params[3].get_int();
+        if (nWatchonlyConfig > 3 || nWatchonlyConfig < 1)
+            nWatchonlyConfig = 1;
+    }
+
     UniValue results(UniValue::VARR);
     vector<COutput> vecOutputs;
     assert(pwalletMain != NULL);
-    pwalletMain->AvailableCoins(vecOutputs, false);
-    BOOST_FOREACH (const COutput& out, vecOutputs) {
+    LOCK2(cs_main, pwalletMain->cs_wallet);
+    pwalletMain->AvailableCoins(vecOutputs, false, NULL, false, ALL_COINS, false, nWatchonlyConfig);
+    BOOST_FOREACH(const COutput& out, vecOutputs) {
         if (out.nDepth < nMinDepth || out.nDepth > nMaxDepth)
             continue;
 
@@ -275,7 +366,7 @@ UniValue listunspent(const UniValue& params, bool fHelp) {
         entry.push_back(Pair("vout", out.i));
         CTxDestination address;
         if (ExtractDestination(out.tx->vout[out.i].scriptPubKey, address)) {
-            entry.push_back(Pair("address", CBitcoinAddress(address).ToString()));
+            entry.push_back(Pair("address", EncodeDestination(address)));
             if (pwalletMain->mapAddressBook.count(address))
                 entry.push_back(Pair("account", pwalletMain->mapAddressBook[address].name));
         }
@@ -319,7 +410,7 @@ UniValue createrawtransaction(const UniValue& params, bool fHelp) {
             "     ]\n"
             "2. \"addresses\"           (string, required) a json object with addresses as keys and amounts as values\n"
             "    {\n"
-            "      \"address\": x.xxx   (numeric, required) The key is the fantasygold address, the value is the btc amount\n"
+            "      \"address\": x.xxx   (numeric, required) The key is the fantasygold address, the value is the fantasygold amount\n"
             "      ,...\n"
             "    }\n"
 
@@ -329,6 +420,7 @@ UniValue createrawtransaction(const UniValue& params, bool fHelp) {
             "\nExamples\n" +
             HelpExampleCli("createrawtransaction", "\"[{\\\"txid\\\":\\\"myid\\\",\\\"vout\\\":0}]\" \"{\\\"address\\\":0.01}\"") + HelpExampleRpc("createrawtransaction", "\"[{\\\"txid\\\":\\\"myid\\\",\\\"vout\\\":0}]\", \"{\\\"address\\\":0.01}\""));
 
+    LOCK(cs_main);
     RPCTypeCheck(params, boost::assign::list_of(UniValue::VARR)(UniValue::VOBJ));
 
     UniValue inputs = params[0].get_array();
@@ -353,25 +445,26 @@ UniValue createrawtransaction(const UniValue& params, bool fHelp) {
         rawTx.vin.push_back(in);
     }
 
-    set<CBitcoinAddress> setAddress;
+    set<CTxDestination> setAddress;
     vector<string> addrList = sendTo.getKeys();
     BOOST_FOREACH(const string& name_, addrList) {
-        CBitcoinAddress address(name_);
-        if (!address.IsValid())
+        if (!IsValidDestinationString(name_))
             throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, string("Invalid FantasyGold address: ")+name_);
+
+        CTxDestination address = DecodeDestination(name_);
 
         if (setAddress.count(address))
             throw JSONRPCError(RPC_INVALID_PARAMETER, string("Invalid parameter, duplicated address: ")+name_);
         setAddress.insert(address);
 
-        CScript scriptPubKey = GetScriptForDestination(address.Get());
+        CScript scriptPubKey = GetScriptForDestination(address);
         CAmount nAmount = AmountFromValue(sendTo[name_]);
 
         CTxOut out(nAmount, scriptPubKey);
         rawTx.vout.push_back(out);
     }
 
-    return EncodeHexTx(rawTx);
+    return EncodeHexTx(rawTx, PROTOCOL_VERSION | RPCSerializationFlags());
 }
 
 UniValue decoderawtransaction(const UniValue& params, bool fHelp) {
@@ -386,6 +479,9 @@ UniValue decoderawtransaction(const UniValue& params, bool fHelp) {
             "\nResult:\n"
             "{\n"
             "  \"txid\" : \"id\",        (string) The transaction id\n"
+            "  \"hash\" : \"id\",        (string) The transaction hash (differs from txid for witness transactions)\n"
+            "  \"size\" : n,             (numeric) The transaction size\n"
+            "  \"vsize\" : n,            (numeric) The virtual transaction size (differs from size for witness transactions)\n"
             "  \"version\" : n,          (numeric) The version\n"
             "  \"locktime\" : ttt,       (numeric) The lock time\n"
             "  \"vin\" : [               (array of json objects)\n"
@@ -396,13 +492,14 @@ UniValue decoderawtransaction(const UniValue& params, bool fHelp) {
             "         \"asm\": \"asm\",  (string) asm\n"
             "         \"hex\": \"hex\"   (string) hex\n"
             "       },\n"
+            "       \"txinwitness\": [\"hex\", ...] (array of string) hex-encoded witness data (if any)\n"
             "       \"sequence\": n     (numeric) The script sequence number\n"
             "     }\n"
             "     ,...\n"
             "  ],\n"
             "  \"vout\" : [             (array of json objects)\n"
             "     {\n"
-            "       \"value\" : x.xxx,            (numeric) The value in btc\n"
+            "       \"value\" : x.xxx,            (numeric) The value in fantasygold\n"
             "       \"n\" : n,                    (numeric) index\n"
             "       \"scriptPubKey\" : {          (json object)\n"
             "         \"asm\" : \"asm\",          (string) the asm\n"
@@ -422,15 +519,16 @@ UniValue decoderawtransaction(const UniValue& params, bool fHelp) {
             "\nExamples:\n" +
             HelpExampleCli("decoderawtransaction", "\"hexstring\"") + HelpExampleRpc("decoderawtransaction", "\"hexstring\""));
 
+    LOCK(cs_main);
     RPCTypeCheck(params, boost::assign::list_of(UniValue::VSTR));
 
     CTransaction tx;
 
-    if (!DecodeHexTx(tx, params[0].get_str()))
+    if (!DecodeHexTx(tx, params[0].get_str(), true))
         throw JSONRPCError(RPC_DESERIALIZATION_ERROR, "TX decode failed");
 
     UniValue result(UniValue::VOBJ);
-    TxToJSON(tx, 0, result);
+    TxToJSON(tx, 0, result, false, RPCSerializationFlags());
 
     return result;
 }
@@ -457,6 +555,7 @@ UniValue decodescript(const UniValue& params, bool fHelp) {
             "\nExamples:\n" +
             HelpExampleCli("decodescript", "\"hexstring\"") + HelpExampleRpc("decodescript", "\"hexstring\""));
 
+    LOCK(cs_main);
     RPCTypeCheck(params, boost::assign::list_of(UniValue::VSTR));
 
     UniValue r(UniValue::VOBJ);
@@ -469,8 +568,19 @@ UniValue decodescript(const UniValue& params, bool fHelp) {
     }
     ScriptPubKeyToJSON(script, r, false);
 
-    r.push_back(Pair("p2sh", CBitcoinAddress(CScriptID(script)).ToString()));
+    r.push_back(Pair("p2sh", EncodeDestination(CTxDestination(CScriptID(script)))));
     return r;
+}
+
+/** Pushes a JSON object for script verification or signing errors to vErrorsRet. */
+static void TxInErrorToJSON(const CTxIn& txin, UniValue& vErrorsRet, const std::string& strMessage) {
+    UniValue entry(UniValue::VOBJ);
+    entry.push_back(Pair("txid", txin.prevout.hash.ToString()));
+    entry.push_back(Pair("vout", (uint64_t)txin.prevout.n));
+    entry.push_back(Pair("scriptSig", HexStr(txin.scriptSig.begin(), txin.scriptSig.end())));
+    entry.push_back(Pair("sequence", (uint64_t)txin.nSequence));
+    entry.push_back(Pair("error", strMessage));
+    vErrorsRet.push_back(entry);
 }
 
 UniValue signrawtransaction(const UniValue& params, bool fHelp) {
@@ -486,40 +596,58 @@ UniValue signrawtransaction(const UniValue& params, bool fHelp) {
             + HelpRequiringPassphrase() + "\n"
 #endif
 
-                                          "\nArguments:\n"
-                                          "1. \"hexstring\"     (string, required) The transaction hex string\n"
-                                          "2. \"prevtxs\"       (string, optional) An json array of previous dependent transaction outputs\n"
-                                          "     [               (json array of json objects, or 'null' if none provided)\n"
-                                          "       {\n"
-                                          "         \"txid\":\"id\",             (string, required) The transaction id\n"
-                                          "         \"vout\":n,                  (numeric, required) The output number\n"
-                                          "         \"scriptPubKey\": \"hex\",   (string, required) script key\n"
-                                          "         \"redeemScript\": \"hex\"    (string, required for P2SH) redeem script\n"
-                                          "       }\n"
-                                          "       ,...\n"
-                                          "    ]\n"
-                                          "3. \"privatekeys\"     (string, optional) A json array of base58-encoded private keys for signing\n"
-                                          "    [                  (json array of strings, or 'null' if none provided)\n"
-                                          "      \"privatekey\"   (string) private key in base58-encoding\n"
-                                          "      ,...\n"
-                                          "    ]\n"
-                                          "4. \"sighashtype\"     (string, optional, default=ALL) The signature hash type. Must be one of\n"
-                                          "       \"ALL\"\n"
-                                          "       \"NONE\"\n"
-                                          "       \"SINGLE\"\n"
-                                          "       \"ALL|ANYONECANPAY\"\n"
-                                          "       \"NONE|ANYONECANPAY\"\n"
-                                          "       \"SINGLE|ANYONECANPAY\"\n"
+            "\nArguments:\n"
+            "1. \"hexstring\"     (string, required) The transaction hex string\n"
+            "2. \"prevtxs\"       (string, optional) An json array of previous dependent transaction outputs\n"
+            "     [               (json array of json objects, or 'null' if none provided)\n"
+            "       {\n"
+            "         \"txid\":\"id\",             (string, required) The transaction id\n"
+            "         \"vout\":n,                  (numeric, required) The output number\n"
+            "         \"scriptPubKey\": \"hex\",   (string, required) script key\n"
+            "         \"redeemScript\": \"hex\",   (string, required for P2SH or P2WSH) redeem script\n"
+            "         \"amount\": value            (numeric, required) The amount spent\n"
+            "       }\n"
+            "       ,...\n"
+            "    ]\n"
+            "3. \"privatekeys\"     (string, optional) A json array of base58-encoded private keys for signing\n"
+            "    [                  (json array of strings, or 'null' if none provided)\n"
+            "      \"privatekey\"   (string) private key in base58-encoding\n"
+            "      ,...\n"
+            "    ]\n"
+            "4. \"sighashtype\"     (string, optional, default=ALL) The signature hash type. Must be one of\n"
+            "       \"ALL\"\n"
+            "       \"NONE\"\n"
+            "       \"SINGLE\"\n"
+            "       \"ALL|ANYONECANPAY\"\n"
+            "       \"NONE|ANYONECANPAY\"\n"
+            "       \"SINGLE|ANYONECANPAY\"\n"
 
-                                          "\nResult:\n"
-                                          "{\n"
-                                          "  \"hex\": \"value\",   (string) The raw transaction with signature(s) (hex-encoded string)\n"
-                                          "  \"complete\": n       (numeric) if transaction has a complete set of signature (0 if not)\n"
-                                          "}\n"
+            "\nResult:\n"
+            "{\n"
+            "  \"hex\" : \"value\",           (string) The hex-encoded raw transaction with signature(s)\n"
+            "  \"complete\" : true|false,   (boolean) If the transaction has a complete set of signatures\n"
+            "  \"errors\" : [                 (json array of objects) Script verification errors (if there are any)\n"
+            "    {\n"
+            "      \"txid\" : \"hash\",           (string) The hash of the referenced, previous transaction\n"
+            "      \"vout\" : n,                (numeric) The index of the output to spent and used as input\n"
+            "      \"scriptSig\" : \"hex\",       (string) The hex-encoded signature script\n"
+            "      \"sequence\" : n,            (numeric) Script sequence number\n"
+            "      \"error\" : \"text\"           (string) Verification or signing error related to the input\n"
+            "    }\n"
+            "    ,...\n"
+            "  ]\n"
+            "}\n"
 
-                                          "\nExamples:\n" +
-            HelpExampleCli("signrawtransaction", "\"myhex\"") + HelpExampleRpc("signrawtransaction", "\"myhex\""));
+            "\nExamples:\n"
+            + HelpExampleCli("signrawtransaction", "\"myhex\"")
+            + HelpExampleRpc("signrawtransaction", "\"myhex\"")
+        );
 
+#ifdef ENABLE_WALLET
+    LOCK2(cs_main, pwalletMain ? &pwalletMain->cs_wallet : NULL);
+#else
+    LOCK(cs_main);
+#endif
     RPCTypeCheck(params, boost::assign::list_of(UniValue::VSTR)(UniValue::VARR)(UniValue::VARR)(UniValue::VSTR), true);
 
     vector<unsigned char> txData(ParseHexV(params[0], "argument 1"));
@@ -541,7 +669,6 @@ UniValue signrawtransaction(const UniValue& params, bool fHelp) {
     // mergedTx will end up with all the signatures; it
     // starts as a clone of the rawtx:
     CMutableTransaction mergedTx(txVariants[0]);
-    bool fComplete = true;
 
     // Fetch previous transactions (inputs):
     CCoinsView viewDummy;
@@ -552,7 +679,7 @@ UniValue signrawtransaction(const UniValue& params, bool fHelp) {
         CCoinsViewMemPool viewMempool(&viewChain, mempool);
         view.SetBackend(viewMempool); // temporarily switch cache backend to db+mempool view
 
-        BOOST_FOREACH (const CTxIn& txin, mergedTx.vin) {
+        BOOST_FOREACH(const CTxIn& txin, mergedTx.vin) {
             const uint256& prevHash = txin.prevout.hash;
             CCoins coins;
             view.AccessCoins(prevHash); // this is certainly allowed to fail
@@ -579,7 +706,7 @@ UniValue signrawtransaction(const UniValue& params, bool fHelp) {
         }
     }
 #ifdef ENABLE_WALLET
-    else
+    else if (pwalletMain)
         EnsureWalletIsUnlocked();
 #endif
 
@@ -593,7 +720,12 @@ UniValue signrawtransaction(const UniValue& params, bool fHelp) {
 
             UniValue prevOut = p.get_obj();
 
-            RPCTypeCheckObj(prevOut, boost::assign::map_list_of("txid", UniValue::VSTR)("vout", UniValue::VNUM)("scriptPubKey", UniValue::VSTR));
+            RPCTypeCheckObj(prevOut,
+                {
+                    {"txid", UniValue::VSTR},
+                    {"vout", UniValue::VNUM},
+                    {"scriptPubKey", UniValue::VSTR},
+                });
 
             uint256 txid = ParseHashO(prevOut, "txid");
 
@@ -615,13 +747,22 @@ UniValue signrawtransaction(const UniValue& params, bool fHelp) {
                 if ((unsigned int)nOut >= coins->vout.size())
                     coins->vout.resize(nOut + 1);
                 coins->vout[nOut].scriptPubKey = scriptPubKey;
-                coins->vout[nOut].nValue = 0; // we don't know the actual output value
+                coins->vout[nOut].nValue = 0;
+                if (prevOut.exists("amount")) {
+                    coins->vout[nOut].nValue = AmountFromValue(find_value(prevOut, "amount"));
+                }
             }
 
             // if redeemScript given and not using the local wallet (private keys
             // given), add redeemScript to the tempKeystore so it can be signed:
-            if (fGivenKeys && scriptPubKey.IsPayToScriptHash()) {
-                RPCTypeCheckObj(prevOut, boost::assign::map_list_of("txid", UniValue::VSTR)("vout", UniValue::VNUM)("scriptPubKey", UniValue::VSTR)("redeemScript",UniValue::VSTR));
+            if (fGivenKeys && (scriptPubKey.IsPayToScriptHash() || scriptPubKey.IsPayToWitnessScriptHash())) {
+                RPCTypeCheckObj(prevOut,
+                    {
+                        {"txid", UniValue::VSTR},
+                        {"vout", UniValue::VNUM},
+                        {"scriptPubKey", UniValue::VSTR},
+                        {"redeemScript", UniValue::VSTR},
+                    });
                 UniValue v = find_value(prevOut, "redeemScript");
                 if (!v.isNull()) {
                     vector<unsigned char> rsData(ParseHexV(v, "redeemScript"));
@@ -641,7 +782,14 @@ UniValue signrawtransaction(const UniValue& params, bool fHelp) {
     int nHashType = SIGHASH_ALL;
     if (params.size() > 3 && !params[3].isNull()) {
         static map<string, int> mapSigHashValues =
-            boost::assign::map_list_of(string("ALL"), int(SIGHASH_ALL))(string("ALL|ANYONECANPAY"), int(SIGHASH_ALL | SIGHASH_ANYONECANPAY))(string("NONE"), int(SIGHASH_NONE))(string("NONE|ANYONECANPAY"), int(SIGHASH_NONE | SIGHASH_ANYONECANPAY))(string("SINGLE"), int(SIGHASH_SINGLE))(string("SINGLE|ANYONECANPAY"), int(SIGHASH_SINGLE | SIGHASH_ANYONECANPAY));
+            boost::assign::map_list_of
+            (string("ALL"), int(SIGHASH_ALL))
+            (string("ALL|ANYONECANPAY"), int(SIGHASH_ALL|SIGHASH_ANYONECANPAY))
+            (string("NONE"), int(SIGHASH_NONE))
+            (string("NONE|ANYONECANPAY"), int(SIGHASH_NONE|SIGHASH_ANYONECANPAY))
+            (string("SINGLE"), int(SIGHASH_SINGLE))
+            (string("SINGLE|ANYONECANPAY"), int(SIGHASH_SINGLE|SIGHASH_ANYONECANPAY))
+            ;
         string strHashType = params[3].get_str();
         if (mapSigHashValues.count(strHashType))
             nHashType = mapSigHashValues[strHashType];
@@ -651,32 +799,48 @@ UniValue signrawtransaction(const UniValue& params, bool fHelp) {
 
     bool fHashSingle = ((nHashType & ~SIGHASH_ANYONECANPAY) == SIGHASH_SINGLE);
 
+    // Script verification errors
+    UniValue vErrors(UniValue::VARR);
+
+    // Use CTransaction for the constant parts of the
+    // transaction to avoid rehashing.
+    const CTransaction txConst(mergedTx);
     // Sign what we can:
     for (unsigned int i = 0; i < mergedTx.vin.size(); i++) {
         CTxIn& txin = mergedTx.vin[i];
         const CCoins* coins = view.AccessCoins(txin.prevout.hash);
         if (coins == NULL || !coins->IsAvailable(txin.prevout.n)) {
-            fComplete = false;
+            TxInErrorToJSON(txin, vErrors, "Input not found or already spent");
             continue;
         }
         const CScript& prevPubKey = coins->vout[txin.prevout.n].scriptPubKey;
+        const CAmount& amount = coins->vout[txin.prevout.n].nValue;
 
-        txin.scriptSig.clear();
+        SignatureData sigdata;
         // Only sign SIGHASH_SINGLE if there's a corresponding output:
         if (!fHashSingle || (i < mergedTx.vout.size()))
-            SignSignature(keystore, prevPubKey, mergedTx, i, nHashType);
+            ProduceSignature(MutableTransactionSignatureCreator(&keystore, &mergedTx, i, amount, nHashType), prevPubKey, sigdata);
 
         // ... and merge in other signatures:
-        BOOST_FOREACH (const CMutableTransaction& txv, txVariants) {
-            txin.scriptSig = CombineSignatures(prevPubKey, mergedTx, i, txin.scriptSig, txv.vin[i].scriptSig);
+        BOOST_FOREACH(const CMutableTransaction& txv, txVariants) {
+            sigdata = CombineSignatures(prevPubKey, TransactionSignatureChecker(&txConst, i, amount), sigdata, DataFromTransaction(txv, i));
         }
-        if (!VerifyScript(txin.scriptSig, prevPubKey, STANDARD_SCRIPT_VERIFY_FLAGS, MutableTransactionSignatureChecker(&mergedTx, i)))
-            fComplete = false;
+
+        UpdateTransaction(mergedTx, i, sigdata);
+
+        ScriptError serror = SCRIPT_ERR_OK;
+        if (!VerifyScript(txin.scriptSig, prevPubKey, mergedTx.wit.vtxinwit.size() > i ? &mergedTx.wit.vtxinwit[i].scriptWitness : NULL, STANDARD_SCRIPT_VERIFY_FLAGS, TransactionSignatureChecker(&txConst, i, amount), &serror)) {
+            TxInErrorToJSON(txin, vErrors, ScriptErrorString(serror));
+        }
     }
+    bool fComplete = vErrors.empty();
 
     UniValue result(UniValue::VOBJ);
-    result.push_back(Pair("hex", EncodeHexTx(mergedTx)));
+    result.push_back(Pair("hex", EncodeHexTx(mergedTx, PROTOCOL_VERSION)));
     result.push_back(Pair("complete", fComplete));
+    if (!vErrors.empty()) {
+        result.push_back(Pair("errors", vErrors));
+    }
 
     return result;
 }
@@ -700,11 +864,12 @@ UniValue sendrawtransaction(const UniValue& params, bool fHelp) {
             "\nSend the transaction (signed hex)\n" + HelpExampleCli("sendrawtransaction", "\"signedhex\"") +
             "\nAs a json rpc call\n" + HelpExampleRpc("sendrawtransaction", "\"signedhex\""));
 
+    LOCK(cs_main);
     RPCTypeCheck(params, boost::assign::list_of(UniValue::VSTR)(UniValue::VBOOL));
 
     // parse hex string from parameter
     CTransaction tx;
-    if (!DecodeHexTx(tx, params[0].get_str()))
+    if (!DecodeHexTx(tx, params[0].get_str(), true))
         throw JSONRPCError(RPC_DESERIALIZATION_ERROR, "TX decode failed");
     uint256 hashTx = tx.GetHash();
 
@@ -712,9 +877,9 @@ UniValue sendrawtransaction(const UniValue& params, bool fHelp) {
     if (params.size() > 1)
         fOverrideFees = params[1].get_bool();
 
-    bool fSwiftTX = false;
+    bool fSwiftX = false;
     if (params.size() > 2)
-        fSwiftTX = params[2].get_bool();
+        fSwiftX = params[2].get_bool();
 
     CCoinsViewCache& view = *pcoinsTip;
     const CCoins* existingCoins = view.AccessCoins(hashTx);
@@ -722,7 +887,7 @@ UniValue sendrawtransaction(const UniValue& params, bool fHelp) {
     bool fHaveChain = existingCoins && existingCoins->nHeight < 1000000000;
     if (!fHaveMempool && !fHaveChain) {
         // push to local node and sync with wallets
-        if (fSwiftTX) {
+        if (fSwiftX) {
             mapTxLockReq.insert(make_pair(tx.GetHash(), tx));
             CreateNewLock(tx);
             RelayTransactionLockReq(tx, true);
@@ -754,6 +919,8 @@ UniValue getspentzerocoinamount(const UniValue& params, bool fHelp) {
             "\"value\"        (int) Spent output value, -1 if error\n"
             "\nExamples:\n" +
             HelpExampleCli("getspentzerocoinamount", "78021ebf92a80dfccef1413067f1222e37535399797cce029bb40ad981131706 0"));
+
+    LOCK(cs_main);
 
     uint256 txHash = ParseHashV(params[0], "parameter 1");
     int inputIndex = params[1].get_int();

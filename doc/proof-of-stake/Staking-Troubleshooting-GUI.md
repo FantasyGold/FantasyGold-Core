@@ -34,7 +34,7 @@ This should always be true, this just shows that the POS period is active for th
 
 ## haveconnections
 
-This makes sure you have valid peers, if this is showing as false I'd recommend following the instructions listed in: [Wallet and Syncing Issues](https://kb.fantasygoldcrypto.com/Guides/Wallet-Syncing-Issues/)
+This makes sure you have valid peers, if this is showing as false I'd recommend following the instructions listed in: [Wallet and Syncing Issues](https://kb.fantasygold.io/Guides/Wallet-Syncing-Issues/)
 
 ## walletunlocked
 
@@ -52,7 +52,7 @@ This is making sure you have more than 100 FGC in the wallet. If this is appeari
 
 ## mnsync
 
-This just makes sure your wallet is fully synced, if you appear to be fully synced I'd recommend following the steps listed in: [Wallet and Syncing Issues](https://kb.fantasygoldcrypto.com/Guides/Wallet-Syncing-Issues/)
+This just makes sure your wallet is fully synced, if you appear to be fully synced I'd recommend following the steps listed in: [Wallet and Syncing Issues](https://kb.fantasygold.io/Guides/Wallet-Syncing-Issues/)
 
 ## staking status
 

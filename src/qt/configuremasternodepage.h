@@ -57,7 +57,8 @@ class ConfigureMasternodePage : public QDialog {
         return counters;
     }
 
-    void setCounters(int counter) {
+	int setCounters(int counter)
+	{
         counters = counter;
     }
 

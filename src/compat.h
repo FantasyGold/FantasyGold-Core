@@ -38,6 +38,7 @@
 #include <net/if.h>
 #include <netdb.h>
 #include <netinet/in.h>
+#include <netinet/tcp.h>
 #include <sys/fcntl.h>
 #include <sys/mman.h>
 #include <sys/socket.h>
@@ -72,13 +73,13 @@ typedef u_int SOCKET;
 #define MAX_PATH 1024
 #endif
 
-// As FantasyGold does not have the MSG_NOSIGNAL flag for send(2) syscall, it is defined as 0
+// As Solaris does not have the MSG_NOSIGNAL flag for send(2) syscall, it is defined as 0
 #if !defined(HAVE_MSG_NOSIGNAL) && !defined(MSG_NOSIGNAL)
 #define MSG_NOSIGNAL 0
 #endif
 
 #ifndef WIN32
-// PRIO_MAX is not defined on FantasyGold
+// PRIO_MAX is not defined on Solaris
 #ifndef PRIO_MAX
 #define PRIO_MAX 20
 #endif
@@ -88,7 +89,9 @@ typedef u_int SOCKET;
 #define THREAD_PRIORITY_ABOVE_NORMAL (-2)
 #endif
 
-size_t strnlen_int(const char* start, size_t max_len);
+#if HAVE_DECL_STRNLEN == 0
+size_t strnlen( const char *start, size_t max_len);
+#endif // HAVE_DECL_STRNLEN
 
 bool static inline IsSelectableSocket(SOCKET s) {
 #ifdef WIN32

@@ -12,18 +12,18 @@
 
 class CNetAddr;
 
-/** 
+/**
  * Median filter over a stream of values.
  * Returns the median of the last N numbers
  */
 template <typename T>
 class CMedianFilter {
-private:
+  private:
     std::vector<T> vValues;
     std::vector<T> vSorted;
     unsigned int nSize;
 
-public:
+  public:
     CMedianFilter(unsigned int size, T initial_value) : nSize(size) {
         vValues.reserve(size);
         vValues.push_back(initial_value);

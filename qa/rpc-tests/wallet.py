@@ -4,7 +4,7 @@
 # file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
 #
-# Exercise the wallet.  Ported from wallet.sh.  
+# Exercise the wallet.  Ported from wallet.sh.
 # Does the following:
 #   a) creates 3 nodes, with an empty chain (no blocks).
 #   b) node0 mines a block
@@ -54,7 +54,7 @@ class WalletTest (BitcoinTestFramework):
         self.nodes[0].sendtoaddress(self.nodes[2].getnewaddress(), 351)
         self.nodes[0].sendtoaddress(self.nodes[2].getnewaddress(), 350)
 
-        # Have node0 mine a block, thus he will collect his own fee. 
+        # Have node0 mine a block, thus he will collect his own fee.
         self.nodes[0].setgenerate(True, 1)
         self.sync_all()
 
@@ -62,20 +62,20 @@ class WalletTest (BitcoinTestFramework):
         self.nodes[1].setgenerate(True, 16)
         self.sync_all()
 
-        # node0 should end up with 100 btc in block rewards plus fees, but
+        # node0 should end up with 100 fantasygold in block rewards plus fees, but
         # minus the 21 plus fees sent to node2
         assert_greater_than(self.nodes[0].getbalance(), 59549)
         assert_equal(self.nodes[2].getbalance(), 701)
 
         # Node0 should have two unspent outputs.
-        # Create a couple of transactions to send them to node2, submit them through 
-        # node1, and make sure both node0 and node2 pick them up properly: 
+        # Create a couple of transactions to send them to node2, submit them through
+        # node1, and make sure both node0 and node2 pick them up properly:
         node0utxos = self.nodes[0].listunspent(1)
         assert_equal(len(node0utxos), 2)
 
         # create both transactions
         txns_to_send = []
-        for utxo in node0utxos: 
+        for utxo in node0utxos:
             inputs = []
             outputs = {}
             inputs.append({ "txid" : utxo["txid"], "vout" : utxo["vout"]})

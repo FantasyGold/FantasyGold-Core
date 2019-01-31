@@ -25,7 +25,7 @@ enum ChangeType {
 
 /** Signals for UI communication. */
 class CClientUIInterface {
-public:
+  public:
     /** Flags for CClientUIInterface::ThreadSafeMessageBox */
     enum MessageBoxFlags {
         ICON_INFORMATION = 0,
@@ -100,6 +100,12 @@ public:
 
     /** New block has been accepted */
     boost::signals2::signal<void(const uint256& hash)> NotifyBlockTip;
+
+    /** New transaction has been added to the mempool */
+    boost::signals2::signal<void(const uint256& hash)> NotifyTransaction;
+    
+    /** New block has been accepted and is over a certain size */
+    boost::signals2::signal<void(int size, const uint256& hash)> NotifyBlockSize;
 
     /** Banlist did change. */
     boost::signals2::signal<void(void)> BannedListChanged;

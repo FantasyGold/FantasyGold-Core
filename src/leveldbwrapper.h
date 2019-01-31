@@ -17,7 +17,7 @@
 #include <leveldb/write_batch.h>
 
 class leveldb_error : public std::runtime_error {
-public:
+  public:
     leveldb_error(const std::string& msg) : std::runtime_error(msg) {}
 };
 
@@ -27,10 +27,10 @@ void HandleError(const leveldb::Status& status);
 class CLevelDBBatch {
     friend class CLevelDBWrapper;
 
-private:
+  private:
     leveldb::WriteBatch batch;
 
-public:
+  public:
     template <typename K, typename V>
     void Write(const K& key, const V& value) {
         CDataStream ssKey(SER_DISK, CLIENT_VERSION);
@@ -58,7 +58,7 @@ public:
 };
 
 class CLevelDBWrapper {
-private:
+  private:
     //! custom environment this database is using (may be NULL in case of default environment)
     leveldb::Env* penv;
 
@@ -80,7 +80,7 @@ private:
     //! the database itself
     leveldb::DB* pdb;
 
-public:
+  public:
     CLevelDBWrapper(const boost::filesystem::path& path, size_t nCacheSize, bool fMemory = false, bool fWipe = false);
     ~CLevelDBWrapper();
 

@@ -2,7 +2,6 @@
 // Copyright (c) 2009-2014 The Bitcoin developers
 // Copyright (c) 2014-2015 The Dash developers
 // Copyright (c) 2015-2017 The PIVX developers
-// Copyright (c) 2017-2018 The Bulwark Core Developers
 // Copyright (c) 2017-2018 The FantasyGold developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
@@ -18,18 +17,18 @@
 #include <vector>
 
 class uint_error : public std::runtime_error {
-public:
+  public:
     explicit uint_error(const std::string& str) : std::runtime_error(str) {}
 };
 
 /** Template base class for unsigned big integers. */
 template <unsigned int BITS>
 class base_uint {
-protected:
+  protected:
     enum { WIDTH = BITS / 32 };
     uint32_t pn[WIDTH];
 
-public:
+  public:
     base_uint() {
         for (int i = 0; i < WIDTH; i++)
             pn[i] = 0;
@@ -42,15 +41,15 @@ public:
 
 
     bool IsNull() const {
-	for (int i = 0; i < WIDTH; i++)
-		if (pn[i] != 0)
-			return false;
-	return true;
-}
+        for (int i = 0; i < WIDTH; i++)
+            if (pn[i] != 0)
+                return false;
+        return true;
+    }
 
     void SetNull() {
-	memset(pn, 0, sizeof(pn));
-}
+        memset(pn, 0, sizeof(pn));
+    }
 
 
     base_uint& operator=(const base_uint& b) {
@@ -200,60 +199,24 @@ public:
     int CompareTo(const base_uint& b) const;
     bool EqualTo(uint64_t b) const;
 
-    friend inline const base_uint operator+(const base_uint& a, const base_uint& b) {
-        return base_uint(a) += b;
-    }
-    friend inline const base_uint operator-(const base_uint& a, const base_uint& b) {
-        return base_uint(a) -= b;
-    }
-    friend inline const base_uint operator*(const base_uint& a, const base_uint& b) {
-        return base_uint(a) *= b;
-    }
-    friend inline const base_uint operator/(const base_uint& a, const base_uint& b) {
-        return base_uint(a) /= b;
-    }
-    friend inline const base_uint operator|(const base_uint& a, const base_uint& b) {
-        return base_uint(a) |= b;
-    }
-    friend inline const base_uint operator&(const base_uint& a, const base_uint& b) {
-        return base_uint(a) &= b;
-    }
-    friend inline const base_uint operator^(const base_uint& a, const base_uint& b) {
-        return base_uint(a) ^= b;
-    }
-    friend inline const base_uint operator>>(const base_uint& a, int shift) {
-        return base_uint(a) >>= shift;
-    }
-    friend inline const base_uint operator<<(const base_uint& a, int shift) {
-        return base_uint(a) <<= shift;
-    }
-    friend inline const base_uint operator*(const base_uint& a, uint32_t b) {
-        return base_uint(a) *= b;
-    }
-    friend inline bool operator==(const base_uint& a, const base_uint& b) {
-        return memcmp(a.pn, b.pn, sizeof(a.pn)) == 0;
-    }
-    friend inline bool operator!=(const base_uint& a, const base_uint& b) {
-        return memcmp(a.pn, b.pn, sizeof(a.pn)) != 0;
-    }
-    friend inline bool operator>(const base_uint& a, const base_uint& b) {
-        return a.CompareTo(b) > 0;
-    }
-    friend inline bool operator<(const base_uint& a, const base_uint& b) {
-        return a.CompareTo(b) < 0;
-    }
-    friend inline bool operator>=(const base_uint& a, const base_uint& b) {
-        return a.CompareTo(b) >= 0;
-    }
-    friend inline bool operator<=(const base_uint& a, const base_uint& b) {
-        return a.CompareTo(b) <= 0;
-    }
-    friend inline bool operator==(const base_uint& a, uint64_t b) {
-        return a.EqualTo(b);
-    }
-    friend inline bool operator!=(const base_uint& a, uint64_t b) {
-        return !a.EqualTo(b);
-    }
+    friend inline const base_uint operator+(const base_uint& a, const base_uint& b) { return base_uint(a) += b; }
+    friend inline const base_uint operator-(const base_uint& a, const base_uint& b) { return base_uint(a) -= b; }
+    friend inline const base_uint operator*(const base_uint& a, const base_uint& b) { return base_uint(a) *= b; }
+    friend inline const base_uint operator/(const base_uint& a, const base_uint& b) { return base_uint(a) /= b; }
+    friend inline const base_uint operator|(const base_uint& a, const base_uint& b) { return base_uint(a) |= b; }
+    friend inline const base_uint operator&(const base_uint& a, const base_uint& b) { return base_uint(a) &= b; }
+    friend inline const base_uint operator^(const base_uint& a, const base_uint& b) { return base_uint(a) ^= b; }
+    friend inline const base_uint operator>>(const base_uint& a, int shift) { return base_uint(a) >>= shift; }
+    friend inline const base_uint operator<<(const base_uint& a, int shift) { return base_uint(a) <<= shift; }
+    friend inline const base_uint operator*(const base_uint& a, uint32_t b) { return base_uint(a) *= b; }
+    friend inline bool operator==(const base_uint& a, const base_uint& b) { return memcmp(a.pn, b.pn, sizeof(a.pn)) == 0; }
+    friend inline bool operator!=(const base_uint& a, const base_uint& b) { return memcmp(a.pn, b.pn, sizeof(a.pn)) != 0; }
+    friend inline bool operator>(const base_uint& a, const base_uint& b) { return a.CompareTo(b) > 0; }
+    friend inline bool operator<(const base_uint& a, const base_uint& b) { return a.CompareTo(b) < 0; }
+    friend inline bool operator>=(const base_uint& a, const base_uint& b) { return a.CompareTo(b) >= 0; }
+    friend inline bool operator<=(const base_uint& a, const base_uint& b) { return a.CompareTo(b) <= 0; }
+    friend inline bool operator==(const base_uint& a, uint64_t b) { return a.EqualTo(b); }
+    friend inline bool operator!=(const base_uint& a, uint64_t b) { return !a.EqualTo(b); }
 
     std::string GetHex() const;
     void SetHex(const char* psz);
@@ -320,7 +283,7 @@ public:
 
 /** 160-bit unsigned big integer. */
 class uint160 : public base_uint<160> {
-public:
+  public:
     uint160() {}
     uint160(const base_uint<160>& b) : base_uint<160>(b) {}
     uint160(uint64_t b) : base_uint<160>(b) {}
@@ -330,7 +293,7 @@ public:
 
 /** 256-bit unsigned big integer. */
 class uint256 : public base_uint<256> {
-public:
+  public:
     uint256() {}
     uint256(const base_uint<256>& b) : base_uint<256>(b) {}
     uint256(uint64_t b) : base_uint<256>(b) {}
@@ -346,12 +309,12 @@ public:
      * The lower 23 bits are the mantissa.
      * Bit number 24 (0x800000) represents the sign of N.
      * N = (-1^sign) * mantissa * 256^(exponent-3)
-     * 
+     *
      * Satoshi's original implementation used BN_bn2mpi() and BN_mpi2bn().
      * MPI uses the most significant bit of the first byte as sign.
      * Thus 0x1234560000 is compact (0x05123456)
      * and  0xc0de000000 is compact (0x0600c0de)
-     * 
+     *
      * Bitcoin only uses this "compact" format for encoding difficulty
      * targets, which are unsigned 256bit quantities.  Thus, all the
      * complexities of the sign bit and using base 256 are probably an
@@ -383,7 +346,7 @@ inline uint256 uint256S(const std::string& str) {
 
 /** 512-bit unsigned big integer. */
 class uint512 : public base_uint<512> {
-public:
+  public:
     uint512() {}
     uint512(const base_uint<512>& b) : base_uint<512>(b) {}
     uint512(uint64_t b) : base_uint<512>(b) {}

@@ -1,7 +1,6 @@
 // Copyright (c) 2011-2014 The Bitcoin developers
 // Copyright (c) 2014-2015 The Dash developers
 // Copyright (c) 2015-2017 The PIVX developers
-// Copyright (c) 2017-2018 The Bulwark Core Developers
 // Copyright (c) 2017-2018 The FantasyGold developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
@@ -24,11 +23,8 @@ bool TransactionRecord::showTransaction(const CWalletTx& wtx) {
         if (!wtx.IsInMainChain()) {
             return false;
         }
-        return true;
-    } else {
-        QSettings settings;
-        return (!settings.value("fShowOrphans").toBool() || wtx.GetDepthInMainChain() >= 0);
     }
+        return true;
 }
 
 /*
@@ -58,7 +54,7 @@ QList<TransactionRecord> TransactionRecord::decomposeTransaction(const CWallet* 
                         isminetype mine = wallet->IsMine(wtx.vout[i]);
                         sub.involvesWatchAddress = mine & ISMINE_WATCH_ONLY;
                         sub.type = TransactionRecord::MNReward;
-                        sub.address = CBitcoinAddress(outAddress).ToString();
+                        sub.address = EncodeDestination(outAddress);
                         sub.credit = wtx.vout[i].nValue;
                     }
                 }
@@ -68,7 +64,7 @@ QList<TransactionRecord> TransactionRecord::decomposeTransaction(const CWallet* 
             isminetype mine = wallet->IsMine(wtx.vout[1]);
             sub.involvesWatchAddress = mine & ISMINE_WATCH_ONLY;
             sub.type = TransactionRecord::StakeMint;
-            sub.address = CBitcoinAddress(address).ToString();
+            sub.address = EncodeDestination(address);
             sub.credit = nNet;
         }
         parts.append(sub);
@@ -86,8 +82,10 @@ QList<TransactionRecord> TransactionRecord::decomposeTransaction(const CWallet* 
                 if (!fSpendFromMe)
                     continue;
 
+                isminetype mine = wallet->IsMine(txout);
                 TransactionRecord sub(hash, nTime);
-                sub.type = TransactionRecord::ZerocoinSpend_Change_zFGC;
+                sub.involvesWatchAddress = mine & ISMINE_WATCH_ONLY;
+                sub.type = TransactionRecord::ZerocoinSpend_Change_zFgc;
                 sub.address = mapValue["zerocoinmint"];
                 sub.debit = -txout.nValue;
                 if (!fFeeAssigned) {
@@ -102,7 +100,7 @@ QList<TransactionRecord> TransactionRecord::decomposeTransaction(const CWallet* 
             string strAddress = "";
             CTxDestination address;
             if (ExtractDestination(txout.scriptPubKey, address))
-                strAddress = CBitcoinAddress(address).ToString();
+                strAddress = EncodeDestination(address);
 
             // a zerocoinspend that was sent to an address held by this wallet
             isminetype mine = wallet->IsMine(txout);
@@ -153,7 +151,7 @@ QList<TransactionRecord> TransactionRecord::decomposeTransaction(const CWallet* 
                 if (ExtractDestination(txout.scriptPubKey, address) && IsMine(*wallet, address)) {
                     // Received by FantasyGold Address
                     sub.type = TransactionRecord::RecvWithAddress;
-                    sub.address = CBitcoinAddress(address).ToString();
+                    sub.address = EncodeDestination(address);
                 } else {
                     // Received by IP connection (deprecated features), or a multisignature or other non-simple transaction
                     sub.type = TransactionRecord::RecvFromOther;
@@ -195,7 +193,7 @@ QList<TransactionRecord> TransactionRecord::decomposeTransaction(const CWallet* 
             if (fAllToMe > mine) fAllToMe = mine;
         }
 
-        if (fAllFromMeDenom && fAllToMeDenom && nFromMe * nToMe) {
+        if (fAllFromMeDenom && fAllToMeDenom && nFromMe && nToMe) {
             parts.append(TransactionRecord(hash, nTime, TransactionRecord::ObfuscationDenominate, "", -nDebit, nCredit));
             parts.last().involvesWatchAddress = false; // maybe pass to TransactionRecord as constructor argument
         } else if (fAllFromMe && fAllToMe) {
@@ -213,7 +211,7 @@ QList<TransactionRecord> TransactionRecord::decomposeTransaction(const CWallet* 
                 CTxDestination address;
                 if (ExtractDestination(wtx.vout[0].scriptPubKey, address)) {
                     // Sent to FantasyGold Address
-                    sub.address = CBitcoinAddress(address).ToString();
+                    sub.address = EncodeDestination(address);
                 } else {
                     // Sent to IP, or other non-address transaction like OP_EVAL
                     sub.address = mapValue["to"];
@@ -257,7 +255,7 @@ QList<TransactionRecord> TransactionRecord::decomposeTransaction(const CWallet* 
                 if (ExtractDestination(txout.scriptPubKey, address)) {
                     // Sent to FantasyGold Address
                     sub.type = TransactionRecord::SendToAddress;
-                    sub.address = CBitcoinAddress(address).ToString();
+                    sub.address = EncodeDestination(address);
                 } else if (txout.IsZerocoinMint()) {
                     sub.type = TransactionRecord::ZerocoinMint;
                     sub.address = mapValue["zerocoinmint"];
@@ -337,16 +335,6 @@ void TransactionRecord::updateStatus(const CWalletTx& wtx) {
             } else {
                 status.status = TransactionStatus::NotAccepted;
             }
-        } else {
-            status.status = TransactionStatus::Confirmed;
-        }
-    } else if (type == TransactionRecord::ZerocoinMint) {
-        if (status.depth < 0) {
-            status.status = TransactionStatus::Conflicted;
-        } else if (status.depth == 0) {
-            status.status = TransactionStatus::Unconfirmed;
-        } else if (status.depth < Params().Zerocoin_MintRequiredConfirmations()) {
-            status.status = TransactionStatus::Confirming;
         } else {
             status.status = TransactionStatus::Confirmed;
         }

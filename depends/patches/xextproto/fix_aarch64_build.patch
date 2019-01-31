@@ -32,4 +32,4 @@
 +	exit ;;
      alpha:Linux:*:*)
  	case `sed -n '/^cpu model/s/^.*: \(.*\)/\1/p' < /proc/cpuinfo` in
- 	  EV5)   UNAME_MACHINE=alphaev5 ;; 
+ 	  EV5)   UNAME_MACHINE=alphaev5 ;;

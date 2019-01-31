@@ -5,6 +5,7 @@
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
 #include "bitcoingui.h"
+
 #include "bitcoinunits.h"
 #include "clientmodel.h"
 #include "guiconstants.h"
@@ -55,9 +56,14 @@
 #include <QStyle>
 #include <QTimer>
 #include <QToolBar>
-#include <QUrlQuery>
 #include <QVBoxLayout>
 #include "qtmaterialflatbutton.h"
+#if QT_VERSION < 0x050000
+#include <QTextDocument>
+#include <QUrl>
+#else
+#include <QUrlQuery>
+#endif
 
 const QString BitcoinGUI::DEFAULT_WALLET = "~Default";
 
@@ -89,6 +95,7 @@ BitcoinGUI::BitcoinGUI(const NetworkStyle* networkStyle, QWidget* parent) : QMai
     multisigSignAction(0),
     aboutAction(0),
     receiveCoinsAction(0),
+                                                                            privacyAction(0),
     optionsAction(0),
     toggleHideAction(0),
     encryptWalletAction(0),
@@ -138,6 +145,13 @@ BitcoinGUI::BitcoinGUI(const NetworkStyle* networkStyle, QWidget* parent) : QMai
     MacDockIconHandler::instance()->setIcon(networkStyle->getAppIcon());
 #endif
     setWindowTitle(windowTitle);
+
+#if defined(Q_OS_MAC) && QT_VERSION < 0x050000
+    // This property is not implemented in Qt 5. Setting it has no effect.
+    // A replacement API (QtMacUnifiedToolBar) is available in QtMacExtras.
+    setUnifiedTitleAndToolBarOnMac(true);
+#endif
+
     rpcConsole = new RPCConsole(enableWallet ? this : 0);
 #ifdef ENABLE_WALLET
     if (enableWallet) {

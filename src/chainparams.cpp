@@ -1,7 +1,7 @@
 // Copyright (c) 2010 Satoshi Nakamoto
 // Copyright (c) 2009-2014 The Bitcoin developers
 // Copyright (c) 2014-2015 The Dash developers
-// Copyright (c) 2017-2018 The Bulwark Core Developers
+// Copyright (c) 2015-2017 The PIVX developers
 // Copyright (c) 2017-2018 The FantasyGold developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
@@ -58,7 +58,7 @@ static const Checkpoints::CCheckpointData dataMainNet = {
     &mapCheckpoints,
     1525119213,// * UNIX timestamp of last checkpoint block
     750,    // * total number of transactions between genesis and last checkpoint
-                //   (the tx=... number in the SetBestChain debug.log lines)
+    //   (the tx=... number in the SetBestChain debug.log lines)
     960        // * estimated number of transactions per day after checkpoint
 };
 
@@ -77,22 +77,34 @@ static const Checkpoints::CCheckpointData dataRegtest = {
     &mapCheckpointsRegtest,
     1454124731,
     0,
-    100
-};
+    100};
 
-libzerocoin::ZerocoinParams* CChainParams::Zerocoin_Params() const {
+libzerocoin::ZerocoinParams* CChainParams::Zerocoin_Params() const
+{
     assert(this);
-    static CBigNum bnTrustedModulus(zerocoinModulus);
+    static CBigNum bnTrustedModulus;
+    bnTrustedModulus.SetDec(zerocoinModulus);
+    static libzerocoin::ZerocoinParams ZCParams = libzerocoin::ZerocoinParams(bnTrustedModulus);
+
+    return &ZCParams;
+}
+
+libzerocoin::ZerocoinParams* CChainParams::OldZerocoin_Params() const
+{
+    assert(this);
+    static CBigNum bnTrustedModulus;
+    bnTrustedModulus.SetHex(zerocoinModulus);
     static libzerocoin::ZerocoinParams ZCParams = libzerocoin::ZerocoinParams(bnTrustedModulus);
 
     return &ZCParams;
 }
 
 class CMainParams : public CChainParams {
-public:
+  public:
     CMainParams() {
         networkID = CBaseChainParams::MAIN;
         strNetworkID = "main";
+        
         /**
          * The message start string is designed to be unlikely to occur in normal data.
          * The characters are rarely used upper ASCII, not valid as UTF-8, and produce
@@ -111,12 +123,13 @@ public:
         nTargetSpacing = 90;  // FantasyGold: 6 Minutes
         nLastPOWBlock = 43200;
         nMaturity = 66;
-		nMasternodeCountDrift = 4;
+        nMasternodeCountDrift = 4;
         nModifierUpdateBlock = 1;
 		nMaxMoneyOut = 21000000 * COIN;
-       	nEnforceBlockUpgradeMajority = 750;
+        nEnforceBlockUpgradeMajority = 750;
         nRejectBlockOutdatedMajority = 950;
         nToCheckBlockUpgradeMajority = 1000;
+		nZerocoinStartHeight = 89993;
         const char* pszTimestamp = "FORBES AUG 20 2013 The $70 Billion Fantasy Football Market";
         CMutableTransaction txNew;
         txNew.vin.resize(1);
@@ -138,16 +151,16 @@ public:
 
 		vSeeds.push_back(CDNSSeedData("seeder.fantasygold.co", "seeder.fantasygold.co"));
 		
-				
+
         base58Prefixes[PUBKEY_ADDRESS] = std::vector<unsigned char>(1, 35); // f
-        base58Prefixes[SCRIPT_ADDRESS] = std::vector<unsigned char>(1, 18); 
+        base58Prefixes[SCRIPT_ADDRESS] = std::vector<unsigned char>(1, 18);
         base58Prefixes[SECRET_KEY] = std::vector<unsigned char>(1, 212);
         base58Prefixes[EXT_PUBLIC_KEY] = boost::assign::list_of(0x46)(0x53)(0x47)(0x4D).convert_to_container<std::vector<unsigned char> >();
         base58Prefixes[EXT_SECRET_KEY] = boost::assign::list_of(0x66)(0x73)(0x67)(0x70).convert_to_container<std::vector<unsigned char> >();
         // 	BIP44 coin type is from https://github.com/satoshilabs/slips/blob/master/slip-0044.md
         base58Prefixes[EXT_COIN_TYPE] = boost::assign::list_of(0x13)(0x00)(0x00)(0x80).convert_to_container<std::vector<unsigned char> >();
-        
-		convertSeed6(vFixedSeeds, pnSeed6_main, ARRAYLEN(pnSeed6_main));
+
+        convertSeed6(vFixedSeeds, pnSeed6_main, ARRAYLEN(pnSeed6_main));
 
         fMiningRequiresPeers = true;
         fAllowMinDifficultyBlocks = false;
@@ -162,8 +175,8 @@ public:
 		strSporkKey = "04d8bc8901ec5b46c8e23d94a4ed2d69d127c4aa79311a28058bb6ab3c87505cefbb4ff9161c285dcf34cf846d2c4eda945d5331902195f8a064bdf6053d0d6767";
         strObfuscationPoolDummyAddress = "fDiJwVuKv9dcKBN4KCfX6UmXbkpqLfzGyf";
         nStartMasternodePayments = 1511092620; //November 19, 2017 11:57:00 AM
-		
-		/** Zerocoin */
+
+        /** Zerocoin */
         zerocoinModulus = "b2275261dcaa303374af30576c5f676c8c2f1596aae7814f932f08839d442a5b2f7eaac75ffe9481321cbaae1c48703eff"
                           "384222885cf9e07e3996fa36d25f0866a7f3834c2457b253b0bbbd0ec23036fcc6c84886cce4d6bcc917ce7fb40d3ffcc12984db02e55e4e"
                           "ccd205f7a239fe48ab27ea1124efa0a545ae434876b0b934ebcc54b03375c78bdbb1cde74c8e42048839e191f3986436f757c11d36b60942"
@@ -171,7 +184,10 @@ public:
                           "52478afcfc1bd1f06ff429ecae3b682faa26bda5bb530fe1eca4d630fadc3b5d15e3d1feeeb161812894d3f17f497bb321c224f5419e30d2"
                           "b79511979fa41d24bc78c0aa18e12dc668b164841ce56bc8de5b7386cff2bb314b11094a4ad5661a7fd7b517181f8a999e61ddadc6936262"
                           "80b2692bc5b62bd328eb0b4c7d48b98942b0e6037add6568897f41adb825482057ae6224531047eef0cfd8f5510eb64e0610d83a1c7181";
-        nMaxZerocoinSpendsPerTransaction = 7; // Assume about 20kb each
+        
+		nZerocoinLastOldParams = 99999999; // Updated to defer zerocoin v2 for further testing.
+		
+		nMaxZerocoinSpendsPerTransaction = 7; // Assume about 20kb each
         nMinZerocoinMintFee = 1 * CENT; //high fee required for zerocoin mints
         nMintRequiredConfirmations = 20; //the maximum amount of confirmations until accumulated in 19
         nRequiredAccumulation = 1;
@@ -184,8 +200,8 @@ public:
         nStakeMinConfirmations = 475; // Required number of confirmations
         nStakeMinAmount = 100 * COIN; // Minimum required staking amount
     }
-    
-	const Checkpoints::CCheckpointData& Checkpoints() const {
+
+    const Checkpoints::CCheckpointData& Checkpoints() const {
         return dataMainNet;
     }
 };
@@ -195,7 +211,7 @@ static CMainParams mainParams;
  * Testnet (v3)
  */
 class CTestNetParams : public CMainParams {
-public:
+  public:
     CTestNetParams() {
         networkID = CBaseChainParams::TESTNET;
         strNetworkID = "test";
@@ -215,19 +231,23 @@ public:
         nEnforceBlockUpgradeMajority = 51;
         nRejectBlockOutdatedMajority = 75;
         nToCheckBlockUpgradeMajority = 100;
-		nMasternodeCountDrift = 4;
-		nModifierUpdateBlock = 51197;
+        nMasternodeCountDrift = 4;
+        nModifierUpdateBlock = 51197; //approx Mon, 17 Apr 2017 04:00:00 GMT
 		
+		nZerocoinStartHeight = 200;
+
+        nZerocoinLastOldParams = 50000;
+
         //! Modify the testnet genesis block so the timestamp is valid for a later start.
         genesis.nTime = 1508638280;
         genesis.nNonce = 1081421;
-		genesis.nBits = bnProofOfWorkLimit.GetCompact();
+        genesis.nBits = bnProofOfWorkLimit.GetCompact();
 		//MineGenesis(genesis);
         hashGenesisBlock = genesis.GetHash();
 		assert(hashGenesisBlock == uint256("0x000005b218ee50a90d18144376a07d8fa5e2477b234c1a7df54fa29229ecf96c"));
 		assert(genesis.hashMerkleRoot == uint256("0x57efb4ec57bf3c7424a679cc41bec99026d6e6b90a91f26cda0b8d5249559502"));
 
-        
+
 		vSeeds.push_back(CDNSSeedData("dns1.fantasygold.co", "dns1.fantasygold.co"));
 		//vSeeds.push_back(CDNSSeedData("fantasygold.co", "test02.fantasygold.co"));
 		//vSeeds.push_back(CDNSSeedData("fantasygold.co", "test03.fantasygold.co"));
@@ -241,7 +261,9 @@ public:
         base58Prefixes[EXT_SECRET_KEY] = boost::assign::list_of(0x3a)(0x80)(0x58)(0x37).convert_to_container<std::vector<unsigned char> >();
         // Testnet fantasygold BIP44 coin type is '1' (All coin's testnet default)
         base58Prefixes[EXT_COIN_TYPE] = boost::assign::list_of(0x01)(0x00)(0x00)(0x80).convert_to_container<std::vector<unsigned char> >();
-        convertSeed6(vFixedSeeds, pnSeed6_test, ARRAYLEN(pnSeed6_test));
+        bech32_hrp = "tp";
+		
+		convertSeed6(vFixedSeeds, pnSeed6_test, ARRAYLEN(pnSeed6_test));
 
         fMiningRequiresPeers = false;
         fAllowMinDifficultyBlocks = true;
@@ -254,14 +276,14 @@ public:
         strSporkKey = "04d45e7b9bd690618bbf1275990c42db1d15f6c059bdafcd0362f30e64e134fdfdbbbe17e0ad4d6cd17c5d8eae7163cbaf8518b8c45039062c8283c1bc4de67890";
         strObfuscationPoolDummyAddress = "FQfdVa57fUXHEU7zboSbyGeBkS63gpowW3";
         nStartMasternodePayments = 1511092620; //November 19, 2017 11:57:00 AM
-		nBudget_Fee_Confirmations = 3; // Number of confirmations for the finalization fee. We have to make this very short
+        nBudget_Fee_Confirmations = 3; // Number of confirmations for the finalization fee. We have to make this very short
         // here because we only have a 8 block finalization window on testnet
 
         /** Staking Requirements */
         nStakeMinStartProtocol = 70850; // Starting protocol version (ActiveProtocol())
         nStakeMinConfirmations = 30; // Required number of confirmations
         nStakeMinAmount = 500 * COIN; // Minimum required staking amount
-	}
+    }
     const Checkpoints::CCheckpointData& Checkpoints() const {
         return dataTestnet;
     }
@@ -272,7 +294,7 @@ static CTestNetParams testNetParams;
  * Regression test
  */
 class CRegTestParams : public CTestNetParams {
-public:
+  public:
     CRegTestParams() {
         networkID = CBaseChainParams::REGTEST;
         strNetworkID = "regtest";
@@ -287,20 +309,30 @@ public:
         bnProofOfWorkLimit = ~uint256(0) >> 1;
         genesis.nTime = 1454124731;
         genesis.nBits = 0x207fffff;
-        genesis.nNonce = 3503480;
-		//MineGenesis(genesis);
+        genesis.nNonce = 12345;
+        nMaturity = 0;
+        nLastPOWBlock = 999999999; // PoS complicates Regtest because of timing issues
+        nZerocoinLastOldParams = 499;
+        nZerocoinStartHeight = 100;
+
         hashGenesisBlock = genesis.GetHash();
         nDefaultPort = 59806;
     	assert(hashGenesisBlock == uint256("00000469c51791d203c00e59b9b1fde736b5f4c16c7e54ab1b87aefe3bd05a9c"));
         vFixedSeeds.clear(); //! Testnet mode doesn't have any fixed seeds.
         vSeeds.clear();      //! Testnet mode doesn't have any DNS seeds.
-
+		bech32_hrp = "fgct";
         fMiningRequiresPeers = false;
         fAllowMinDifficultyBlocks = true;
         fDefaultConsistencyChecks = true;
         fRequireStandard = false;
         fMineBlocksOnDemand = true;
         fTestnetToBeDeprecatedFieldRPC = false;
+        nRequiredAccumulation = 1;
+
+        // {
+        //     "PrivateKey": "923EhWh2bJHynX6d4Tqt2Q75bhTDCT1b4kff3qzDKDZHZ6pkQs7",
+        //     "PublicKey": "04866dc02c998b7e1ab16fe14e0d86554595da90c36acb706a4d763b58ed0edb1f82c87e3ced065c5b299b26e12496956b9e5f9f19aa008b5c46229b15477c875a"
+        // }  strSporkKey = "04866dc02c998b7e1ab16fe14e0d86554595da90c36acb706a4d763b58ed0edb1f82c87e3ced065c5b299b26e12496956b9e5f9f19aa008b5c46229b15477c875a";
     }
     const Checkpoints::CCheckpointData& Checkpoints() const {
         return dataRegtest;
@@ -312,7 +344,7 @@ static CRegTestParams regTestParams;
  * Unit test
  */
 class CUnitTestParams : public CMainParams, public CModifiableParams {
-public:
+  public:
     CUnitTestParams() {
         networkID = CBaseChainParams::UNITTEST;
         strNetworkID = "unittest";
@@ -332,24 +364,12 @@ public:
     }
 
     //! Published setters to allow changing values in unit test cases
-    virtual void setDefaultConsistencyChecks(bool afDefaultConsistencyChecks) {
-        fDefaultConsistencyChecks = afDefaultConsistencyChecks;
-    }
-    virtual void setAllowMinDifficultyBlocks(bool afAllowMinDifficultyBlocks) {
-        fAllowMinDifficultyBlocks = afAllowMinDifficultyBlocks;
-    }
-    virtual void setSkipProofOfWorkCheck(bool afSkipProofOfWorkCheck) {
-        fSkipProofOfWorkCheck = afSkipProofOfWorkCheck;
-    }
-    virtual void setEnforceBlockUpgradeMajority(int anEnforceBlockUpgradeMajority) {
-        nEnforceBlockUpgradeMajority = anEnforceBlockUpgradeMajority;
-    }
-    virtual void setRejectBlockOutdatedMajority(int anRejectBlockOutdatedMajority) {
-        nRejectBlockOutdatedMajority = anRejectBlockOutdatedMajority;
-    }
-    virtual void setToCheckBlockUpgradeMajority(int anToCheckBlockUpgradeMajority) {
-        nToCheckBlockUpgradeMajority = anToCheckBlockUpgradeMajority;
-    }
+    virtual void setEnforceBlockUpgradeMajority(int anEnforceBlockUpgradeMajority) { nEnforceBlockUpgradeMajority = anEnforceBlockUpgradeMajority; }
+    virtual void setRejectBlockOutdatedMajority(int anRejectBlockOutdatedMajority) { nRejectBlockOutdatedMajority = anRejectBlockOutdatedMajority; }
+    virtual void setToCheckBlockUpgradeMajority(int anToCheckBlockUpgradeMajority) { nToCheckBlockUpgradeMajority = anToCheckBlockUpgradeMajority; }
+    virtual void setDefaultConsistencyChecks(bool afDefaultConsistencyChecks) { fDefaultConsistencyChecks = afDefaultConsistencyChecks; }
+    virtual void setAllowMinDifficultyBlocks(bool afAllowMinDifficultyBlocks) { fAllowMinDifficultyBlocks = afAllowMinDifficultyBlocks; }
+    virtual void setSkipProofOfWorkCheck(bool afSkipProofOfWorkCheck) { fSkipProofOfWorkCheck = afSkipProofOfWorkCheck; }
 };
 static CUnitTestParams unitTestParams;
 

@@ -1,6 +1,5 @@
 // Copyright (c) 2009-2012 The Dash developers
 // Copyright (c) 2015-2017 The PIVX developers
-// Copyright (c) 2017-2018 The Bulwark Core Developers
 // Copyright (c) 2017-2018 The FantasyGold developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
@@ -63,10 +62,13 @@ bool ProcessConsensusVote(CNode* pnode, CConsensusVote& ctx);
 // keep transaction locks in memory for an hour
 void CleanTransactionLocksList();
 
+// get the accepted transaction lock signatures
+int GetTransactionLockSignatures(uint256 txHash);
+
 int64_t GetAverageVoteTime();
 
 class CConsensusVote {
-public:
+  public:
     CTxIn vinMasternode;
     uint256 txHash;
     int nBlockHeight;
@@ -80,7 +82,8 @@ public:
     ADD_SERIALIZE_METHODS;
 
     template <typename Stream, typename Operation>
-    inline void SerializationOp(Stream& s, Operation ser_action, int nType, int nVersion) {
+    inline void SerializationOp(Stream& s, Operation ser_action, int nType, int nVersion)
+    {
         READWRITE(txHash);
         READWRITE(vinMasternode);
         READWRITE(vchMasterNodeSignature);
@@ -89,7 +92,7 @@ public:
 };
 
 class CTransactionLock {
-public:
+  public:
     int nBlockHeight;
     uint256 txHash;
     std::vector<CConsensusVote> vecConsensusVotes;
@@ -100,7 +103,8 @@ public:
     int CountSignatures();
     void AddSignature(CConsensusVote& cv);
 
-    uint256 GetHash() {
+    uint256 GetHash()
+    {
         return txHash;
     }
 };

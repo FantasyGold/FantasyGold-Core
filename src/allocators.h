@@ -29,7 +29,7 @@
  */
 template <class Locker>
 class LockedPageManagerBase {
-public:
+  public:
     LockedPageManagerBase(size_t page_size) : page_size(page_size) {
         // Determine bitmask for extracting page from address
         assert(!(page_size & (page_size - 1))); // size must be power of two
@@ -86,7 +86,7 @@ public:
         return histogram.size();
     }
 
-private:
+  private:
     Locker locker;
     boost::mutex mutex;
     size_t page_size, page_mask;
@@ -101,7 +101,7 @@ private:
  * Defined as policy class to make stubbing for test possible.
  */
 class MemoryPageLocker {
-public:
+  public:
     /** Lock memory pages.
      * addr and len must be a multiple of the system page size
      */
@@ -124,13 +124,13 @@ public:
  * static-initialized, it is created on demand.
  */
 class LockedPageManager : public LockedPageManagerBase<MemoryPageLocker> {
-public:
+  public:
     static LockedPageManager& Instance() {
         boost::call_once(LockedPageManager::CreateInstance, LockedPageManager::init_flag);
         return *LockedPageManager::_instance;
     }
 
-private:
+  private:
     LockedPageManager();
 
     static void CreateInstance() {
@@ -206,42 +206,7 @@ struct secure_allocator : public std::allocator<T> {
 };
 
 
-//
-// Allocator that clears its contents before deletion.
-//
-template <typename T>
-struct zero_after_free_allocator : public std::allocator<T> {
-    // MSVC8 default copy constructor is broken
-    typedef std::allocator<T> base;
-    typedef typename base::size_type size_type;
-    typedef typename base::difference_type difference_type;
-    typedef typename base::pointer pointer;
-    typedef typename base::const_pointer const_pointer;
-    typedef typename base::reference reference;
-    typedef typename base::const_reference const_reference;
-    typedef typename base::value_type value_type;
-    zero_after_free_allocator() throw() {}
-    zero_after_free_allocator(const zero_after_free_allocator& a) throw() : base(a) {}
-    template <typename U>
-    zero_after_free_allocator(const zero_after_free_allocator<U>& a) throw() : base(a) {
-    }
-    ~zero_after_free_allocator() throw() {}
-    template <typename _Other>
-    struct rebind {
-        typedef zero_after_free_allocator<_Other> other;
-    };
-
-    void deallocate(T* p, std::size_t n) {
-        if (p != NULL)
-            OPENSSL_cleanse(p, sizeof(T) * n);
-        std::allocator<T>::deallocate(p, n);
-    }
-};
-
 // This is exactly like std::string, but with a custom allocator.
 typedef std::basic_string<char, std::char_traits<char>, secure_allocator<char> > SecureString;
-
-// Byte-vector that clears its contents before deletion.
-typedef std::vector<char, zero_after_free_allocator<char> > CSerializeData;
 
 #endif // BITCOIN_ALLOCATORS_H

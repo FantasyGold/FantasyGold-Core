@@ -12,7 +12,7 @@
 
 /** Coin Control Features. */
 class CCoinControl {
-public:
+  public:
     CTxDestination destChange;
     bool useObfuScation;
     bool useSwiftTX;
@@ -71,11 +71,11 @@ public:
     }
 
     void SetSelection(std::set<COutPoint> setSelected) {
-	        this->setSelected.clear();
-	        this->setSelected = setSelected;
-	    }
+        this->setSelected.clear();
+        this->setSelected = setSelected;
+    }
 
-private:
+  private:
     std::set<COutPoint> setSelected;
 };
 

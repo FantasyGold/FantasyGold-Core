@@ -17,13 +17,13 @@ const unsigned int WALLET_CRYPTO_SALT_SIZE = 8;
 /**
  * Private key encryption is done based on a CMasterKey,
  * which holds a salt and random encryption key.
- * 
+ *
  * CMasterKeys are encrypted using AES-256-CBC using a key
  * derived using derivation method nDerivationMethod
  * (0 == EVP_sha512()) and derivation iterations nDeriveIterations.
  * vchOtherDerivationParameters is provided for alternative algorithms
  * which may require more parameters (such as scrypt).
- * 
+ *
  * Wallet Private Keys are then encrypted using AES-256-CBC
  * with the double-sha256 of the public key as the IV, and the
  * master key's key as the encryption key (see keystore.[ch]).
@@ -31,7 +31,7 @@ const unsigned int WALLET_CRYPTO_SALT_SIZE = 8;
 
 /** Master key for wallet encryption */
 class CMasterKey {
-public:
+  public:
     std::vector<unsigned char> vchCryptedKey;
     std::vector<unsigned char> vchSalt;
     //! 0 = EVP_sha512()
@@ -66,12 +66,12 @@ typedef std::vector<unsigned char, secure_allocator<unsigned char> > CKeyingMate
 
 /** Encryption/decryption context with key information */
 class CCrypter {
-private:
+  private:
     unsigned char chKey[WALLET_CRYPTO_KEY_SIZE];
     unsigned char chIV[WALLET_CRYPTO_KEY_SIZE];
     bool fKeySet;
 
-public:
+  public:
     bool SetKeyFromPassphrase(const SecureString& strKeyData, const std::vector<unsigned char>& chSalt, const unsigned int nRounds, const unsigned int nDerivationMethod);
     bool Encrypt(const CKeyingMaterial& vchPlaintext, std::vector<unsigned char>& vchCiphertext);
     bool Decrypt(const std::vector<unsigned char>& vchCiphertext, CKeyingMaterial& vchPlaintext);
@@ -112,7 +112,7 @@ bool DecryptAES256(const SecureString& sKey, const std::string& sCiphertext, con
  * It derives from the basic key store, which is used if no encryption is active.
  */
 class CCryptoKeyStore : public CBasicKeyStore {
-private:
+  private:
     CryptedKeyMap mapCryptedKeys;
 
     CKeyingMaterial vMasterKey;
@@ -124,7 +124,7 @@ private:
     //! keeps track of whether Unlock has run a thorough check before
     bool fDecryptionThoroughlyChecked;
 
-protected:
+  protected:
     bool SetCrypted();
 
     //! will encrypt previously unencrypted keys
@@ -132,7 +132,7 @@ protected:
 
     bool Unlock(const CKeyingMaterial& vMasterKeyIn);
 
-public:
+  public:
     CCryptoKeyStore() : fUseCrypto(false), fDecryptionThoroughlyChecked(false) {
     }
 
@@ -178,6 +178,9 @@ public:
             mi++;
         }
     }
+
+    bool GetDeterministicSeed(const uint256& hashSeed, uint256& seed);
+    bool AddDeterministicSeed(const uint256& seed);
 
     /**
      * Wallet status (encrypted, locked) changed.

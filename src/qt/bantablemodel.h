@@ -6,7 +6,6 @@
 #define BITCOIN_QT_BANTABLEMODEL_H
 
 #include "net.h"
-#include "addrdb.h"
 
 #include <QAbstractTableModel>
 #include <QStringList>
@@ -39,6 +38,7 @@ class BanTableModel : public QAbstractTableModel {
 
   public:
     explicit BanTableModel(ClientModel *parent = 0);
+    ~BanTableModel();
     void startAutoRefresh();
     void stopAutoRefresh();
 
@@ -65,7 +65,7 @@ class BanTableModel : public QAbstractTableModel {
   private:
     ClientModel * clientModel;
     QStringList columns;
-    BanTablePriv *priv;
+    std::unique_ptr<BanTablePriv> priv;
 };
 
 #endif // BITCOIN_QT_BANTABLEMODEL_H

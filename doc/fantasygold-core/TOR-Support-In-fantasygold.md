@@ -70,7 +70,7 @@ config file):
 ```
 
 The directory can be different of course, but (both) port numbers should be equal to
-your fantasygoldd's P2P listen port (52541 by default).
+your fantasygoldd's P2P listen port (57814 by default).
 
 ```
 -externalip=X   You can tell fantasygold about its publicly reachable address using

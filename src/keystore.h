@@ -9,6 +9,7 @@
 #include "key.h"
 #include "pubkey.h"
 #include "sync.h"
+#include "script/standard.h"
 
 #include <boost/signals2/signal.hpp>
 #include <boost/variant.hpp>
@@ -18,10 +19,10 @@ class CScriptID;
 
 /** A virtual base class for key stores */
 class CKeyStore {
-protected:
+  protected:
     mutable CCriticalSection cs_KeyStore;
 
-public:
+  public:
     virtual ~CKeyStore() {}
 
     //! Add a key to the store.
@@ -32,7 +33,7 @@ public:
     virtual bool HaveKey(const CKeyID& address) const = 0;
     virtual bool GetKey(const CKeyID& address, CKey& keyOut) const = 0;
     virtual void GetKeys(std::set<CKeyID>& setAddress) const = 0;
-    virtual bool GetPubKey(const CKeyID& address, CPubKey& vchPubKeyOut) const;
+    virtual bool GetPubKey(const CKeyID& address, CPubKey& vchPubKeyOut) const = 0;
 
     //! Support for BIP 0013 : see https://github.com/bitcoin/bips/blob/master/bip-0013.mediawiki
     virtual bool AddCScript(const CScript& redeemScript) = 0;
@@ -46,28 +47,34 @@ public:
     virtual bool HaveWatchOnly() const = 0;
 
     //! Support for MultiSig addresses
-	virtual bool AddMultiSig(const CScript& dest) = 0;
-	virtual bool RemoveMultiSig(const CScript& dest) = 0;
-	virtual bool HaveMultiSig(const CScript& dest) const = 0;
-	virtual bool HaveMultiSig() const = 0;
+    virtual bool AddMultiSig(const CScript& dest) = 0;
+    virtual bool RemoveMultiSig(const CScript& dest) = 0;
+    virtual bool HaveMultiSig(const CScript& dest) const = 0;
+    virtual bool HaveMultiSig() const = 0;
 };
 
 typedef std::map<CKeyID, CKey> KeyMap;
 typedef std::map<CScriptID, CScript> ScriptMap;
+typedef std::map<CKeyID, CPubKey> WatchKeyMap;
 typedef std::set<CScript> WatchOnlySet;
 typedef std::set<CScript> MultiSigScriptSet;
 
 /** Basic key store, that keeps keys in an address->secret map */
 class CBasicKeyStore : public CKeyStore {
-protected:
+  protected:
     KeyMap mapKeys;
+    WatchKeyMap mapWatchKeys;
     ScriptMap mapScripts;
     WatchOnlySet setWatchOnly;
-	MultiSigScriptSet setMultiSig;
-	
-public:
-    bool AddKeyPubKey(const CKey& key, const CPubKey& pubkey);
-    bool HaveKey(const CKeyID& address) const {
+    MultiSigScriptSet setMultiSig;
+
+    void ImplicitlyLearnRelatedKeyScripts(const CPubKey& pubkey);
+
+  public:
+    bool AddKeyPubKey(const CKey& key, const CPubKey& pubkey) override;
+    bool GetPubKey(const CKeyID &address, CPubKey &vchPubKeyOut) const override;
+    bool HaveKey(const CKeyID& address) const override 
+    {
         bool result;
         {
             LOCK(cs_KeyStore);
@@ -86,7 +93,8 @@ public:
             }
         }
     }
-    bool GetKey(const CKeyID& address, CKey& keyOut) const {
+    bool GetKey(const CKeyID& address, CKey& keyOut) const override
+    {
         {
             LOCK(cs_KeyStore);
             KeyMap::const_iterator mi = mapKeys.find(address);
@@ -97,22 +105,25 @@ public:
         }
         return false;
     }
-    virtual bool AddCScript(const CScript& redeemScript);
-    virtual bool HaveCScript(const CScriptID& hash) const;
-    virtual bool GetCScript(const CScriptID& hash, CScript& redeemScriptOut) const;
+    virtual bool AddCScript(const CScript& redeemScript) override;
+    virtual bool HaveCScript(const CScriptID& hash) const override;
+    virtual bool GetCScript(const CScriptID& hash, CScript& redeemScriptOut) const override;
 
-    virtual bool AddWatchOnly(const CScript& dest);
-    virtual bool RemoveWatchOnly(const CScript& dest);
-    virtual bool HaveWatchOnly(const CScript& dest) const;
-    virtual bool HaveWatchOnly() const;
-    
-	virtual bool AddMultiSig(const CScript& dest);
-	virtual bool RemoveMultiSig(const CScript& dest);
-	virtual bool HaveMultiSig(const CScript& dest) const;
-	virtual bool HaveMultiSig() const;
+    virtual bool AddWatchOnly(const CScript& dest) override;
+    virtual bool RemoveWatchOnly(const CScript& dest) override;
+    virtual bool HaveWatchOnly(const CScript& dest) const override;
+    virtual bool HaveWatchOnly() const override;
+
+    virtual bool AddMultiSig(const CScript& dest) override;
+    virtual bool RemoveMultiSig(const CScript& dest) override;
+    virtual bool HaveMultiSig(const CScript& dest) const override;
+    virtual bool HaveMultiSig() const override;
 };
 
 typedef std::vector<unsigned char, secure_allocator<unsigned char> > CKeyingMaterial;
 typedef std::map<CKeyID, std::pair<CPubKey, std::vector<unsigned char> > > CryptedKeyMap;
+
+/** Return the CKeyID of the key involved in a script (if there is a unique one). */
+CKeyID GetKeyForDestination(const CKeyStore& store, const CTxDestination& dest);
 
 #endif // BITCOIN_KEYSTORE_H

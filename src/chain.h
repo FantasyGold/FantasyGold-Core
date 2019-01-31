@@ -51,9 +51,7 @@ struct CDiskBlockPos {
         nFile = -1;
         nPos = 0;
     }
-    bool IsNull() const {
-        return (nFile == -1);
-    }
+    bool IsNull() const { return (nFile == -1); }
 };
 
 enum BlockStatus {
@@ -93,6 +91,8 @@ enum BlockStatus {
     BLOCK_FAILED_VALID = 32, //! stage after last reached validness failed
     BLOCK_FAILED_CHILD = 64, //! descends from failed block
     BLOCK_FAILED_MASK = BLOCK_FAILED_VALID | BLOCK_FAILED_CHILD,
+
+    BLOCK_OPT_WITNESS       =   128, //! block data in blk*.data was received with a witness-enforcing client
 };
 
 /** The block chain is a tree shaped structure starting with the
@@ -101,7 +101,7 @@ enum BlockStatus {
  * to it, but at most one of them can be part of the currently active branch.
  */
 class CBlockIndex {
-public:
+  public:
     //! pointer to the hash of the block, if any. memory is owned by this CBlockIndex
     const uint256* phashBlock;
 
@@ -358,9 +358,9 @@ public:
 
     std::string ToString() const {
         return strprintf("CBlockIndex(pprev=%p, nHeight=%d, merkle=%s, hashBlock=%s)",
-            pprev, nHeight,
-            hashMerkleRoot.ToString(),
-            GetBlockHash().ToString());
+                         pprev, nHeight,
+                         hashMerkleRoot.ToString(),
+                         GetBlockHash().ToString());
     }
 
     //! Check whether this block index entry is valid up to the passed validity level.
@@ -394,7 +394,7 @@ public:
 
 /** Used to marshal pointers into hashes for db storage. */
 class CDiskBlockIndex : public CBlockIndex {
-public:
+  public:
     uint256 hashPrev;
     uint256 hashNext;
 
@@ -471,18 +471,18 @@ public:
         std::string str = "CDiskBlockIndex(";
         str += CBlockIndex::ToString();
         str += strprintf("\n                hashBlock=%s, hashPrev=%s)",
-            GetBlockHash().ToString(),
-            hashPrev.ToString());
+                         GetBlockHash().ToString(),
+                         hashPrev.ToString());
         return str;
     }
 };
 
 /** An in-memory indexed chain of blocks. */
 class CChain {
-private:
+  private:
     std::vector<CBlockIndex*> vChain;
 
-public:
+  public:
     /** Returns the index entry for the genesis block of this chain, or NULL if none. */
     CBlockIndex* Genesis() const {
         return vChain.size() > 0 ? vChain[0] : NULL;

@@ -17,7 +17,7 @@
  *  (coinbase or not, height, transaction version)
  */
 class CTxInUndo {
-public:
+  public:
     CTxOut txout;   // the txout data before being spent
     bool fCoinBase; // if the outpoint was the last unspent: whether it belonged to a coinbase
     bool fCoinStake;
@@ -56,7 +56,7 @@ public:
 
 /** Undo information for a CTransaction */
 class CTxUndo {
-public:
+  public:
     // undo information for all txins
     std::vector<CTxInUndo> vprevout;
 

@@ -18,7 +18,15 @@
 #include "amount.h"
 #include "bignum.h"
 #include "util.h"
-namespace libzerocoin {
+#include "key.h"
+
+namespace libzerocoin
+{
+    int ExtractVersionFromSerial(const CBigNum& bnSerial);
+    bool IsValidSerial(const ZerocoinParams* params, const CBigNum& bnSerial);
+    CBigNum GetAdjustedSerial(const CBigNum& bnSerial);
+    bool GenerateKeyPair(const CBigNum& bnGroupOrder, const uint256& nPrivkey, CKey& key, CBigNum& bnSerial);
+
 /** A Public coin is the part of a coin that
  * is published to the network and what is handled
  * by other clients. It contains only the value
@@ -41,25 +49,18 @@ class PublicCoin {
      * @param denomination The denomination of the coin.
      */
     PublicCoin(const ZerocoinParams* p, const CBigNum& coin, const CoinDenomination d);
-    const CBigNum& getValue() const {
-        return this->value;
-    }
+    const CBigNum& getValue() const { return this->value; }
 
-    CoinDenomination getDenomination() const {
-        return this->denomination;
-    }
-    bool operator==(const PublicCoin& rhs) const {
+    CoinDenomination getDenomination() const { return this->denomination; }
+    bool operator==(const PublicCoin& rhs) const
+    {
         return ((this->value == rhs.value) && (this->params == rhs.params) && (this->denomination == rhs.denomination));
     }
-    bool operator!=(const PublicCoin& rhs) const {
-        return !(*this == rhs);
-    }
+    bool operator!=(const PublicCoin& rhs) const { return !(*this == rhs); }
     /** Checks that coin is prime and in the appropriate range given the parameters
      * @return true if valid
      */
-    bool validate() const {
-        return (this->params->accumulatorParams.minCoinValue < value) && (value < this->params->accumulatorParams.maxCoinValue) && value.isPrime(params->zkp_iterations);
-    }
+    bool validate() const;
 
     ADD_SERIALIZE_METHODS;
     template <typename Stream, typename Operation>
@@ -87,31 +88,30 @@ class PublicCoin {
  */
 class PrivateCoin {
   public:
+    static int const PUBKEY_VERSION = 2;
+    static int const CURRENT_VERSION = 2;
+    static int const V2_BITSHIFT = 4;
     template <typename Stream>
     PrivateCoin(const ZerocoinParams* p, Stream& strm) : params(p), publicCoin(p) {
         strm >> *this;
     }
-    PrivateCoin(const ZerocoinParams* p, const CoinDenomination denomination);
-    const PublicCoin& getPublicCoin() const {
-        return this->publicCoin;
-    }
+    PrivateCoin(const ZerocoinParams* p, const CoinDenomination denomination, bool fMintNew = true);
+    PrivateCoin(const ZerocoinParams* p, const CoinDenomination denomination, const CBigNum& bnSerial, const CBigNum& bnRandomness);
+    const PublicCoin& getPublicCoin() const { return this->publicCoin; }
     // @return the coins serial number
-    const CBigNum& getSerialNumber() const {
-        return this->serialNumber;
-    }
-    const CBigNum& getRandomness() const {
-        return this->randomness;
-    }
+    const CBigNum& getSerialNumber() const { return this->serialNumber; }
+    const CBigNum& getRandomness() const { return this->randomness; }
+    const CPrivKey& getPrivKey() const { return this->privkey; }
+    const CPubKey getPubKey() const;
+    const uint8_t& getVersion() const { return this->version; }
 
-    void setPublicCoin(PublicCoin p) {
-        publicCoin = p;
-    }
-    void setRandomness(Bignum n) {
-        randomness = n;
-    }
-    void setSerialNumber(Bignum n) {
-        serialNumber = n;
-    }
+    void setPublicCoin(PublicCoin p) { publicCoin = p; }
+    void setRandomness(Bignum n) { randomness = n; }
+    void setSerialNumber(Bignum n) { serialNumber = n; }
+    void setVersion(uint8_t nVersion) { this->version = nVersion; }
+    void setPrivKey(const CPrivKey& privkey) { this->privkey = privkey; }
+    bool sign(const uint256& hash, std::vector<unsigned char>& vchSig) const;
+    bool IsValid();
 
     ADD_SERIALIZE_METHODS;
     template <typename Stream, typename Operation>
@@ -119,6 +119,11 @@ class PrivateCoin {
         READWRITE(publicCoin);
         READWRITE(randomness);
         READWRITE(serialNumber);
+        version = (uint8_t )ExtractVersionFromSerial(serialNumber);
+        if (version == 2) {
+            READWRITE(version);
+            READWRITE(privkey);
+        }
     }
 
   private:
@@ -126,6 +131,8 @@ class PrivateCoin {
     PublicCoin publicCoin;
     CBigNum randomness;
     CBigNum serialNumber;
+    uint8_t version = 1;
+    CPrivKey privkey;
 
     /**
      * @brief Mint a new coin.

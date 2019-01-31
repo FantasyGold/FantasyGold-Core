@@ -3915,10 +3915,6 @@ Ya daha yüksek mezhepleri daraltın (daha az girdi gereklidir) veya harcama mik
         <source>The Dash Core developers</source>
         <translation>The Dash Core developers</translation>
     </message>
-	<message>
-        <source>The Bulwark Core developers</source>
-        <translation>The Bulwark Core developers</translation>
-    </message>
     <message>
         <source>The FantasyGold Core developers</source>
         <translation>The FantasyGold Core developers</translation>

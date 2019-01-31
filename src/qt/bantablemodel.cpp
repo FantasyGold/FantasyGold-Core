@@ -2,8 +2,8 @@
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#include "addrdb.h"
 #include "bantablemodel.h"
+
 #include "clientmodel.h"
 #include "guiconstants.h"
 #include "guiutil.h"
@@ -11,7 +11,6 @@
 #include "sync.h"
 #include "utiltime.h"
 
-#include <QDateTime>
 #include <QDebug>
 #include <QList>
 
@@ -45,12 +44,14 @@ class BanTablePriv {
     /** Pull a full list of banned nodes from CNode into our cache */
     void refreshBanlist() {
         banmap_t banMap;
-        CBanDB bandb;
-        bandb.Read(banMap);
+        CNode::GetBanned(banMap);
 
         cachedBanlist.clear();
+#if QT_VERSION >= 0x040700
         cachedBanlist.reserve(banMap.size());
-        for (banmap_t::iterator it = banMap.begin(); it != banMap.end(); it++) {
+#endif
+        for (banmap_t::iterator it = banMap.begin(); it != banMap.end(); it++)
+        {
             CCombinedBan banEntry;
             banEntry.subnet = (*it).first;
             banEntry.banEntry = (*it).second;
@@ -78,12 +79,16 @@ BanTableModel::BanTableModel(ClientModel *parent) :
     QAbstractTableModel(parent),
     clientModel(parent) {
     columns << tr("IP/Netmask") << tr("Banned Until");
-    priv = new BanTablePriv();
+    priv.reset(new BanTablePriv());
     // default to unsorted
     priv->sortColumn = -1;
 
     // load initial data
     refresh();
+}
+
+BanTableModel::~BanTableModel() {
+    // Intentionally left empty
 }
 
 int BanTableModel::rowCount(const QModelIndex &parent) const {
@@ -93,7 +98,7 @@ int BanTableModel::rowCount(const QModelIndex &parent) const {
 
 int BanTableModel::columnCount(const QModelIndex &parent) const {
     Q_UNUSED(parent);
-    return columns.length();;
+    return columns.length();
 }
 
 QVariant BanTableModel::data(const QModelIndex &index, int role) const {
@@ -107,7 +112,7 @@ QVariant BanTableModel::data(const QModelIndex &index, int role) const {
         case Address:
             return QString::fromStdString(rec->subnet.ToString());
         case Bantime:
-            QDateTime date = QDateTime::currentDateTime();
+            QDateTime date = QDateTime::fromMSecsSinceEpoch(0);
             date = date.addSecs(rec->banEntry.nBanUntil);
             return date.toString(Qt::SystemLocaleLongDate);
         }

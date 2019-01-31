@@ -54,12 +54,18 @@ void Accumulator::accumulate(const PublicCoin& coin) {
     }
 
     if(this->denomination != coin.getDenomination()) {
+		std::cout << "Wrong denomination for coin. Expected coins of denomination: ";
+        std::cout << this->denomination;
+        std::cout << ". Instead, got a coin of denomination: ";
+        std::cout << coin.getDenomination();
+        std::cout << "\n";
         throw std::runtime_error("Wrong denomination for coin");
     }
 
     if(coin.validate()) {
         increment(coin.getValue());
     } else {
+		std::cout << "Coin not valid\n";
         throw std::runtime_error("Coin is not valid");
     }
 }
@@ -102,7 +108,7 @@ void AccumulatorWitness::resetValue(const Accumulator& checkpoint, const PublicC
 }
 
 void AccumulatorWitness::AddElement(const PublicCoin& c) {
-    if(element != c) {
+	if(element.getValue() != c.getValue()) {
         witness += c;
     }
 }
@@ -119,6 +125,12 @@ const CBigNum& AccumulatorWitness::getValue() const {
 bool AccumulatorWitness::VerifyWitness(const Accumulator& a, const PublicCoin &publicCoin) const {
     Accumulator temp(witness);
     temp += element;
+	if (!(temp == a)) {
+		LogPrintf("Accumulator does not verify.\n");
+	}
+	if (this->element != publicCoin) {
+		LogPrintf("Pubcoin does not verify.\n");
+	}
     return (temp == a && this->element == publicCoin);
 }
 

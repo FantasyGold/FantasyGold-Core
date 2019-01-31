@@ -5,7 +5,10 @@
 #ifndef BITCOIN_QT_PAYMENTREQUESTPLUS_H
 #define BITCOIN_QT_PAYMENTREQUESTPLUS_H
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
 #include "paymentrequest.pb.h"
+#pragma GCC diagnostic pop
 
 #include "base58.h"
 
@@ -34,9 +37,7 @@ class PaymentRequestPlus {
     // Returns list of outputs, amount
     QList<std::pair<CScript, CAmount> > getPayTo() const;
 
-    const payments::PaymentDetails& getDetails() const {
-        return details;
-    }
+    const payments::PaymentDetails& getDetails() const { return details; }
 
   private:
     payments::PaymentRequest paymentRequest;

@@ -5547,11 +5547,6 @@ Either mint higher denominations (so fewer inputs are needed) or reduce the amou
         <source>The Dash Core developers</source>
         <translation type="unfinished"></translation>
     </message>
-	<message>
-        <location line="+1"/>
-        <source>The Bulwark Core developers</source>
-        <translation type="unfinished"></translation>
-    </message>
     <message>
         <location line="+1"/>
         <source>The FantasyGold Core developers</source>

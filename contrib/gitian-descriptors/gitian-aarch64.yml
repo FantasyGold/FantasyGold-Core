@@ -1,5 +1,5 @@
 ---
-name: "fantasygold-aarch64-1.2"
+name: "fantasygold-aarch64-2.1"
 enable_cache: true
 suites:
 - "xenial"

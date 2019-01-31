@@ -16,14 +16,14 @@
 #include <openssl/bn.h>
 
 class bignum_error : public std::runtime_error {
-public:
+  public:
     explicit bignum_error(const std::string& str) : std::runtime_error(str) {}
 };
 
 
 /** C++ wrapper for BIGNUM (OpenSSL bignum) */
 class CBigNum : public BIGNUM {
-public:
+  public:
     CBigNum() {
         BN_init(this);
     }
@@ -46,10 +46,7 @@ public:
         BN_clear_free(this);
     }
 
-    CBigNum(long long n) {
-        BN_init(this);
-        setint64(n);
-    }
+    CBigNum(long long n)          { BN_init(this); setint64(n); }
 
     explicit CBigNum(const std::vector<unsigned char>& vch) {
         BN_init(this);
@@ -71,7 +68,7 @@ public:
         uint64_t n;
 
         if (sn < (int64_t)0) {
-            // Since the minimum signed integer cannot be represented as positive so long as its type is signed, 
+            // Since the minimum signed integer cannot be represented as positive so long as its type is signed,
             // and it's not well-defined what happens if you make it unsigned before negating it,
             // we instead increment the negative integer by 1, convert it, then increment the (now positive) unsigned integer by 1 to compensate
             n = -(sn + 1);
@@ -155,23 +152,11 @@ inline const CBigNum operator-(const CBigNum& a) {
     return r;
 }
 
-inline bool operator==(const CBigNum& a, const CBigNum& b) {
-    return (BN_cmp(&a, &b) == 0);
-}
-inline bool operator!=(const CBigNum& a, const CBigNum& b) {
-    return (BN_cmp(&a, &b) != 0);
-}
-inline bool operator<=(const CBigNum& a, const CBigNum& b) {
-    return (BN_cmp(&a, &b) <= 0);
-}
-inline bool operator>=(const CBigNum& a, const CBigNum& b) {
-    return (BN_cmp(&a, &b) >= 0);
-}
-inline bool operator<(const CBigNum& a, const CBigNum& b) {
-    return (BN_cmp(&a, &b) < 0);
-}
-inline bool operator>(const CBigNum& a, const CBigNum& b) {
-    return (BN_cmp(&a, &b) > 0);
-}
+inline bool operator==(const CBigNum& a, const CBigNum& b) { return (BN_cmp(&a, &b) == 0); }
+inline bool operator!=(const CBigNum& a, const CBigNum& b) { return (BN_cmp(&a, &b) != 0); }
+inline bool operator<=(const CBigNum& a, const CBigNum& b) { return (BN_cmp(&a, &b) <= 0); }
+inline bool operator>=(const CBigNum& a, const CBigNum& b) { return (BN_cmp(&a, &b) >= 0); }
+inline bool operator<(const CBigNum& a, const CBigNum& b)  { return (BN_cmp(&a, &b) < 0); }
+inline bool operator>(const CBigNum& a, const CBigNum& b)  { return (BN_cmp(&a, &b) > 0); }
 
 #endif // BITCOIN_TEST_BIGNUM_H

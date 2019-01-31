@@ -1,7 +1,6 @@
 // Copyright (c) 2011-2014 The Bitcoin developers
 // Copyright (c) 2014-2015 The Dash developers
 // Copyright (c) 2015-2017 The PIVX developers
-// Copyright (c) 2017-2018 The Bulwark Core Developers
 // Copyright (c) 2017-2018 The FantasyGold developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
@@ -28,6 +27,7 @@
 #include <QApplication>
 #include <QCheckBox>
 #include <QCursor>
+#include <QDialogButtonBox>
 #include <QFlags>
 #include <QIcon>
 #include <QSettings>
@@ -524,9 +524,10 @@ void CoinControlDialog::updateLabels(WalletModel* model, QDialog* dialog) {
     unsigned int nQuantity = 0;
     int nQuantityUncompressed = 0;
     bool fAllowFree = false;
+    bool fWitness               = false;
 
-    vector<COutPoint> vCoinControl;
-    vector<COutput> vOutputs;
+    std::vector<COutPoint> vCoinControl;
+    std::vector<COutput>   vOutputs;
     coinControl->ListSelected(vCoinControl);
     model->getOutputs(vCoinControl, vOutputs);
 
@@ -551,7 +552,15 @@ void CoinControlDialog::updateLabels(WalletModel* model, QDialog* dialog) {
 
         // Bytes
         CTxDestination address;
-        if (ExtractDestination(out.tx->vout[out.i].scriptPubKey, address)) {
+        int witnessversion = 0;
+        std::vector<unsigned char> witnessprogram;
+        if (out.tx->vout[out.i].scriptPubKey.IsWitnessProgram(witnessversion, witnessprogram))
+        {
+            nBytesInputs += (32 + 4 + 1 + (107 / WITNESS_SCALE_FACTOR) + 4);
+            fWitness = true;
+        }
+        else if(ExtractDestination(out.tx->vout[out.i].scriptPubKey, address))
+        {
             CPubKey pubkey;
             CKeyID* keyid = boost::get<CKeyID>(&address);
             if (keyid && model->getPubKey(*keyid, pubkey)) {
@@ -568,6 +577,14 @@ void CoinControlDialog::updateLabels(WalletModel* model, QDialog* dialog) {
     if (nQuantity > 0) {
         // Bytes
         nBytes = nBytesInputs + ((CoinControlDialog::payAmounts.size() > 0 ? CoinControlDialog::payAmounts.size() + max(1, CoinControlDialog::nSplitBlockDummy) : 2) * 34) + 10; // always assume +1 output for change here
+        if (fWitness)
+        {
+            // there is some fudging in these numbers related to the actual virtual transaction size calculation that will keep this estimate from being exact.
+            // usually, the result will be an overestimate within a couple of satoshis so that the confirmation dialog ends up displaying a slightly smaller fee.
+            // also, the witness stack size value value is a variable sized integer. usually, the number of stack items will be well under the single byte var int limit.
+            nBytes += 2; // account for the serialized marker and flag bytes
+            nBytes += nQuantity; // account for the witness byte that holds the number of stack items for each input.
+        }
 
         // Priority
         double mempoolEstimatePriority = mempool.estimatePriority(nTxConfirmTarget);
@@ -773,7 +790,7 @@ void CoinControlDialog::updateView() {
             CTxDestination outputAddress;
             QString sAddress = "";
             if (ExtractDestination(out.tx->vout[out.i].scriptPubKey, outputAddress)) {
-                sAddress = QString::fromStdString(CBitcoinAddress(outputAddress).ToString());
+                sAddress = QString::fromStdString(EncodeDestination(outputAddress));
 
                 // if listMode or change => show FantasyGold address. In tree mode, address is not shown again for direct wallet address outputs
                 if (!treeMode || (!(sAddress == sWalletAddress)))

@@ -111,12 +111,12 @@ RUN ./autogen.sh \
   --build=x86_64-unknown-linux-gnu \
   --host=arm-linux-gnueabihf \
   && make \
-  && cp ./src/fantasygold-cli ./src/bulwarkd ./src/qt/fantasygold-qt / \
+  && cp ./src/fantasygold-cli ./src/fantasygoldd ./src/qt/fantasygold-qt / \
   && make clean
 WORKDIR /
-RUN arm-linux-gnueabihf-strip ./fantasygold-cli ./fantasygold-qt ./bulwarkd  \
+RUN arm-linux-gnueabihf-strip ./fantasygold-cli ./fantasygold-qt ./fantasygoldd  \
   && tar czf arm32.tar.gz ./fantasygold* \
-  && rm ./fantasygold-cli ./fantasygold-qt ./bulwarkd 
+  && rm ./fantasygold-cli ./fantasygold-qt ./fantasygoldd 
 
 FROM base AS linux32
 ENV CXXFLAGS="-Wall -Wextra -Wformat -Wformat-security -Wno-unused-parameter -Wno-narrowing"
@@ -136,12 +136,12 @@ RUN ./autogen.sh \
   --build=x86_64-unknown-linux-gnu \
   --host=i686-pc-linux-gnu \
   && make \
-  && cp ./src/fantasygold-cli ./src/bulwarkd ./src/qt/fantasygold-qt / \
+  && cp ./src/fantasygold-cli ./src/fantasygoldd ./src/qt/fantasygold-qt / \
   && make clean
 WORKDIR /
-RUN strip ./fantasygold-cli ./fantasygold-qt ./bulwarkd  \
+RUN strip ./fantasygold-cli ./fantasygold-qt ./fantasygoldd  \
   && tar czf linux32.tar.gz ./fantasygold* \
-  && rm ./fantasygold-cli ./fantasygold-qt ./bulwarkd 
+  && rm ./fantasygold-cli ./fantasygold-qt ./fantasygoldd 
 
 FROM base AS linux64
 ENV CXXFLAGS="-Wall -Wextra -Wformat -Wformat-security -Wno-unused-parameter -Wno-narrowing"
@@ -162,12 +162,12 @@ RUN ./autogen.sh \
   --build=x86_64-unknown-linux-gnu \
   --host=x86_64-unknown-linux-gnu \
   && make \
-  && cp ./src/fantasygold-cli ./src/bulwarkd ./src/qt/fantasygold-qt / \
+  && cp ./src/fantasygold-cli ./src/fantasygoldd ./src/qt/fantasygold-qt / \
   && make clean
 WORKDIR /
-RUN strip ./fantasygold-cli ./fantasygold-qt ./bulwarkd  \
+RUN strip ./fantasygold-cli ./fantasygold-qt ./fantasygoldd  \
   && tar czf linux64.tar.gz ./fantasygold* \
-  && rm ./fantasygold-cli ./fantasygold-qt ./bulwarkd 
+  && rm ./fantasygold-cli ./fantasygold-qt ./fantasygoldd 
 
 FROM base AS windows32
 ENV CXXFLAGS="-Wall -Wextra -Wformat -Wformat-security -Wno-unused-parameter -Wno-narrowing"
@@ -194,12 +194,12 @@ RUN ./autogen.sh \
   --build=x86_64-unknown-linux-gnu \
   --host=i686-w64-mingw32 \
   && make \
-  && cp ./src/fantasygold-cli.exe ./src/bulwarkd.exe ./src/qt/fantasygold-qt.exe / \
+  && cp ./src/fantasygold-cli.exe ./src/fantasygoldd.exe ./src/qt/fantasygold-qt.exe / \
   && make clean
 WORKDIR /
-RUN strip ./fantasygold-cli.exe ./fantasygold-qt.exe ./bulwarkd.exe  \
+RUN strip ./fantasygold-cli.exe ./fantasygold-qt.exe ./fantasygoldd.exe  \
   && tar czf windows32.tar.gz ./fantasygold* \
-  && rm ./fantasygold-cli.exe ./fantasygold-qt.exe ./bulwarkd.exe
+  && rm ./fantasygold-cli.exe ./fantasygold-qt.exe ./fantasygoldd.exe
 
 FROM base AS windows64
 ENV CXXFLAGS="-Wall -Wextra -Wformat -Wformat-security -Wno-unused-parameter -Wno-narrowing"
@@ -226,12 +226,12 @@ RUN ./autogen.sh \
   --build=x86_64-unknown-linux-gnu \
   --host=x86_64-w64-mingw32 \
   && make \
-  && cp ./src/fantasygold-cli.exe ./src/bulwarkd.exe ./src/qt/fantasygold-qt.exe / \
+  && cp ./src/fantasygold-cli.exe ./src/fantasygoldd.exe ./src/qt/fantasygold-qt.exe / \
   && make clean
 WORKDIR /
-RUN strip ./fantasygold-cli.exe ./fantasygold-qt.exe ./bulwarkd.exe  \
+RUN strip ./fantasygold-cli.exe ./fantasygold-qt.exe ./fantasygoldd.exe  \
   && tar czf windows64.tar.gz ./fantasygold* \
-  && rm ./fantasygold-cli.exe ./fantasygold-qt.exe ./bulwarkd.exe
+  && rm ./fantasygold-cli.exe ./fantasygold-qt.exe ./fantasygoldd.exe
 
 FROM alpine:3.8
 LABEL maintainer="kewagi"

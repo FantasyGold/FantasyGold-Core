@@ -28,10 +28,10 @@ static const int64_t nMinDbCache = 4;
 
 /** CCoinsView backed by the LevelDB coin database (chainstate/) */
 class CCoinsViewDB : public CCoinsView {
-protected:
+  protected:
     CLevelDBWrapper db;
 
-public:
+  public:
     CCoinsViewDB(size_t nCacheSize, bool fMemory = false, bool fWipe = false);
 
     bool GetCoins(const uint256& txid, CCoins& coins) const;
@@ -43,14 +43,15 @@ public:
 
 /** Access to the block database (blocks/index/) */
 class CBlockTreeDB : public CLevelDBWrapper {
-public:
+  public:
     CBlockTreeDB(size_t nCacheSize, bool fMemory = false, bool fWipe = false);
 
-private:
+  private:
+    uint256 salt;
     CBlockTreeDB(const CBlockTreeDB&);
     void operator=(const CBlockTreeDB&);
 
-public:
+  public:
     bool WriteBlockIndex(const CDiskBlockIndex& blockindex);
     bool ReadBlockFileInfo(int nFile, CBlockFileInfo& fileinfo);
     bool WriteBlockFileInfo(int nFile, const CBlockFileInfo& fileinfo);
@@ -60,6 +61,8 @@ public:
     bool ReadReindexing(bool& fReindex);
     bool ReadTxIndex(const uint256& txid, CDiskTxPos& pos);
     bool WriteTxIndex(const std::vector<std::pair<uint256, CDiskTxPos> >& list);
+    bool ReadAddrIndex(uint160 addrid, std::vector<CExtDiskTxPos> &list);
+    bool AddAddrIndex(const std::vector<std::pair<uint160, CExtDiskTxPos> > &list);
     bool WriteFlag(const std::string& name, bool fValue);
     bool ReadFlag(const std::string& name, bool& fValue);
     bool WriteInt(const std::string& name, int nValue);
@@ -78,10 +81,13 @@ class CZerocoinDB : public CLevelDBWrapper {
   public:
     bool WriteCoinMint(const libzerocoin::PublicCoin& pubCoin, const uint256& txHash);
     bool ReadCoinMint(const CBigNum& bnPubcoin, uint256& txHash);
+    bool ReadCoinMint(const uint256& hashPubcoin, uint256& hashTx);
     bool WriteCoinSpend(const CBigNum& bnSerial, const uint256& txHash);
     bool ReadCoinSpend(const CBigNum& bnSerial, uint256& txHash);
+    bool ReadCoinSpend(const uint256& hashSerial, uint256 &txHash);
     bool EraseCoinMint(const CBigNum& bnPubcoin);
     bool EraseCoinSpend(const CBigNum& bnSerial);
+    bool WipeCoins(std::string strType);
     bool WriteAccumulatorValue(const uint32_t& nChecksum, const CBigNum& bnValue);
     bool ReadAccumulatorValue(const uint32_t& nChecksum, CBigNum& bnValue);
     bool EraseAccumulatorValue(const uint32_t& nChecksum);

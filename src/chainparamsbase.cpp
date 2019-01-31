@@ -17,7 +17,7 @@ using namespace boost::assign;
  * Main network
  */
 class CBaseMainParams : public CBaseChainParams {
-public:
+  public:
     CBaseMainParams() {
         networkID = CBaseChainParams::MAIN;
         nRPCPort = 57814;
@@ -29,7 +29,7 @@ static CBaseMainParams mainParams;
  * Testnet (v3)
  */
 class CBaseTestNetParams : public CBaseMainParams {
-public:
+  public:
     CBaseTestNetParams() {
         networkID = CBaseChainParams::TESTNET;
         nRPCPort = 58804;
@@ -42,7 +42,7 @@ static CBaseTestNetParams testNetParams;
  * Regression test
  */
 class CBaseRegTestParams : public CBaseTestNetParams {
-public:
+  public:
     CBaseRegTestParams() {
         networkID = CBaseChainParams::REGTEST;
         strDataDir = "regtest";
@@ -54,7 +54,7 @@ static CBaseRegTestParams regTestParams;
  * Unit test
  */
 class CBaseUnitTestParams : public CBaseMainParams {
-public:
+  public:
     CBaseUnitTestParams() {
         networkID = CBaseChainParams::UNITTEST;
         strDataDir = "unittest";

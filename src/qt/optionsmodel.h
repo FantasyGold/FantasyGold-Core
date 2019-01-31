@@ -43,11 +43,14 @@ class OptionsModel : public QAbstractListModel {
         DatabaseCache,       // int
         SpendZeroConfChange, // bool
         ShowOrphans,         // bool
+		ZeromintEnable,       //bool
         ZeromintPercentage,  // int
         ZeromintPrefDenom,   // int
+		HideZeroBalances,    //bool
         AnonymizeFantasyGoldAmount, //int
         ShowMasternodesTab,  // bool
         Listen,              // bool
+        StakeSplitThreshold, // int
         OptionIDRowCount,
     };
 
@@ -59,27 +62,17 @@ class OptionsModel : public QAbstractListModel {
     bool setData(const QModelIndex& index, const QVariant& value, int role = Qt::EditRole);
     /** Updates current unit in memory, settings and emits displayUnitChanged(newUnit) signal */
     void setDisplayUnit(const QVariant& value);
+    /* Update StakeSplitThreshold's value in wallet */
+    void setStakeSplitThreshold(int value);
 
     /* Explicit getters */
-    bool getMinimizeToTray() {
-        return fMinimizeToTray;
-    }
-    bool getMinimizeOnClose() {
-        return fMinimizeOnClose;
-    }
-    int getDisplayUnit() {
-        return nDisplayUnit;
-    }
-    QString getThirdPartyTxUrls() {
-        return strThirdPartyTxUrls;
-    }
+    bool getMinimizeToTray() { return fMinimizeToTray; }
+    bool getMinimizeOnClose() { return fMinimizeOnClose; }
+    int getDisplayUnit() { return nDisplayUnit; }
+    QString getThirdPartyTxUrls() { return strThirdPartyTxUrls; }
     bool getProxySettings(QNetworkProxy& proxy) const;
-    bool getCoinControlFeatures() {
-        return fCoinControlFeatures;
-    }
-    const QString& getOverriddenByCommandLine() {
-        return strOverriddenByCommandLine;
-    }
+    bool getCoinControlFeatures() { return fCoinControlFeatures; }
+    const QString& getOverriddenByCommandLine() { return strOverriddenByCommandLine; }
 
     /* Restart flag helper */
     void setRestartRequired(bool fRequired);
@@ -95,6 +88,7 @@ class OptionsModel : public QAbstractListModel {
     QString strThirdPartyTxUrls;
     bool fShowOrphans;
     bool fCoinControlFeatures;
+    bool fHideZeroBalances;
     /* settings that were overriden by command-line */
     QString strOverriddenByCommandLine;
 
@@ -103,10 +97,12 @@ class OptionsModel : public QAbstractListModel {
 
   signals:
     void displayUnitChanged(int unit);
+    void zeromintEnableChanged(bool);
     void zeromintPercentageChanged(int);
     void preferredDenomChanged(int);
     void anonymizeFantasyGoldAmountChanged(int);
     void coinControlFeaturesChanged(bool);
+    void hideZeroBalancesChanged(bool);
 };
 
 #endif // BITCOIN_QT_OPTIONSMODEL_H

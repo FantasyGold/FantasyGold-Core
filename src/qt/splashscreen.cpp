@@ -1,7 +1,6 @@
 // Copyright (c) 2011-2014 The Bitcoin developers
 // Copyright (c) 2014-2015 The Dash developers
 // Copyright (c) 2015-2017 The PIVX developers
-// Copyright (c) 2017-2018 The Bulwark Core Developers
 // Copyright (c) 2017-2018 The FantasyGold developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
@@ -39,7 +38,6 @@ SplashScreen::SplashScreen(Qt::WindowFlags f, const NetworkStyle* networkStyle) 
     QString copyrightTextBtc = QChar(0xA9) + QString(" 2009-%1 ").arg(COPYRIGHT_YEAR) + QString(tr("The Bitcoin Core developers"));
     QString copyrightTextDash = QChar(0xA9) + QString(" 2014-%1 ").arg(COPYRIGHT_YEAR) + QString(tr("The Dash Core developers"));
     QString copyrightTextPIVX = QChar(0xA9) + QString(" 2015-%1 ").arg(COPYRIGHT_YEAR) + QString(tr("The PIVX Core developers"));
-    QString copyrightTextBulwark = QChar(0xA9) + QString(" 2017-%1 ").arg(COPYRIGHT_YEAR) + QString(tr("The Bulwark Core developers"));
     QString copyrightTextFantasyGold = QChar(0xA9) + QString(" 2017-%1 ").arg(COPYRIGHT_YEAR) + QString(tr("The FantasyGold Core developers"));
     QString titleAddText = networkStyle->getTitleAddText();
 
@@ -49,7 +47,9 @@ SplashScreen::SplashScreen(Qt::WindowFlags f, const NetworkStyle* networkStyle) 
     pixmap = networkStyle->getSplashImage();
 
     QPainter pixPaint(&pixmap);
-    pixPaint.setPen(QColor(255, 255, 255));
+    pixPaint.setRenderHint(QPainter::Antialiasing);
+    pixPaint.setRenderHint(QPainter::HighQualityAntialiasing);
+    pixPaint.setPen(QColor(73, 84, 94));
 
     // check font size and drawing with
     pixPaint.setFont(QFont(font, 28 * fontFactor));
@@ -73,18 +73,17 @@ SplashScreen::SplashScreen(Qt::WindowFlags f, const NetworkStyle* networkStyle) 
     pixPaint.drawText(paddingLeft, paddingTop + titleCopyrightVSpace, copyrightTextBtc);
     pixPaint.drawText(paddingLeft, paddingTop + titleCopyrightVSpace + 12, copyrightTextDash);
     pixPaint.drawText(paddingLeft, paddingTop + titleCopyrightVSpace + 24, copyrightTextPIVX);
-    pixPaint.drawText(paddingLeft, paddingTop + titleCopyrightVSpace + 36, copyrightTextBulwark);
-    pixPaint.drawText(paddingLeft, paddingTop + titleCopyrightVSpace + 48, copyrightTextFantasyGold);
+    pixPaint.drawText(paddingLeft, paddingTop + titleCopyrightVSpace + 36, copyrightTextFantasyGold);
 
     // draw additional text if special network
-    if (!titleAddText.isEmpty()) {
-        QFont boldFont = QFont(font, 10 * fontFactor);
-        boldFont.setWeight(QFont::Bold);
-        pixPaint.setFont(boldFont);
-        fm = pixPaint.fontMetrics();
-        int titleAddTextWidth = fm.width(titleAddText);
-        pixPaint.drawText(pixmap.width() - titleAddTextWidth - 10, pixmap.height() - 25, titleAddText);
-    }
+    // if (!titleAddText.isEmpty()) {
+    //     QFont boldFont = QFont(font, 10 * fontFactor);
+    //     boldFont.setWeight(QFont::Bold);
+    //     pixPaint.setFont(boldFont);
+    //     fm = pixPaint.fontMetrics();
+    //     int titleAddTextWidth = fm.width(titleAddText);
+    //     pixPaint.drawText(pixmap.width() - titleAddTextWidth - 10, pixmap.height() - 25, titleAddText);
+    // }
 
     pixPaint.end();
 
@@ -92,7 +91,8 @@ SplashScreen::SplashScreen(Qt::WindowFlags f, const NetworkStyle* networkStyle) 
     setWindowTitle(titleText + " " + titleAddText);
 
     // Resize window and move to center of desktop, disallow resizing
-    QRect r(QPoint(), pixmap.size());
+    //QRect r(QPoint(), pixmap.size());
+    QRect r(QPoint(), QSize(pixmap.size().width()/2, pixmap.size().height()/2)); //retina
     resize(r.size());
     setFixedSize(r.size());
     move(QApplication::desktop()->screenGeometry().center() - r.center());

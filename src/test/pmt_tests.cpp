@@ -15,7 +15,7 @@
 using namespace std;
 
 class CPartialMerkleTreeTester : public CPartialMerkleTree {
-public:
+  public:
     // flip one bit in one of the hashes - this should break the authentication
     void Damage() {
         unsigned int n = rand() % vHash.size();

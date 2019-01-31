@@ -17,11 +17,11 @@
 #include <stdint.h>
 #include <vector>
 
-/** 
- * Extended statistics about a CAddress 
+/**
+ * Extended statistics about a CAddress
  */
 class CAddrInfo : public CAddress {
-private:
+  private:
     //! where knowledge about this address first came from
     CNetAddr source;
 
@@ -45,7 +45,7 @@ private:
 
     friend class CAddrMan;
 
-public:
+  public:
     ADD_SERIALIZE_METHODS;
 
     template <typename Stream, typename Operation>
@@ -156,11 +156,11 @@ public:
 //! the maximum number of nodes to return in a getaddr call
 #define ADDRMAN_GETADDR_MAX 2500
 
-/** 
- * Stochastical (IP) address manager 
+/**
+ * Stochastical (IP) address manager
  */
 class CAddrMan {
-private:
+  private:
     //! critical section to protect the inner data structures
     mutable CCriticalSection cs;
 
@@ -191,7 +191,7 @@ private:
     //! list of "new" buckets
     int vvNew[ADDRMAN_NEW_BUCKET_COUNT][ADDRMAN_BUCKET_SIZE];
 
-protected:
+  protected:
     //! Find an entry.
     CAddrInfo* Find(const CNetAddr& addr, int* pnId = NULL);
 
@@ -235,7 +235,10 @@ protected:
     //! Mark an entry as currently-connected-to.
     void Connected_(const CService& addr, int64_t nTime);
 
-public:
+    //! Update a entry's service bits
+    void SetServices_(const CService& addr, uint64_t nServices);
+
+  public:
     /**
      * serialized format:
      * * version byte (currently 1)
@@ -541,6 +544,17 @@ public:
             LOCK(cs);
             Check();
             Connected_(addr, nTime);
+            Check();
+        }
+    }
+
+    //! Update an entry's service bits.
+    void SetServices(const CService& addr, uint64_t nServices)
+    {
+        {
+            LOCK(cs);
+            Check();
+            Connected_(addr, nServices);
             Check();
         }
     }

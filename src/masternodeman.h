@@ -17,6 +17,8 @@
 #define MASTERNODES_DUMP_SECONDS (15 * 60)
 #define MASTERNODES_DSEG_SECONDS (3 * 60 * 60)
 
+#define MINIMUM_PROTOCOL_VERSION_OLD_PING 70003
+
 using namespace std;
 
 class CMasternodeMan;
@@ -27,11 +29,11 @@ void DumpMasternodes();
 /** Access to the MN database (mncache.dat)
  */
 class CMasternodeDB {
-private:
+  private:
     boost::filesystem::path pathMN;
     std::string strMagicMessage;
 
-public:
+  public:
     enum ReadResult {
         Ok,
         FileError,
@@ -48,7 +50,7 @@ public:
 };
 
 class CMasternodeMan {
-private:
+  private:
     // critical section to protect the inner data structures
     mutable CCriticalSection cs;
 
@@ -64,7 +66,7 @@ private:
     // which Masternodes we've asked for
     std::map<COutPoint, int64_t> mWeAskedForMasternodeListEntry;
 
-public:
+  public:
     // Keep track of all broadcasts I've seen
     map<uint256, CMasternodeBroadcast> mapSeenMasternodeBroadcast;
     // Keep track of all pings I've seen
@@ -108,9 +110,9 @@ public:
 
     int CountEnabled(int protocolVersion = -1);
 
-	void CountNetworks(int protocolVersion, int& ipv4, int& ipv6, int& onion);
+    void CountNetworks(int protocolVersion, int& ipv4, int& ipv6, int& onion);
 
-	void DsegUpdate(CNode* pnode);
+    void DsegUpdate(CNode* pnode);
 
     /// Find an entry
     CMasternode* Find(const CScript& payee);
@@ -149,6 +151,8 @@ public:
     std::string ToString() const;
 
     void Remove(CTxIn vin);
+
+    int GetEstimatedMasternodes(int nBlock);
 
     /// Update masternode list and maps using provided CMasternodeBroadcast
     void UpdateMasternodeList(CMasternodeBroadcast mnb);

@@ -4244,10 +4244,6 @@ Either mint higher denominations (so fewer inputs are needed) or reduce the amou
         <source>The Dash Core developers</source>
         <translation>Dash Core programeri</translation>
     </message>
-	 <message>
-        <source>The Bulwark Core developers</source>
-        <translation>Bulwark Core programeri</translation>
-    </message>
     <message>
         <source>The FantasyGold Core developers</source>
         <translation>FantasyGold Core programeri</translation>

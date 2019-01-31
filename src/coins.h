@@ -18,7 +18,7 @@
 #include <boost/foreach.hpp>
 #include <boost/unordered_map.hpp>
 
-/** 
+/**
 
     ****Note - for FantasyGold we added fCoinStake to the 2nd bit. Keep in mind when reading the following and adjust as needed.
  * Pruned version of CTransaction: only retains metadata and unspent transaction outputs
@@ -72,7 +72,7 @@
  *  - height = 120891
  */
 class CCoins {
-public:
+  public:
     //! whether transaction is a coinbase
     bool fCoinBase;
     bool fCoinStake;
@@ -121,7 +121,7 @@ public:
     }
 
     void ClearUnspendable() {
-        BOOST_FOREACH (CTxOut& txout, vout) {
+        BOOST_FOREACH(CTxOut& txout, vout) {
             if (txout.scriptPubKey.IsUnspendable())
                 txout.SetNull();
         }
@@ -270,10 +270,10 @@ public:
 };
 
 class CCoinsKeyHasher {
-private:
+  private:
     uint256 salt;
 
-public:
+  public:
     CCoinsKeyHasher();
 
     /**
@@ -315,7 +315,7 @@ struct CCoinsStats {
 
 /** Abstract view on the open txout dataset. */
 class CCoinsView {
-public:
+  public:
     //! Retrieve the CCoins (unspent transaction outputs) for a given txid
     virtual bool GetCoins(const uint256& txid, CCoins& coins) const;
 
@@ -340,10 +340,10 @@ public:
 
 /** CCoinsView backed by another CCoinsView */
 class CCoinsViewBacked : public CCoinsView {
-protected:
+  protected:
     CCoinsView* base;
 
-public:
+  public:
     CCoinsViewBacked(CCoinsView* viewIn);
     bool GetCoins(const uint256& txid, CCoins& coins) const;
     bool HaveCoins(const uint256& txid) const;
@@ -366,44 +366,40 @@ enum {
 
 /** Used as the flags parameter to sequence and nLocktime checks in non-consensus code. */
 static const unsigned int STANDARD_LOCKTIME_VERIFY_FLAGS = LOCKTIME_VERIFY_SEQUENCE |
-                                                           LOCKTIME_MEDIAN_TIME_PAST;
+        LOCKTIME_MEDIAN_TIME_PAST;
 
-/** 
+/**
  * A reference to a mutable cache entry. Encapsulating it allows us to run
  *  cleanup code after the modification is finished, and keeping track of
- *  concurrent modifications. 
+ *  concurrent modifications.
  */
 class CCoinsModifier {
-private:
+  private:
     CCoinsViewCache& cache;
     CCoinsMap::iterator it;
     CCoinsModifier(CCoinsViewCache& cache_, CCoinsMap::iterator it_);
 
-public:
-    CCoins* operator->() {
-        return &it->second.coins;
-    }
-    CCoins& operator*() {
-        return it->second.coins;
-    }
+  public:
+    CCoins* operator->() { return &it->second.coins; }
+    CCoins& operator*() { return it->second.coins; }
     ~CCoinsModifier();
     friend class CCoinsViewCache;
 };
 
 /** CCoinsView that adds a memory cache for transactions to another CCoinsView */
 class CCoinsViewCache : public CCoinsViewBacked {
-protected:
+  protected:
     /* Whether this cache has an active modifier. */
     bool hasModifier;
 
     /**
      * Make mutable so that we can "fill the cache" even from Get-methods
-     * declared as "const".  
+     * declared as "const".
      */
     mutable uint256 hashBlock;
     mutable CCoinsMap cacheCoins;
 
-public:
+  public:
     CCoinsViewCache(CCoinsView* baseIn);
     ~CCoinsViewCache();
 
@@ -438,7 +434,7 @@ public:
     //! Calculate the size of the cache (in number of transactions)
     unsigned int GetCacheSize() const;
 
-    /** 
+    /**
      * Amount of fantasygold coming in to a transaction
      * Note that lightweight clients may not know anything besides the hash of previous transactions,
      * so may not be able to calculate this.
@@ -458,7 +454,7 @@ public:
 
     friend class CCoinsModifier;
 
-private:
+  private:
     CCoinsMap::iterator FetchCoins(const uint256& txid);
     CCoinsMap::const_iterator FetchCoins(const uint256& txid) const;
 };

@@ -1,8 +1,11 @@
+// Copyright (c) 2017 The PIVX developers
+// Copyright (c) 2019 The FantasyGold Developers
+// Distributed under the MIT/X11 software license, see the accompanying
+// file COPYING or http://www.opensource.org/licenses/mit-license.php.
+
 #include "masternodelist.h"
 #include "ui_masternodelist.h"
 
-#include "privkeypage.h"
-#include "outputspage.h"
 #include "configuremasternodepage.h"
 
 #include "activemasternode.h"
@@ -50,6 +53,8 @@ MasternodeList::MasternodeList(QWidget* parent) : QWidget(parent),
     ui->tableWidgetMyMasternodes->setColumnWidth(5, columnLastSeenWidth);
 
     ui->tableWidgetMyMasternodes->setContextMenuPolicy(Qt::CustomContextMenu);
+
+    ui->tableWidgetMyMasternodes->horizontalHeader()->setDefaultAlignment(Qt::AlignVCenter);
 
     QAction* startAliasAction = new QAction(tr("Start alias"), this);
     QAction* copyAliasAction = new QAction(tr("Copy alias"), this);
@@ -204,7 +209,7 @@ void MasternodeList::updateMyMasternodeInfo(QString strAlias, QString strAddr, C
     QTableWidgetItem* statusItem = new QTableWidgetItem(QString::fromStdString(pmn ? pmn->GetStatus() : "MISSING"));
     GUIUtil::DHMSTableWidgetItem* activeSecondsItem = new GUIUtil::DHMSTableWidgetItem(pmn ? (pmn->lastPing.sigTime - pmn->sigTime) : 0);
     QTableWidgetItem* lastSeenItem = new QTableWidgetItem(QString::fromStdString(DateTimeStrFormat("%Y-%m-%d %H:%M", pmn ? pmn->lastPing.sigTime : 0)));
-    QTableWidgetItem* pubkeyItem = new QTableWidgetItem(QString::fromStdString(pmn ? CBitcoinAddress(pmn->pubKeyCollateralAddress.GetID()).ToString() : ""));
+    QTableWidgetItem* pubkeyItem = new QTableWidgetItem(QString::fromStdString(pmn ? EncodeDestination(CTxDestination(pmn->pubKeyCollateralAddress.GetID())) : ""));
 
     ui->tableWidgetMyMasternodes->setItem(nNewRow, 0, aliasItem);
     ui->tableWidgetMyMasternodes->setItem(nNewRow, 1, addrItem);
@@ -225,18 +230,6 @@ void MasternodeList::updateMyNodeList(bool fForce) {
 
     if (nSecondsTillUpdate > 0 && !fForce) return;
     nTimeMyListUpdated = GetTime();
-
-    while (ui->tableWidgetMyMasternodes->rowCount() > 0) {
-        ui->tableWidgetMyMasternodes->removeRow(0);
-    }
-
-    // clear cache
-    masternodeConfig.clear();
-    // parse masternode.conf
-    std::string strErr;
-    if (!masternodeConfig.read(strErr)) {
-        LogPrintf("Error reading masternode configuration file: \n");
-    }
 
     ui->tableWidgetMyMasternodes->setSortingEnabled(false);
     BOOST_FOREACH(CMasternodeConfig::CMasternodeEntry mne, masternodeConfig.getEntries()) {
@@ -313,7 +306,20 @@ void MasternodeList::on_editConfigureMasternode_clicked() {
 void MasternodeList::on_configureMasternodeButton_clicked() {
 
     ConfigureMasternodePage dlg(ConfigureMasternodePage::NewConfigureMasternode, this);
-    if ( QDialog::Accepted == dlg.exec() ) {
+    if ( QDialog::Accepted == dlg.exec() )
+    {
+while (ui->tableWidgetMyMasternodes->rowCount() > 0)
+	{
+		ui->tableWidgetMyMasternodes->removeRow(0);
+	}		
+	
+	// clear cache
+	masternodeConfig.clear();
+    // parse masternode.conf
+    std::string strErr;
+    if (!masternodeConfig.read(strErr)) {
+        LogPrintf("Error reading masternode configuration file: \n");
+    }	
         updateMyNodeList(true);
     }
 }
@@ -328,7 +334,20 @@ void MasternodeList::openEditConfigureMasternodePage(QString strAlias, QString s
     dlg.loadOutputIndex(strOutputIndex);
     dlg.counter(count);
     dlg.MNAliasCache(strAlias);
-    if ( QDialog::Accepted == dlg.exec() ) {
+    if ( QDialog::Accepted == dlg.exec() )
+    {
+while (ui->tableWidgetMyMasternodes->rowCount() > 0)
+	{
+		ui->tableWidgetMyMasternodes->removeRow(0);
+	}		
+	
+	// clear cache
+	masternodeConfig.clear();
+    // parse masternode.conf
+    std::string strErr;
+    if (!masternodeConfig.read(strErr)) {
+        LogPrintf("Error reading masternode configuration file: \n");
+    }	
         updateMyNodeList(true);
     }
 }
@@ -359,6 +378,18 @@ void MasternodeList::deleteAlias() {
             masternodeConfig.deleteAlias(count);
             // write to masternode.conf
             masternodeConfig.writeToMasternodeConf();
+while (ui->tableWidgetMyMasternodes->rowCount() > 0)
+	{
+		ui->tableWidgetMyMasternodes->removeRow(0);
+	}		
+	
+	// clear cache
+	masternodeConfig.clear();
+    // parse masternode.conf
+    std::string strErr;
+    if (!masternodeConfig.read(strErr)) {
+        LogPrintf("Error reading masternode configuration file: \n");
+    }			
             updateMyNodeList(true);
             break;
 

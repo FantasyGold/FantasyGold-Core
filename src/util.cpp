@@ -2,7 +2,6 @@
 // Copyright (c) 2009-2014 The Bitcoin developers
 // Copyright (c) 2014-2015 The Dash developers
 // Copyright (c) 2015-2017 The PIVX developers
-// Copyright (c) 2017-2018 The Bulwark Core Developers
 // Copyright (c) 2017-2018 The FantasyGold developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
@@ -142,7 +141,7 @@ volatile bool fReopenDebugLog = false;
 
 /** Init OpenSSL library multithreading support */
 static CCriticalSection** ppmutexOpenSSL;
-void locking_callback(int mode, int i, const char* file, int line) {
+void locking_callback(int mode, int i, const char* file, int line) NO_THREAD_SAFETY_ANALYSIS{
     if (mode & CRYPTO_LOCK) {
         ENTER_CRITICAL_SECTION(*ppmutexOpenSSL[i]);
     } else {
@@ -152,7 +151,7 @@ void locking_callback(int mode, int i, const char* file, int line) {
 
 // Init
 class CInit {
-public:
+  public:
     CInit() {
         // Init OpenSSL library multithreading support
         ppmutexOpenSSL = (CCriticalSection**)OPENSSL_malloc(CRYPTO_num_locks() * sizeof(CCriticalSection*));
@@ -244,7 +243,7 @@ bool LogAcceptCategory(const char* category) {
 
         // if not debugging everything and not debugging specific category, LogPrint does nothing.
         if (setCategories.count(string("")) == 0 &&
-            setCategories.count(string(category)) == 0)
+                setCategories.count(string(category)) == 0)
             return false;
     }
     return true;
@@ -289,17 +288,17 @@ int LogPrintStr(const std::string& str) {
 
 /** Interpret string as boolean, for argument parsing */
 static bool InterpretBool(const std::string& strValue) {
-	if (strValue.empty())
-		return true;
-	return (atoi(strValue) != 0);
+    if (strValue.empty())
+        return true;
+    return (atoi(strValue) != 0);
 }
 
 /** Turn -noX into -X=0 */
 static void InterpretNegativeSetting(std::string& strKey, std::string& strValue) {
-	if (strKey.length()>3 && strKey[0]=='-' && strKey[1]=='n' && strKey[2]=='o') {
-		strKey = "-" + strKey.substr(3);
-		strValue = InterpretBool(strValue) ? "0" : "1";
-	}
+    if (strKey.length()>3 && strKey[0]=='-' && strKey[1]=='n' && strKey[2]=='o') {
+        strKey = "-" + strKey.substr(3);
+        strValue = InterpretBool(strValue) ? "0" : "1";
+    }
 }
 
 void ParseParameters(int argc, const char* const argv[]) {
@@ -327,12 +326,130 @@ void ParseParameters(int argc, const char* const argv[]) {
         // If both --foo and -foo are set, the last takes effect.
         if (str.length() > 1 && str[1] == '-')
             str = str.substr(1);
-		InterpretNegativeSetting(str, strValue);
+        InterpretNegativeSetting(str, strValue);
 
         mapArgs[str] = strValue;
         mapMultiArgs[str].push_back(strValue);
     }
-  }
+}
+
+/** Upper bound for mantissa.
+ * 10^18-1 is the largest arbitrary decimal that will fit in a signed 64-bit integer.
+ * Larger integers cannot consist of arbitrary combinations of 0-9:
+ *
+ *   999999999999999999  1^18-1
+ *  9223372036854775807  (1<<63)-1  (max int64_t)
+ *  9999999999999999999  1^19-1     (would overflow)
+ */
+static const int64_t UPPER_BOUND = 1000000000000000000LL - 1LL;
+
+/** Helper function for ParseFixedPoint */
+static inline bool ProcessMantissaDigit(char ch, int64_t &mantissa, int &mantissa_tzeros) {
+    if(ch == '0')
+        ++mantissa_tzeros;
+    else {
+        for (int i=0; i<=mantissa_tzeros; ++i) {
+            if (mantissa > (UPPER_BOUND / 10LL))
+                return false; /* overflow */
+            mantissa *= 10;
+        }
+        mantissa += ch - '0';
+        mantissa_tzeros = 0;
+    }
+    return true;
+}
+
+
+bool ParseFixedPoint(const std::string &val, int decimals, int64_t *amount_out) {
+    int64_t mantissa = 0;
+    int64_t exponent = 0;
+    int mantissa_tzeros = 0;
+    bool mantissa_sign = false;
+    bool exponent_sign = false;
+    int ptr = 0;
+    int end = val.size();
+    int point_ofs = 0;
+
+    if (ptr < end && val[ptr] == '-') {
+        mantissa_sign = true;
+        ++ptr;
+    }
+    if (ptr < end)
+    {
+        if (val[ptr] == '0') {
+            /* pass single 0 */
+            ++ptr;
+        } else if (val[ptr] >= '1' && val[ptr] <= '9') {
+            while (ptr < end && val[ptr] >= '0' && val[ptr] <= '9') {
+                if (!ProcessMantissaDigit(val[ptr], mantissa, mantissa_tzeros))
+                    return false; /* overflow */
+                ++ptr;
+            }
+        } else return false; /* missing expected digit */
+    } else return false; /* empty string or loose '-' */
+    if (ptr < end && val[ptr] == '.')
+    {
+        ++ptr;
+        if (ptr < end && val[ptr] >= '0' && val[ptr] <= '9')
+        {
+            while (ptr < end && val[ptr] >= '0' && val[ptr] <= '9') {
+                if (!ProcessMantissaDigit(val[ptr], mantissa, mantissa_tzeros))
+                    return false; /* overflow */
+                ++ptr;
+                ++point_ofs;
+            }
+        } else return false; /* missing expected digit */
+    }
+    if (ptr < end && (val[ptr] == 'e' || val[ptr] == 'E'))
+    {
+        ++ptr;
+        if (ptr < end && val[ptr] == '+')
+            ++ptr;
+        else if (ptr < end && val[ptr] == '-') {
+            exponent_sign = true;
+            ++ptr;
+        }
+        if (ptr < end && val[ptr] >= '0' && val[ptr] <= '9') {
+            while (ptr < end && val[ptr] >= '0' && val[ptr] <= '9') {
+                if (exponent > (UPPER_BOUND / 10LL))
+                    return false; /* overflow */
+                exponent = exponent * 10 + val[ptr] - '0';
+                ++ptr;
+            }
+        } else return false; /* missing expected digit */
+    }
+    if (ptr != end)
+        return false; /* trailing garbage */
+
+    /* finalize exponent */
+    if (exponent_sign)
+        exponent = -exponent;
+    exponent = exponent - point_ofs + mantissa_tzeros;
+
+    /* finalize mantissa */
+    if (mantissa_sign)
+        mantissa = -mantissa;
+
+    /* convert to one 64-bit fixed-point value */
+    exponent += decimals;
+    if (exponent < 0)
+        return false; /* cannot represent values smaller than 10^-decimals */
+    if (exponent >= 18)
+        return false; /* cannot represent values larger than or equal to 10^(18-decimals) */
+
+    for (int i=0; i < exponent; ++i) {
+        if (mantissa > (UPPER_BOUND / 10LL) || mantissa < -(UPPER_BOUND / 10LL))
+            return false; /* overflow */
+        mantissa *= 10;
+    }
+    if (mantissa > UPPER_BOUND || mantissa < -UPPER_BOUND)
+        return false; /* overflow */
+
+    if (amount_out)
+        *amount_out = mantissa;
+
+    return true;
+}
 
 std::string GetArg(const std::string& strArg, const std::string& strDefault) {
     if (mapArgs.count(strArg))
@@ -341,15 +458,15 @@ std::string GetArg(const std::string& strArg, const std::string& strDefault) {
 }
 
 int64_t GetArg(const std::string& strArg, int64_t nDefault) {
-if (mapArgs.count(strArg))
-	return atoi64(mapArgs[strArg]);
-return nDefault;
+    if (mapArgs.count(strArg))
+        return atoi64(mapArgs[strArg]);
+    return nDefault;
 }
 
 bool GetBoolArg(const std::string& strArg, bool fDefault) {
-if (mapArgs.count(strArg))
-	return InterpretBool(mapArgs[strArg]);
-return fDefault;
+    if (mapArgs.count(strArg))
+        return InterpretBool(mapArgs[strArg]);
+    return fDefault;
 }
 
 bool SoftSetArg(const std::string& strArg, const std::string& strValue) {
@@ -390,10 +507,10 @@ static std::string FormatException(std::exception* pex, const char* pszThread) {
 #endif
     if (pex)
         return strprintf(
-            "EXCEPTION: %s       \n%s       \n%s in %s       \n", typeid(*pex).name(), pex->what(), pszModule, pszThread);
+                   "EXCEPTION: %s       \n%s       \n%s in %s       \n", typeid(*pex).name(), pex->what(), pszModule, pszThread);
     else
         return strprintf(
-            "UNKNOWN EXCEPTION       \n%s in %s       \n", pszModule, pszThread);
+                   "UNKNOWN EXCEPTION       \n%s in %s       \n", pszModule, pszThread);
 }
 
 void PrintExceptionContinue(std::exception* pex, const char* pszThread) {
@@ -500,11 +617,11 @@ void ReadConfigFile(map<string, string>& mapSettingsRet,
     for (boost::program_options::detail::config_file_iterator it(streamConfig, setOptions), end; it != end; ++it) {
         // Don't overwrite existing settings so command line settings override fantasygold.conf
         string strKey = string("-") + it->string_key;
-		string strValue = it->value[0];
-		InterpretNegativeSetting(strKey, strValue);
-		if (mapSettingsRet.count(strKey) == 0)
-			mapSettingsRet[strKey] = strValue;
-		mapMultiSettingsRet[strKey].push_back(strValue);
+        string strValue = it->value[0];
+        InterpretNegativeSetting(strKey, strValue);
+        if (mapSettingsRet.count(strKey) == 0)
+            mapSettingsRet[strKey] = strValue;
+        mapMultiSettingsRet[strKey].push_back(strValue);
     }
     // If datadir is changed in .conf file:
     ClearDatadirCache();
@@ -529,7 +646,7 @@ void CreatePidFile(const boost::filesystem::path& path, pid_t pid) {
 bool RenameOver(boost::filesystem::path src, boost::filesystem::path dest) {
 #ifdef WIN32
     return MoveFileExA(src.string().c_str(), dest.string().c_str(),
-               MOVEFILE_REPLACE_EXISTING) != 0;
+                       MOVEFILE_REPLACE_EXISTING) != 0;
 #else
     int rc = std::rename(src.string().c_str(), dest.string().c_str());
     return (rc == 0);
@@ -703,6 +820,24 @@ boost::filesystem::path GetTempPath() {
 #endif
 }
 
+double double_safe_addition(double fValue, double fIncrement) {
+    double fLimit = std::numeric_limits<double>::max() - fValue;
+
+    if (fLimit > fIncrement)
+        return fValue + fIncrement;
+    else
+        return std::numeric_limits<double>::max();
+}
+
+double double_safe_multiplication(double fValue, double fmultiplicator) {
+    double fLimit = std::numeric_limits<double>::max() / fmultiplicator;
+
+    if (fLimit > fmultiplicator)
+        return fValue * fmultiplicator;
+    else
+        return std::numeric_limits<double>::max();
+}
+
 void runCommand(std::string strCommand) {
     int nErr = ::system(strCommand.c_str());
     if (nErr)
@@ -748,6 +883,17 @@ void SetupEnvironment() {
     // boost::filesystem::path, which is then used to explicitly imbue the path.
     std::locale loc = boost::filesystem::path::imbue(std::locale::classic());
     boost::filesystem::path::imbue(loc);
+}
+
+bool SetupNetworking() {
+#ifdef WIN32
+    // Initialize Windows Sockets
+    WSADATA wsadata;
+    int ret = WSAStartup(MAKEWORD(2,2), &wsadata);
+    if (ret != NO_ERROR || LOBYTE(wsadata.wVersion ) != 2 || HIBYTE(wsadata.wVersion) != 2)
+        return false;
+#endif
+    return true;
 }
 
 void SetThreadPriority(int nPriority) {

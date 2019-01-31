@@ -34,7 +34,8 @@ struct COrphanTx {
 extern std::map<uint256, COrphanTx> mapOrphanTransactions;
 extern std::map<uint256, std::set<uint256> > mapOrphanTransactionsByPrev;
 
-CService ip(uint32_t i) {
+CService ip(uint32_t i)
+{
     struct in_addr s;
     s.s_addr = i;
     return CService(CNetAddr(s), Params().GetDefaultPort());
@@ -42,7 +43,8 @@ CService ip(uint32_t i) {
 
 BOOST_AUTO_TEST_SUITE(DoS_tests)
 
-BOOST_AUTO_TEST_CASE(DoS_banning) {
+BOOST_AUTO_TEST_CASE(DoS_banning)
+{
     CNode::ClearBanned();
     CAddress addr1(ip(0xa0b0c001));
     CNode dummyNode1(INVALID_SOCKET, addr1, "", true);
@@ -64,7 +66,8 @@ BOOST_AUTO_TEST_CASE(DoS_banning) {
     BOOST_CHECK(CNode::IsBanned(addr2));
 }
 
-BOOST_AUTO_TEST_CASE(DoS_banscore) {
+BOOST_AUTO_TEST_CASE(DoS_banscore)
+{
     CNode::ClearBanned();
     mapArgs["-banscore"] = "111"; // because 11 is my favorite number
     CAddress addr1(ip(0xa0b0c001));

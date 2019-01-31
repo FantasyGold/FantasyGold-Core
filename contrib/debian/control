@@ -1,8 +1,8 @@
 Source: fantasygold
 Section: utils
 Priority: optional
-Maintainer: Jonas Smedegaard <dr@jones.dk> ***TODO***
-Uploaders: Micah Anderson <micah@debian.org> ***TODO***
+Maintainer: silence <silence@draftdaily.com>
+Uploaders: silence <silence@draftdaily.com>
 Build-Depends: debhelper,
  devscripts,
  automake,

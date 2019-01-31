@@ -56,42 +56,20 @@ bool CCoins::Spend(int nPos) {
 }
 
 
-bool CCoinsView::GetCoins(const uint256& txid, CCoins& coins) const {
-    return false;
-}
-bool CCoinsView::HaveCoins(const uint256& txid) const {
-    return false;
-}
-uint256 CCoinsView::GetBestBlock() const {
-    return uint256(0);
-}
-bool CCoinsView::BatchWrite(CCoinsMap& mapCoins, const uint256& hashBlock) {
-    return false;
-}
-bool CCoinsView::GetStats(CCoinsStats& stats) const {
-    return false;
-}
+bool CCoinsView::GetCoins(const uint256& txid, CCoins& coins) const { return false; }
+bool CCoinsView::HaveCoins(const uint256& txid) const { return false; }
+uint256 CCoinsView::GetBestBlock() const { return uint256(0); }
+bool CCoinsView::BatchWrite(CCoinsMap& mapCoins, const uint256& hashBlock) { return false; }
+bool CCoinsView::GetStats(CCoinsStats& stats) const { return false; }
 
 
 CCoinsViewBacked::CCoinsViewBacked(CCoinsView* viewIn) : base(viewIn) {}
-bool CCoinsViewBacked::GetCoins(const uint256& txid, CCoins& coins) const {
-    return base->GetCoins(txid, coins);
-}
-bool CCoinsViewBacked::HaveCoins(const uint256& txid) const {
-    return base->HaveCoins(txid);
-}
-uint256 CCoinsViewBacked::GetBestBlock() const {
-    return base->GetBestBlock();
-}
-void CCoinsViewBacked::SetBackend(CCoinsView& viewIn) {
-    base = &viewIn;
-}
-bool CCoinsViewBacked::BatchWrite(CCoinsMap& mapCoins, const uint256& hashBlock) {
-    return base->BatchWrite(mapCoins, hashBlock);
-}
-bool CCoinsViewBacked::GetStats(CCoinsStats& stats) const {
-    return base->GetStats(stats);
-}
+bool CCoinsViewBacked::GetCoins(const uint256& txid, CCoins& coins) const { return base->GetCoins(txid, coins); }
+bool CCoinsViewBacked::HaveCoins(const uint256& txid) const { return base->HaveCoins(txid); }
+uint256 CCoinsViewBacked::GetBestBlock() const { return base->GetBestBlock(); }
+void CCoinsViewBacked::SetBackend(CCoinsView& viewIn) { base = &viewIn; }
+bool CCoinsViewBacked::BatchWrite(CCoinsMap& mapCoins, const uint256& hashBlock) { return base->BatchWrite(mapCoins, hashBlock); }
+bool CCoinsViewBacked::GetStats(CCoinsStats& stats) const { return base->GetStats(stats); }
 
 CCoinsKeyHasher::CCoinsKeyHasher() : salt(GetRandHash()) {}
 
@@ -258,17 +236,22 @@ double CCoinsViewCache::GetPriority(const CTransaction& tx, int nHeight) const {
         return 0.0;
     double dResult = 0.0;
     for (const CTxIn& txin:  tx.vin) {
+        if (!tx.IsZerocoinSpend()) {
         const CCoins* coins = AccessCoins(txin.prevout.hash);
         assert(coins);
         if (!coins->IsAvailable(txin.prevout.n)) continue;
         if (coins->nHeight < nHeight) {
-            dResult += coins->vout[txin.prevout.n].nValue * (nHeight - coins->nHeight);
+                dResult += coins->vout[txin.prevout.n].nValue * (nHeight - coins->nHeight); // value * age
+            }
+        } else {
+            dResult += tx.GetZerocoinSpent(); // we do not know the age of a zerocoin tx
         }
     }
     return tx.ComputePriority(dResult);
 }
 
-CCoinsModifier::CCoinsModifier(CCoinsViewCache& cache_, CCoinsMap::iterator it_) : cache(cache_), it(it_) {
+CCoinsModifier::CCoinsModifier(CCoinsViewCache& cache_, CCoinsMap::iterator it_) : cache(cache_), it(it_)
+{
     assert(!cache.hasModifier);
     cache.hasModifier = true;
 }

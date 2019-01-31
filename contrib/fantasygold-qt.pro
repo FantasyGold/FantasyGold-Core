@@ -10,6 +10,7 @@ DEPENDPATH += . \
               src \
               src/compat \
               src/config \
+              src/consensus \
               src/crypto \
               src/json \
               src/obj \
@@ -28,6 +29,8 @@ DEPENDPATH += . \
               src/qt/test \
               src/secp256k1/include \
               src/secp256k1/src \
+              src/support \
+              src/support/allocators \
               src/test/data \
               src/leveldb/doc/bench \
               src/leveldb/helpers/memenv \
@@ -47,8 +50,11 @@ INCLUDEPATH += . \
                src/qt \
                src/qt/forms \
                src/compat \
+               src/consensus \
                src/secp256k1/include \
                src/leveldb/helpers/memenv \
+               src/support \
+               src/support/allocators \
                src/test/data \
                src/test \
                src/qt/test \
@@ -62,7 +68,7 @@ HEADERS += src/activemasternode.h \
            src/allocators.h \
            src/amount.h \
            src/base58.h \
-           src/bignum.h \
+           src/bech32.h \
            src/bloom.h \
            src/chain.h \
            src/chainparams.h \
@@ -114,6 +120,8 @@ HEADERS += src/activemasternode.h \
            src/serialize.h \
            src/spork.h \
            src/streams.h \
+           src/support/allocators/zeroafterfree.h \
+           src/support/cleanse.h \
            src/sync.h \
            src/threadsafety.h \
            src/timedata.h \
@@ -131,7 +139,10 @@ HEADERS += src/activemasternode.h \
            src/wallet.h \
            src/wallet_ismine.h \
            src/walletdb.h \
+           src/validationinterface.h \
            src/compat/sanity.h \
+           src/consensus/merkle.h \
+           src/consensus/validation.h \
            src/config/fantasygold-config.h \
            src/crypto/common.h \
            src/crypto/hmac_sha256.h \
@@ -142,9 +153,15 @@ HEADERS += src/activemasternode.h \
            src/crypto/sha256.h \
            src/crypto/sha512.h \
            src/crypto/sph_blake.h \
+           src/crypto/sph_bmw.h \
+           src/crypto/sph_cubehash.h \
+           src/crypto/sph_echo.h \
            src/crypto/sph_groestl.h \
-		   src/crypto/sph_jh.h \
+           src/crypto/sph_jh.h \
            src/crypto/sph_keccak.h \
+           src/crypto/sph_luffa.h \
+           src/crypto/sph_shavite.h \
+           src/crypto/sph_simd.h \
            src/crypto/sph_skein.h \
            src/crypto/sph_types.h \
            src/json/json_spirit.h \
@@ -217,6 +234,7 @@ HEADERS += src/activemasternode.h \
            src/script/sigcache.h \
            src/script/sign.h \
            src/script/standard.h \
+           src/test/bignum.h \
            src/univalue/univalue.h \
            src/univalue/univalue_escapes.h \
            src/leveldb/db/builder.h \
@@ -355,6 +373,7 @@ SOURCES += src/activemasternode.cpp \
            src/allocators.cpp \
            src/amount.cpp \
            src/base58.cpp \
+           src/bech32.cpp \
            src/bloom.cpp \
            src/chain.cpp \
            src/chainparams.cpp \
@@ -412,6 +431,7 @@ SOURCES += src/activemasternode.cpp \
            src/rpcserver.cpp \
            src/rpcwallet.cpp \
            src/spork.cpp \
+           src/support/cleanse.cpp \
            src/sync.cpp \
            src/timedata.cpp \
            src/txdb.cpp \
@@ -424,6 +444,8 @@ SOURCES += src/activemasternode.cpp \
            src/wallet.cpp \
            src/wallet_ismine.cpp \
            src/walletdb.cpp \
+           src/validationinterface.cpp \
+           src/consensus/merkle.cpp \
            src/compat/glibc_compat.cpp \
            src/compat/glibc_sanity.cpp \
            src/compat/glibcxx_compat.cpp \
@@ -431,10 +453,15 @@ SOURCES += src/activemasternode.cpp \
            src/compat/strnlen.cpp \
            src/crypto/aes_helper.c \
            src/crypto/blake.c \
-		   src/crypto/hmac_sha256.cpp \
+           src/crypto/bmw.c \
+           src/crypto/cubehash.c \
+           src/crypto/echo.c \
+           src/crypto/groestl.c \
+           src/crypto/hmac_sha256.cpp \
            src/crypto/hmac_sha512.cpp \
            src/crypto/jh.c \
            src/crypto/keccak.c \
+           src/crypto/luffa.c \
            src/crypto/rfc6979_hmac_sha256.cpp \
            src/crypto/ripemd160.cpp \
            src/crypto/sha1.cpp \
@@ -530,10 +557,10 @@ SOURCES += src/activemasternode.cpp \
            src/test/netbase_tests.cpp \
            src/test/pmt_tests.cpp \
            src/test/rpc_tests.cpp \
-           src/test/rpc_wallet_tests.cpp \
            src/test/sanity_tests.cpp \
            src/test/script_P2SH_tests.cpp \
            src/test/script_tests.cpp \
+           src/test/script_standard_tests.cpp \
            src/test/scriptnum_tests.cpp \
            src/test/serialize_tests.cpp \
            src/test/sighash_tests.cpp \

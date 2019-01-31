@@ -198,7 +198,7 @@ class WalletModel : public QObject {
     UnlockContext requestUnlock(bool relock = false);
 
     bool getPubKey(const CKeyID& address, CPubKey& vchPubKeyOut) const;
-    bool isMine(CBitcoinAddress address);
+    bool isMine(CTxDestination address);
     void getOutputs(const std::vector<COutPoint>& vOutpoints, std::vector<COutput>& vOutputs);
     bool isSpent(const COutPoint& outpoint) const;
     void listCoins(std::map<QString, std::vector<COutput> >& mapCoins) const;
@@ -208,10 +208,13 @@ class WalletModel : public QObject {
     void unlockCoin(COutPoint& output);
     void listLockedCoins(std::vector<COutPoint>& vOutpts);
 
-    void listZerocoinMints(std::list<CZerocoinMint>& listMints, bool fUnusedOnly = false, bool fMaturedOnly = false, bool fUpdateStatus = false);
+    void listZerocoinMints(std::set<CMintMeta>& setMints, bool fUnusedOnly = false, bool fMaturedOnly = false, bool fUpdateStatus = false);
 
+    string GetUniqueWalletBackupName();
     void loadReceiveRequests(std::vector<std::string>& vReceiveRequests);
     bool saveReceiveRequest(const std::string& sAddress, const int64_t nId, const std::string& sRequest);
+
+    OutputType getDefaultAddressType() const;
 
   private:
     CWallet* wallet;
