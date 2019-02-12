@@ -57,7 +57,22 @@
        <number>6</number>
       </property>
       <item>
-       <layout class="QVBoxLayout" name="verticalLayout_Master" stretch="0">
+       <layout class="QVBoxLayout" name="verticalLayout_Master" stretch="0,1">
+        <property name="leftMargin">
+         <number>0</number>
+        </property>
+        <property name="topMargin">
+         <number>0</number>
+        </property>
+        <property name="rightMargin">
+         <number>0</number>
+        </property>
+        <property name="bottomMargin">
+         <number>0</number>
+        </property>
+        <item>
+         <widget class="QFrame" name="frame_Header">
+          <layout class="QVBoxLayout" name="verticalLayout_Header" stretch="0">
         <property name="leftMargin">
          <number>0</number>
         </property>
@@ -1067,7 +1082,7 @@ Immature: confirmed, but less than 1 mint of the same denomination after it was 
               <property name="frameShadow">
                <enum>QFrame::Raised</enum>
               </property>
-              <layout class="QVBoxLayout" name="verticalLayout_1">
+                 <layout class="QVBoxLayout" name="verticalLayout_1" stretch="0,0,0,0,0">
                <item>
                 <layout class="QHBoxLayout" name="horizontalLayout_2">
                  <item>
