@@ -1,6 +1,7 @@
 // Copyright (c) 2012-2014 The Bitcoin Core developers
 // Copyright (c) 2014-2015 The Dash Core developers
-// // Copyright (c) 2015-2017 The Bulwark developers
+// Copyright (c) 2015-2017 The PIVX developers
+// Copyright (c) 2017-2018 The Bulwark Core Developers
 // Copyright (c) 2017-2018 The FantasyGold developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
@@ -15,8 +16,7 @@ using namespace std;
 
 BOOST_AUTO_TEST_SUITE(netbase_tests)
 
-BOOST_AUTO_TEST_CASE(netbase_networks)
-{
+BOOST_AUTO_TEST_CASE(netbase_networks) {
     BOOST_CHECK(CNetAddr("127.0.0.1").GetNetwork()                              == NET_UNROUTABLE);
     BOOST_CHECK(CNetAddr("::1").GetNetwork()                                    == NET_UNROUTABLE);
     BOOST_CHECK(CNetAddr("8.8.8.8").GetNetwork()                                == NET_IPV4);
@@ -24,8 +24,7 @@ BOOST_AUTO_TEST_CASE(netbase_networks)
     BOOST_CHECK(CNetAddr("FD87:D87E:EB43:edb1:8e4:3588:e546:35ca").GetNetwork() == NET_TOR);
 }
 
-BOOST_AUTO_TEST_CASE(netbase_properties)
-{
+BOOST_AUTO_TEST_CASE(netbase_properties) {
     BOOST_CHECK(CNetAddr("127.0.0.1").IsIPv4());
     BOOST_CHECK(CNetAddr("::FFFF:192.168.1.1").IsIPv4());
     BOOST_CHECK(CNetAddr("::1").IsIPv6());
@@ -48,54 +47,49 @@ BOOST_AUTO_TEST_CASE(netbase_properties)
     BOOST_CHECK(CNetAddr("127.0.0.1").IsValid());
 }
 
-bool static TestSplitHost(string test, string host, int port)
-{
+bool static TestSplitHost(string test, string host, int port) {
     string hostOut;
     int portOut = -1;
     SplitHostPort(test, portOut, hostOut);
     return hostOut == host && port == portOut;
 }
 
-BOOST_AUTO_TEST_CASE(netbase_splithost)
-{
+BOOST_AUTO_TEST_CASE(netbase_splithost) {
     BOOST_CHECK(TestSplitHost("www.bitcoin.org", "www.bitcoin.org", -1));
     BOOST_CHECK(TestSplitHost("[www.bitcoin.org]", "www.bitcoin.org", -1));
     BOOST_CHECK(TestSplitHost("www.bitcoin.org:80", "www.bitcoin.org", 80));
     BOOST_CHECK(TestSplitHost("[www.bitcoin.org]:80", "www.bitcoin.org", 80));
     BOOST_CHECK(TestSplitHost("127.0.0.1", "127.0.0.1", -1));
-    BOOST_CHECK(TestSplitHost("127.0.0.1:57810", "127.0.0.1", 57810));
+    BOOST_CHECK(TestSplitHost("127.0.0.1:57814", "127.0.0.1", 57814));
     BOOST_CHECK(TestSplitHost("[127.0.0.1]", "127.0.0.1", -1));
-    BOOST_CHECK(TestSplitHost("[127.0.0.1]:57810", "127.0.0.1", 57810));
+    BOOST_CHECK(TestSplitHost("[127.0.0.1]:57814", "127.0.0.1", 57814));
     BOOST_CHECK(TestSplitHost("::ffff:127.0.0.1", "::ffff:127.0.0.1", -1));
-    BOOST_CHECK(TestSplitHost("[::ffff:127.0.0.1]:57810", "::ffff:127.0.0.1", 57810));
-    BOOST_CHECK(TestSplitHost("[::]:57810", "::", 57810));
-    BOOST_CHECK(TestSplitHost("::57810", "::57810", -1));
-    BOOST_CHECK(TestSplitHost(":57810", "", 57810));
-    BOOST_CHECK(TestSplitHost("[]:57810", "", 57810));
+    BOOST_CHECK(TestSplitHost("[::ffff:127.0.0.1]:57814", "::ffff:127.0.0.1", 57814));
+    BOOST_CHECK(TestSplitHost("[::]:57814", "::", 57814));
+    BOOST_CHECK(TestSplitHost("::57814", "::57814", -1));
+    BOOST_CHECK(TestSplitHost(":57814", "", 57814));
+    BOOST_CHECK(TestSplitHost("[]:57814", "", 57814));
     BOOST_CHECK(TestSplitHost("", "", -1));
 }
 
-bool static TestParse(string src, string canon)
-{
+bool static TestParse(string src, string canon) {
     CService addr;
     if (!LookupNumeric(src.c_str(), addr, 65535))
         return canon == "";
     return canon == addr.ToString();
 }
 
-BOOST_AUTO_TEST_CASE(netbase_lookupnumeric)
-{
+BOOST_AUTO_TEST_CASE(netbase_lookupnumeric) {
     BOOST_CHECK(TestParse("127.0.0.1", "127.0.0.1:65535"));
-    BOOST_CHECK(TestParse("127.0.0.1:57810", "127.0.0.1:57810"));
+    BOOST_CHECK(TestParse("127.0.0.1:57814", "127.0.0.1:57814"));
     BOOST_CHECK(TestParse("::ffff:127.0.0.1", "127.0.0.1:65535"));
     BOOST_CHECK(TestParse("::", "[::]:65535"));
-    BOOST_CHECK(TestParse("[::]:57810", "[::]:57810"));
+    BOOST_CHECK(TestParse("[::]:57814", "[::]:57814"));
     BOOST_CHECK(TestParse("[127.0.0.1]", "127.0.0.1:65535"));
     BOOST_CHECK(TestParse(":::", ""));
 }
 
-BOOST_AUTO_TEST_CASE(onioncat_test)
-{
+BOOST_AUTO_TEST_CASE(onioncat_test) {
     // values from https://web.archive.org/web/20121122003543/http://www.cypherpunk.at/onioncat/wiki/OnionCat
     CNetAddr addr1("5wyqrzbvrdsumnok.onion");
     CNetAddr addr2("FD87:D87E:EB43:edb1:8e4:3588:e546:35ca");
@@ -105,8 +99,7 @@ BOOST_AUTO_TEST_CASE(onioncat_test)
     BOOST_CHECK(addr1.IsRoutable());
 }
 
-BOOST_AUTO_TEST_CASE(subnet_test)
-{
+BOOST_AUTO_TEST_CASE(subnet_test) {
     BOOST_CHECK(CSubNet("1.2.3.0/24") == CSubNet("1.2.3.0/255.255.255.0"));
     BOOST_CHECK(CSubNet("1.2.3.0/24") != CSubNet("1.2.4.0/255.255.255.0"));
     BOOST_CHECK(CSubNet("1.2.3.0/24").Match(CNetAddr("1.2.3.4")));

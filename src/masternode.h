@@ -1,9 +1,8 @@
-
 // Copyright (c) 2014-2015 The Dash developers
-// // Copyright (c) 2015-2017 The Bulwark developers
-// Copyright (c) 2017-2018 The FantasyGold developers
+// Copyright (c) 2015-2017 The PIVX developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
+
 #ifndef MASTERNODE_H
 #define MASTERNODE_H
 
@@ -37,8 +36,7 @@ bool GetBlockHash(uint256& hash, int nBlockHeight);
 // The Masternode Ping Class : Contains a different serialize method for sending pings from masternodes throughout the network
 //
 
-class CMasternodePing
-{
+class CMasternodePing {
 public:
     CTxIn vin;
     uint256 blockHash;
@@ -52,8 +50,7 @@ public:
     ADD_SERIALIZE_METHODS;
 
     template <typename Stream, typename Operation>
-    inline void SerializationOp(Stream& s, Operation ser_action, int nType, int nVersion)
-    {
+    inline void SerializationOp(Stream& s, Operation ser_action, int nType, int nVersion) {
         READWRITE(vin);
         READWRITE(blockHash);
         READWRITE(sigTime);
@@ -64,16 +61,14 @@ public:
     bool Sign(CKey& keyMasternode, CPubKey& pubKeyMasternode);
     void Relay();
 
-    uint256 GetHash()
-    {
+    uint256 GetHash() {
         CHashWriter ss(SER_GETHASH, PROTOCOL_VERSION);
         ss << vin;
         ss << sigTime;
         return ss.GetHash();
     }
 
-    void swap(CMasternodePing& first, CMasternodePing& second) // nothrow
-    {
+    void swap(CMasternodePing& first, CMasternodePing& second) { // nothrow
         // enable ADL (not necessary in our case, but good practice)
         using std::swap;
 
@@ -85,27 +80,23 @@ public:
         swap(first.vchSig, second.vchSig);
     }
 
-    CMasternodePing& operator=(CMasternodePing from)
-    {
+    CMasternodePing& operator=(CMasternodePing from) {
         swap(*this, from);
         return *this;
     }
-    friend bool operator==(const CMasternodePing& a, const CMasternodePing& b)
-    {
+    friend bool operator==(const CMasternodePing& a, const CMasternodePing& b) {
         return a.vin == b.vin && a.blockHash == b.blockHash;
     }
-    friend bool operator!=(const CMasternodePing& a, const CMasternodePing& b)
-    {
+    friend bool operator!=(const CMasternodePing& a, const CMasternodePing& b) {
         return !(a == b);
     }
 };
 
 //
-// The Masternode Class. For managing the Obfuscation process. It contains the input of the 10,000 FGC, signature to prove
+// The Masternode Class. For managing the Obfuscation process. It contains the input of the 10000 FGC, signature to prove
 // it's the one who own that ip address and code for calculating the payment election.
 //
-class CMasternode
-{
+class CMasternode {
 private:
     // critical section to protect the inner data structures
     mutable CCriticalSection cs;
@@ -152,8 +143,7 @@ public:
     CMasternode(const CMasternodeBroadcast& mnb);
 
 
-    void swap(CMasternode& first, CMasternode& second) // nothrow
-    {
+    void swap(CMasternode& first, CMasternode& second) { // nothrow
         // enable ADL (not necessary in our case, but good practice)
         using std::swap;
 
@@ -177,17 +167,14 @@ public:
         swap(first.nLastScanningErrorBlockHeight, second.nLastScanningErrorBlockHeight);
     }
 
-    CMasternode& operator=(CMasternode from)
-    {
+    CMasternode& operator=(CMasternode from) {
         swap(*this, from);
         return *this;
     }
-    friend bool operator==(const CMasternode& a, const CMasternode& b)
-    {
+    friend bool operator==(const CMasternode& a, const CMasternode& b) {
         return a.vin == b.vin;
     }
-    friend bool operator!=(const CMasternode& a, const CMasternode& b)
-    {
+    friend bool operator!=(const CMasternode& a, const CMasternode& b) {
         return !(a.vin == b.vin);
     }
 
@@ -196,8 +183,7 @@ public:
     ADD_SERIALIZE_METHODS;
 
     template <typename Stream, typename Operation>
-    inline void SerializationOp(Stream& s, Operation ser_action, int nType, int nVersion)
-    {
+    inline void SerializationOp(Stream& s, Operation ser_action, int nType, int nVersion) {
         LOCK(cs);
 
         READWRITE(vin);
@@ -222,8 +208,7 @@ public:
 
     bool UpdateFromNewBroadcast(CMasternodeBroadcast& mnb);
 
-    inline uint64_t SliceHash(uint256& hash, int slice)
-    {
+    inline uint64_t SliceHash(uint256& hash, int slice) {
         uint64_t n = 0;
         memcpy(&n, &hash + slice * 64, 64);
         return n;
@@ -231,31 +216,26 @@ public:
 
     void Check(bool forceCheck = false);
 
-    bool IsBroadcastedWithin(int seconds)
-    {
+    bool IsBroadcastedWithin(int seconds) {
         return (GetAdjustedTime() - sigTime) < seconds;
     }
 
-    bool IsPingedWithin(int seconds, int64_t now = -1)
-    {
+    bool IsPingedWithin(int seconds, int64_t now = -1) {
         now == -1 ? now = GetAdjustedTime() : now;
 
         return (lastPing == CMasternodePing()) ? false : now - lastPing.sigTime < seconds;
     }
 
-    void Disable()
-    {
+    void Disable() {
         sigTime = 0;
         lastPing = CMasternodePing();
     }
 
-    bool IsEnabled()
-    {
+    bool IsEnabled() {
         return activeState == MASTERNODE_ENABLED;
     }
 
-    int GetMasternodeInputAge()
-    {
+    int GetMasternodeInputAge() {
         if (chainActive.Tip() == NULL) return 0;
 
         if (cacheInputAge == 0) {
@@ -268,8 +248,7 @@ public:
 
     std::string GetStatus();
 
-    std::string Status()
-    {
+    std::string Status() {
         std::string strStatus = "ACTIVE";
 
         if (activeState == CMasternode::MASTERNODE_ENABLED) strStatus = "ENABLED";
@@ -290,8 +269,7 @@ public:
 // The Masternode Broadcast Class : Contains a different serialize method for sending masternodes through the network
 //
 
-class CMasternodeBroadcast : public CMasternode
-{
+class CMasternodeBroadcast : public CMasternode {
 public:
     CMasternodeBroadcast();
     CMasternodeBroadcast(CService newAddr, CTxIn newVin, CPubKey newPubkey, CPubKey newPubkey2, int protocolVersionIn);
@@ -305,8 +283,7 @@ public:
     ADD_SERIALIZE_METHODS;
 
     template <typename Stream, typename Operation>
-    inline void SerializationOp(Stream& s, Operation ser_action, int nType, int nVersion)
-    {
+    inline void SerializationOp(Stream& s, Operation ser_action, int nType, int nVersion) {
         READWRITE(vin);
         READWRITE(addr);
         READWRITE(pubKeyCollateralAddress);
@@ -318,8 +295,7 @@ public:
         READWRITE(nLastDsq);
     }
 
-    uint256 GetHash()
-    {
+    uint256 GetHash() {
         CHashWriter ss(SER_GETHASH, PROTOCOL_VERSION);
         ss << sigTime;
         ss << pubKeyCollateralAddress;

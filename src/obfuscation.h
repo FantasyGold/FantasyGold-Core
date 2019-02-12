@@ -1,5 +1,6 @@
 // Copyright (c) 2014-2015 The Dash developers
-// // Copyright (c) 2015-2017 The Bulwark developers
+// Copyright (c) 2015-2017 The PIVX developers
+// Copyright (c) 2017-2018 The Bulwark Core Developers
 // Copyright (c) 2017-2018 The FantasyGold developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
@@ -59,14 +60,12 @@ extern CActiveMasternode activeMasternode;
 
 /** Holds an Obfuscation input
  */
-class CTxDSIn : public CTxIn
-{
+class CTxDSIn : public CTxIn {
 public:
     bool fHasSig;   // flag to indicate if signed
     int nSentTimes; //times we've sent this anonymously
 
-    CTxDSIn(const CTxIn& in)
-    {
+    CTxDSIn(const CTxIn& in) {
         prevout = in.prevout;
         scriptSig = in.scriptSig;
         prevPubKey = in.prevPubKey;
@@ -78,13 +77,11 @@ public:
 
 /** Holds an Obfuscation output
  */
-class CTxDSOut : public CTxOut
-{
+class CTxDSOut : public CTxOut {
 public:
     int nSentTimes; //times we've sent this anonymously
 
-    CTxDSOut(const CTxOut& out)
-    {
+    CTxDSOut(const CTxOut& out) {
         nValue = out.nValue;
         nRounds = out.nRounds;
         scriptPubKey = out.scriptPubKey;
@@ -93,8 +90,7 @@ public:
 };
 
 // A clients transaction in the obfuscation pool
-class CObfuScationEntry
-{
+class CObfuScationEntry {
 public:
     bool isSet;
     std::vector<CTxDSIn> sev;
@@ -104,25 +100,25 @@ public:
     CTransaction txSupporting;
     int64_t addedTime; // time in UTC milliseconds
 
-    CObfuScationEntry()
-    {
+    CObfuScationEntry() {
         isSet = false;
         collateral = CTransaction();
         amount = 0;
     }
 
     /// Add entries to use for Obfuscation
-    bool Add(const std::vector<CTxIn> vinIn, CAmount amountIn, const CTransaction collateralIn, const std::vector<CTxOut> voutIn)
-    {
+    bool Add(const std::vector<CTxIn> vinIn, CAmount amountIn, const CTransaction collateralIn, const std::vector<CTxOut> voutIn) {
         if (isSet) {
             return false;
         }
 
-        BOOST_FOREACH (const CTxIn& in, vinIn)
+        BOOST_FOREACH(const CTxIn& in, vinIn) {
             sev.push_back(in);
+        }
 
-        BOOST_FOREACH (const CTxOut& out, voutIn)
+        BOOST_FOREACH(const CTxOut& out, voutIn) {
             vout.push_back(out);
+        }
 
         amount = amountIn;
         collateral = collateralIn;
@@ -132,8 +128,7 @@ public:
         return true;
     }
 
-    bool AddSig(const CTxIn& vin)
-    {
+    bool AddSig(const CTxIn& vin) {
         BOOST_FOREACH (CTxDSIn& s, sev) {
             if (s.prevout == vin.prevout && s.nSequence == vin.nSequence) {
                 if (s.fHasSig) {
@@ -150,8 +145,7 @@ public:
         return false;
     }
 
-    bool IsExpired()
-    {
+    bool IsExpired() {
         return (GetTime() - addedTime) > OBFUSCATION_QUEUE_TIMEOUT; // 120 seconds
     }
 };
@@ -160,8 +154,7 @@ public:
 /**
  * A currently inprogress Obfuscation merge and denomination information
  */
-class CObfuscationQueue
-{
+class CObfuscationQueue {
 public:
     CTxIn vin;
     int64_t time;
@@ -169,8 +162,7 @@ public:
     bool ready; //ready for submit
     std::vector<unsigned char> vchSig;
 
-    CObfuscationQueue()
-    {
+    CObfuscationQueue() {
         nDenom = 0;
         vin = CTxIn();
         time = 0;
@@ -181,8 +173,7 @@ public:
     ADD_SERIALIZE_METHODS;
 
     template <typename Stream, typename Operation>
-    inline void SerializationOp(Stream& s, Operation ser_action, int nType, int nVersion)
-    {
+    inline void SerializationOp(Stream& s, Operation ser_action, int nType, int nVersion) {
         READWRITE(nDenom);
         READWRITE(vin);
         READWRITE(time);
@@ -190,8 +181,7 @@ public:
         READWRITE(vchSig);
     }
 
-    bool GetAddress(CService& addr)
-    {
+    bool GetAddress(CService& addr) {
         CMasternode* pmn = mnodeman.Find(vin);
         if (pmn != NULL) {
             addr = pmn->addr;
@@ -201,8 +191,7 @@ public:
     }
 
     /// Get the protocol version
-    bool GetProtocolVersion(int& protocolVersion)
-    {
+    bool GetProtocolVersion(int& protocolVersion) {
         CMasternode* pmn = mnodeman.Find(vin);
         if (pmn != NULL) {
             protocolVersion = pmn->protocolVersion;
@@ -223,8 +212,7 @@ public:
     bool Relay();
 
     /// Is this Obfuscation expired?
-    bool IsExpired()
-    {
+    bool IsExpired() {
         return (GetTime() - time) > OBFUSCATION_QUEUE_TIMEOUT; // 120 seconds
     }
 
@@ -234,8 +222,7 @@ public:
 
 /** Helper class to store Obfuscation transaction (tx) information.
  */
-class CObfuscationBroadcastTx
-{
+class CObfuscationBroadcastTx {
 public:
     CTransaction tx;
     CTxIn vin;
@@ -245,10 +232,9 @@ public:
 
 /** Helper object for signing and checking signatures
  */
-class CObfuScationSigner
-{
+class CObfuScationSigner {
 public:
-    /// Is the inputs associated with this public key? (and there is 10,000 FGC - checking if valid masternode)
+    /// Is the inputs associated with this public key? (and there is 10000 FGC - checking if valid masternode)
     bool IsVinAssociatedWithPubkey(CTxIn& vin, CPubKey& pubkey);
     /// Set the private/public key values, returns true if successful
     bool GetKeysFromSecret(std::string strSecret, CKey& keyRet, CPubKey& pubkeyRet);
@@ -262,8 +248,7 @@ public:
 
 /** Used to keep track of current status of Obfuscation pool
  */
-class CObfuscationPool
-{
+class CObfuscationPool {
 private:
     mutable CCriticalSection cs_obfuscation;
 
@@ -331,8 +316,7 @@ public:
     int sessionDenom;    //Users must submit an denom matching this
     int cachedNumBlocks; //used for the overview screen
 
-    CObfuscationPool()
-    {
+    CObfuscationPool() {
         /* Obfuscation uses collateral addresses to trust parties entering the pool
             to behave themselves. If they don't it takes their money. */
 
@@ -363,13 +347,11 @@ public:
      */
     void ProcessMessageObfuscation(CNode* pfrom, std::string& strCommand, CDataStream& vRecv);
 
-    void InitCollateralAddress()
-    {
+    void InitCollateralAddress() {
         SetCollateralAddress(Params().ObfuscationPoolDummyAddress());
     }
 
-    void SetMinBlockSpacing(int minBlockSpacingIn)
-    {
+    void SetMinBlockSpacing(int minBlockSpacingIn) {
         minBlockSpacing = minBlockSpacingIn;
     }
 
@@ -379,44 +361,38 @@ public:
 
     void UnlockCoins();
 
-    bool IsNull() const
-    {
+    bool IsNull() const {
         return state == POOL_STATUS_ACCEPTING_ENTRIES && entries.empty();
     }
 
-    int GetState() const
-    {
+    int GetState() const {
         return state;
     }
 
     std::string GetStatus();
 
-    int GetEntriesCount() const
-    {
+    int GetEntriesCount() const {
         return entries.size();
     }
 
     /// Get the time the last entry was accepted (time in UTC milliseconds)
-    int GetLastEntryAccepted() const
-    {
+    int GetLastEntryAccepted() const {
         return lastEntryAccepted;
     }
 
     /// Get the count of the accepted entries
-    int GetCountEntriesAccepted() const
-    {
+    int GetCountEntriesAccepted() const {
         return countEntriesAccepted;
     }
 
     // Set the 'state' value, with some logging and capturing when the state changed
-    void UpdateState(unsigned int newState)
-    {
+    void UpdateState(unsigned int newState) {
         if (fMasterNode && (newState == POOL_STATUS_ERROR || newState == POOL_STATUS_SUCCESS)) {
-            LogPrint("obfuscation", "CObfuscationPool::UpdateState() - Can't set state to ERROR or SUCCESS as a Masternode. \n");
+            // LogPrint("obfuscation", "CObfuscationPool::UpdateState() - Can't set state to ERROR or SUCCESS as a Masternode. \n");
             return;
         }
 
-        LogPrintf("CObfuscationPool::UpdateState() == %d | %d \n", state, newState);
+        // LogPrintf("CObfuscationPool::UpdateState() == %d | %d \n", state, newState);
         if (state != newState) {
             lastTimeChanged = GetTimeMillis();
             if (fMasterNode) {
@@ -427,14 +403,12 @@ public:
     }
 
     /// Get the maximum number of transactions for the pool
-    int GetMaxPoolTransactions()
-    {
+    int GetMaxPoolTransactions() {
         return Params().PoolMaxTransactions();
     }
 
     /// Do we have enough users to take entries?
-    bool IsSessionReady()
-    {
+    bool IsSessionReady() {
         return sessionUsers >= GetMaxPoolTransactions();
     }
 

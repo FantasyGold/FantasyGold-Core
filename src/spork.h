@@ -1,9 +1,10 @@
-
-// Copyright (c) 2009-2012 The Dash developers
-// // Copyright (c) 2015-2017 The Bulwark developers
+// Copyright (c) 2014-2016 The Dash developers
+// Copyright (c) 2016-2017 The PIVX developers
+// Copyright (c) 2017-2018 The Bulwark Core Developers
 // Copyright (c) 2017-2018 The FantasyGold developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
+
 #ifndef SPORK_H
 #define SPORK_H
 
@@ -16,7 +17,6 @@
 
 #include "obfuscation.h"
 #include "protocol.h"
-#include <boost/lexical_cast.hpp>
 
 using namespace std;
 using namespace boost;
@@ -26,7 +26,7 @@ using namespace boost;
     - This would result in old clients getting confused about which spork is for what
 */
 #define SPORK_START 10001
-#define SPORK_END 10017
+#define SPORK_END 10022
 
 #define SPORK_2_SWIFTTX 10001
 #define SPORK_3_SWIFTTX_BLOCK_FILTERING 10002
@@ -43,6 +43,10 @@ using namespace boost;
 #define SPORK_16_MN_WINNER_MINIMUM_AGE 10015
 #define SPORK_17_NEW_PROTOCOL_ENFORCEMENT_3 10016
 #define SPORK_18_NEW_PROTOCOL_ENFORCEMENT_4 10017
+#define SPORK_20_NEW_PROTOCOL_DYNAMIC 10019
+#define SPORK_21_ENABLE_ZEROCOIN 10020
+#define SPORK_22_ZEROCOIN_MAINTENANCE_MODE 10021
+#define SPORK_23_STAKING_REQUIREMENTS 10022
 
 #define SPORK_2_SWIFTTX_DEFAULT 978307200                         //2001-1-1
 #define SPORK_3_SWIFTTX_BLOCK_FILTERING_DEFAULT 1424217600        //2015-2-18
@@ -59,8 +63,16 @@ using namespace boost;
 #define SPORK_16_MN_WINNER_MINIMUM_AGE_DEFAULT 8000               // Age in seconds. This should be > MASTERNODE_REMOVAL_SECONDS to avoid
                                                                    // misconfigured new nodes in the list. 
                                                                    // Set this to zero to emulate classic behaviour
-#define SPORK_17_NEW_PROTOCOL_ENFORCEMENT_3_DEFAULT 4070908800    //OFF
-#define SPORK_18_NEW_PROTOCOL_ENFORCEMENT_4_DEFAULT 4070908800
+#define SPORK_17_NEW_PROTOCOL_ENFORCEMENT_3_DEFAULT 4070908800    //ON
+#define SPORK_18_NEW_PROTOCOL_ENFORCEMENT_4_DEFAULT 4070908800    //ON
+
+#define SPORK_20_NEW_PROTOCOL_DYNAMIC_DEFAULT 4070908800          //OFF
+// Will be whatever value is provided during spork update.
+// Example `spork SPORK_20_NEW_PROTOCOL_DYNAMIC 70850` will set active
+// protocol version to `70850`.
+#define SPORK_21_ENABLE_ZEROCOIN_DEFAULT 4070908800               //OFF
+#define SPORK_22_ZEROCOIN_MAINTENANCE_MODE_DEFAULT 4070908800     //OFF
+#define SPORK_23_STAKING_REQUIREMENTS_DEFAULT 4070908800          //OFF
  
 class CSporkMessage;
 class CSporkManager;
@@ -69,6 +81,7 @@ extern std::map<uint256, CSporkMessage> mapSporks;
 extern std::map<int, CSporkMessage> mapSporksActive;
 extern CSporkManager sporkManager;
 
+void LoadSporksFromDB();
 void ProcessSpork(CNode* pfrom, std::string& strCommand, CDataStream& vRecv);
 int64_t GetSporkValue(int nSporkID);
 bool IsSporkActive(int nSporkID);
@@ -80,16 +93,14 @@ void ReprocessBlocks(int nBlocks);
 // Keeps track of all of the network spork settings
 //
 
-class CSporkMessage
-{
+class CSporkMessage {
 public:
     std::vector<unsigned char> vchSig;
     int nSporkID;
     int64_t nValue;
     int64_t nTimeSigned;
 
-    uint256 GetHash()
-    {
+    uint256 GetHash() {
         uint256 n = Nist5(BEGIN(nSporkID), END(nTimeSigned));
         return n;
     }
@@ -97,8 +108,7 @@ public:
     ADD_SERIALIZE_METHODS;
 
     template <typename Stream, typename Operation>
-    inline void SerializationOp(Stream& s, Operation ser_action, int nType, int nVersion)
-    {
+    inline void SerializationOp(Stream& s, Operation ser_action, int nType, int nVersion) {
         READWRITE(nSporkID);
         READWRITE(nValue);
         READWRITE(nTimeSigned);
@@ -107,15 +117,13 @@ public:
 };
 
 
-class CSporkManager
-{
+class CSporkManager {
 private:
     std::vector<unsigned char> vchSig;
     std::string strMasterPrivKey;
 
 public:
-    CSporkManager()
-    {
+    CSporkManager() {
     }
 
     std::string GetSporkNameByID(int id);

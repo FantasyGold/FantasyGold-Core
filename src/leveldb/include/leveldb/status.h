@@ -16,49 +16,74 @@
 #include <string>
 #include "leveldb/slice.h"
 
-namespace leveldb {
+namespace leveldb
+{
 
-class Status {
+class Status
+{
  public:
   // Create a success status.
   Status() : state_(NULL) { }
-  ~Status() { delete[] state_; }
+    ~Status()
+    {
+        delete[] state_;
+    }
 
   // Copy the specified status.
   Status(const Status& s);
   void operator=(const Status& s);
 
   // Return a success status.
-  static Status OK() { return Status(); }
+    static Status OK()
+    {
+        return Status();
+    }
 
   // Return error status of an appropriate type.
-  static Status NotFound(const Slice& msg, const Slice& msg2 = Slice()) {
+    static Status NotFound(const Slice& msg, const Slice& msg2 = Slice())
+    {
     return Status(kNotFound, msg, msg2);
   }
-  static Status Corruption(const Slice& msg, const Slice& msg2 = Slice()) {
+    static Status Corruption(const Slice& msg, const Slice& msg2 = Slice())
+    {
     return Status(kCorruption, msg, msg2);
   }
-  static Status NotSupported(const Slice& msg, const Slice& msg2 = Slice()) {
+    static Status NotSupported(const Slice& msg, const Slice& msg2 = Slice())
+    {
     return Status(kNotSupported, msg, msg2);
   }
-  static Status InvalidArgument(const Slice& msg, const Slice& msg2 = Slice()) {
+    static Status InvalidArgument(const Slice& msg, const Slice& msg2 = Slice())
+    {
     return Status(kInvalidArgument, msg, msg2);
   }
-  static Status IOError(const Slice& msg, const Slice& msg2 = Slice()) {
+    static Status IOError(const Slice& msg, const Slice& msg2 = Slice())
+    {
     return Status(kIOError, msg, msg2);
   }
 
   // Returns true iff the status indicates success.
-  bool ok() const { return (state_ == NULL); }
+    bool ok() const
+    {
+        return (state_ == NULL);
+    }
 
   // Returns true iff the status indicates a NotFound error.
-  bool IsNotFound() const { return code() == kNotFound; }
+    bool IsNotFound() const
+    {
+        return code() == kNotFound;
+    }
 
   // Returns true iff the status indicates a Corruption error.
-  bool IsCorruption() const { return code() == kCorruption; }
+    bool IsCorruption() const
+    {
+        return code() == kCorruption;
+    }
 
   // Returns true iff the status indicates an IOError.
-  bool IsIOError() const { return code() == kIOError; }
+    bool IsIOError() const
+    {
+        return code() == kIOError;
+    }
 
   // Return a string representation of this status suitable for printing.
   // Returns the string "OK" for success.
@@ -72,7 +97,8 @@ class Status {
   //    state_[5..]  == message
   const char* state_;
 
-  enum Code {
+    enum Code
+    {
     kOk = 0,
     kNotFound = 1,
     kCorruption = 2,
@@ -81,7 +107,8 @@ class Status {
     kIOError = 5
   };
 
-  Code code() const {
+    Code code() const
+    {
     return (state_ == NULL) ? kOk : static_cast<Code>(state_[4]);
   }
 
@@ -89,13 +116,16 @@ class Status {
   static const char* CopyState(const char* s);
 };
 
-inline Status::Status(const Status& s) {
+inline Status::Status(const Status& s)
+{
   state_ = (s.state_ == NULL) ? NULL : CopyState(s.state_);
 }
-inline void Status::operator=(const Status& s) {
+inline void Status::operator=(const Status& s)
+{
   // The following condition catches both aliasing (when this == &s),
   // and the common case where both s and *this are ok.
-  if (state_ != s.state_) {
+    if (state_ != s.state_)
+    {
     delete[] state_;
     state_ = (s.state_ == NULL) ? NULL : CopyState(s.state_);
   }

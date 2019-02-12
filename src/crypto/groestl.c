@@ -2735,8 +2735,7 @@ static const sph_u32 T3dn[] = {
 #endif
 
 static void
-groestl_small_init(sph_groestl_small_context *sc, unsigned out_size)
-{
+groestl_small_init(sph_groestl_small_context *sc, unsigned out_size) {
 	size_t u;
 	for (u = 0; u < 64; u ++) sc->buf[u] = 0;
 	sc->ptr = 0;
@@ -2768,8 +2767,7 @@ groestl_small_init(sph_groestl_small_context *sc, unsigned out_size)
 }
 
 static void
-groestl_small_core(sph_groestl_small_context *sc, const void *data, size_t len)
-{
+groestl_small_core(sph_groestl_small_context *sc, const void *data, size_t len) {
 	unsigned char *buf;
 	size_t ptr;
 	DECL_STATE_SMALL
@@ -2811,8 +2809,7 @@ groestl_small_core(sph_groestl_small_context *sc, const void *data, size_t len)
 
 static void
 groestl_small_close(sph_groestl_small_context *sc,
-	unsigned ub, unsigned n, void *dst, size_t out_len)
-{
+                    unsigned ub, unsigned n, void *dst, size_t out_len) {
 	unsigned char *buf;
 	unsigned char pad[72];
 	size_t u=0, ptr=0, pad_len=0;
@@ -2871,8 +2868,7 @@ groestl_small_close(sph_groestl_small_context *sc,
 }
 
 static void
-groestl_big_init(sph_groestl_big_context *sc, unsigned out_size)
-{
+groestl_big_init(sph_groestl_big_context *sc, unsigned out_size) {
 	size_t u;
 for (u = 0; u < 128; u ++) sc->buf[u] = 0;
 	sc->ptr = 0;
@@ -2904,8 +2900,7 @@ for (u = 0; u < 128; u ++) sc->buf[u] = 0;
 }
 
 static void
-groestl_big_core(sph_groestl_big_context *sc, const void *data, size_t len)
-{
+groestl_big_core(sph_groestl_big_context *sc, const void *data, size_t len) {
 	unsigned char *buf;
 	size_t ptr;
 	DECL_STATE_BIG
@@ -2947,8 +2942,7 @@ groestl_big_core(sph_groestl_big_context *sc, const void *data, size_t len)
 
 static void
 groestl_big_close(sph_groestl_big_context *sc,
-	unsigned ub, unsigned n, void *dst, size_t out_len)
-{
+                  unsigned ub, unsigned n, void *dst, size_t out_len) {
 	unsigned char *buf;
 	unsigned char pad[136];
 	size_t ptr=0, pad_len=0, u=0;
@@ -3008,113 +3002,97 @@ groestl_big_close(sph_groestl_big_context *sc,
 
 /* see sph_groestl.h */
 void
-sph_groestl224_init(void *cc)
-{
+sph_groestl224_init(void *cc) {
 	groestl_small_init(cc, 224);
 }
 
 /* see sph_groestl.h */
 void
-sph_groestl224(void *cc, const void *data, size_t len)
-{
+sph_groestl224(void *cc, const void *data, size_t len) {
 	groestl_small_core(cc, data, len);
 }
 
 /* see sph_groestl.h */
 void
-sph_groestl224_close(void *cc, void *dst)
-{
+sph_groestl224_close(void *cc, void *dst) {
 	groestl_small_close(cc, 0, 0, dst, 28);
 }
 
 /* see sph_groestl.h */
 void
-sph_groestl224_addbits_and_close(void *cc, unsigned ub, unsigned n, void *dst)
-{
+sph_groestl224_addbits_and_close(void *cc, unsigned ub, unsigned n, void *dst) {
 	groestl_small_close(cc, ub, n, dst, 28);
 }
 
 /* see sph_groestl.h */
 void
-sph_groestl256_init(void *cc)
-{
+sph_groestl256_init(void *cc) {
 	groestl_small_init(cc, 256);
 }
 
 /* see sph_groestl.h */
 void
-sph_groestl256(void *cc, const void *data, size_t len)
-{
+sph_groestl256(void *cc, const void *data, size_t len) {
 	groestl_small_core(cc, data, len);
 }
 
 /* see sph_groestl.h */
 void
-sph_groestl256_close(void *cc, void *dst)
-{
+sph_groestl256_close(void *cc, void *dst) {
 	groestl_small_close(cc, 0, 0, dst, 32);
 }
 
 /* see sph_groestl.h */
 void
-sph_groestl256_addbits_and_close(void *cc, unsigned ub, unsigned n, void *dst)
-{
+sph_groestl256_addbits_and_close(void *cc, unsigned ub, unsigned n, void *dst) {
 	groestl_small_close(cc, ub, n, dst, 32);
 }
 
 /* see sph_groestl.h */
 void
-sph_groestl384_init(void *cc)
-{
+sph_groestl384_init(void *cc) {
 	groestl_big_init(cc, 384);
 }
 
 /* see sph_groestl.h */
 void
-sph_groestl384(void *cc, const void *data, size_t len)
-{
+sph_groestl384(void *cc, const void *data, size_t len) {
 	groestl_big_core(cc, data, len);
 }
 
 /* see sph_groestl.h */
 void
-sph_groestl384_close(void *cc, void *dst)
-{
+sph_groestl384_close(void *cc, void *dst) {
 	groestl_big_close(cc, 0, 0, dst, 48);
 }
 
 /* see sph_groestl.h */
 void
-sph_groestl384_addbits_and_close(void *cc, unsigned ub, unsigned n, void *dst)
-{
+sph_groestl384_addbits_and_close(void *cc, unsigned ub, unsigned n, void *dst) {
 	groestl_big_close(cc, ub, n, dst, 48);
 }
 
 /* see sph_groestl.h */
 void
-sph_groestl512_init(void *cc)
-{
+sph_groestl512_init(void *cc) {
 	groestl_big_init(cc, 512);
 }
 
 /* see sph_groestl.h */
 void
-sph_groestl512(void *cc, const void *data, size_t len)
-{
+sph_groestl512(void *cc, const void *data, size_t len) {
 	groestl_big_core(cc, data, len);
 }
 
 /* see sph_groestl.h */
 void
-sph_groestl512_close(void *cc, void *dst)
-{
+sph_groestl512_close(void *cc, void *dst) {
 	groestl_big_close(cc, 0, 0, dst, 64);
 }
 
 /* see sph_groestl.h */
 void
-sph_groestl512_addbits_and_close(void *cc, unsigned ub, unsigned n, void *dst)
-{
+sph_groestl512_addbits_and_close(void *cc, unsigned ub, unsigned n, void *dst) {
 	groestl_big_close(cc, ub, n, dst, 64);
 }
 

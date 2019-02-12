@@ -1,5 +1,6 @@
 // Copyright (c) 2009-2010 Satoshi Nakamoto
 // Copyright (c) 2009-2014 The Bitcoin developers
+// Copyright (c) 2016-2017 The PIVX developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -15,13 +16,11 @@
 
 class CAutoFile;
 
-inline double AllowFreeThreshold()
-{
-    return COIN * 576 / 250;
+inline double AllowFreeThreshold() {
+    return COIN * 1440 / 250;
 }
 
-inline bool AllowFree(double dPriority)
-{
+inline bool AllowFree(double dPriority) {
     // Large (in bytes) low-priority (new, small-coin) transactions
     // need a fee.
     return dPriority > AllowFreeThreshold();
@@ -34,8 +33,7 @@ static const unsigned int MEMPOOL_HEIGHT = 0x7FFFFFFF;
 /**
  * CTxMemPool stores these:
  */
-class CTxMemPoolEntry
-{
+class CTxMemPoolEntry {
 private:
     CTransaction tx;
     CAmount nFee;         //! Cached to avoid expensive parent-transaction lookups
@@ -50,35 +48,46 @@ public:
     CTxMemPoolEntry();
     CTxMemPoolEntry(const CTxMemPoolEntry& other);
 
-    const CTransaction& GetTx() const { return this->tx; }
+    const CTransaction& GetTx() const {
+        return this->tx;
+    }
     double GetPriority(unsigned int currentHeight) const;
-    CAmount GetFee() const { return nFee; }
-    size_t GetTxSize() const { return nTxSize; }
-    int64_t GetTime() const { return nTime; }
-    unsigned int GetHeight() const { return nHeight; }
+    CAmount GetFee() const {
+        return nFee;
+    }
+    size_t GetTxSize() const {
+        return nTxSize;
+    }
+    int64_t GetTime() const {
+        return nTime;
+    }
+    unsigned int GetHeight() const {
+        return nHeight;
+    }
 };
 
 class CMinerPolicyEstimator;
 
 /** An inpoint - a combination of a transaction and an index n into its vin */
-class CInPoint
-{
+class CInPoint {
 public:
     const CTransaction* ptx;
     uint32_t n;
 
-    CInPoint() { SetNull(); }
-    CInPoint(const CTransaction* ptxIn, uint32_t nIn)
-    {
+    CInPoint() {
+        SetNull();
+    }
+    CInPoint(const CTransaction* ptxIn, uint32_t nIn) {
         ptx = ptxIn;
         n = nIn;
     }
-    void SetNull()
-    {
+    void SetNull() {
         ptx = NULL;
         n = (uint32_t)-1;
     }
-    bool IsNull() const { return (ptx == NULL && n == (uint32_t)-1); }
+    bool IsNull() const {
+        return (ptx == NULL && n == (uint32_t)-1);
+    }
 };
 
 /**
@@ -91,8 +100,7 @@ public:
  * an input of a transaction in the pool, it is dropped,
  * as are non-standard transactions.
  */
-class CTxMemPool
-{
+class CTxMemPool {
 private:
     bool fSanityCheck; //! Normally false, true if -checkmempool or -regtest
     unsigned int nTransactionsUpdated;
@@ -117,7 +125,9 @@ public:
      * check does nothing.
      */
     void check(const CCoinsViewCache* pcoins) const;
-    void setSanityCheck(bool _fSanityCheck) { fSanityCheck = _fSanityCheck; }
+    void setSanityCheck(bool _fSanityCheck) {
+        fSanityCheck = _fSanityCheck;
+    }
 
     bool addUnchecked(const uint256& hash, const CTxMemPoolEntry& entry);
     void remove(const CTransaction& tx, std::list<CTransaction>& removed, bool fRecursive = false);
@@ -135,19 +145,16 @@ public:
     void ApplyDeltas(const uint256 hash, double& dPriorityDelta, CAmount& nFeeDelta);
     void ClearPrioritisation(const uint256 hash);
 
-    unsigned long size()
-    {
+    unsigned long size() {
         LOCK(cs);
         return mapTx.size();
     }
-    uint64_t GetTotalTxSize()
-    {
+    uint64_t GetTotalTxSize() {
         LOCK(cs);
         return totalTxSize;
     }
 
-    bool exists(uint256 hash)
-    {
+    bool exists(uint256 hash) {
         LOCK(cs);
         return (mapTx.count(hash) != 0);
     }
@@ -169,8 +176,7 @@ public:
  * CCoinsView that brings transactions from a memorypool into view.
  * It does not check for spendings by memory pool transactions.
  */
-class CCoinsViewMemPool : public CCoinsViewBacked
-{
+class CCoinsViewMemPool : public CCoinsViewBacked {
 protected:
     CTxMemPool& mempool;
 

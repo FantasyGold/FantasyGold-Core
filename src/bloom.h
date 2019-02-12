@@ -40,8 +40,7 @@ enum bloomflags {
  * allowing clients to trade more bandwidth for more privacy by obfuscating which
  * keys are owned by them.
  */
-class CBloomFilter
-{
+class CBloomFilter {
 private:
     std::vector<unsigned char> vData;
     bool isFull;
@@ -68,8 +67,7 @@ public:
     ADD_SERIALIZE_METHODS;
 
     template <typename Stream, typename Operation>
-    inline void SerializationOp(Stream& s, Operation ser_action, int nType, int nVersion)
-    {
+    inline void SerializationOp(Stream& s, Operation ser_action, int nType, int nVersion) {
         READWRITE(vData);
         READWRITE(nHashFuncs);
         READWRITE(nTweak);

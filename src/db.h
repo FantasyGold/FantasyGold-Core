@@ -30,8 +30,7 @@ extern unsigned int nWalletDBUpdated;
 void ThreadFlushWalletDB(const std::string& strWalletFile);
 
 
-class CDBEnv
-{
+class CDBEnv {
 private:
     bool fDbEnvInit;
     bool fMockDb;
@@ -50,7 +49,9 @@ public:
     CDBEnv();
     ~CDBEnv();
     void MakeMock();
-    bool IsMock() { return fMockDb; }
+    bool IsMock() {
+        return fMockDb;
+    }
 
     /**
      * Verify that database file strFile is OK. If it is not,
@@ -60,7 +61,8 @@ public:
      */
     enum VerifyResult { VERIFY_OK,
         RECOVER_OK,
-        RECOVER_FAIL };
+                        RECOVER_FAIL
+                      };
     VerifyResult Verify(std::string strFile, bool (*recoverFunc)(CDBEnv& dbenv, std::string strFile));
     /**
      * Salvage data from a file that Verify says is bad.
@@ -80,8 +82,7 @@ public:
     void CloseDb(const std::string& strFile);
     bool RemoveDb(const std::string& strFile);
 
-    DbTxn* TxnBegin(int flags = DB_TXN_WRITE_NOSYNC)
-    {
+    DbTxn* TxnBegin(int flags = DB_TXN_WRITE_NOSYNC) {
         DbTxn* ptxn = NULL;
         int ret = dbenv.txn_begin(NULL, &ptxn, flags);
         if (!ptxn || ret != 0)
@@ -94,8 +95,7 @@ extern CDBEnv bitdb;
 
 
 /** RAII class that provides access to a Berkeley database */
-class CDB
-{
+class CDB {
 protected:
     Db* pdb;
     std::string strFile;
@@ -103,7 +103,9 @@ protected:
     bool fReadOnly;
 
     explicit CDB(const std::string& strFilename, const char* pszMode = "r+");
-    ~CDB() { Close(); }
+    ~CDB() {
+        Close();
+    }
 
 public:
     void Flush();
@@ -115,8 +117,7 @@ private:
 
 protected:
     template <typename K, typename T>
-    bool Read(const K& key, T& value)
-    {
+    bool Read(const K& key, T& value) {
         if (!pdb)
             return false;
 
@@ -149,8 +150,7 @@ protected:
     }
 
     template <typename K, typename T>
-    bool Write(const K& key, const T& value, bool fOverwrite = true)
-    {
+    bool Write(const K& key, const T& value, bool fOverwrite = true) {
         if (!pdb)
             return false;
         if (fReadOnly)
@@ -178,8 +178,7 @@ protected:
     }
 
     template <typename K>
-    bool Erase(const K& key)
-    {
+    bool Erase(const K& key) {
         if (!pdb)
             return false;
         if (fReadOnly)
@@ -200,8 +199,7 @@ protected:
     }
 
     template <typename K>
-    bool Exists(const K& key)
-    {
+    bool Exists(const K& key) {
         if (!pdb)
             return false;
 
@@ -219,8 +217,7 @@ protected:
         return (ret == 0);
     }
 
-    Dbc* GetCursor()
-    {
+    Dbc* GetCursor() {
         if (!pdb)
             return NULL;
         Dbc* pcursor = NULL;
@@ -230,8 +227,7 @@ protected:
         return pcursor;
     }
 
-    int ReadAtCursor(Dbc* pcursor, CDataStream& ssKey, CDataStream& ssValue, unsigned int fFlags = DB_NEXT)
-    {
+    int ReadAtCursor(Dbc* pcursor, CDataStream& ssKey, CDataStream& ssValue, unsigned int fFlags = DB_NEXT) {
         // Read at cursor
         Dbt datKey;
         if (fFlags == DB_SET || fFlags == DB_SET_RANGE || fFlags == DB_GET_BOTH || fFlags == DB_GET_BOTH_RANGE) {
@@ -268,8 +264,7 @@ protected:
     }
 
 public:
-    bool TxnBegin()
-    {
+    bool TxnBegin() {
         if (!pdb || activeTxn)
             return false;
         DbTxn* ptxn = bitdb.TxnBegin();
@@ -279,8 +274,7 @@ public:
         return true;
     }
 
-    bool TxnCommit()
-    {
+    bool TxnCommit() {
         if (!pdb || !activeTxn)
             return false;
         int ret = activeTxn->commit(0);
@@ -288,8 +282,7 @@ public:
         return (ret == 0);
     }
 
-    bool TxnAbort()
-    {
+    bool TxnAbort() {
         if (!pdb || !activeTxn)
             return false;
         int ret = activeTxn->abort();
@@ -297,14 +290,12 @@ public:
         return (ret == 0);
     }
 
-    bool ReadVersion(int& nVersion)
-    {
+    bool ReadVersion(int& nVersion) {
         nVersion = 0;
         return Read(std::string("version"), nVersion);
     }
 
-    bool WriteVersion(int nVersion)
-    {
+    bool WriteVersion(int nVersion) {
         return Write(std::string("version"), nVersion);
     }
 

@@ -12,8 +12,7 @@
  * CBaseChainParams defines the base parameters (shared between fantasygold-cli and fantasygoldd)
  * of a given instance of the FantasyGold system.
  */
-class CBaseChainParams
-{
+class CBaseChainParams {
 public:
     enum Network {
         MAIN,
@@ -24,8 +23,12 @@ public:
         MAX_NETWORK_TYPES
     };
 
-    const std::string& DataDir() const { return strDataDir; }
-    int RPCPort() const { return nRPCPort; }
+    const std::string& DataDir() const {
+        return strDataDir;
+    }
+    int RPCPort() const {
+        return nRPCPort;
+    }
 
 protected:
     CBaseChainParams() {}

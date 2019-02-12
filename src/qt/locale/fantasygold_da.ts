@@ -7,39 +7,39 @@
     </message>
     <message>
         <source>Create a new address</source>
-        <translation>Ny adresse</translation>
+        <translation>opret ny adresse</translation>
     </message>
     <message>
-        <source>&amp;New</source>
-        <translation>&amp;Ny</translation>
+        <source>New</source>
+        <translation>Ny</translation>
     </message>
     <message>
         <source>Copy the currently selected address to the system clipboard</source>
         <translation>Kopier til udklipsholder</translation>
     </message>
     <message>
-        <source>&amp;Copy</source>
-        <translation>&amp;Kopier</translation>
+        <source>Copy</source>
+        <translation>Kopier</translation>
     </message>
     <message>
         <source>Delete the currently selected address from the list</source>
         <translation>Slet den valgte adresse fra listen</translation>
     </message>
     <message>
-        <source>&amp;Delete</source>
-        <translation>&amp;Slet</translation>
+        <source>Delete</source>
+        <translation>Slet</translation>
     </message>
     <message>
         <source>Export the data in the current tab to a file</source>
         <translation>Eksporter aktuelle tekst til en fil</translation>
     </message>
     <message>
-        <source>&amp;Export</source>
-        <translation>E&amp;ksporter</translation>
+        <source>Export</source>
+        <translation>Eksporter</translation>
     </message>
     <message>
-        <source>C&amp;lose</source>
-        <translation>L&amp;uk</translation>
+        <source>Close</source>
+        <translation>Luk</translation>
     </message>
     <message>
         <source>Choose the address to send coins to</source>
@@ -50,8 +50,8 @@
         <translation>Vælg egen modtageradresse </translation>
     </message>
     <message>
-        <source>C&amp;hoose</source>
-        <translation>V&amp;ælg</translation>
+        <source>Choose</source>
+        <translation>Vælg</translation>
     </message>
     <message>
         <source>Sending addresses</source>
@@ -70,15 +70,15 @@
         <translation>Dette er dine modtager adresser. Det anbefales at anvende en ny adresse til hver transaktion</translation>
     </message>
     <message>
-        <source>&amp;Copy Address</source>
+        <source>Copy Address</source>
         <translation>Kopier adresse</translation>
     </message>
     <message>
-        <source>Copy &amp;Label</source>
+        <source>Copy Label</source>
         <translation>Kopier tekst</translation>
     </message>
     <message>
-        <source>&amp;Edit</source>
+        <source>Edit</source>
         <translation>Ret</translation>
     </message>
     <message>
@@ -136,8 +136,8 @@
         <translation>Slår ligegyldige afsendelser fra, når operativsystemets konto er kompromitteret. Denne funktion giver ikke ægte sikkerhed</translation>
     </message>
     <message>
-        <source>For anonymization and staking only</source>
-        <translation>Kun til staking og anononymisering</translation>
+        <source>For anonymization, automint, and staking only</source>
+        <translation>Til anonymisering, automint og staking alene</translation>
     </message>
     <message>
         <source>Enter the new passphrase to the wallet.&lt;br/&gt;Please use a passphrase of &lt;b&gt;ten or more random characters&lt;/b&gt;, or &lt;b&gt;eight or more words&lt;/b&gt;.</source>
@@ -176,7 +176,7 @@
         <translation>Bekræft, og tegnebogen krypteres.</translation>
     </message>
     <message>
-        <source>FantasyGold will close now to finish the encryption process. Remember that encrypting your wallet cannot fully protect your FGCs from being stolen by malware infecting your computer.</source>
+        <source>FantasyGold will close now to finish the encryption process. Remember that encrypting your wallet cannot fully protect your FGCS from being stolen by malware infecting your computer.</source>
         <translation>FantasyGold vil lukke ned for at færdiggøre kryptograferingsprocesserne. Husk at kryptering alene ikke sikrer mod tyveri af mønterne fra malware eller virus på computeren.</translation>
     </message>
     <message>
@@ -184,8 +184,8 @@
         <translation>Er du sikker på, at du vil kryptere din tegnebog?</translation>
     </message>
     <message>
-        <source>Warning: If you encrypt your wallet and lose your passphrase, you will &lt;b&gt;LOSE ALL OF YOUR FGC&lt;/b&gt;!</source>
-        <translation>Advarsel! Hvis du krypterer din tegnebog og mister dit password vil du &lt;b&gt;MISTE ALLE DINE FGC&lt;/b&gt;. Passworded kan ikke genskabes.</translation>
+        <source>Warning: If you encrypt your wallet and lose your passphrase, you will &lt;b&gt;LOSE ALL OF YOUR FantasyGold&lt;/b&gt;!</source>
+        <translation>Advarsel! Hvis du krypterer din tegnebog og mister dit password vil du &lt;b&gt;MISTE ALLE DINE FantasyGold&lt;/b&gt;. Passworded kan ikke genskabes.</translation>
     </message>
     <message>
         <source>Wallet encrypted</source>
@@ -229,26 +229,37 @@
     </message>
 </context>
 <context>
+    <name>BanTableModel</name>
+    <message>
+        <source>IP/Netmask</source>
+        <translation>IP / Netmaske</translation>
+    </message>
+    <message>
+        <source>Banned Until</source>
+        <translation>Forbudt indtil</translation>
+    </message>
+</context>
+<context>
     <name>Bip38ToolDialog</name>
     <message>
         <source>BIP 38 Tool</source>
         <translation>BIP 38 værktøj</translation>
     </message>
     <message>
-        <source>&amp;BIP 38 Encrypt</source>
+        <source>BIP 38 Encrypt</source>
         <translation>BIP 38 kryptografering</translation>
-    </message>
-    <message>
-        <source>Enter a FantasyGold Address that you would like to encrypt using BIP 38. Enter a passphrase in the middle box. Press encrypt to compute the encrypted private key.</source>
-        <translation>Indtast den FantasyGold adresse De ønsker at kryptografere ved hjælp af BIP 38. Indtast et kodeord i den midterste boks. Klik på krypter for at generere den kryptograferede private nøgle.</translation>
     </message>
     <message>
         <source>Address:</source>
         <translation>Adresse</translation>
     </message>
     <message>
-        <source>The FantasyGold address to sign the message with</source>
-        <translation>Den FantasyGold adresse, der skal bruges til at underskrive beskeden med.</translation>
+        <source>Enter a FantasyGold Address that you would like to encrypt using BIP 38. Enter a passphrase in the middle box. Press encrypt to compute the encrypted private key.</source>
+        <translation>Indtast en FantasyGold-adresse, som du gerne vil kryptere ved hjælp af BIP 38. Indtast en adgangskode i mellemkassen. Tryk på krypteringen for at beregne den krypterede private nøgle.</translation>
+    </message>
+    <message>
+        <source>The FantasyGold address to encrypt</source>
+        <translation>FantasyGold-adressen for at kryptere</translation>
     </message>
     <message>
         <source>Choose previously used address</source>
@@ -279,23 +290,31 @@
         <translation>Kopier den aktuelle underskrift til udklipsholderen.</translation>
     </message>
     <message>
-        <source>Sign the message to prove you own this FantasyGold address</source>
-        <translation>Underskriv beskeden for at bevise, at De ejer denne FantasyGold adresse.</translation>
+        <source>Encrypt the private key for this FantasyGold address</source>
+        <translation>Krypter den private nøgle for denne FantasyGold-adresse</translation>
     </message>
     <message>
-        <source>Encrypt &amp;Key</source>
+        <source>Reset all fields</source>
+        <translation>Nulstil alle felter</translation>
+    </message>
+    <message>
+        <source>The encrypted private key</source>
+        <translation>Den krypterede private nøgle</translation>
+    </message>
+    <message>
+        <source>Decrypt the entered key using the passphrase</source>
+        <translation>Dekrypter den indtastede nøgle ved hjælp af adgangskoden</translation>
+    </message>
+    <message>
+        <source>Encrypt Key</source>
         <translation>Krypter og underskriv</translation>
     </message>
     <message>
-        <source>Reset all sign message fields</source>
-        <translation>Nulstil alle underskriftsfelter</translation>
-    </message>
-    <message>
-        <source>Clear &amp;All</source>
+        <source>Clear All</source>
         <translation>Nulstil alt</translation>
     </message>
     <message>
-        <source>&amp;BIP 38 Decrypt</source>
+        <source>BIP 38 Decrypt</source>
         <translation>BIP 38 dekryptér.</translation>
     </message>
     <message>
@@ -303,20 +322,8 @@
         <translation>Indtast den krypterede BIP 38 nøgle. Indtast kodeordet i den midterste boks. Klik på dekryptér for at generere den private nøgle. Når nøglen er dekrypteret vil klip på "importér adresse" overføre den private nøgle til tegnebogen.</translation>
     </message>
     <message>
-        <source>The FantasyGold address the message was signed with</source>
-        <translation>Beskeden er underskrevet med denne FantasyGold adresse</translation>
-    </message>
-    <message>
-        <source>Verify the message to ensure it was signed with the specified FantasyGold address</source>
-        <translation>verificer beskeden for at sikre, at den blev underskrevet med den rigtige FantasyGold adresse.</translation>
-    </message>
-    <message>
-        <source>Decrypt &amp;Key</source>
+        <source>Decrypt Key</source>
         <translation>Dekrypteringsnøgle</translation>
-    </message>
-    <message>
-        <source>Reset all verify message fields</source>
-        <translation>Nulstil alle verificeringsfelter for beskeder.</translation>
     </message>
     <message>
         <source>Decrypted Key:</source>
@@ -402,7 +409,7 @@
         <translation>Node</translation>
     </message>
     <message>
-        <source>&amp;Overview</source>
+        <source>Overview</source>
         <translation>Overblik</translation>
     </message>
     <message>
@@ -410,128 +417,132 @@
         <translation>Vis et generelt overblik over tegnebogen</translation>
     </message>
     <message>
-        <source>&amp;Send</source>
-        <translation>&amp;Send</translation>
+        <source>Send</source>
+        <translation>Send</translation>
     </message>
     <message>
-        <source>&amp;Receive</source>
-        <translation>&amp;Modtag</translation>
+        <source>Receive</source>
+        <translation>Modtag</translation>
     </message>
     <message>
-        <source>&amp;Transactions</source>
-        <translation>&amp;Transaktioner</translation>
+        <source>Transactions</source>
+        <translation>Transaktioner</translation>
     </message>
     <message>
         <source>Browse transaction history</source>
         <translation>Vis transaktionshistorik</translation>
     </message>
     <message>
-        <source>E&amp;xit</source>
-        <translation>E&amp;xit</translation>
+        <source>Privacy Actions for zFGC</source>
+        <translation>Beskyttelse af personlige oplysninger for zFGC</translation>
+    </message>
+    <message>
+        <source>Exit</source>
+        <translation>Exit</translation>
     </message>
     <message>
         <source>Quit application</source>
         <translation>Afslut applikationen</translation>
     </message>
     <message>
-        <source>About &amp;Qt</source>
-        <translation>Om&amp;Qt</translation>
+        <source>About Qt</source>
+        <translation>OmQt</translation>
     </message>
     <message>
         <source>Show information about Qt</source>
         <translation>Information om Qt</translation>
     </message>
     <message>
-        <source>&amp;Options...</source>
-        <translation>&amp;Indstillinger</translation>
+        <source>Options...</source>
+        <translation>Indstillinger</translation>
     </message>
     <message>
-        <source>&amp;Show / Hide</source>
-        <translation>&amp;Vis / skjul</translation>
+        <source>Show / Hide</source>
+        <translation>Vis / skjul</translation>
     </message>
     <message>
         <source>Show or hide the main Window</source>
         <translation>Vis eller skjul hovedvinduet.</translation>
     </message>
     <message>
-        <source>&amp;Encrypt Wallet...</source>
-        <translation>&amp;Kryptografer tegnebog</translation>
+        <source>Encrypt Wallet...</source>
+        <translation>Kryptografer tegnebog</translation>
     </message>
     <message>
         <source>Encrypt the private keys that belong to your wallet</source>
         <translation>Krypter den private nøgle som hører til tegnebogen.</translation>
     </message>
     <message>
-        <source>&amp;Backup Wallet...</source>
-        <translation>&amp;Sikkerhedskopier tegnebog</translation>
+        <source>Backup Wallet...</source>
+        <translation>Sikkerhedskopier tegnebog</translation>
     </message>
     <message>
         <source>Backup wallet to another location</source>
         <translation>Sikkerhedskopier og gem et andet sted</translation>
     </message>
     <message>
-        <source>&amp;Change Passphrase...</source>
-        <translation>&amp;Skift kodeord</translation>
+        <source>Change Passphrase...</source>
+        <translation>Skift kodeord</translation>
     </message>
     <message>
         <source>Change the passphrase used for wallet encryption</source>
         <translation>Skift kodeordet til kryptografering af tegnebog</translation>
     </message>
     <message>
-        <source>&amp;Unlock Wallet...</source>
-        <translation>&amp;Lås tegnebogen op</translation>
+        <source>Unlock Wallet...</source>
+        <translation>Lås tegnebogen op</translation>
     </message>
     <message>
         <source>Unlock wallet</source>
         <translation>Lås tegnebogen op</translation>
     </message>
     <message>
-        <source>&amp;Lock Wallet</source>
-        <translation>&amp;Lås tegnebogen</translation>
+        <source>Lock Wallet</source>
+        <translation>Lås tegnebogen</translation>
     </message>
     <message>
-        <source>Sign &amp;message...</source>
-        <translation>Underskriv &amp; besked</translation>
+        <source>Sign message...</source>
+        <translation>Underskriv  besked</translation>
     </message>
     <message>
-        <source>&amp;Verify message...</source>
-        <translation>&amp;verificer besked</translation>
+        <source>Verify message...</source>
+        <translation>verificer besked</translation>
     </message>
     <message>
-        <source>&amp;Information</source>
-        <translation>&amp;information</translation>
+        <source>Information</source>
+        <translation>information</translation>
     </message>
     <message>
         <source>Show diagnostic information</source>
         <translation>Vis diagnosticeringsinformation</translation>
     </message>
     <message>
-        <source>&amp;Debug console</source>
-        <translation>&amp;Debugpanel</translation>
+        <source>Debug console</source>
+        <translation>Debugpanel</translation>
     </message>
     <message>
         <source>Open debugging console</source>
         <translation>Åben debugpanel</translation>
     </message>
     <message>
-        <source>&amp;Network Monitor</source>
-        <translation>&amp;Netværksmonitering</translation>
+        <source>Network Monitor</source>
+        <translation>Netværksmonitering</translation>
     </message>
     <message>
         <source>Show network monitor</source>
         <translation>Vis netværksmonitor</translation>
     </message>
     <message>
-        <source>&amp;Peers list</source>
-        <translation>&amp;Peersliste</translation>
+        <source>Peers list</source>
+        <translation>Peersliste</translation>
     </message>
     <message>
         <source>Show peers info</source>
         <translation>Vis information om PEERS</translation>
     </message>
     <message>
-        <source>Wallet &amp;Repair</source>
-        <translation>Tegnebog &amp;Reparer</translation>
+        <source>Wallet Repair</source>
+        <translation>Tegnebog Reparer</translation>
     </message>
     <message>
         <source>Show wallet repair options</source>
@@ -542,56 +553,92 @@
         <translation>Åbn konfigurationsfil</translation>
     </message>
     <message>
-        <source>Show Automatic &amp;Backups</source>
-        <translation>Vis &amp;sikkerhedskopier, der er taget automatisk</translation>
+        <source>Show Automatic Backups</source>
+        <translation>Vis sikkerhedskopier, der er taget automatisk</translation>
     </message>
     <message>
         <source>Show automatically created wallet backups</source>
         <translation>Vis sikkerhedskopier, der er taget automatisk</translation>
     </message>
     <message>
-        <source>&amp;Sending addresses...</source>
-        <translation>&amp;Afsenderadresser</translation>
+        <source>Sending addresses...</source>
+        <translation>Afsenderadresser</translation>
     </message>
     <message>
         <source>Show the list of used sending addresses and labels</source>
         <translation>Vis listen over brugte afsenderadresse med tilhørende tekst.</translation>
     </message>
     <message>
-        <source>&amp;Receiving addresses...</source>
-        <translation>&amp;Modtageradresse</translation>
+        <source>Receiving addresses...</source>
+        <translation>Modtageradresse</translation>
     </message>
     <message>
         <source>Show the list of used receiving addresses and labels</source>
         <translation>Vis listen over brugte modtageradresser og tekst</translation>
     </message>
     <message>
-        <source>Open &amp;URI...</source>
-        <translation>Åbn &amp;URL</translation>
+        <source>Multisignature creation...</source>
+        <translation> Oprettelse af multisignatur ...</translation>
     </message>
     <message>
-        <source>&amp;Command-line options</source>
-        <translation>&amp;Kommandolinieparametre</translation>
+        <source>Create a new multisignature address and add it to this wallet</source>
+        <translation>Opret en ny multisignaturadresse og tilføj den til denne tegnebog</translation>
+    </message>
+    <message>
+        <source>Multisignature spending...</source>
+        <translation> Multisignatur udgifter ...</translation>
+    </message>
+    <message>
+        <source>Spend from a multisignature address</source>
+        <translation>Tilbring fra en multisignaturadresse</translation>
+    </message>
+    <message>
+        <source>Multisignature signing...</source>
+        <translation> Signaturer til multisignatur ...</translation>
+    </message>
+    <message>
+        <source>Sign with a multisignature address</source>
+        <translation>Log med en multisignaturadresse</translation>
+    </message>
+    <message>
+        <source>Open URI...</source>
+        <translation>Åbn URL</translation>
+    </message>
+    <message>
+        <source>Command-line options</source>
+        <translation>Kommandolinieparametre</translation>
+    </message>
+    <message numerus="yes">
+        <source>Processed %n blocks of transaction history.</source>
+        <translation><numerusform>Behandlet %n blok af transaktionshistorik.</numerusform><numerusform>Behandlet %n blokke af transaktionshistorik.</numerusform></translation>
     </message>
     <message>
         <source>Synchronizing additional data: %p%</source>
         <translation>Synkroniserer yderligere data %p%</translation>
     </message>
     <message>
-        <source>&amp;File</source>
-        <translation>&amp;Fil</translation>
+        <source>%1 behind. Scanning block %2</source>
+        <translation>%1 bag. Scanning blok %2</translation>
     </message>
     <message>
-        <source>&amp;Settings</source>
-        <translation>&amp;indstillinger</translation>
+        <source>Wallet is &lt;b&gt;encrypted&lt;/b&gt; and currently &lt;b&gt;unlocked&lt;/b&gt; for anonymization and staking only</source>
+        <translation>Tegnebogen er&lt;b&gt;krypteret&lt;/b&gt; og aktuelt &lt;b&gt;unlocked&lt;/b&gt; for anonymisering og staking alene</translation>
     </message>
     <message>
-        <source>&amp;Tools</source>
-        <translation>&amp;værktøj</translation>
+        <source>File</source>
+        <translation>Fil</translation>
     </message>
     <message>
-        <source>&amp;Help</source>
-        <translation>&amp;hjælp</translation>
+        <source>Settings</source>
+        <translation>indstillinger</translation>
+    </message>
+    <message>
+        <source>Tools</source>
+        <translation>værktøj</translation>
+    </message>
+    <message>
+        <source>Help</source>
+        <translation>hjælp</translation>
     </message>
     <message>
         <source>Tabs toolbar</source>
@@ -606,20 +653,24 @@
         <translation>Send mønter til en FantasyGold adresse</translation>
     </message>
     <message>
-        <source>Request payments (generates QR codes and fantasygold: URIs)</source>
+        <source>Request payments (generates QR codes and FantasyGold: URIs)</source>
         <translation>Anmod om betaling (genrerer QR kode og FantasyGold URL)</translation>
     </message>
     <message>
-        <source>&amp;Masternodes</source>
-        <translation>&amp;Masternoder</translation>
+        <source>Privacy</source>
+        <translation>Privatliv</translation>
+    </message>
+    <message>
+        <source>Masternodes</source>
+        <translation>Masternoder</translation>
     </message>
     <message>
         <source>Browse masternodes</source>
         <translation>Vis masternoder</translation>
     </message>
     <message>
-        <source>&amp;About FantasyGold Core</source>
-        <translation>&amp;Om FantasyGold kerne</translation>
+        <source>About FantasyGold Core</source>
+        <translation>Om FantasyGold kerne</translation>
     </message>
     <message>
         <source>Show information about FantasyGold Core</source>
@@ -638,28 +689,28 @@
         <translation>Verificer besked for at sikre, at den er underskrevet med den opgivne FantasyGold adresse</translation>
     </message>
     <message>
-        <source>&amp;BIP38 tool</source>
-        <translation>&amp;BIP 38 værktøj</translation>
+        <source>BIP38 tool</source>
+        <translation>BIP 38 værktøj</translation>
     </message>
     <message>
         <source>Encrypt and decrypt private keys using a passphrase</source>
         <translation>Krypter og dekrypter private nøgler ved hjælp af et kodeord</translation>
     </message>
     <message>
-        <source>&amp;MultiSend</source>
-        <translation>&amp;Massesending</translation>
+        <source>MultiSend</source>
+        <translation>Massesending</translation>
     </message>
     <message>
         <source>MultiSend Settings</source>
         <translation>Massesending, indstillinger</translation>
     </message>
     <message>
-        <source>Open Wallet &amp;Configuration File</source>
-        <translation>Åbn tegnebog &amp;konfigurationsfil</translation>
+        <source>Open Wallet Configuration File</source>
+        <translation>Åbn tegnebog konfigurationsfil</translation>
     </message>
     <message>
-        <source>Open &amp;Masternode Configuration File</source>
-        <translation>Åbn &amp;Masternode konfigurationsfil</translation>
+        <source>Open Masternode Configuration File</source>
+        <translation>Åbn Masternode konfigurationsfil</translation>
     </message>
     <message>
         <source>Open Masternode configuration file</source>
@@ -670,8 +721,8 @@
         <translation>Åbn en FantasyGold URl eller betalingsanmodning</translation>
     </message>
     <message>
-        <source>&amp;Blockchain explorer</source>
-        <translation>&amp;blockchain explorer</translation>
+        <source>Blockchain explorer</source>
+        <translation>blockchain explorer</translation>
     </message>
     <message>
         <source>Block explorer window</source>
@@ -684,6 +735,10 @@
     <message>
         <source>FantasyGold Core client</source>
         <translation>FantasyGold kerneklient</translation>
+    </message>
+    <message numerus="yes">
+        <source>%n active connection(s) to FantasyGold network</source>
+        <translation><numerusform>%n aktiv forbindelse til FantasyGold-netværk</numerusform><numerusform>%n aktiv forbindelse(s) til FantasyGold netværk</numerusform></translation>
     </message>
     <message>
         <source>Synchronizing with network...</source>
@@ -705,13 +760,25 @@
         <source>Up to date</source>
         <translation>Opdateret!</translation>
     </message>
+    <message numerus="yes">
+        <source>%n hour(s)</source>
+        <translation><numerusform>%n timer</numerusform><numerusform>%n timer</numerusform></translation>
+    </message>
+    <message numerus="yes">
+        <source>%n day(s)</source>
+        <translation><numerusform>%n dage</numerusform><numerusform>%n dage</numerusform></translation>
+    </message>
+    <message numerus="yes">
+        <source>%n week(s)</source>
+        <translation><numerusform>%n uger</numerusform><numerusform>%n uger</numerusform></translation>
+    </message>
     <message>
         <source>%1 and %2</source>
         <translation>%1 og %2</translation>
     </message>
-    <message>
-        <source>%1 behind</source>
-        <translation>%1 bagud</translation>
+    <message numerus="yes">
+        <source>%n year(s)</source>
+        <translation><numerusform>%n år</numerusform><numerusform>%n år</numerusform></translation>
     </message>
     <message>
         <source>Catching up...</source>
@@ -782,12 +849,16 @@ Adresse: %4
 "Multisend": %1</translation>
     </message>
     <message>
-        <source>Wallet is &lt;b&gt;encrypted&lt;/b&gt; and currently &lt;b&gt;unlocked&lt;/b&gt;</source>
-        <translation>Tegnebogen &lt;b&gt;er krypteret&lt;/b&gt;men i øjeblikket&lt;b&gt;låst op&lt;/b&gt;</translation>
+        <source>AutoMint is currently enabled and set to </source>
+        <translation>AutoMint er i øjeblikket aktiveret og indstillet til</translation>
     </message>
     <message>
-        <source>Wallet is &lt;b&gt;encrypted&lt;/b&gt; and currently &lt;b&gt;unlocked&lt;/b&gt; for anonimization and staking only</source>
-        <translation>Tegnebogen &lt;b&gt;er krypteret,&lt;/b&gt;er i øjeblikket&lt;b&gt;låst op,&lt;/b&gt;men kun for anonymisering og indskydning.</translation>
+        <source>AutoMint is disabled</source>
+        <translation>AutoMint er deaktiveret</translation>
+    </message>
+    <message>
+        <source>Wallet is &lt;b&gt;encrypted&lt;/b&gt; and currently &lt;b&gt;unlocked&lt;/b&gt;</source>
+        <translation>Tegnebogen &lt;b&gt;er krypteret&lt;/b&gt;men i øjeblikket&lt;b&gt;låst op&lt;/b&gt;</translation>
     </message>
     <message>
         <source>Wallet is &lt;b&gt;encrypted&lt;/b&gt; and currently &lt;b&gt;locked&lt;/b&gt;</source>
@@ -799,6 +870,14 @@ Adresse: %4
     <message>
         <source>Blockchain Explorer</source>
         <translation>Blockcain eksplorer</translation>
+    </message>
+    <message>
+        <source>Back</source>
+        <translation>Tilbage</translation>
+    </message>
+    <message>
+        <source>Forward</source>
+        <translation>Frem</translation>
     </message>
     <message>
         <source>Address / Block / Transaction</source>
@@ -820,8 +899,8 @@ Adresse: %4
 <context>
     <name>ClientModel</name>
     <message>
-        <source>Total: %1 (OBF compatible: %2 / Enabled: %3)</source>
-        <translation>I alt: %1 (OBF kompatible: %2 / Aktiverede: %3)</translation>
+        <source>Total: %1 (IPv4: %2 / IPv6: %3 / Tor: %4 / Unknown: %5)</source>
+        <translation>I alt: %1 (IPv4: %2 / IPv6: %3 / Tor: %4 / Ukendt: %5)</translation>
     </message>
     <message>
         <source>Network Alert</source>
@@ -899,8 +978,8 @@ Adresse: %4
         <translation>Modtaget med adresse</translation>
     </message>
     <message>
-        <source>DS Rounds</source>
-        <translation>DS gennemløb</translation>
+        <source>Type</source>
+        <translation>Type</translation>
     </message>
     <message>
         <source>Date</source>
@@ -975,10 +1054,6 @@ Adresse: %4
         <translation>Skift til "listeformat" for at benytte denne funktion</translation>
     </message>
     <message>
-        <source>Non-anonymized input selected. &lt;b&gt;Obfuscation will be disabled.&lt;/b&gt;&lt;br&gt;&lt;br&gt;If you still want to use Obfuscation, please deselect all non-nonymized inputs first and then check Obfuscation checkbox again.</source>
-        <translation>Ikke anonymiseret indhold valgt.&lt;b&gt;tilsløring vil være slået fra.&lt;/b&gt;&lt;br&gt;&lt;br&gt;Hvis De ønsker at anvende tilsløring skal De fravælge alt ikke anonymiseret indhold først, derefter afmærke boksen for tilsløring igen.</translation>
-    </message>
-    <message>
         <source>highest</source>
         <translation>højeste</translation>
     </message>
@@ -993,14 +1068,6 @@ Adresse: %4
     <message>
         <source>medium-high</source>
         <translation>middelhøj</translation>
-    </message>
-    <message>
-        <source>Can vary +/- %1 duff(s) per input.</source>
-        <translation>kan variere +/- %1 duff(s) pr. input</translation>
-    </message>
-    <message>
-        <source>n/a</source>
-        <translation>Ikke tilgængelig</translation>
     </message>
     <message>
         <source>medium</source>
@@ -1063,6 +1130,10 @@ Adresse: %4
         <translation>Denne tekstmarkør bliver rød, hvis en modtageradresse modtager et beløb mindre end %1.</translation>
     </message>
     <message>
+        <source>Can vary +/- %1 uFantasyGold per input.</source>
+        <translation>Kan variere +/- %1 oFantasyGold pr input.</translation>
+    </message>
+    <message>
         <source>(no label)</source>
         <translation>(ingen opmærknig)</translation>
     </message>
@@ -1082,16 +1153,16 @@ Adresse: %4
         <translation>Ret adresse</translation>
     </message>
     <message>
-        <source>&amp;Label</source>
-        <translation>&amp;tekstmarkør</translation>
+        <source>Label</source>
+        <translation>tekstmarkør</translation>
     </message>
     <message>
         <source>The label associated with this address list entry</source>
         <translation>Denne tekstmarkør e forbundet med denne adresse i listen.</translation>
     </message>
     <message>
-        <source>&amp;Address</source>
-        <translation>&amp;adresse</translation>
+        <source>Address</source>
+        <translation>adresse</translation>
     </message>
     <message>
         <source>The address associated with this address list entry. This can only be modified for sending addresses.</source>
@@ -1262,8 +1333,8 @@ Adresse: %4
         <translation>Formular</translation>
     </message>
     <message>
-        <source>My Masternodes</source>
-        <translation>Mine masternoder</translation>
+        <source>MASTERNODES</source>
+        <translation>MASTERNODES</translation>
     </message>
     <message>
         <source>Note: Status of your masternodes in local wallet can potentially be slightly incorrect.&lt;br /&gt;Always wait for wallet to sync additional data and then double check from another node&lt;br /&gt;if your node should be running but you still see "MISSING" in "Status" field.</source>
@@ -1298,20 +1369,20 @@ Adresse: %4
         <translation>Offentlig nøgle</translation>
     </message>
     <message>
-        <source>S&amp;tart alias</source>
-        <translation>S&amp;tart alias</translation>
+        <source>Start alias</source>
+        <translation>Start alias</translation>
     </message>
     <message>
-        <source>Start &amp;all</source>
-        <translation>Start &amp;all</translation>
+        <source>Start all</source>
+        <translation>Start all</translation>
     </message>
     <message>
-        <source>Start &amp;MISSING</source>
-        <translation>Start &amp;MANGLER</translation>
+        <source>Start MISSING</source>
+        <translation>Start MANGLER</translation>
     </message>
     <message>
-        <source>&amp;Update status</source>
-        <translation>&amp;opdateringsstatus</translation>
+        <source>Update status</source>
+        <translation>opdateringsstatus</translation>
     </message>
     <message>
         <source>Status will be updated automatically in (sec):</source>
@@ -1427,6 +1498,14 @@ Multisend vil ikke fungere med mindre systemet er aktiveret.</translation>
         <translation>Adresse</translation>
     </message>
     <message>
+        <source>Label:</source>
+        <translation>etiket</translation>
+    </message>
+    <message>
+        <source>Enter a label for this address to add it to your address book</source>
+        <translation>Indtast et mærke til denne adresse for at tilføje den til adressebogen.</translation>
+    </message>
+    <message>
         <source>Delete Address From MultiSend Vector</source>
         <translation>Slet adresse fra Multisendgruppen</translation>
     </message>
@@ -1459,6 +1538,10 @@ Multisend vil ikke fungere med mindre systemet er aktiveret.</translation>
         <translation>Send til Masternodebelønning</translation>
     </message>
     <message>
+        <source>(no label)</source>
+        <translation>(ingen opmærknig)</translation>
+    </message>
+    <message>
         <source>The entered address:
 </source>
         <translation>Den indtastede adresse:
@@ -1481,6 +1564,12 @@ Kontroller adressen og prøv igen.</translation>
         <translation>Indtast en procentsats 1-100 </translation>
     </message>
     <message>
+        <source>Saved the MultiSend to memory, but failed saving properties to the database.
+</source>
+        <translation>Gemt MultiSend til hukommelse, men fejlede gemme egenskaber til databasen.
+</translation>
+    </message>
+    <message>
         <source>MultiSend Vector
 </source>
         <translation>Multisendgruppe
@@ -1495,6 +1584,177 @@ Kontroller adressen og prøv igen.</translation>
 </source>
         <translation>Kunne ikke finde adresse
 </translation>
+    </message>
+</context>
+<context>
+    <name>MultisigDialog</name>
+    <message>
+        <source>Multisignature Address Interactions</source>
+        <translation>Multisignatur adresseinteraktioner</translation>
+    </message>
+    <message>
+        <source>Create MultiSignature Address</source>
+        <translation>Create MultiSignature Address</translation>
+    </message>
+    <message>
+        <source>How many people must sign to verify a transaction</source>
+        <translation>Hvor mange mennesker skal underskrive for at bekræfte en transaktion</translation>
+    </message>
+    <message>
+        <source>Enter the minimum number of signatures required to sign transactions</source>
+        <translation>Indtast det mindste antal signaturer, der kræves for at underskrive transaktioner</translation>
+    </message>
+    <message>
+        <source>Address Label:</source>
+        <translation>Adresselabel:</translation>
+    </message>
+    <message>
+        <source>Add another address that could sign to verify a transaction from the multisig address.</source>
+        <translation>Tilføj en anden adresse, der kunne underskrive for at bekræfte en transaktion fra multisig-adressen.</translation>
+    </message>
+    <message>
+        <source>Add Address / Key</source>
+        <translation> Tilføj adresse / nøgle</translation>
+    </message>
+    <message>
+        <source>Local addresses or public keys that can sign:</source>
+        <translation>Lokale adresser eller offentlige nøgler, der kan underskrive:</translation>
+    </message>
+    <message>
+        <source>Create a new multisig address</source>
+        <translation>Opret en ny multisig-adresse</translation>
+    </message>
+    <message>
+        <source>Create</source>
+        <translation>Create</translation>
+    </message>
+    <message>
+        <source>Status:</source>
+        <translation>Status</translation>
+    </message>
+    <message>
+        <source>Use below to quickly import an address by its redeem. Don't forget to add a label before clicking import!
+Keep in mind, the wallet will rescan the blockchain to find transactions containing the new address.
+Please be patient after clicking import.</source>
+        <translation>Brug nedenfor for hurtigt at importere en adresse ved hjælp af indløsningen. Glem ikke at tilføje en etiket før du klikker på import!
+Husk, at tegnebogen omskriver blockchain for at finde transaktioner, der indeholder den nye adresse
+Vær tålmodig efter at du har klikket på import.</translation>
+    </message>
+    <message>
+        <source>Import Redeem</source>
+        <translation> Importindløsning</translation>
+    </message>
+    <message>
+        <source>Create MultiSignature Tx</source>
+        <translation> Opret MultiSignature Tx</translation>
+    </message>
+    <message>
+        <source>Inputs:</source>
+        <translation>Inputs:</translation>
+    </message>
+    <message>
+        <source>Coin Control</source>
+        <translation>Møntkontrol</translation>
+    </message>
+    <message>
+        <source>Quantity Selected:</source>
+        <translation>Mængde valgt:</translation>
+    </message>
+    <message>
+        <source>0</source>
+        <translation>0</translation>
+    </message>
+    <message>
+        <source>Amount:</source>
+        <translation>Beløb</translation>
+    </message>
+    <message>
+        <source>Add an input to fund the outputs</source>
+        <translation>Tilføj et input for at finansiere udgangene</translation>
+    </message>
+    <message>
+        <source>Add a Raw Input</source>
+        <translation>Tilføj en rå indgang</translation>
+    </message>
+    <message>
+        <source>Address / Amount:</source>
+        <translation>Adresse / Beløb:</translation>
+    </message>
+    <message>
+        <source>Add destinations to send FantasyGold to</source>
+        <translation>Tilføj destinationer for at sende FantasyGold til</translation>
+    </message>
+    <message>
+        <source>Add Destination</source>
+        <translation>Tilføj og destination</translation>
+    </message>
+    <message>
+        <source>Create a transaction object using the given inputs to the given outputs</source>
+        <translation>Opret en transaktionsobjekt ved hjælp af de givne indgange til de givne udgange</translation>
+    </message>
+    <message>
+        <source>Create</source>
+        <translation>Create</translation>
+    </message>
+    <message>
+        <source>Sign MultiSignature Tx</source>
+        <translation>Tegn MultiSignature Tx</translation>
+    </message>
+    <message>
+        <source>Transaction Hex:</source>
+        <translation>Transaktion Hex:</translation>
+    </message>
+    <message>
+        <source>Sign the transaction from this wallet or from provided private keys</source>
+        <translation>Signer transaktionen fra denne tegnebog eller fra private knapper</translation>
+    </message>
+    <message>
+        <source>Sign</source>
+        <translation>Sign</translation>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;DISABLED until transaction has been signed enough times.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;DISABLED indtil transaktionen er blevet undertegnet nok gange.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <source>Commit</source>
+        <translation>Commit</translation>
+    </message>
+    <message>
+        <source>Add private keys to sign the transaction with</source>
+        <translation>Tilføj private nøgler for at underskrive transaktionen med</translation>
+    </message>
+    <message>
+        <source>Add Private Key</source>
+        <translation>Tilføj privat nøgle</translation>
+    </message>
+    <message>
+        <source>Sign with only private keys (Not Recommened)</source>
+        <translation>Log med kun private nøgler (ikke anbefalet)</translation>
+    </message>
+    <message>
+        <source>Invalid Tx Hash.</source>
+        <translation>Ugyldig Tx Hash.</translation>
+    </message>
+    <message>
+        <source>Vout position must be positive.</source>
+        <translation>Vout position skal være positiv.</translation>
+    </message>
+    <message>
+        <source>Maximum possible addresses reached. (15)</source>
+        <translation>Maksimale mulige adresser nået. (15)</translation>
+    </message>
+    <message>
+        <source>Vout Position: </source>
+        <translation>Vout Position:</translation>
+    </message>
+    <message>
+        <source>Amount: </source>
+        <translation>Beløb:</translation>
+    </message>
+    <message>
+        <source>Maximum (15)</source>
+        <translation>Maksimum (15)</translation>
     </message>
 </context>
 <context>
@@ -1520,32 +1780,32 @@ Kontroller adressen og prøv igen.</translation>
         <translation>Vælg tilsløringsniveau</translation>
     </message>
     <message>
-        <source>Use 2 separate masternodes to mix funds up to 10000 FGC</source>
-        <translation>Brug 2 separate masternoder for at tilsløre beløb op til 10000 FGC</translation>
+        <source>Use 2 separate masternodes to mix funds up to 10000 FantasyGold</source>
+        <translation>Brug 2 separate masternoder for at tilsløre beløb op til 10000 FantasyGold</translation>
     </message>
     <message>
-        <source>Use 8 separate masternodes to mix funds up to 10000 FGC</source>
-        <translation>Brug 8 separate masternoder for at tilsløre op til 10000 FGC</translation>
+        <source>Use 8 separate masternodes to mix funds up to 10000 FantasyGold</source>
+        <translation>Brug 8 separate masternoder for at tilsløre op til 10000 FantasyGold</translation>
     </message>
     <message>
         <source>Use 16 separate masternodes</source>
         <translation>Brug 16 separate masternoder</translation>
     </message>
     <message>
-        <source>This option is the quickest and will cost about ~0.025 FGC to anonymize 10000 FGC</source>
-        <translation>Dette valg er det hurtigste og vil koste i omegnen af 0.025 FGC for at anonymiser 10000 FGC</translation>
+        <source>This option is the quickest and will cost about ~0.025 FantasyGold to anonymize 10000 FantasyGold</source>
+        <translation>Dette valg er det hurtigste og vil koste i omegnen af 0.025 FantasyGold for at anonymiser 10000 FantasyGold</translation>
     </message>
     <message>
-        <source>This option is moderately fast and will cost about 0.05 FGC to anonymize 10000 FGC</source>
-        <translation>Dette valg er relativt hurtigt og vil koste i omegnen af 0.05 FGC for at anonymiser 10000 FGC</translation>
+        <source>This option is moderately fast and will cost about 0.05 FantasyGold to anonymize 10000 FantasyGold</source>
+        <translation>Dette valg er relativt hurtigt og vil koste i omegnen af 0.05 FantasyGold for at anonymiser 10000 FantasyGold</translation>
     </message>
     <message>
         <source>This is the slowest and most secure option. Using maximum anonymity will cost</source>
         <translation>Denne mulighed er den langsomste og det mest sikre valg. Valg af maksimal tilsløring vil koste</translation>
     </message>
     <message>
-        <source>0.1 FGC per 10000 FGC you anonymize.</source>
-        <translation>0.1 pr 10000 FGC for at tilsløre.</translation>
+        <source>0.1 FantasyGold per 10000 FantasyGold you anonymize.</source>
+        <translation>0.1 pr 10000 FantasyGold for at tilsløre.</translation>
     </message>
     <message>
         <source>Obfuscation Configuration</source>
@@ -1594,28 +1854,28 @@ Kontroller adressen og prøv igen.</translation>
         <translation>Muligheder</translation>
     </message>
     <message>
-        <source>&amp;Main</source>
-        <translation>&amp;hoved</translation>
+        <source>Main</source>
+        <translation>hoved</translation>
     </message>
     <message>
-        <source>Size of &amp;database cache</source>
-        <translation>Størrelse på &amp;databasecache</translation>
+        <source>Size of database cache</source>
+        <translation>Størrelse på databasecache</translation>
     </message>
     <message>
         <source>MB</source>
         <translation>MB</translation>
     </message>
     <message>
-        <source>Number of script &amp;verification threads</source>
-        <translation>antal af script &amp;verifikationstråde</translation>
+        <source>Number of script verification threads</source>
+        <translation>antal af script verifikationstråde</translation>
     </message>
     <message>
         <source>(0 = auto, &lt;0 = leave that many cores free)</source>
         <translation>(0=auto, &gt;0 efterlad så mange tråde fri)</translation>
     </message>
     <message>
-        <source>W&amp;allet</source>
-        <translation>T&amp;egnebog</translation>
+        <source>Wallet</source>
+        <translation>Tegnebog</translation>
     </message>
     <message>
         <source>If you disable the spending of unconfirmed change, the change from a transaction&lt;br/&gt;cannot be used until that transaction has at least one confirmation.&lt;br/&gt;This also affects how your balance is computed.</source>
@@ -1634,8 +1894,8 @@ Kontroller adressen og prøv igen.</translation>
         <translation>Tillad indkomne forbindelser</translation>
     </message>
     <message>
-        <source>&amp;Connect through SOCKS5 proxy (default proxy):</source>
-        <translation>&amp;forbind gennem SOCJS5 proxy (standardproxy):</translation>
+        <source>Connect through SOCKS5 proxy (default proxy):</source>
+        <translation>forbind gennem SOCJS5 proxy (standardproxy):</translation>
     </message>
     <message>
         <source>Expert</source>
@@ -1646,32 +1906,16 @@ Kontroller adressen og prøv igen.</translation>
         <translation>Start FantasyGold automatisk, når der logges på systemet</translation>
     </message>
     <message>
-        <source>&amp;Start FantasyGold on system login</source>
-        <translation>&amp;start FantasyGold når der logges på systemet</translation>
-    </message>
-    <message>
-        <source>This setting determines the amount of individual masternodes that an input will be anonymized through.&lt;br/&gt;More rounds of anonymization gives a higher degree of privacy, but also costs more in fees.</source>
-        <translation>Denne indstilling bestemmer antallet af individuelle masternoder hvorgennem der tilsløres et input. &lt;br/&gt;Jo flere gennemløb der udføres, jo højere grad af tilsløring, og jo højere gebyrer.</translation>
-    </message>
-    <message>
-        <source>Obfuscation rounds to use</source>
-        <translation>Antal gennemløb der skal benyttes </translation>
-    </message>
-    <message>
-        <source>This amount acts as a threshold to turn off Obfuscation once it's reached.</source>
-        <translation>når dette antal er nået slås tilsløringsfunktonen fra. </translation>
-    </message>
-    <message>
-        <source>Amount of FantasyGold to keep anonymized</source>
-        <translation>Antallet af FantasyGold som skal holdes tilslørede</translation>
+        <source>Start FantasyGold on system login</source>
+        <translation>start FantasyGold når der logges på systemet</translation>
     </message>
     <message>
         <source>Whether to show coin control features or not.</source>
         <translation>Vis eller skjul møntkontrolfeatures</translation>
     </message>
     <message>
-        <source>Enable coin &amp;control features</source>
-        <translation>Aktiver mønt &amp;kontrolfeatures</translation>
+        <source>Enable coin control features</source>
+        <translation>Aktiver mønt kontrolfeatures</translation>
     </message>
     <message>
         <source>Show additional tab listing all your masternodes in first sub-tab&lt;br/&gt;and all masternodes on the network in second sub-tab.</source>
@@ -1682,12 +1926,12 @@ Kontroller adressen og prøv igen.</translation>
         <translation>Vis fane med masternoder</translation>
     </message>
     <message>
-        <source>&amp;Spend unconfirmed change</source>
-        <translation>&amp;brug ikke bekræftede "penge tilbage"</translation>
+        <source>Spend unconfirmed change</source>
+        <translation>brug ikke bekræftede "penge tilbage"</translation>
     </message>
     <message>
-        <source>&amp;Network</source>
-        <translation>&amp;netværk</translation>
+        <source>Network</source>
+        <translation>netværk</translation>
     </message>
     <message>
         <source>The user interface language can be set here. This setting will take effect after restarting FantasyGold.</source>
@@ -1695,69 +1939,97 @@ Kontroller adressen og prøv igen.</translation>
     </message>
     <message>
         <source>Language missing or translation incomplete? Help contributing translations here:
-https://www.transifex.com/fantasygold-project/fantasygold-project-translations</source>
+https://www.transifex.com/FantasyGold-project/FantasyGold-project-translations</source>
         <translation>Det valgte sprog mangler, eller oversættelsen er mangelfuld. Hjælp ved at bidrage med oversættelser her:
-https://www.transifex.com/fantasygold-project/fantasygold-project-translations</translation>
+https://www.transifex.com/FantasyGold-project/FantasyGold-project-translations</translation>
     </message>
     <message>
-        <source>Map port using &amp;UPnP</source>
+        <source>Map port using UPnP</source>
         <translation>MAP port ved hjælp af UPnP</translation>
+    </message>
+    <message>
+        <source>Enable automatic minting of FantasyGold units to zFGC</source>
+        <translation>Aktivér automatisk mintning af FantasyGold-enheder til zFGC</translation>
+    </message>
+    <message>
+        <source>Enable zFGC Automint</source>
+        <translation>Aktivér zFGC Automint</translation>
+    </message>
+    <message>
+        <source>Percentage of incoming FantasyGold which get automatically converted to zFGC via Zerocoin Protocol (min: 10%)</source>
+        <translation>Procentdelen af indkommende FantasyGold, som automatisk konverteres til zFGC via Zerocoin Protocol (min: 10%)</translation>
+    </message>
+    <message>
+        <source>Percentage of autominted zFGC</source>
+        <translation>Procentdel af automatiseret zFGC</translation>
+    </message>
+    <message>
+        <source>Wait with automatic conversion to Zerocoin until enough FantasyGold for this denomination is available</source>
+        <translation>Vent med automatisk konvertering til Zerocoin, indtil nok FantasyGold til denne betegnelse er tilgængelig</translation>
+    </message>
+    <message>
+        <source>Preferred Automint zFGC Denomination</source>
+        <translation>Foretrukket Automint zFGC Denomination</translation>
+    </message>
+    <message>
+        <source>Stake split threshold:</source>
+        <translation>Indtastningsgrænse for indsats:</translation>
     </message>
     <message>
         <source>Connect to the FantasyGold network through a SOCKS5 proxy.</source>
         <translation>Tilslut FantasyGold netværket gennem en SOCKS5 PROXY</translation>
     </message>
     <message>
-        <source>Proxy &amp;IP:</source>
-        <translation>Proxy &amp;IP</translation>
+        <source>Proxy IP:</source>
+        <translation>Proxy IP</translation>
     </message>
     <message>
         <source>IP address of the proxy (e.g. IPv4: 127.0.0.1 / IPv6: ::1)</source>
         <translation>IP adresse til proxyserveren (For eksempel IPV4: 127.0.0.1/IPv6: ::1)</translation>
     </message>
     <message>
-        <source>&amp;Port:</source>
-        <translation>&amp;port</translation>
+        <source>Port:</source>
+        <translation>port</translation>
     </message>
     <message>
         <source>Port of the proxy (e.g. 9050)</source>
         <translation>Proxyport (f.eks 9050)</translation>
     </message>
     <message>
-        <source>&amp;Window</source>
-        <translation>&amp;vindue</translation>
+        <source>Window</source>
+        <translation>vindue</translation>
     </message>
     <message>
         <source>Show only a tray icon after minimizing the window.</source>
         <translation>Vis kun ikonet efter minimering af vinduet</translation>
     </message>
     <message>
-        <source>&amp;Minimize to the tray instead of the taskbar</source>
-        <translation>&amp;Minimer til bakken i stedet for til proceslinien</translation>
+        <source>Minimize to the tray instead of the taskbar</source>
+        <translation>Minimer til bakken i stedet for til proceslinien</translation>
     </message>
     <message>
         <source>Minimize instead of exit the application when the window is closed. When this option is enabled, the application will be closed only after selecting Quit in the menu.</source>
         <translation>Minimer i stedet for at afslutte applikationen når vinduet lukkes. Når dette er valgt er det kun muligt at lukke ned via filmenuen og afslut</translation>
     </message>
     <message>
-        <source>M&amp;inimize on close</source>
-        <translation>M&amp;inimer og luk</translation>
+        <source>Minimize on close</source>
+        <translation>Minimer og luk</translation>
     </message>
     <message>
-        <source>&amp;Display</source>
-        <translation>&amp;Vis</translation>
+        <source>Display</source>
+        <translation>Vis</translation>
     </message>
     <message>
-        <source>User Interface &amp;language:</source>
-        <translation>Brugerinterface &amp;sprog:</translation>
+        <source>User Interface language:</source>
+        <translation>Brugerinterface sprog:</translation>
     </message>
     <message>
         <source>User Interface Theme:</source>
         <translation>Brugers tema:</translation>
     </message>
     <message>
-        <source>&amp;Unit to show amounts in:</source>
-        <translation>&amp;Enhed som beløb vises i</translation>
+        <source>Unit to show amounts in:</source>
+        <translation>Enhed som beløb vises i</translation>
     </message>
     <message>
         <source>Choose the default subdivision unit to show in the interface and when sending coins.</source>
@@ -1766,6 +2038,10 @@ https://www.transifex.com/fantasygold-project/fantasygold-project-translations</
     <message>
         <source>Decimal digits</source>
         <translation>Decimaler</translation>
+    </message>
+    <message>
+        <source>Hide empty balances</source>
+        <translation>Skjul tomme saldi</translation>
     </message>
     <message>
         <source>Third party URLs (e.g. a block explorer) that appear in the transactions tab as context menu items. %s in the URL is replaced by transaction hash. Multiple URLs are separated by vertical bar |.</source>
@@ -1784,16 +2060,20 @@ https://www.transifex.com/fantasygold-project/fantasygold-project-translations</
         <translation>Nulstil alle klientoptioner til standard</translation>
     </message>
     <message>
-        <source>&amp;Reset Options</source>
-        <translation>&amp;nulstil optioner</translation>
+        <source>Reset Options</source>
+        <translation>nulstil optioner</translation>
     </message>
     <message>
-        <source>&amp;OK</source>
-        <translation>&amp;Ok</translation>
+        <source>OK</source>
+        <translation>Ok</translation>
     </message>
     <message>
-        <source>&amp;Cancel</source>
-        <translation>&amp;Annuller</translation>
+        <source>Cancel</source>
+        <translation>Annuller</translation>
+    </message>
+    <message>
+        <source>Any</source>
+        <translation>Nogen</translation>
     </message>
     <message>
         <source>default</source>
@@ -1823,6 +2103,14 @@ https://www.transifex.com/fantasygold-project/fantasygold-project-translations</
         <source>The supplied proxy address is invalid.</source>
         <translation>Den oplyste proxyadresse er ugyldig.</translation>
     </message>
+    <message>
+        <source>The supplied proxy port is invalid.</source>
+        <translation>Den medfølgende proxyport er ugyldig.</translation>
+    </message>
+    <message>
+        <source>The supplied proxy settings are invalid.</source>
+        <translation>De medfølgende proxyindstillinger er ugyldige.</translation>
+    </message>
 </context>
 <context>
     <name>OverviewPage</name>
@@ -1837,6 +2125,14 @@ https://www.transifex.com/fantasygold-project/fantasygold-project-translations</
     <message>
         <source>Your current spendable balance</source>
         <translation>Deres nuværende og brugbare indestående.</translation>
+    </message>
+    <message>
+        <source>Total Balance, including all unavailable coins.</source>
+        <translation>Samlet saldo, inklusive alle utilgængelige mønter.</translation>
+    </message>
+    <message>
+        <source>FantasyGold Balance</source>
+        <translation>FantasyGold Balance</translation>
     </message>
     <message>
         <source>Pending:</source>
@@ -1855,12 +2151,44 @@ https://www.transifex.com/fantasygold-project/fantasygold-project-translations</
         <translation>Indskyder- eller masternodebelønning er stadig under behandling</translation>
     </message>
     <message>
-        <source>Balances</source>
-        <translation>Saldi</translation>
+        <source>Current locked balance in watch-only addresses</source>
+        <translation>Nuværende låst balance i kun-adresser</translation>
+    </message>
+    <message>
+        <source>Your current FantasyGold balance, unconfirmed and immature transactions included</source>
+        <translation>Din nuværende FantasyGold-saldo, ubekræftede og umodne transaktioner inkluderet</translation>
+    </message>
+    <message>
+        <source>zFGC Balance</source>
+        <translation>zFGC-saldo</translation>
+    </message>
+    <message>
+        <source>Mature: more than 20 confirmation and more than 1 mint of the same denomination after it was minted.
+These zFGC are spendable.</source>
+        <translation>Ældre: mere end 20 bekræftelser og mere end 1 minutter med samme betegnelse, efter at den blev minted
+Disse zFGC kan bruges.</translation>
+    </message>
+    <message>
+        <source>Unconfirmed: less than 20 confirmations
+Immature: confirmed, but less than 1 mint of the same denomination after it was minted</source>
+        <translation>Ubekræftet: mindre end 20 bekræftelser
+Uplettet: bekræftet, men mindre end 1 minutter med samme betegnelse, efter at den blev mønnet</translation>
     </message>
     <message>
         <source>The displayed information may be out of date. Your wallet automatically synchronizes with the FantasyGold network after a connection is established, but this process has not completed yet.</source>
         <translation>De viste informationer kan være uddaterede. Deres tegnebog synkronisere automatism med FantasyGold netværket så snart en forbindelse er etalbleret, men denne proces er ikke færdiggjort endnu. </translation>
+    </message>
+    <message>
+        <source>OVERVIEW</source>
+        <translation>OVERSIGT</translation>
+    </message>
+    <message>
+        <source>Combined Balance (including unconfirmed and immature coins)</source>
+        <translation>Kombinerede saldi (inklusiv ubekræftede og umodne mønter)</translation>
+    </message>
+    <message>
+        <source>Combined Balance</source>
+        <translation>Kombineret saldo</translation>
     </message>
     <message>
         <source>Unconfirmed transactions to watch-only addresses</source>
@@ -1873,10 +2201,6 @@ https://www.transifex.com/fantasygold-project/fantasygold-project-translations</
     <message>
         <source>Total:</source>
         <translation>I alt:</translation>
-    </message>
-    <message>
-        <source>Your current total balance</source>
-        <translation>Nuværende saldo</translation>
     </message>
     <message>
         <source>Current total balance in watch-only addresses</source>
@@ -1895,145 +2219,49 @@ https://www.transifex.com/fantasygold-project/fantasygold-project-translations</
         <translation>Brugbare:</translation>
     </message>
     <message>
-        <source>Status:</source>
-        <translation>Status</translation>
+        <source>Locked FantasyGold or Masternode collaterals. These are excluded from zFGC minting.</source>
+        <translation>Låste FantasyGold eller Masternode collaterals. Disse er udelukket fra zFGC-mintning.</translation>
     </message>
     <message>
-        <source>Obfuscation Balance:</source>
-        <translation>Sløret beløb</translation>
+        <source>Locked:</source>
+        <translation>Låst:</translation>
     </message>
     <message>
-        <source>0 FGC/ 0 Rounds</source>
-        <translation>0 FGC/ 0 gennemløb</translation>
+        <source>Unconfirmed:</source>
+        <translation>Ubekræftet:</translation>
     </message>
     <message>
-        <source>Enabled/Disabled</source>
-        <translation>Startet/Stoppet</translation>
-    </message>
-    <message>
-        <source>Try to manually submit a Obfuscation request.</source>
-        <translation>Prøv at send en manuel tilsløringsanmodning.</translation>
-    </message>
-    <message>
-        <source>Reset the current status of Obfuscation (can interrupt Obfuscation if it's in the process of Mixing, which can cost you money!)</source>
-        <translation>Nulstil den aktuelle status for tilsløringsfunktionen. (Kan forstyrre processen, hvilket kan koste mønter).</translation>
-    </message>
-    <message>
-        <source>Obfuscation</source>
-        <translation>Tilsløring</translation>
-    </message>
-    <message>
-        <source>Completion:</source>
-        <translation>Færdiggørelse:</translation>
-    </message>
-    <message>
-        <source>Amount and Rounds:</source>
-        <translation>Beløb og gennemløb</translation>
-    </message>
-    <message>
-        <source>Submitted Denom:</source>
-        <translation>Afsendte midler</translation>
-    </message>
-    <message>
-        <source>n/a</source>
-        <translation>Ikke tilgængelig</translation>
+        <source>Your current zFGC balance, unconfirmed and immature zFGC included.</source>
+        <translation>Din nuværende zFGC-saldo, ubekræftede og umodne zFGC inkluderet.</translation>
     </message>
     <message>
         <source>Recent transactions</source>
         <translation>Nylige transaktioner</translation>
     </message>
     <message>
-        <source>Start/Stop Mixing</source>
-        <translation>Start/Stop tilsløring</translation>
-    </message>
-    <message>
-        <source>The denominations you submitted to the Masternode.&lt;br&gt;To mix, other users must submit the exact same denominations.</source>
-        <translation>Designerede midler afsendt til masternoden. &lt;br&gt;For at gennemføre tilsløringen må andre brugere afsende tilsvarende designerede midler.</translation>
-    </message>
-    <message>
-        <source>(Last Message)</source>
-        <translation>(seneste besked)</translation>
-    </message>
-    <message>
-        <source>Try Mix</source>
-        <translation>Prøv at usynliggøre</translation>
-    </message>
-    <message>
-        <source>Reset</source>
-        <translation>Nulstil</translation>
-    </message>
-    <message>
         <source>out of sync</source>
         <translation>Ude af synk</translation>
     </message>
     <message>
-        <source>Disabled</source>
-        <translation>slået fra</translation>
-    </message>
-    <message>
-        <source>No inputs detected</source>
-        <translation>Ingen inputs valgt</translation>
-    </message>
-    <message>
-        <source>Not enough compatible inputs to anonymize &lt;span style='color:red;'&gt;%1&lt;/span&gt;,&lt;br&gt;will anonymize &lt;span style='color:red;'&gt;%2&lt;/span&gt; instead</source>
-        <translation>Der er ikke tilstrækkelige kompatible inputs tilgængelige for tilsløring &lt;span style='color:red;'&gt;%1&lt;/span&gt;,&lt;br&gt;vil tilsløre &lt;span style='color:red;'&gt;%2&lt;/span&gt; i stedet</translation>
-    </message>
-    <message>
-        <source>Overall progress</source>
-        <translation>Samlet status</translation>
-    </message>
-    <message>
-        <source>Denominated</source>
-        <translation>Designerede</translation>
-    </message>
-    <message>
-        <source>Anonymized</source>
-        <translation>Tilsløret</translation>
-    </message>
-    <message>
-        <source>Last Obfuscation message:
+        <source>Current percentage of zFGC.
+If AutoMint is enabled this percentage will settle around the configured AutoMint percentage (default = 10%).
 </source>
-        <translation>Seneste besked fra tilsløringsprocessen</translation>
+        <translation>Nuværende procentdel af zFGC
+Hvis AutoMint er aktiveret, vil denne procentdel sætte sig omkring den konfigurerede AutoMint-procent (default = 10%)</translation>
     </message>
     <message>
-        <source>Obfuscation was successfully reset.</source>
-        <translation>Tilsløringsfunktionen blev nulstillet </translation>
+        <source>AutoMint is currently enabled and set to </source>
+        <translation>AutoMint er i øjeblikket aktiveret og indstillet til</translation>
     </message>
     <message>
-        <source>If you don't want to see internal Obfuscation fees/transactions select "Most Common" as Type on the "Transactions" tab.</source>
-        <translation>Hvis de ikke ønsker at se de interne tilsløringsgebyrer og transaktioner, skal De vælge "Mest fremherskende" som type i transaktionsmenuen.</translation>
+        <source>To disable AutoMint add 'enablezeromint=0' in fantasygold.conf.</source>
+        <translation>To disable AutoMint add 'enablezeromint=0' in fantasygold.conf.</translation>
     </message>
     <message>
-        <source>Obfuscation requires at least %1 to use.</source>
-        <translation>Tilsløring kræver mindst %1 for at kunne anvendes </translation>
-    </message>
-    <message>
-        <source>Wallet is locked and user declined to unlock. Disabling Obfuscation.</source>
-        <translation>Tegnebogen er låst, brugeren har afvist at låse den op. Tilsløring slås fra.</translation>
-    </message>
-    <message>
-        <source>Found enough compatible inputs to anonymize %1</source>
-        <translation>Der er fundet nok kompatible inputs for tilsløring af %1</translation>
-    </message>
-    <message>
-        <source>Start Obfuscation</source>
-        <translation>Start tilsløring</translation>
-    </message>
-    <message>
-        <source>Stop Obfuscation</source>
-        <translation>stop tilsløring</translation>
-    </message>
-    <message>
-        <source>Mixed</source>
-        <translation>Tilsløret</translation>
-    </message>
-    <message>
-        <source>Enabled</source>
-        <translation>Slået til</translation>
-    </message>
-    <message>
-        <source>N/A</source>
-        <translation>Ikke tilgængelig</translation>
+        <source>AutoMint is currently disabled.
+To enable AutoMint change 'enablezeromint=0' to 'enablezeromint=1' in fantasygold.conf</source>
+        <translation>AutoMint er for øjeblikket deaktiveret
+For at aktivere AutoMint-ændring 'enablezeromint = 0' til 'enablezeromint = 1' i fantasygold.conf</translation>
     </message>
 </context>
 <context>
@@ -2059,11 +2287,11 @@ https://www.transifex.com/fantasygold-project/fantasygold-project-translations</
         <translation>Ugyldig betalingsadresse: %1</translation>
     </message>
     <message>
-        <source>Cannot start fantasygold: click-to-pay handler</source>
+        <source>Cannot start FantasyGold: click-to-pay handler</source>
         <translation>Kan ikke starte FantasyGold "klik for at betale" systemet</translation>
     </message>
     <message>
-        <source>URI cannot be parsed! This can be caused by an invalid FantasyGold address or malformed URI parameters.</source>
+        <source>URI cannot be parsed! This can be caused by an Invalid FGC address or malformed URI parameters.</source>
         <translation>URl kan ikke fortolkes! Det kan skyldes en ugyldig adresse, eller forkerte URl parametre.</translation>
     </message>
     <message>
@@ -2143,6 +2371,659 @@ https://www.transifex.com/fantasygold-project/fantasygold-project-translations</
     </message>
 </context>
 <context>
+    <name>PrivacyDialog</name>
+    <message>
+        <source>Zerocoin Actions:</source>
+        <translation>Zerocoin Aktioner:</translation>
+    </message>
+    <message>
+        <source>The displayed information may be out of date. Your wallet automatically synchronizes with the FantasyGold network after a connection is established, but this process has not completed yet.</source>
+        <translation>De viste informationer kan være uddaterede. Deres tegnebog synkronisere automatism med FantasyGold netværket så snart en forbindelse er etalbleret, men denne proces er ikke færdiggjort endnu. </translation>
+    </message>
+    <message>
+        <source>Mint Zerocoin</source>
+        <translation>Mint Zerocoin</translation>
+    </message>
+    <message>
+        <source>0</source>
+        <translation>0</translation>
+    </message>
+    <message>
+        <source>zFGC</source>
+        <translation>zFGC</translation>
+    </message>
+    <message>
+        <source>Available for minting are coins which are confirmed and not locked or Masternode collaterals.</source>
+        <translation>Til rådighed for mintning er mønter, som er bekræftet og ikke låst eller Masternode collaterals.</translation>
+    </message>
+    <message>
+        <source>Available for Minting:</source>
+        <translation>Til rådighed til Minting:</translation>
+    </message>
+    <message>
+        <source>0.000 000 00 FGC</source>
+        <translation>0.000 000 00 FGC</translation>
+    </message>
+    <message>
+        <source>Reset Zerocoin Wallet DB. Deletes transactions that did not make it into the blockchain.</source>
+        <translation>Nulstil Zerocoin Wallet DB. Sletter transaktioner, der ikke gjorde det i blokkæden.</translation>
+    </message>
+    <message>
+        <source>Reset</source>
+        <translation>Nulstil</translation>
+    </message>
+    <message>
+        <source>Coin Control...</source>
+        <translation>Møntkontrol...</translation>
+    </message>
+    <message>
+        <source>Quantity:</source>
+        <translation>Antal:</translation>
+    </message>
+    <message>
+        <source>Amount:</source>
+        <translation>Beløb</translation>
+    </message>
+    <message>
+        <source>Rescan the complete blockchain for  Zerocoin mints and their meta-data.</source>
+        <translation>Omskrive den komplette blokchain for Zerocoin-minter og deres metadata.</translation>
+    </message>
+    <message>
+        <source>ReScan</source>
+        <translation>ReScan</translation>
+    </message>
+    <message>
+        <source>Status and/or Mesages from the last Mint Action.</source>
+        <translation>Status og / eller Beskeder fra sidste minuts handling.</translation>
+    </message>
+    <message>
+        <source>PRIVACY</source>
+        <translation>PRIVATLIV</translation>
+    </message>
+    <message>
+        <source>Enter an amount of FGC to convert to zFGC</source>
+        <translation>Indtast en mængde FantasyGold for at konvertere til zFGC</translation>
+    </message>
+    <message>
+        <source>zFGC Control</source>
+        <translation>zFGC Control</translation>
+    </message>
+    <message>
+        <source>zFGC Selected:</source>
+        <translation>zFGC Selected:</translation>
+    </message>
+    <message>
+        <source>Quantity Selected:</source>
+        <translation>Mængde valgt:</translation>
+    </message>
+    <message>
+        <source>Spend Zerocoin. Without 'Pay To:' address creates payments to yourself.</source>
+        <translation>Tilbring Zerocoin. Uden 'Betal til:' adresse skaber betalinger til dig selv.</translation>
+    </message>
+    <message>
+        <source>Spend Zerocoin</source>
+        <translation>Tilbring Zerocoin</translation>
+    </message>
+    <message>
+        <source>Available (mature and spendable) zFGC for spending</source>
+        <translation>Tilgængelig (moden og brugt) zFGC for udgifter</translation>
+    </message>
+    <message>
+        <source>Available Balance:</source>
+        <translation>Disponibel saldo:</translation>
+    </message>
+    <message>
+        <source>Available (mature and spendable) zFGC for spending
+
+zFGC are mature when they have more than 20 confirmations AND more than 2 mints of the same denomination after them were minted</source>
+        <translation>Tilgængelig (moden og brugt) zFGC for spending
+
+zFGC er modne, når de har mere end 20 bekræftelser OG mere end 2 minutter med samme betegnelse, efter at de blev præsenteret</translation>
+    </message>
+    <message>
+        <source>0 zFGC</source>
+        <translation>0 zFGC</translation>
+    </message>
+    <message>
+        <source>Security Level for Zerocoin Transactions. More is better, but needs more time and resources.</source>
+        <translation>Sikkerhedsniveau for Zerocoin Transaktioner. Mere er bedre, men har brug for mere tid og ressourcer.</translation>
+    </message>
+    <message>
+        <source>Security Level:</source>
+        <translation>Sikkerhedsniveau:</translation>
+    </message>
+    <message>
+        <source>Security Level 1 - 100 (default: 42)</source>
+        <translation>Sikkerhedsniveau 1 - 100 (standard: 42)</translation>
+    </message>
+    <message>
+        <source>Pay To:</source>
+        <translation>Betal Til</translation>
+    </message>
+    <message>
+        <source>The FantasyGold address to send the payment to. Creates local payment to yourself when empty.</source>
+        <translation>FantasyGold-adressen for at sende betalingen til. Opretter lokal betaling til dig selv, når du er tom.</translation>
+    </message>
+    <message>
+        <source>Choose previously used address</source>
+        <translation>Benyt en tidligere anvendt adresse.</translation>
+    </message>
+    <message>
+        <source>Alt+A</source>
+        <translation>Alt+A</translation>
+    </message>
+    <message>
+        <source>Paste address from clipboard</source>
+        <translation>Indsæt adresse fra udklipsholderen.</translation>
+    </message>
+    <message>
+        <source>Alt+P</source>
+        <translation>Alt+P</translation>
+    </message>
+    <message>
+        <source>Label:</source>
+        <translation>Mærkning</translation>
+    </message>
+    <message>
+        <source>Enter a label for this address to add it to the list of used addresses</source>
+        <translation>Indtast et mærke til denne adresse for at tilføje den til listen over brugte adresser</translation>
+    </message>
+    <message>
+        <source>Amount:</source>
+        <translation>Amount</translation>
+    </message>
+    <message>
+        <source>Convert Change to Zerocoin (might cost additional fees)</source>
+        <translation>Konverter Skift til Zerocoin (kan koste ekstra gebyrer)</translation>
+    </message>
+    <message>
+        <source>If checked, the wallet tries to minimize the returning change instead of minimizing the number of spent denominations.</source>
+        <translation>Hvis det er markeret, forsøger tegnebogen at minimere den tilbagevendende ændring i stedet for at minimere antallet af brugte betegnelser.</translation>
+    </message>
+    <message>
+        <source>Minimize Change</source>
+        <translation>Minimer ændring</translation>
+    </message>
+    <message>
+        <source>Information about the available Zerocoin funds.</source>
+        <translation>Oplysninger om de tilgængelige Zerocoin-midler.</translation>
+    </message>
+    <message>
+        <source>Zerocoin Stats:</source>
+        <translation>Zerocoin Stats:</translation>
+    </message>
+    <message>
+        <source>Total Balance including unconfirmed and immature zFGC</source>
+        <translation>Samlet saldo inklusive ubekræftede og umodne zFGC</translation>
+    </message>
+    <message>
+        <source>Total Zerocoin  Balance:</source>
+        <translation>Samlet Zerocoin Balance:</translation>
+    </message>
+    <message>
+        <source>Denominations with value 1:</source>
+        <translation>Betegnelser med værdi 1:</translation>
+    </message>
+    <message>
+        <source>Denom. with value 1:</source>
+        <translation>DENOM. med værdi 1:</translation>
+    </message>
+    <message>
+        <source>Unconfirmed: less than 20 confirmations
+Immature: confirmed, but less than 1 mint of the same denomination after it was minted</source>
+        <translation>Ubekræftet: mindre end 20 bekræftelser
+Uplettet: bekræftet, men mindre end 1 minutter med samme betegnelse, efter at den blev mønnet</translation>
+    </message>
+    <message>
+        <source>Show the current status of automatic zFGC minting.
+
+To change the status (restart required):
+- enable: add 'enablezeromint=1' to fantasygold.conf
+- disable: add 'enablezeromint=0' to fantasygold.conf
+
+To change the percentage (no restart required):
+- menu Settings-&gt;Options-&gt;Percentage of autominted zFGC
+
+</source>
+        <translation>Vis den aktuelle status for automatisk zFGC minting.øj
+
+For at ændre status (genstart kræves):.
+- aktiver: tilføj 'enablezeromint = 1' til fantasygold.conf
+- deaktiver: tilføj 'enablezeromint = 0' til fantasygold.conf
+
+For at ændre procentdelen (ingen genstart kræves):.
+- menu Indstillinger-&gt; Indstillinger-&gt; Procentdel af automatiseret zFGC
+</translation>
+    </message>
+    <message>
+        <source>AutoMint Status</source>
+        <translation>AutoMint-status</translation>
+    </message>
+    <message>
+        <source>Global Supply:</source>
+        <translation>Global Supply:</translation>
+    </message>
+    <message>
+        <source>Denom. 1:</source>
+        <translation>DENOM. 1:</translation>
+    </message>
+    <message>
+        <source>Denom. 5:</source>
+        <translation>Denom. 5:</translation>
+    </message>
+    <message>
+        <source>Denom. 10:</source>
+        <translation>Denom. 10:</translation>
+    </message>
+    <message>
+        <source>Denom. 50:</source>
+        <translation>Denom. 50:</translation>
+    </message>
+    <message>
+        <source>Denom. 100:</source>
+        <translation>Denom. 100:</translation>
+    </message>
+    <message>
+        <source>Denom. 500:</source>
+        <translation>Denom. 500:</translation>
+    </message>
+    <message>
+        <source>Denom. 1000:</source>
+        <translation>Denom. 1000:</translation>
+    </message>
+    <message>
+        <source>Denom. 5000:</source>
+        <translation>Denom. 5000:</translation>
+    </message>
+    <message>
+        <source>0 x</source>
+        <translation>0 x</translation>
+    </message>
+    <message>
+        <source>Denominations with value 5:</source>
+        <translation>Betegnelser med værdi 5:</translation>
+    </message>
+    <message>
+        <source>Denom. with value 5:</source>
+        <translation>DENOM. med værdi 5:</translation>
+    </message>
+    <message>
+        <source>Denominations with value 10:</source>
+        <translation>Betegnelser med værdi 10:</translation>
+    </message>
+    <message>
+        <source>Denom. with value 10:</source>
+        <translation>DENOM. med værdi 10:</translation>
+    </message>
+    <message>
+        <source>Denominations with value 50:</source>
+        <translation>Betegnelser med værdi 50:</translation>
+    </message>
+    <message>
+        <source>Denom. with value 50:</source>
+        <translation>DENOM. med værdi 50:</translation>
+    </message>
+    <message>
+        <source>Denominations with value 100:</source>
+        <translation>Betegnelser med værdi 100:</translation>
+    </message>
+    <message>
+        <source>Denom. with value 100:</source>
+        <translation>DENOM. med værdi 100:</translation>
+    </message>
+    <message>
+        <source>Denominations with value 500:</source>
+        <translation>Betegnelser med værdi 500:</translation>
+    </message>
+    <message>
+        <source>Denom. with value 500:</source>
+        <translation>DENOM. med værdi 500:</translation>
+    </message>
+    <message>
+        <source>Denominations with value 1000:</source>
+        <translation>Betegnelser med værdi 1000:</translation>
+    </message>
+    <message>
+        <source>Denom. with value 1000:</source>
+        <translation>DENOM. med værdi 1000:</translation>
+    </message>
+    <message>
+        <source>Denominations with value 5000:</source>
+        <translation>Betegnelser med værdi 5000:</translation>
+    </message>
+    <message>
+        <source>Denom. with value 5000:</source>
+        <translation>DENOM. med værdi 5000:</translation>
+    </message>
+    <message>
+        <source>Priority:</source>
+        <translation>Prioritet:</translation>
+    </message>
+    <message>
+        <source>TextLabel</source>
+        <translation>Tekstmærke</translation>
+    </message>
+    <message>
+        <source>Fee:</source>
+        <translation>Gebyr:</translation>
+    </message>
+    <message>
+        <source>Dust:</source>
+        <translation>Affald:</translation>
+    </message>
+    <message>
+        <source>no</source>
+        <translation>nej</translation>
+    </message>
+    <message>
+        <source>Bytes:</source>
+        <translation>Bytes:</translation>
+    </message>
+    <message>
+        <source>Insufficient funds!</source>
+        <translation>Saldo for lille!</translation>
+    </message>
+    <message>
+        <source>Coins automatically selected</source>
+        <translation>Mønter vælges automatisk</translation>
+    </message>
+    <message>
+        <source>medium</source>
+        <translation>Middel</translation>
+    </message>
+    <message>
+        <source>Coin Control Features</source>
+        <translation>Møntkontrol, features</translation>
+    </message>
+    <message>
+        <source>If this is activated, but the change address is empty or invalid, change will be sent to a newly generated address.</source>
+        <translation>Hvis denne er aktiveret, men tilbagebetalingsadressen er tom, eller ugyldig, overskydende beløb vil blive fremsendt til en nyoprettet adresse</translation>
+    </message>
+    <message>
+        <source>Custom change address</source>
+        <translation>Brugerdefineret tilbagebetalingsadresse</translation>
+    </message>
+    <message>
+        <source>Amount After Fee:</source>
+        <translation>Beløb efter gebyr:</translation>
+    </message>
+    <message>
+        <source>Change:</source>
+        <translation>Penge tilbage:</translation>
+    </message>
+    <message>
+        <source>out of sync</source>
+        <translation>Ude af synk</translation>
+    </message>
+    <message>
+        <source>Mint Status: Okay</source>
+        <translation>Mint Status: Okay</translation>
+    </message>
+    <message>
+        <source>Copy quantity</source>
+        <translation>Kopiér antal</translation>
+    </message>
+    <message>
+        <source>Copy amount</source>
+        <translation>Kopiér beløb</translation>
+    </message>
+    <message>
+        <source>Starting ResetMintZerocoin: rescanning complete blockchain, this will need up to 30 minutes depending on your hardware.
+Please be patient...</source>
+        <translation>Starter ResetMintZerocoin: Genskanning af komplet blockchain, dette vil tage op til 30 minutter afhængigt af din hardware.
+Vær tålmodig...</translation>
+    </message>
+    <message>
+        <source>Spending Zerocoin.
+Computationally expensive, might need several minutes depending on the selected Security Level and your hardware.
+Please be patient...</source>
+        <translation>Tilbringe Zerocoin
+Computationally dyrt, kan have brug for flere minutter afhængigt af det valgte sikkerhedsniveau og din hardware.
+Vær tålmodig..</translation>
+    </message>
+    <message>
+        <source>) needed.
+Maximum allowed: </source>
+        <translation>) havde brug for.
+Maksimum tilladt:</translation>
+    </message>
+    <message>
+        <source>zFGC Spend #: </source>
+        <translation>zFGC Spend #: </translation>
+    </message>
+    <message>
+        <source>zFGC Mint</source>
+        <translation>zFGC Mint</translation>
+    </message>
+    <message>
+        <source> &lt;b&gt;enabled&lt;/b&gt;.</source>
+        <translation>&lt;b&gt;aktiveret&lt;/b&gt;.</translation>
+    </message>
+    <message>
+        <source> &lt;b&gt;disabled&lt;/b&gt;.</source>
+        <translation>&lt;b&gt;invalid&lt;/b&gt;.</translation>
+    </message>
+    <message>
+        <source> Configured target percentage: &lt;b&gt;</source>
+        <translation>Konfigureret målprocent:&lt;b&gt;</translation>
+    </message>
+    <message>
+        <source>zFGC is currently disabled due to maintenance.</source>
+        <translation>zFGC er i øjeblikket deaktiveret på grund af vedligeholdelse.</translation>
+    </message>
+    <message>
+        <source>zFGC is currently undergoing maintenance.</source>
+        <translation>zFGC er i øjeblikket under opretholdelse.</translation>
+    </message>
+    <message>
+        <source>Denom. with value &lt;b&gt;1&lt;/b&gt;:</source>
+        <translation>DENOM. med værdi&lt;b&gt;1&lt;/b&gt;:</translation>
+    </message>
+    <message>
+        <source>Denom. with value &lt;b&gt;5&lt;/b&gt;:</source>
+        <translation>DENOM. med værdi &lt;b&gt; 5&lt;/b&gt;:</translation>
+    </message>
+    <message>
+        <source>Denom. with value &lt;b&gt;10&lt;/b&gt;:</source>
+        <translation>DENOM. med værdi &lt;b&gt; 10&lt;/b&gt;:</translation>
+    </message>
+    <message>
+        <source>Denom. with value &lt;b&gt;50&lt;/b&gt;:</source>
+        <translation>DENOM. med værdi &lt;b&gt; 50&lt;/b&gt;:</translation>
+    </message>
+    <message>
+        <source>Denom. with value &lt;b&gt;100&lt;/b&gt;:</source>
+        <translation>DENOM. med værdi &lt;b&gt; 100&lt;/b&gt;:</translation>
+    </message>
+    <message>
+        <source>Denom. with value &lt;b&gt;500&lt;/b&gt;:</source>
+        <translation>DENOM. med værdi  &lt;b&gt;500&lt;/b&gt;:</translation>
+    </message>
+    <message>
+        <source>Denom. with value &lt;b&gt;1000&lt;/b&gt;:</source>
+        <translation>DENOM. med værdi &lt;b&gt; 1000&lt;/b&gt;:</translation>
+    </message>
+    <message>
+        <source>Denom. with value &lt;b&gt;5000&lt;/b&gt;:</source>
+        <translation>DENOM. med værdi &lt;b&gt;5000&lt;/b&gt;:</translation>
+    </message>
+    <message>
+        <source>AutoMint Status:</source>
+        <translation>AutoMint-status:</translation>
+    </message>
+    <message>
+        <source>Denom. &lt;b&gt;1&lt;/b&gt;:</source>
+        <translation>Denom. &lt;b&gt;1&lt;/b&gt;:</translation>
+    </message>
+    <message>
+        <source>Denom. &lt;b&gt;5&lt;/b&gt;:</source>
+        <translation>Denom. &lt;b&gt;5&lt;/b&gt;:</translation>
+    </message>
+    <message>
+        <source>Denom. &lt;b&gt;10&lt;/b&gt;:</source>
+        <translation>Denom. &lt;b&gt;10&lt;/b&gt;:</translation>
+    </message>
+    <message>
+        <source>Denom. &lt;b&gt;50&lt;/b&gt;:</source>
+        <translation>Denom. &lt;b&gt;50&lt;/b&gt;:</translation>
+    </message>
+    <message>
+        <source>Denom. &lt;b&gt;100&lt;/b&gt;:</source>
+        <translation>Denom. &lt;b&gt;100&lt;/b&gt;:</translation>
+    </message>
+    <message>
+        <source>Denom. &lt;b&gt;500&lt;/b&gt;:</source>
+        <translation>Denom. &lt;b&gt;500&lt;/b&gt;:</translation>
+    </message>
+    <message>
+        <source>Denom. &lt;b&gt;1000&lt;/b&gt;:</source>
+        <translation>Denom. &lt;b&gt;1000&lt;/b&gt;:</translation>
+    </message>
+    <message>
+        <source>Denom. &lt;b&gt;5000&lt;/b&gt;:</source>
+        <translation>Denom. &lt;b&gt;5000&lt;/b&gt;:</translation>
+    </message>
+    <message>
+        <source>Error: Your wallet is locked. Please enter the wallet passphrase first.</source>
+        <translation>Fejl: Din tegnebog er låst. Indtast venligst lommebrevets kodeord først.</translation>
+    </message>
+    <message>
+        <source>Message: Enter an amount &gt; 0.</source>
+        <translation>Meddelelse: Indtast et beløb&gt; 0.</translation>
+    </message>
+    <message>
+        <source>Minting </source>
+        <translation>Minting</translation>
+    </message>
+    <message>
+        <source>Successfully minted </source>
+        <translation>Mynt succesfuldt</translation>
+    </message>
+    <message>
+        <source> zFGC in </source>
+        <translation> zFGC i</translation>
+    </message>
+    <message>
+        <source> sec. Used denominations:
+</source>
+        <translation>sek. Brugte betegnelser:.
+</translation>
+    </message>
+    <message>
+        <source>Duration: </source>
+        <translation>Varighed:</translation>
+    </message>
+    <message>
+        <source> sec.
+</source>
+        <translation> sec.
+</translation>
+    </message>
+    <message>
+        <source>Starting ResetSpentZerocoin: </source>
+        <translation>Starter ResetSpentZerocoin:</translation>
+    </message>
+    <message>
+        <source>No 'Pay To' address provided, creating local payment</source>
+        <translation>Ingen 'Betal til' adresse, der er oprettet, skaber lokal betaling</translation>
+    </message>
+    <message>
+        <source>Invalid FGC address</source>
+        <translation> Ugyldig FantasyGold adresse</translation>
+    </message>
+    <message>
+        <source>Invalid Send Amount</source>
+        <translation>Ugyldig Send beløb</translation>
+    </message>
+    <message>
+        <source>Confirm additional Fees</source>
+        <translation>Bekræft yderligere gebyrer</translation>
+    </message>
+    <message>
+        <source>Are you sure you want to send?&lt;br /&gt;&lt;br /&gt;</source>
+        <translation>Er De sikker på at De vil sende? &lt;br /&gt;&lt;br /&gt;</translation>
+    </message>
+    <message>
+        <source> to address </source>
+        <translation>at adressere</translation>
+    </message>
+    <message>
+        <source> to a newly generated (unused and therefore anonymous) local address &lt;br /&gt;</source>
+        <translation>til en nyligt genereret (ubrugt og derfor anonym) lokal adresse &lt;br /&gt;</translation>
+    </message>
+    <message>
+        <source>with Security Level </source>
+        <translation>med sikkerhedsniveau</translation>
+    </message>
+    <message>
+        <source>Confirm send coins</source>
+        <translation>Bekræft at De vil sende mønter</translation>
+    </message>
+    <message>
+        <source>Version 1 zFGC require a security level of 100 to successfully spend.</source>
+        <translation>Version 1 zFGC kræver et sikkerhedsniveau på 100 til succes.</translation>
+    </message>
+    <message>
+        <source>Failed to spend zFGC</source>
+        <translation>Kunne ikke bruge zFGC</translation>
+    </message>
+    <message>
+        <source>Failed to fetch mint associated with serial hash</source>
+        <translation>Kunne ikke hente mynte i forbindelse med seriel hash</translation>
+    </message>
+    <message>
+        <source>Too much inputs (</source>
+        <translation>For mange input (</translation>
+    </message>
+    <message>
+        <source>
+Either mint higher denominations (so fewer inputs are needed) or reduce the amount to spend.</source>
+        <translation>
+Enten mint højere nomineringer (så færre input er nødvendige) eller reducere det beløb, der skal bruges.</translation>
+    </message>
+    <message>
+        <source>Spend Zerocoin failed with status = </source>
+        <translation>Brug Zerocoin mislykkedes med status =</translation>
+    </message>
+    <message numerus="yes">
+        <source>PrivacyDialog</source>
+        <comment>Enter an amount of FGC to convert to zFGC</comment>
+        <translation><numerusform>PrivacyDialog</numerusform><numerusform>PrivacyDialog</numerusform></translation>
+    </message>
+    <message>
+        <source>denomination: </source>
+        <translation>pålydende:</translation>
+    </message>
+    <message>
+        <source>serial: </source>
+        <translation>seriel:</translation>
+    </message>
+    <message>
+        <source>Spend is 1 of : </source>
+        <translation>Tilbring er 1 af:</translation>
+    </message>
+    <message>
+        <source>value out: </source>
+        <translation>værdi ud:</translation>
+    </message>
+    <message>
+        <source>address: </source>
+        <translation>adresse:</translation>
+    </message>
+    <message>
+        <source>Sending successful, return code: </source>
+        <translation>Afsendelse af succes, returkode:</translation>
+    </message>
+    <message>
+        <source>txid: </source>
+        <translation>txid: </translation>
+    </message>
+    <message>
+        <source>fee: </source>
+        <translation>Gebyr:</translation>
+    </message>
+</context>
+<context>
     <name>QObject</name>
     <message>
         <source>Amount</source>
@@ -2173,6 +3054,10 @@ https://www.transifex.com/fantasygold-project/fantasygold-project-translations</
         <translation>NETVÆRK</translation>
     </message>
     <message>
+        <source>BLOOM</source>
+        <translation>BLOOM</translation>
+    </message>
+    <message>
         <source>UNKNOWN</source>
         <translation>UENDT</translation>
     </message>
@@ -2192,12 +3077,12 @@ https://www.transifex.com/fantasygold-project/fantasygold-project-translations</
 <context>
     <name>QRImageWidget</name>
     <message>
-        <source>&amp;Save Image...</source>
-        <translation>&amp;Gem billede</translation>
+        <source>Save Image...</source>
+        <translation>Gem billede</translation>
     </message>
     <message>
-        <source>&amp;Copy Image</source>
-        <translation>&amp;Kopier billede</translation>
+        <source>Copy Image</source>
+        <translation>Kopier billede</translation>
     </message>
     <message>
         <source>Save QR Code</source>
@@ -2215,8 +3100,8 @@ https://www.transifex.com/fantasygold-project/fantasygold-project-translations</
         <translation>Værktøjskasse</translation>
     </message>
     <message>
-        <source>&amp;Information</source>
-        <translation>&amp;information</translation>
+        <source>Information</source>
+        <translation>information</translation>
     </message>
     <message>
         <source>General</source>
@@ -2239,8 +3124,8 @@ https://www.transifex.com/fantasygold-project/fantasygold-project-translations</
         <translation>Antal forbindelser</translation>
     </message>
     <message>
-        <source>&amp;Open</source>
-        <translation>&amp;Åben</translation>
+        <source>Open</source>
+        <translation>Åben</translation>
     </message>
     <message>
         <source>Startup time</source>
@@ -2291,20 +3176,20 @@ https://www.transifex.com/fantasygold-project/fantasygold-project-translations</
         <translation>Antal masternoder</translation>
     </message>
     <message>
-        <source>&amp;Console</source>
-        <translation>&amp;konsol</translation>
+        <source>Console</source>
+        <translation>konsol</translation>
     </message>
     <message>
         <source>Clear console</source>
         <translation>Clear konsollet</translation>
     </message>
     <message>
-        <source>&amp;Network Traffic</source>
-        <translation>&amp;Netværkstrafik</translation>
+        <source>Network Traffic</source>
+        <translation>Netværkstrafik</translation>
     </message>
     <message>
-        <source>&amp;Clear</source>
-        <translation>&amp;clear</translation>
+        <source>Clear</source>
+        <translation>clear</translation>
     </message>
     <message>
         <source>Totals</source>
@@ -2319,12 +3204,20 @@ https://www.transifex.com/fantasygold-project/fantasygold-project-translations</
         <translation>Sendt</translation>
     </message>
     <message>
-        <source>&amp;Peers</source>
-        <translation>&amp;Peers</translation>
+        <source>Peers</source>
+        <translation>Peers</translation>
+    </message>
+    <message>
+        <source>Banned peers</source>
+        <translation>Forbudte jævnaldrende</translation>
     </message>
     <message>
         <source>Select a peer to view detailed information.</source>
         <translation>Vælg en peer for at få vist deltaljerede informationer</translation>
+    </message>
+    <message>
+        <source>Whitelisted</source>
+        <translation>whitelisten</translation>
     </message>
     <message>
         <source>Direction</source>
@@ -2341,14 +3234,6 @@ https://www.transifex.com/fantasygold-project/fantasygold-project-translations</
     <message>
         <source>Services</source>
         <translation>Tjenester</translation>
-    </message>
-    <message>
-        <source>Starting Height</source>
-        <translation>Starthøjde</translation>
-    </message>
-    <message>
-        <source>Sync Height</source>
-        <translation>Synkroniseringshøjde</translation>
     </message>
     <message>
         <source>Ban Score</source>
@@ -2379,12 +3264,52 @@ https://www.transifex.com/fantasygold-project/fantasygold-project-translations</
         <translation>PingtidPingtid</translation>
     </message>
     <message>
-        <source>&amp;Wallet Repair</source>
-        <translation>&amp;Tegnebog Reparer</translation>
+        <source>Wallet Repair</source>
+        <translation>Tegnebog Reparer</translation>
+    </message>
+    <message>
+        <source>Delete local Blockchain Folders</source>
+        <translation>Slet lokale blokchainmapper</translation>
     </message>
     <message>
         <source>Wallet In Use:</source>
         <translation>Tegnebog i brug</translation>
+    </message>
+    <message>
+        <source>Starting Block</source>
+        <translation>Startblok</translation>
+    </message>
+    <message>
+        <source>Synced Headers</source>
+        <translation>Synkroniserede overskrifter</translation>
+    </message>
+    <message>
+        <source>Synced Blocks</source>
+        <translation>Synced Blocks</translation>
+    </message>
+    <message>
+        <source>The duration of a currently outstanding ping.</source>
+        <translation>Varigheden af en aktuelt fremragende ping.</translation>
+    </message>
+    <message>
+        <source>Ping Wait</source>
+        <translation>Ping Vent</translation>
+    </message>
+    <message>
+        <source>Time Offset</source>
+        <translation>Tidsforskydning</translation>
+    </message>
+    <message>
+        <source>Custom Backup Path:</source>
+        <translation>Brugerdefineret Backup-sti:</translation>
+    </message>
+    <message>
+        <source>Custom zFGC Backup Path:</source>
+        <translation>Brugerdefineret zFGC Backup-sti:</translation>
+    </message>
+    <message>
+        <source>Custom Backups Threshold:</source>
+        <translation>Brugerdefineret sikkerhedskopieringstærskel:</translation>
     </message>
     <message>
         <source>Salvage wallet</source>
@@ -2427,6 +3352,14 @@ https://www.transifex.com/fantasygold-project/fantasygold-project-translations</
         <translation>Genopbyg blokkædens indeks fra de aktuelle blk000??.dat filer</translation>
     </message>
     <message>
+        <source>-resync:</source>
+        <translation>-resync:</translation>
+    </message>
+    <message>
+        <source>Deletes all local blockchain folders so the wallet synchronizes from scratch.</source>
+        <translation>Sletter alle lokale blockchain-mapper, så tegnebogen synkroniseres fra bunden.</translation>
+    </message>
+    <message>
         <source>The buttons below will restart the wallet with command-line options to repair the wallet, fix issues with corrupt blockhain files or missing/obsolete transactions.</source>
         <translation>Nedenstående knapper vil genstarte tegnebogen med kommandolinieparametre fr at reparere den, korrigere fejl og mangler i block-chain filerne, herunder også undersøge for manglende eller fejlagtige transaktioner</translation>
     </message>
@@ -2455,6 +3388,54 @@ https://www.transifex.com/fantasygold-project/fantasygold-project-translations</
         <translation>Velkommen til FantasyGold RPC konsollet</translation>
     </message>
     <message>
+        <source>Disconnect Node</source>
+        <translation> Afbryd knudepunkt</translation>
+    </message>
+    <message>
+        <source>Ban Node for</source>
+        <translation>Ban Node for</translation>
+    </message>
+    <message>
+        <source>1 hour</source>
+        <translation>1 hour</translation>
+    </message>
+    <message>
+        <source>1 day</source>
+        <translation>1 day</translation>
+    </message>
+    <message>
+        <source>1 week</source>
+        <translation>1 week</translation>
+    </message>
+    <message>
+        <source>1 year</source>
+        <translation>1 year</translation>
+    </message>
+    <message>
+        <source>Unban Node</source>
+        <translation> Unban Node</translation>
+    </message>
+    <message>
+        <source>This will delete your local blockchain folders and the wallet will synchronize the complete Blockchain from scratch.&lt;br /&gt;&lt;br /&gt;</source>
+        <translation>Dette vil slette dine lokale blockchain-mapper, og tegnebogen vil synkronisere den komplette blokke fra bunden.&lt;br /&gt;&lt;br /&gt;</translation>
+    </message>
+    <message>
+        <source>This needs quite some time and downloads a lot of data.&lt;br /&gt;&lt;br /&gt;</source>
+        <translation>Dette har brug for en del tid og overfører mange data.&lt;br /&gt;&lt;br /&gt;</translation>
+    </message>
+    <message>
+        <source>Your transactions and funds will be visible again after the download has completed.&lt;br /&gt;&lt;br /&gt;</source>
+        <translation>Dine transaktioner og penge vil blive synlige igen, når downloadet er gennemført.&lt;br /&gt;&lt;br /&gt;</translation>
+    </message>
+    <message>
+        <source>Do you want to continue?.&lt;br /&gt;</source>
+        <translation>Vil du fortsætte?.&lt;br /&gt;</translation>
+    </message>
+    <message>
+        <source>Confirm resync Blockchain</source>
+        <translation>Bekræft resync Blockchain</translation>
+    </message>
+    <message>
         <source>Use up and down arrows to navigate history, and &lt;b&gt;Ctrl-L&lt;/b&gt; to clear screen.</source>
         <translation>Brug piltasterne for at navigere rundt i historiedata, og &lt;b&gt;Ctrl-L&lt;/b&gt; for at tømme skærmen.</translation>
     </message>
@@ -2479,6 +3460,10 @@ https://www.transifex.com/fantasygold-project/fantasygold-project-translations</
         <translation>%1 GB</translation>
     </message>
     <message>
+        <source>(node id: %1)</source>
+        <translation>(node id: %1)</translation>
+    </message>
+    <message>
         <source>via %1</source>
         <translation>Via %1</translation>
     </message>
@@ -2495,12 +3480,16 @@ https://www.transifex.com/fantasygold-project/fantasygold-project-translations</
         <translation>Udgående</translation>
     </message>
     <message>
-        <source>Unknown</source>
-        <translation>Ukendt</translation>
+        <source>Yes</source>
+        <translation>Ja</translation>
     </message>
     <message>
-        <source>Fetching...</source>
-        <translation>Henter</translation>
+        <source>No</source>
+        <translation>Ingen</translation>
+    </message>
+    <message>
+        <source>Unknown</source>
+        <translation>Ukendt</translation>
     </message>
 </context>
 <context>
@@ -2510,12 +3499,12 @@ https://www.transifex.com/fantasygold-project/fantasygold-project-translations</
         <translation>Genbrug en af de tidligere benyttede modtageradresser. &lt;br&gt; Genbrug af adresser kan kompromittere anonymiteten og sikkerheden. &lt;br&gt; Anbefales ikke, med mindre der blot er tale om genudsendelse af en tidligere genereret adresse.</translation>
     </message>
     <message>
-        <source>R&amp;euse an existing receiving address (not recommended)</source>
-        <translation>G&amp;enbrug en eksisterendemodageradresse (ikke anbefalet)</translation>
+        <source>Reuse an existing receiving address (not recommended)</source>
+        <translation>Genbrug en eksisterendemodageradresse (ikke anbefalet)</translation>
     </message>
     <message>
-        <source>&amp;Message:</source>
-        <translation>&amp;Besked</translation>
+        <source>Message:</source>
+        <translation>Besked</translation>
     </message>
     <message>
         <source>An optional label to associate with the new receiving address.</source>
@@ -2526,6 +3515,10 @@ https://www.transifex.com/fantasygold-project/fantasygold-project-translations</
         <translation>Valgfri besked som vedhæftes betalingsanmodnigen, og som bliver vist når anmodningen åbnes. Note: Beskeden fremsendes ikke sammen med betalingen, når denne sendes ud på FantasyGold netværket.</translation>
     </message>
     <message>
+        <source>RECEIVE</source>
+        <translation>MODTAGE</translation>
+    </message>
+    <message>
         <source>An optional message to attach to the payment request, which will be displayed when the request is opened.&lt;br&gt;Note: The message will not be sent with the payment over the FantasyGold network.</source>
         <translation>Valgfri besked som vedhæftes betalingsanmodnigen, og som bliver vist når anmodningen åbnes. &lt;br&gt;Note: Beskeden fremsendes ikke sammen med betalingen, når denne sendes ud på FantasyGold netværket.</translation>
     </message>
@@ -2534,20 +3527,20 @@ https://www.transifex.com/fantasygold-project/fantasygold-project-translations</
         <translation>Anvend denne formular for at anmode om betalinger. Alle felter er &lt;b&gt;valgfri&lt;/b&gt;</translation>
     </message>
     <message>
-        <source>&amp;Label:</source>
-        <translation>&amp;Mærkning</translation>
+        <source>Label:</source>
+        <translation>Mærkning</translation>
     </message>
     <message>
         <source>An optional amount to request. Leave this empty or zero to not request a specific amount.</source>
         <translation>Beløbsfeltet er valgfrit. Efterlad det tomt, eller med værdien 0 for at anmode om et beløb, som afsenderen bestemmer.</translation>
     </message>
     <message>
-        <source>&amp;Amount:</source>
-        <translation>&amp;Beløb</translation>
+        <source>Amount:</source>
+        <translation>Beløb</translation>
     </message>
     <message>
-        <source>&amp;Request payment</source>
-        <translation>&amp;Anmod om betaling</translation>
+        <source>Request payment</source>
+        <translation>Anmod om betaling</translation>
     </message>
     <message>
         <source>Clear all fields of the form.</source>
@@ -2555,7 +3548,7 @@ https://www.transifex.com/fantasygold-project/fantasygold-project-translations</
     </message>
     <message>
         <source>Clear</source>
-        <translation>&amp;clear</translation>
+        <translation>clear</translation>
     </message>
     <message>
         <source>Requested payments history</source>
@@ -2597,16 +3590,16 @@ https://www.transifex.com/fantasygold-project/fantasygold-project-translations</
         <translation>QR kode</translation>
     </message>
     <message>
-        <source>Copy &amp;URI</source>
-        <translation>Kopier &amp;URl</translation>
+        <source>Copy URI</source>
+        <translation>Kopier URl</translation>
     </message>
     <message>
-        <source>Copy &amp;Address</source>
-        <translation>Kopier &amp;Adresse</translation>
+        <source>Copy Address</source>
+        <translation>Kopier Adresse</translation>
     </message>
     <message>
-        <source>&amp;Save Image...</source>
-        <translation>&amp;Gem billede</translation>
+        <source>Save Image...</source>
+        <translation>Gem billede</translation>
     </message>
     <message>
         <source>Request payment to %1</source>
@@ -2683,16 +3676,12 @@ https://www.transifex.com/fantasygold-project/fantasygold-project-translations</
         <translation>Send mønter</translation>
     </message>
     <message>
+        <source>SEND</source>
+        <translation>SENDE</translation>
+    </message>
+    <message>
         <source>Coin Control Features</source>
         <translation>Møntkontrol, features</translation>
-    </message>
-    <message>
-        <source>Inputs...</source>
-        <translation>Inputs...</translation>
-    </message>
-    <message>
-        <source>automatically selected</source>
-        <translation>Automatisk valgte</translation>
     </message>
     <message>
         <source>Insufficient funds!</source>
@@ -2759,8 +3748,8 @@ https://www.transifex.com/fantasygold-project/fantasygold-project-translations</
         <translation>UTXO størrelse:</translation>
     </message>
     <message>
-        <source>0 FGC</source>
-        <translation>0 FGC</translation>
+        <source>0 FantasyGold</source>
+        <translation>0 FantasyGold</translation>
     </message>
     <message>
         <source>Transaction Fee:</source>
@@ -2777,10 +3766,6 @@ https://www.transifex.com/fantasygold-project/fantasygold-project-translations</
     <message>
         <source>Minimize</source>
         <translation>Minimer</translation>
-    </message>
-    <message>
-        <source>Obfuscation</source>
-        <translation>Tilsløring</translation>
     </message>
     <message>
         <source>per kilobyte</source>
@@ -2803,16 +3788,28 @@ https://www.transifex.com/fantasygold-project/fantasygold-project-translations</
         <translation>(Smartgebyr endnu ikke initialiseret. Det tager som regel nogle få blokke...)</translation>
     </message>
     <message>
+        <source>SwiftX</source>
+        <translation>SwiftX</translation>
+    </message>
+    <message>
         <source>Confirmation time:</source>
         <translation>Bekræftelsestid</translation>
     </message>
     <message>
+        <source>Open Coin Control...</source>
+        <translation>Åben møntkontrol ...</translation>
+    </message>
+    <message>
+        <source>Coins automatically selected</source>
+        <translation>Mønter vælges automatisk</translation>
+    </message>
+    <message>
         <source>If the custom fee is set to 1000 uFGCs and the transaction is only 250 bytes, then "per kilobyte" only pays 250 uFGCs in fee,&lt;br /&gt;while "at least" pays 1000 uFGCs. For transactions bigger than a kilobyte both pay by kilobyte.</source>
-        <translation>Hvis den brugerfastsatte gebyrbetaling er sat til 1000 uFGCs og transaktionen kun fylder 250 bytes, så vil "pr. kilobyte" kun udbetale 250 uFGCi gebyr, &lt;br /&gt; mens "mindst" udbetaler 1000 uFGCs. For transaktioner større end en kilobyte betales i begge tilfælde i forhold til antallet af kilobytes </translation>
+        <translation>Hvis den brugerfastsatte gebyrbetaling er sat til 1000 uFGCs og transaktionen kun fylder 250 bytes, så vil "pr. kilobyte" kun udbetale 250 uFantasyGold i gebyr, &lt;br /&gt; mens "mindst" udbetaler 1000 uFGCs. For transaktioner større end en kilobyte betales i begge tilfælde i forhold til antallet af kilobytes </translation>
     </message>
     <message>
         <source>If the custom fee is set to 1000 uFGCs and the transaction is only 250 bytes, then "per kilobyte" only pays 250 uFGCs in fee,&lt;br /&gt;while "total at least" pays 1000 uFGCs. For transactions bigger than a kilobyte both pay by kilobyte.</source>
-        <translation>Hvis den brugerfastsatte gebyrbetaling er sat til 1000 uFGCs og transaktionen kun fylder 250 bytes, så vil "pr. kilobyte" kun udbetale 250 uFGCi gebyr, &lt;br /&gt; mens "Total-mindst" udbetaler 1000 uFGCs. For transaktioner større end en kilobyte betales i begge tilfælde i forhold til antallet af kilobytes </translation>
+        <translation>Hvis den brugerfastsatte gebyrbetaling er sat til 1000 uFGCs og transaktionen kun fylder 250 bytes, så vil "pr. kilobyte" kun udbetale 250 uFantasyGold i gebyr, &lt;br /&gt; mens "Total-mindst" udbetaler 1000 uFGCs. For transaktioner større end en kilobyte betales i begge tilfælde i forhold til antallet af kilobytes </translation>
     </message>
     <message>
         <source>Paying only the minimum fee is just fine as long as there is less transaction volume than space in the blocks.&lt;br /&gt;But be aware that this can end up in a never confirming transaction once there is more demand for FantasyGold transactions than the network can process.</source>
@@ -2843,15 +3840,15 @@ https://www.transifex.com/fantasygold-project/fantasygold-project-translations</
         <translation>Bekræft  og send</translation>
     </message>
     <message>
-        <source>S&amp;end</source>
-        <translation>S&amp;end</translation>
+        <source>Send</source>
+        <translation>Send</translation>
     </message>
     <message>
         <source>Clear all fields of the form.</source>
         <translation>Tøm alle felter i formularen</translation>
     </message>
     <message>
-        <source>Clear &amp;All</source>
+        <source>Clear All</source>
         <translation>Nulstil alt</translation>
     </message>
     <message>
@@ -2859,12 +3856,12 @@ https://www.transifex.com/fantasygold-project/fantasygold-project-translations</
         <translation>Send til flere modtagere på én gang</translation>
     </message>
     <message>
-        <source>Add &amp;Recipient</source>
-        <translation>Tilføj &amp;Modtager</translation>
+        <source>Add Recipient</source>
+        <translation>Tilføj Modtager</translation>
     </message>
     <message>
-        <source>SwiftTX</source>
-        <translation>SwiftTX</translation>
+        <source>Anonymized FGC</source>
+        <translation>Tilsløret FantasyGold</translation>
     </message>
     <message>
         <source>Balance:</source>
@@ -2911,24 +3908,8 @@ https://www.transifex.com/fantasygold-project/fantasygold-project-translations</
         <translation>Split blok værktøjet virker ikke med flere adresser. Prøv igen</translation>
     </message>
     <message>
-        <source>using</source>
-        <translation>Anvender</translation>
-    </message>
-    <message>
-        <source>anonymous funds</source>
-        <translation>Anonyme saldi</translation>
-    </message>
-    <message>
-        <source>Warning: Invalid FantasyGold address</source>
+        <source>Warning: Invalid FGC address</source>
         <translation>Advarsel! Ugyldig FantasyGold adresse</translation>
-    </message>
-    <message>
-        <source>any available funds (not recommended)</source>
-        <translation>Alle tilgængelige saldi (anbefales ikke)</translation>
-    </message>
-    <message>
-        <source>and SwiftTX</source>
-        <translation>og SwiftTX</translation>
     </message>
     <message>
         <source>%1 to %2</source>
@@ -2963,8 +3944,8 @@ https://www.transifex.com/fantasygold-project/fantasygold-project-translations</
         <translation>Modtageradressen er ikke gyldig. Kontroller igen</translation>
     </message>
     <message>
-        <source>(obfuscation requires this amount to be rounded up to the nearest %1).</source>
-        <translation>(Tilsløring kræver at dette beløb rundes op til nærmeste %1)</translation>
+        <source>using SwiftX</source>
+        <translation>ved hjælp af SwiftX</translation>
     </message>
     <message>
         <source> split into %1 outputs using the UTXO splitter.</source>
@@ -3003,6 +3984,10 @@ https://www.transifex.com/fantasygold-project/fantasygold-project-translations</
         <translation>Fejl! Tegnebogen blev kun låst op for at anonymisere mønterne. </translation>
     </message>
     <message>
+        <source>Error: The wallet was unlocked only to anonymize coins. Unlock canceled.</source>
+        <translation>Fejl: Tegnebogen blev låst op for at anonymisere mønter. Lås op afbrudt.</translation>
+    </message>
+    <message>
         <source>Pay only the minimum fee of %1</source>
         <translation>Betal kun minimums transaktionsgebyret på %1</translation>
     </message>
@@ -3022,8 +4007,8 @@ https://www.transifex.com/fantasygold-project/fantasygold-project-translations</
         <translation>Dette er en almindelig betaling</translation>
     </message>
     <message>
-        <source>Pay &amp;To:</source>
-        <translation>Betal &amp;Til</translation>
+        <source>Pay To:</source>
+        <translation>Betal Til</translation>
     </message>
     <message>
         <source>The FantasyGold address to send the payment to</source>
@@ -3050,16 +4035,16 @@ https://www.transifex.com/fantasygold-project/fantasygold-project-translations</
         <translation>Fjern denne postering</translation>
     </message>
     <message>
-        <source>&amp;Label:</source>
-        <translation>&amp;Mærkning</translation>
+        <source>Label:</source>
+        <translation>Mærkning</translation>
     </message>
     <message>
         <source>Enter a label for this address to add it to the list of used addresses</source>
         <translation>Indtast et mærke til denne adresse for at tilføje den til listen over brugte adresser</translation>
     </message>
     <message>
-        <source>A&amp;mount:</source>
-        <translation>A&amp;mount</translation>
+        <source>Amount:</source>
+        <translation>Amount</translation>
     </message>
     <message>
         <source>Message:</source>
@@ -3108,8 +4093,8 @@ https://www.transifex.com/fantasygold-project/fantasygold-project-translations</
         <translation>Underskrifter - Underskriv / verificer en besked</translation>
     </message>
     <message>
-        <source>&amp;Sign Message</source>
-        <translation>&amp;Underskriv besked</translation>
+        <source>Sign Message</source>
+        <translation>Underskriv besked</translation>
     </message>
     <message>
         <source>You can sign messages with your addresses to prove you own them. Be careful not to sign anything vague, as phishing attacks may try to trick you into signing your identity over to them. Only sign fully-detailed statements you agree to.</source>
@@ -3160,28 +4145,28 @@ https://www.transifex.com/fantasygold-project/fantasygold-project-translations</
         <translation>verificer beskeden for at sikre, at den blev underskrevet med den rigtige FantasyGold adresse.</translation>
     </message>
     <message>
-        <source>Sign &amp;Message</source>
-        <translation>Underskriv &amp;Besked</translation>
+        <source>Sign Message</source>
+        <translation>Underskriv Besked</translation>
     </message>
     <message>
         <source>Reset all sign message fields</source>
         <translation>Nulstil alle underskriftsfelter</translation>
     </message>
     <message>
-        <source>Clear &amp;All</source>
+        <source>Clear All</source>
         <translation>Nulstil alt</translation>
     </message>
     <message>
-        <source>&amp;Verify Message</source>
-        <translation>&amp;verificer besked</translation>
+        <source>Verify Message</source>
+        <translation>verificer besked</translation>
     </message>
     <message>
         <source>Enter the signing address, message (ensure you copy line breaks, spaces, tabs, etc. exactly) and signature below to verify the message. Be careful not to read more into the signature than what is in the signed message itself, to avoid being tricked by a man-in-the-middle attack.</source>
         <translation>Skriv den adresse der skal bruges til at underskrive med. (Vær sikker på at få det hele med, herunder alle linjerne, mellemrum, tabuleringer o.l. præcist) og signer nedenfor for at verificere beskeden. Vær forsigtig med ikke at læse mere ind i underskriften end den underskrevne besked for at undgå snyd fra et "man-in-the-middle" angreb.</translation>
     </message>
     <message>
-        <source>Verify &amp;Message</source>
-        <translation>Verificer &amp;Beske</translation>
+        <source>Verify Message</source>
+        <translation>Verificer Beske</translation>
     </message>
     <message>
         <source>Reset all verify message fields</source>
@@ -3258,6 +4243,10 @@ https://www.transifex.com/fantasygold-project/fantasygold-project-translations</
         <source>The Dash Core developers</source>
         <translation>DASH "core" udviklerne</translation>
     </message>
+	<message>
+        <source>The Bulwark Core developers</source>
+        <translation>Bulwark "core" udviklerne</translation>
+    </message>
     <message>
         <source>The FantasyGold Core developers</source>
         <translation>FantasyGold "core" udviklerne</translation>
@@ -3276,6 +4265,10 @@ https://www.transifex.com/fantasygold-project/fantasygold-project-translations</
 </context>
 <context>
     <name>TransactionDesc</name>
+    <message numerus="yes">
+        <source>Open for %n more block(s)</source>
+        <translation><numerusform>Åbn for %n flere blokke</numerusform><numerusform>Åbn for %n flere blokke</numerusform></translation>
+    </message>
     <message>
         <source>Open until %1</source>
         <translation>Åbn frem til %1</translation>
@@ -3283,18 +4276,6 @@ https://www.transifex.com/fantasygold-project/fantasygold-project-translations</
     <message>
         <source>conflicted</source>
         <translation>Konflikt!</translation>
-    </message>
-    <message>
-        <source>%1/offline (verified via swifttx)</source>
-        <translation>%1/offline (verified via svifttx)</translation>
-    </message>
-    <message>
-        <source>%1/confirmed (verified via swifttx)</source>
-        <translation>%1/bekræftet (verified via svifttx)</translation>
-    </message>
-    <message>
-        <source>%1 confirmations (verified via swifttx)</source>
-        <translation>%1/bekræftelser (verified via svifttx)</translation>
     </message>
     <message>
         <source>%1/offline</source>
@@ -3309,23 +4290,35 @@ https://www.transifex.com/fantasygold-project/fantasygold-project-translations</
         <translation>%1/bekræftelser</translation>
     </message>
     <message>
-        <source>%1/offline (SwiftTX verification in progress - %2 of %3 signatures)</source>
+        <source>%1/offline (verified via SwiftX)</source>
+        <translation>%1/offline (verified via svifttx)</translation>
+    </message>
+    <message>
+        <source>%1/confirmed (verified via SwiftX)</source>
+        <translation>%1/bekræftet (verified via svifttx)</translation>
+    </message>
+    <message>
+        <source>%1 confirmations (verified via SwiftX)</source>
+        <translation>%1/bekræftelser (verified via svifttx)</translation>
+    </message>
+    <message>
+        <source>%1/offline (SwiftX verification in progress - %2 of %3 signatures)</source>
         <translation>%1/offline (SwifTX verificering i gang - %2 af %3 signaturer)</translation>
     </message>
     <message>
-        <source>%1/confirmed (SwiftTX verification in progress - %2 of %3 signatures )</source>
+        <source>%1/confirmed (SwiftX verification in progress - %2 of %3 signatures )</source>
         <translation>%1/bekræftet(SwifTX verificering i gang - %2 af %3 signaturer)</translation>
     </message>
     <message>
-        <source>%1 confirmations (SwiftTX verification in progress - %2 of %3 signatures)</source>
+        <source>%1 confirmations (SwiftX verification in progress - %2 of %3 signatures)</source>
         <translation>%1/bekræftelser (SwifTX verificering i gang - %2 af %3 signaturer)</translation>
     </message>
     <message>
-        <source>%1/offline (SwiftTX verification failed)</source>
+        <source>%1/offline (SwiftX verification failed)</source>
         <translation>%1/offline (SwifTX verificering mislykkedes)</translation>
     </message>
     <message>
-        <source>%1/confirmed (SwiftTX verification failed)</source>
+        <source>%1/confirmed (SwiftX verification failed)</source>
         <translation>%1/bekræftet (SwifTX verificering mislykkedes)</translation>
     </message>
     <message>
@@ -3335,6 +4328,10 @@ https://www.transifex.com/fantasygold-project/fantasygold-project-translations</
     <message>
         <source>, has not been successfully broadcast yet</source>
         <translation>, er ikke udsendt endnu</translation>
+    </message>
+    <message numerus="yes">
+        <source>, broadcast through %n node(s)</source>
+        <translation><numerusform>, sendt gennem %n noder</numerusform><numerusform>, sendt gennem %n noder</numerusform></translation>
     </message>
     <message>
         <source>Date</source>
@@ -3375,6 +4372,10 @@ https://www.transifex.com/fantasygold-project/fantasygold-project-translations</
     <message>
         <source>Credit</source>
         <translation>Kredit</translation>
+    </message>
+    <message numerus="yes">
+        <source>matures in %n more block(s)</source>
+        <translation><numerusform>Modnes efter %n blokke</numerusform><numerusform>Modnes efter %n blokke</numerusform></translation>
     </message>
     <message>
         <source>not accepted</source>
@@ -3474,6 +4475,10 @@ https://www.transifex.com/fantasygold-project/fantasygold-project-translations</
         <source>Address</source>
         <translation>Adresse</translation>
     </message>
+    <message numerus="yes">
+        <source>Open for %n more block(s)</source>
+        <translation><numerusform>Åbn for %n flere blokke</numerusform><numerusform>Åbn for %n flere blokke</numerusform></translation>
+    </message>
     <message>
         <source>Open until %1</source>
         <translation>Åbn frem til %1</translation>
@@ -3523,6 +4528,14 @@ https://www.transifex.com/fantasygold-project/fantasygold-project-translations</
         <translation>Modtaget via tilsløring</translation>
     </message>
     <message>
+        <source>FantasyGold Stake</source>
+        <translation>FantasyGold Stake</translation>
+    </message>
+    <message>
+        <source>zFGC Stake</source>
+        <translation>zFGC Stake</translation>
+    </message>
+    <message>
         <source>Obfuscation Denominate</source>
         <translation>Tilslør designerede</translation>
     </message>
@@ -3539,6 +4552,34 @@ https://www.transifex.com/fantasygold-project/fantasygold-project-translations</
         <translation>Opret tilsløret designering</translation>
     </message>
     <message>
+        <source>Converted FantasyGold to zFGC</source>
+        <translation>Konverteret FantasyGold til zFGC</translation>
+    </message>
+    <message>
+        <source>Spent zFGC</source>
+        <translation>Brugt zFGC</translation>
+    </message>
+    <message>
+        <source>Received FantasyGold from zFGC</source>
+        <translation>Modtaget FantasyGold fra zFGC</translation>
+    </message>
+    <message>
+        <source>Minted Change as zFGC from zFGC Spend</source>
+        <translation>Minted Change som zFGC fra zFGC Spend</translation>
+    </message>
+    <message>
+        <source>Converted zFGC to FantasyGold</source>
+        <translation>Konverteret FantasyGold til zFGC</translation>
+    </message>
+    <message>
+        <source>Anonymous (zFGC Transaction)</source>
+        <translation>Anonym (zFGC Transaction)</translation>
+    </message>
+    <message>
+        <source>Anonymous (zFGC Stake)</source>
+        <translation>Anonym (zFGC Stake)</translation>
+    </message>
+    <message>
         <source>Sent to</source>
         <translation>Sendt til</translation>
     </message>
@@ -3549,10 +4590,6 @@ https://www.transifex.com/fantasygold-project/fantasygold-project-translations</
     <message>
         <source>Payment to yourself</source>
         <translation>Betaling til Dem selv</translation>
-    </message>
-    <message>
-        <source>Minted</source>
-        <translation>Mintet</translation>
     </message>
     <message>
         <source>Mined</source>
@@ -3638,26 +4675,6 @@ https://www.transifex.com/fantasygold-project/fantasygold-project-translations</
         <translation>Sendt til</translation>
     </message>
     <message>
-        <source>Obfuscated</source>
-        <translation>skjult</translation>
-    </message>
-    <message>
-        <source>Obfuscation Make Collateral Inputs</source>
-        <translation>Tilslørede samlede tilføjelser</translation>
-    </message>
-    <message>
-        <source>Obfuscation Create Denominations</source>
-        <translation>Opret tilsløret designering</translation>
-    </message>
-    <message>
-        <source>Obfuscation Denominate</source>
-        <translation>Tilslør designerede</translation>
-    </message>
-    <message>
-        <source>Obfuscation Collateral Payment</source>
-        <translation>Samlet tilsløret betaling</translation>
-    </message>
-    <message>
         <source>To yourself</source>
         <translation>Til Dem selv</translation>
     </message>
@@ -3672,6 +4689,18 @@ https://www.transifex.com/fantasygold-project/fantasygold-project-translations</
     <message>
         <source>Masternode Reward</source>
         <translation>Masternodebelønning</translation>
+    </message>
+    <message>
+        <source>Zerocoin Mint</source>
+        <translation>Zerocoin Mint</translation>
+    </message>
+    <message>
+        <source>Zerocoin Spend</source>
+        <translation>Zerocoin Tilbring</translation>
+    </message>
+    <message>
+        <source>Zerocoin Spend to Self</source>
+        <translation>Zerocoin bruger sig selv</translation>
     </message>
     <message>
         <source>Other</source>
@@ -3758,6 +4787,14 @@ https://www.transifex.com/fantasygold-project/fantasygold-project-translations</
         <translation>Eksporteret!</translation>
     </message>
     <message>
+        <source>Received FantasyGold from zFGC</source>
+        <translation>Modtaget FantasyGold fra zFGC</translation>
+    </message>
+    <message>
+        <source>Zerocoin Spend, Change in zFGC</source>
+        <translation>Zerocoin Spend, Ændring i zFGC</translation>
+    </message>
+    <message>
         <source>The transaction history was successfully saved to %1.</source>
         <translation>Transaktionshistorikken blev gemt i %1</translation>
     </message>
@@ -3791,15 +4828,19 @@ https://www.transifex.com/fantasygold-project/fantasygold-project-translations</
         <translation>Send mønter</translation>
     </message>
     <message>
-        <source>SwiftTX doesn't support sending values that high yet. Transactions are currently limited to %1 FGC.</source>
-        <translation>SwiftTx understøtter ikke afsendelse af så store beløb endnu. Transaktioner er for tiden begrænsede til %1FGC.</translation>
+        <source>SwiftX doesn't support sending values that high yet. Transactions are currently limited to %1 FantasyGold.</source>
+        <translation>SwiftTx understøtter ikke afsendelse af så store beløb endnu. Transaktioner er for tiden begrænsede til %1FantasyGold.</translation>
     </message>
 </context>
 <context>
     <name>WalletView</name>
     <message>
-        <source>&amp;Export</source>
-        <translation>E&amp;ksporter</translation>
+        <source>HISTORY</source>
+        <translation>HISTORIE</translation>
+    </message>
+    <message>
+        <source>Export</source>
+        <translation>Eksporter</translation>
     </message>
     <message>
         <source>Export the data in the current tab to a file</source>
@@ -3817,21 +4858,32 @@ https://www.transifex.com/fantasygold-project/fantasygold-project-translations</
         <source>Wallet Data (*.dat)</source>
         <translation>Datafil til tegnebog (*.dat)</translation>
     </message>
+</context>
+<context>
+    <name>zFGCControlDialog</name>
     <message>
-        <source>Backup Failed</source>
-        <translation>Sikkerhedskopiering mislykkedes.</translation>
+        <source>Select zFGC to Spend</source>
+        <translation>Vælg zFGC for at bruge</translation>
     </message>
     <message>
-        <source>There was an error trying to save the wallet data to %1.</source>
-        <translation>Der opstod en fejl i forsøget på at gemme tegnebogens data til %1</translation>
+        <source>Quantity</source>
+        <translation>Antal</translation>
     </message>
     <message>
-        <source>Backup Successful</source>
-        <translation>Sikkerhedskopiering fuldført</translation>
+        <source>0</source>
+        <translation>0</translation>
     </message>
     <message>
-        <source>The wallet data was successfully saved to %1.</source>
-        <translation>Tegnebogens data blev gemt i %1</translation>
+        <source>zFGC</source>
+        <translation>zFGC</translation>
+    </message>
+    <message>
+        <source>Select/Deselect All</source>
+        <translation>Vælg / Fravælg alle</translation>
+    </message>
+    <message>
+        <source>Is Spendable</source>
+        <translation>Kan tilbringes</translation>
     </message>
 </context>
 <context>
@@ -3845,10 +4897,6 @@ https://www.transifex.com/fantasygold-project/fantasygold-project-translations</
         <translation>Tillad JSON-RPC forbindelser fra bestemte kilder. Gyldig &lt;ip&gt; er enkeltadresse (1.2.3.4), a Network/netmask (1.2.3.4/255.255.255.0) eller et netværk/CCIDR (1.2.3.4/24). Der kan indsættes flere linier.</translation>
     </message>
     <message>
-        <source>An error occurred while setting up the RPC address %s port %u for listening: %s</source>
-        <translation>Der opstod en fejl under opsætningen af RPC adressen %s port %u for monitering: %s</translation>
-    </message>
-    <message>
         <source>Bind to given address and always listen on it. Use [host]:port notation for IPv6</source>
         <translation>Forbind til den opgivne adresse og lyt på den kontinuerligt. Brug [host]:port notation for IPv6</translation>
     </message>
@@ -3859,6 +4907,10 @@ https://www.transifex.com/fantasygold-project/fantasygold-project-translations</
     <message>
         <source>Bind to given address to listen for JSON-RPC connections. Use [host]:port notation for IPv6. This option can be specified multiple times (default: bind to all interfaces)</source>
         <translation>Forbind til den opgivne adresse og lyt efter JSON-.RPC forbindelser. Brug [host]:port notation for IPv6. Der kan indsættes flere linier (standard: Forbind til alle interfaces)</translation>
+    </message>
+    <message>
+        <source>Calculated accumulator checkpoint is not what is recorded by block index</source>
+        <translation>Beregnet akkumulator kontrolpunkt er ikke det, der er registreret af blok indeks</translation>
     </message>
     <message>
         <source>Cannot obtain a lock on data directory %s. FantasyGold Core is probably already running.</source>
@@ -3881,8 +4933,8 @@ https://www.transifex.com/fantasygold-project/fantasygold-project-translations</
         <translation>Slet alle tegnebogens transaktioner og genskab kun fra blokkæden ved at tilføje -rescan i forbindes med opstart.</translation>
     </message>
     <message>
-        <source>Disable all FantasyGold specific functionality (Masternodes, Obfuscation, SwiftTX, Budgeting) (0-1, default: %u)</source>
-        <translation>Slå alle FantasyGold funktioner fra (Masternoder, Tilsløring, SwiftTX, Budgetting)(0-1,default:%u)</translation>
+        <source>Delete all zerocoin spends and mints that have been recorded to the blockchain database and reindex them (0-1, default: %u)</source>
+        <translation>Slet alle zerocoin-udgifter og minter, der er blevet sendt til blockchain-databasen og geninddrive dem (0-1, standard: %u)</translation>
     </message>
     <message>
         <source>Distributed under the MIT software license, see the accompanying file COPYING or &lt;http://www.opensource.org/licenses/mit-license.php&gt;.</source>
@@ -3890,16 +4942,20 @@ https://www.transifex.com/fantasygold-project/fantasygold-project-translations</
 &lt;http://www.opensource.org/licenses/mit-license.php&gt;. </translation>
     </message>
     <message>
+        <source>Enable automatic wallet backups triggered after each zFGC minting (0-1, default: %u)</source>
+        <translation>Aktivér automatiske wallet-sikkerhedskopier udløst efter hver zFGC-mintning (0-1, standard: %u)</translation>
+    </message>
+    <message>
+        <source>Enable or disable staking functionality for FantasyGold inputs (0-1, default: %u)</source>
+        <translation>Aktiver eller deaktiver staking-funktionalitet for FantasyGold-indgange (0-1, standard: %u)</translation>
+    </message>
+    <message>
+        <source>Enable or disable staking functionality for zFGC inputs (0-1, default: %u)</source>
+        <translation>Aktiver eller deaktiver staking-funktionalitet for zFGC-indgange (0-1, standard: %u)</translation>
+    </message>
+    <message>
         <source>Enable spork administration functionality with the appropriate private key.</source>
         <translation>Slå spork administrationsfunktionen til med den rette private nøgle</translation>
-    </message>
-    <message>
-        <source>Enable swifttx, show confirmations for locked transactions (bool, default: %s)</source>
-        <translation>Aktiver swifttx, vis bekræftelser for låste transaktioner (bool, default: %s)</translation>
-    </message>
-    <message>
-        <source>Enable use of automated obfuscation for funds stored in this wallet (0-1, default: %u)</source>
-        <translation>Slå automatisk tilsløring til for alle midler i denne tegebog (0-1, default: %u)</translation>
     </message>
     <message>
         <source>Enter regression test mode, which uses a special chain in which blocks can be solved instantly.</source>
@@ -3908,6 +4964,10 @@ https://www.transifex.com/fantasygold-project/fantasygold-project-translations</
     <message>
         <source>Error: Listening for incoming connections failed (listen returned error %s)</source>
         <translation>Fejl! Der opstod en fejl i under lytning efter indkommende forbindelser (Listen returnerede fejl %s)</translation>
+    </message>
+    <message>
+        <source>Error: The transaction is larger than the maximum allowed transaction size!</source>
+        <translation>Fejl: Transaktionen er større end den maksimalt tilladte transaktionsstørrelse!</translation>
     </message>
     <message>
         <source>Error: Unsupported argument -socks found. Setting SOCKS version isn't possible anymore, only SOCKS5 proxies are supported.</source>
@@ -3926,12 +4986,12 @@ https://www.transifex.com/fantasygold-project/fantasygold-project-translations</
         <translation>Udfør en kommando når den bedste blok ændres (%s in cmd erstattes med blok hashen)</translation>
     </message>
     <message>
-        <source>Fees (in FGC/Kb) smaller than this are considered zero fee for relaying (default: %s)</source>
-        <translation>Gebyrer (in FGC/kb) lavere end dette betragtes som et nul-gebyr for at videresende (default: %s)</translation>
+        <source>Fees (in FGC/kB) smaller than this are considered zero fee for relaying (default: %s)</source>
+        <translation>Gebyrer (in FGC/kB) lavere end dette betragtes som et nul-gebyr for at videresende (default: %s)</translation>
     </message>
     <message>
-        <source>Fees (in FGC/Kb) smaller than this are considered zero fee for transaction creation (default: %s)</source>
-        <translation>Gebyrer (in FGC/kb) lavere end dette betragtes som et nul-gebyr for at oprette en transaktion (default: %s)</translation>
+        <source>Fees (in FGC/kB) smaller than this are considered zero fee for transaction creation (default: %s)</source>
+        <translation>Gebyrer (in FGC/kB) lavere end dette betragtes som et nul-gebyr for at oprette en transaktion (default: %s)</translation>
     </message>
     <message>
         <source>Flush database activity from memory pool to disk log every &lt;n&gt; megabytes (default: %u)</source>
@@ -3942,16 +5002,16 @@ https://www.transifex.com/fantasygold-project/fantasygold-project-translations</
         <translation>Der er fundet ubekræftede designerede outputs. Vent indtil de bekræftes for at fortsætte.</translation>
     </message>
     <message>
-        <source>How thorough the block verification of -checkblocks is (0-4, default: %u)</source>
-        <translation>Hvor grundig er blokkens verificeringer af -checkblocks er (0-4, default %u)</translation>
-    </message>
-    <message>
         <source>If paytxfee is not set, include enough fee so transactions begin confirmation on average within n blocks (default: %u)</source>
         <translation>Hvis der ikke fastsættes et betalingsTxgebyr, skal der inkluderes tilstrækkelige midler til gebyret så transaktionens bekræftelsesproces vil begynde indenfor n blokke (default: %u)</translation>
     </message>
     <message>
         <source>In this mode -genproclimit controls how many blocks are generated immediately.</source>
         <translation>Denne indstilling -genproclimit kontrollerer hvor mange blokke der bliver genereret med det samme.</translation>
+    </message>
+    <message>
+        <source>Insufficient or insufficient confirmed funds, you might need to wait a few minutes and try again.</source>
+        <translation>Utilstrækkelige eller utilstrækkelige bekræftede penge, skal du muligvis vente et par minutter og prøve igen.</translation>
     </message>
     <message>
         <source>Invalid amount for -maxtxfee=&lt;amount&gt;: '%s' (must be at least the minrelay fee of %s to prevent stuck transactions)</source>
@@ -3990,12 +5050,12 @@ https://www.transifex.com/fantasygold-project/fantasygold-project-translations</
         <translation>Output debug information (default: %u, supplying &lt;category&gt; er valgfri)</translation>
     </message>
     <message>
-        <source>Provide liquidity to Obfuscation by infrequently mixing coins on a continual basis (0-100, default: %u, 1=very frequent, high fees, 100=very infrequent, low fees)</source>
-        <translation>Tilfør tilsløring likviditet  ved at tilføje flere FantasyGold løbende (0-100, default:%u, 1=meget hyppigt, høje gebyrer, 100=sjældent, lave gebyrer)</translation>
-    </message>
-    <message>
         <source>Query for peer addresses via DNS lookup, if low on addresses (default: 1 unless -connect)</source>
         <translation>Forespørg peer adresser via DNS opslag, hvis antallet af adresser er laft (default: 1 med mindre -connect)</translation>
+    </message>
+    <message>
+        <source>Randomize credentials for every proxy connection. This enables Tor stream isolation (default: %u)</source>
+        <translation>Randomize credentials for hver proxy-forbindelse. Dette gør det muligt for Tor-strøm isolering (standard: %u)</translation>
     </message>
     <message>
         <source>Require high priority for relaying free or low-fee transactions (default:%u)</source>
@@ -4026,36 +5086,8 @@ https://www.transifex.com/fantasygold-project/fantasygold-project-translations</
         <translation>Understøt filtrering af blokke og transaktioner med bloom filters (default: %u)</translation>
     </message>
     <message>
-        <source>SwiftTX requires inputs with at least 6 confirmations, you might need to wait a few minutes and try again.</source>
-        <translation>SwiftTX kræver mindst 6 bekræftelser. Vent nogle minutter og prøv igen.</translation>
-    </message>
-    <message>
         <source>This product includes software developed by the OpenSSL Project for use in the OpenSSL Toolkit &lt;https://www.openssl.org/&gt; and cryptographic software written by Eric Young and UPnP software written by Thomas Bernard.</source>
         <translation>Dette produkt anvender software udviklet i OpenSSL projektet til brug i OpenSSL værktøjssættet &lt;https://www.openssl.org/&gt; og kryptosoftware skrevet afEric Young og UPnP software skrevet af Thomas Bernard.</translation>
-    </message>
-    <message>
-        <source>To use fantasygoldd, or the -server option to fantasygold-qt, you must set an rpcpassword in the configuration file:
-%s
-It is recommended you use the following random password:
-rpcuser=fantasygoldrpc
-rpcpassword=%s
-(you do not need to remember this password)
-The username and password MUST NOT be the same.
-If the file does not exist, create it with owner-readable-only file permissions.
-It is also recommended to set alertnotify so you are notified of problems;
-for example: alertnotify=echo %%s | mail -s "FantasyGold Alert" admin@foo.com
-</source>
-        <translation>For at bruge fantasygoldd eller -server muligheden sammen med fantasygold-qt skal der angives et rpc kodeord i konfigurationsfilen:
-%s
-De anbefales at benytte følgende tilfældige kodeord
-Rpcuser=fantasygoldrpc
-rpcpasswrd=%s
-(Det er ikke nødvendigt at huske dette kodeord)
-Brugernavn og kodeord MÅ IKKE VÆRE ENS!
-Hvis filen ikke eksisterer, opret den med sikkerhedsindstillingen - ejer kun læserettigheder tilladelsen.
-Det anbefales tillige at vælge alertnotify til for at blive orienteret om eventuelle problemer.
-For eksempel: alertnotify=Echo %% | mail - s "FantasyGold ALARM!" e-mail@administrator.dk
-</translation>
     </message>
     <message>
         <source>Unable to bind to %s on this computer. FantasyGold Core is probably already running.</source>
@@ -4066,12 +5098,12 @@ For eksempel: alertnotify=Echo %% | mail - s "FantasyGold ALARM!" e-mail@adminis
         <translation>Det er ikke muligt at allokere tilstrækkeligt med tilsløret designeret indestående for at gennemføre denne transaktion.</translation>
     </message>
     <message>
-        <source>Unable to locate enough Obfuscation non-denominated funds for this transaction that are not equal 10000 FGC.</source>
-        <translation>Det er ikke muligt at allokere tilstrækkeligt med tilsløret  ikke-designeret indestående for at gennemføre denne transaktion, der ikke ækvivalerer 10000 FGC.</translation>
+        <source>Unable to locate enough Obfuscation non-denominated funds for this transaction that are not equal 10000 FantasyGold.</source>
+        <translation>Det er ikke muligt at allokere tilstrækkeligt med tilsløret  ikke-designeret indestående for at gennemføre denne transaktion, der ikke ækvivalerer 10000 FantasyGold.</translation>
     </message>
     <message>
-        <source>Unable to locate enough funds for this transaction that are not equal 10000 FGC.</source>
-        <translation>Det var ikke muligt at allokere tilstrækkelige midler til denne transaktion som er forskellig fra 10000 FGC.</translation>
+        <source>Unable to locate enough funds for this transaction that are not equal 10000 FantasyGold.</source>
+        <translation>Det var ikke muligt at allokere tilstrækkelige midler til denne transaktion som er forskellig fra 10000 FantasyGold.</translation>
     </message>
     <message>
         <source>Use separate SOCKS5 proxy to reach peers via Tor hidden services (default: %s)</source>
@@ -4118,8 +5150,8 @@ For eksempel: alertnotify=Echo %% | mail - s "FantasyGold ALARM!" e-mail@adminis
         <translation>Der skal angives en masternodeprivkey i konfigurationen. For mere information, se i dokumentationen.</translation>
     </message>
     <message>
-        <source>(57810 could be used only on mainnet)</source>
-        <translation>(57810 kunne kun bruges på hovednettet)</translation>
+        <source>(51472 could be used only on mainnet)</source>
+        <translation>(51472 kunne kun bruges på hovednettet)</translation>
     </message>
     <message>
         <source>(default: %s)</source>
@@ -4130,8 +5162,8 @@ For eksempel: alertnotify=Echo %% | mail - s "FantasyGold ALARM!" e-mail@adminis
         <translation>(default: 1)</translation>
     </message>
     <message>
-        <source>(must be 57810 for mainnet)</source>
-        <translation>(skal være 57810 for hovednettet)</translation>
+        <source>(must be 51472 for mainnet)</source>
+        <translation>(skal være 51472 for hovednettet)</translation>
     </message>
     <message>
         <source>Accept command line and JSON-RPC commands</source>
@@ -4144,10 +5176,6 @@ For eksempel: alertnotify=Echo %% | mail - s "FantasyGold ALARM!" e-mail@adminis
     <message>
         <source>Accept public REST requests (default: %u)</source>
         <translation>Accepter public REST anmodninger (default: %u)</translation>
-    </message>
-    <message>
-        <source>Acceptable ciphers (default: %s)</source>
-        <translation>Acceptabel krypto (default: %s)</translation>
     </message>
     <message>
         <source>Add a node to connect to and attempt to keep the connection open</source>
@@ -4170,8 +5198,16 @@ For eksempel: alertnotify=Echo %% | mail - s "FantasyGold ALARM!" e-mail@adminis
         <translation>Forsøger at genskabe de private nøgler fra en beskadiget wallet.dat fil</translation>
     </message>
     <message>
+        <source>Automatically create Tor hidden service (default: %d)</source>
+        <translation>Opret automatisk Tor-skjult tjeneste (standard: %d)</translation>
+    </message>
+    <message>
         <source>Block creation options:</source>
         <translation>Bloker optioner for oprettelse:</translation>
+    </message>
+    <message>
+        <source>Calculating missing accumulators...</source>
+        <translation>Beregning af manglende akkumulatorer ...</translation>
     </message>
     <message>
         <source>Can't denominate: no compatible inputs left.</source>
@@ -4238,16 +5274,8 @@ For eksempel: alertnotify=Echo %% | mail - s "FantasyGold ALARM!" e-mail@adminis
         <translation>Copyright (C) 2015-%i The FantasyGold Core Developers</translation>
     </message>
     <message>
-        <source>Copyright (C) 2017-%i The FantasyGold Core Developers</source>
-        <translation>Copyright (C) 2017-%i The FantasyGold Core Developers</translation>
-    </message>
-    <message>
         <source>Corrupted block database detected</source>
         <translation>Blokdatabasen er beskadiget</translation>
-    </message>
-    <message>
-        <source>Could not parse -rpcbind value %s as network address</source>
-        <translation>Kunne ikke fortolke -rpcbind værdien %s som netværksadresse</translation>
     </message>
     <message>
         <source>Could not parse masternode.conf</source>
@@ -4256,6 +5284,14 @@ For eksempel: alertnotify=Echo %% | mail - s "FantasyGold ALARM!" e-mail@adminis
     <message>
         <source>Debugging/Testing options:</source>
         <translation>Debug/testoptioner:</translation>
+    </message>
+    <message>
+        <source>Delete blockchain folders and resync from scratch</source>
+        <translation>Slet blockchain mapper og resync fra bunden</translation>
+    </message>
+    <message>
+        <source>Disable OS notifications for incoming transactions (default: %u)</source>
+        <translation>Deaktiver OS-underretninger for indgående transaktioner (standard: %u)</translation>
     </message>
     <message>
         <source>Disable safemode, override a real safe mode event (default: %u)</source>
@@ -4276,6 +5312,18 @@ For eksempel: alertnotify=Echo %% | mail - s "FantasyGold ALARM!" e-mail@adminis
     <message>
         <source>Done loading</source>
         <translation>Indlæst!</translation>
+    </message>
+    <message>
+        <source>Enable automatic Zerocoin minting (0-1, default: %u)</source>
+        <translation>Aktivér automatisk Zerocoin-mintning (0-1, standard: %u)</translation>
+    </message>
+    <message>
+        <source>Enable publish hash transaction (locked via SwiftX) in &lt;address&gt;</source>
+        <translation>Aktivér publicering af hash-transaktion (låst via SwiftX) i &lt;address&gt;</translation>
+    </message>
+    <message>
+        <source>Enable publish raw transaction (locked via SwiftX) in &lt;address&gt;</source>
+        <translation>Aktivér publicere rå transaktion (låst via SwiftX) i &lt;address&gt;</translation>
     </message>
     <message>
         <source>Enable the client to act as a masternode (0-1, default: %u)</source>
@@ -4354,6 +5402,10 @@ For eksempel: alertnotify=Echo %% | mail - s "FantasyGold ALARM!" e-mail@adminis
         <translation>Fejl! De har allerede ventende transaktioner i tilsløringsgruppen</translation>
     </message>
     <message>
+        <source>Failed to calculate accumulator checkpoint</source>
+        <translation>Kunne ikke beregne akkumulatorkontrolpunktet</translation>
+    </message>
+    <message>
         <source>Failed to listen on any port. Use -listen=0 if you want this.</source>
         <translation>Lytning på uspecificerede porte mislykkedes. Brug -listen=0 hvis De ønsker denne funktion.</translation>
     </message>
@@ -4430,16 +5482,16 @@ For eksempel: alertnotify=Echo %% | mail - s "FantasyGold ALARM!" e-mail@adminis
         <translation>Ugyldigt input</translation>
     </message>
     <message>
+        <source>Insufficient funds</source>
+        <translation>Utilstrækkelige midler</translation>
+    </message>
+    <message>
         <source>Insufficient funds.</source>
         <translation>Utilstrækkelige midler</translation>
     </message>
     <message>
-        <source>Invalid -onion address: '%s'</source>
-        <translation>Ugyldig -onion adresse: '%s'</translation>
-    </message>
-    <message>
-        <source>Invalid -proxy address: '%s'</source>
-        <translation>Ugyldig -proxy adresse: '%s'</translation>
+        <source>Invalid -onion address or hostname: '%s'</source>
+        <translation>Ugyldig -onionadresse eller værtsnavn: ' %s'</translation>
     </message>
     <message>
         <source>Invalid amount for -maxtxfee=&lt;amount&gt;: '%s'</source>
@@ -4466,6 +5518,10 @@ For eksempel: alertnotify=Echo %% | mail - s "FantasyGold ALARM!" e-mail@adminis
         <translation>Ugyldigt beløb til -reservebalance=&lt;beløb&gt;:</translation>
     </message>
     <message>
+        <source>Invalid amount</source>
+        <translation>Ugyldigt beløb</translation>
+    </message>
+    <message>
         <source>Invalid masternodeprivkey. Please see documenation.</source>
         <translation> Ugyldig masternodeprivkey. Se dokumentationen</translation>
     </message>
@@ -4486,8 +5542,96 @@ For eksempel: alertnotify=Echo %% | mail - s "FantasyGold ALARM!" e-mail@adminis
         <translation>Ugyldigt script fundet.</translation>
     </message>
     <message>
+        <source>Percentage of automatically minted Zerocoin  (1-100, default: %u)</source>
+        <translation>Procentdel af automatisk mintede Zerocoin (10-100, standard: %u)</translation>
+    </message>
+    <message>
+        <source>Reindex the FantasyGold and zFGC money supply statistics</source>
+        <translation>Reindex FantasyGold og zFGC pengemængde statistikker</translation>
+    </message>
+    <message>
+        <source>Reindexing zerocoin database...</source>
+        <translation>Reindexing zerocoin database ...</translation>
+    </message>
+    <message>
+        <source>Reindexing zerocoin failed</source>
+        <translation>Reindexerende zerocoin mislykkedes</translation>
+    </message>
+    <message>
+        <source>Selected coins value is less than payment target</source>
+        <translation>Valgt mønter værdi er mindre end betalingsmål</translation>
+    </message>
+    <message>
+        <source>SwiftX options:</source>
+        <translation>SwiftTX optioner:</translation>
+    </message>
+    <message>
         <source>This is a pre-release test build - use at your own risk - do not use for staking or merchant applications!</source>
         <translation>Denne release er en testrelease. Anvendelse på eget ansvar - bør ikke anvendes til staking eller handelsapplikationer!</translation>
+    </message>
+    <message>
+        <source> mints deleted
+</source>
+        <translation>minter slettet
+</translation>
+    </message>
+    <message>
+        <source> mints updated, </source>
+        <translation>mints opdateret,</translation>
+    </message>
+    <message>
+        <source> unconfirmed transactions removed
+</source>
+        <translation>ubekræftede transaktioner fjernet
+</translation>
+    </message>
+    <message>
+        <source>Disable all FantasyGold specific functionality (Masternodes, Zerocoin, SwiftX, Budgeting) (0-1, default: %u)</source>
+        <translation>Slå alle FantasyGold funktioner fra (Masternoder, Tilsløring, SwiftTX, Budgetting)(0-1,default:%u)</translation>
+    </message>
+    <message>
+        <source>Enable SwiftX, show confirmations for locked transactions (bool, default: %s)</source>
+        <translation>Aktiver swifttx, vis bekræftelser for låste transaktioner (bool, default: %s)</translation>
+    </message>
+    <message>
+        <source>Error: The transaction was rejected! This might happen if some of the coins in your wallet were already spent, such as if you used a copy of wallet.dat and coins were spent in the copy but not marked as spent here.</source>
+        <translation>Transaktionen blev afvist! Dette kan ske, hvis nogle af mønterne i tegnebogen allerede er brugt. For eksempel hvis De har brugt en kopi af Wallet.dat filen, og mønterne har været brugt, men ikke markerede som brugte i den. </translation>
+    </message>
+    <message>
+        <source>Error: This transaction requires a transaction fee of at least %s because of its amount, complexity, or use of recently received funds!</source>
+        <translation>Fejl: Denne transaktion kræver et transaktionsgebyr på mindst %s på grund af dets mængde, kompleksitet eller brug af nyligt modtagne penge!</translation>
+    </message>
+    <message>
+        <source>Error: Unsupported argument -checklevel found. Checklevel must be level 4.</source>
+        <translation>Fejl: Ikke understøttet argument -checklevel fundet. Checklevel skal være niveau 4.</translation>
+    </message>
+    <message>
+        <source>Execute command when the best block changes and its size is over (%s in cmd is replaced by block hash, %d with the block size)</source>
+        <translation>Udfør kommando, når den bedste blok ændres, og dens størrelse er overstået (%s i cmd erstattes af blok hash, %d med blokstørrelsen)</translation>
+    </message>
+    <message>
+        <source>Failed to find coin set amongst held coins with less than maxNumber of Spends</source>
+        <translation>Kunne ikke finde møntsæt blandt holdte mønter med mindre end maksimalt antal udgifter</translation>
+    </message>
+    <message>
+        <source>In rare cases, a spend with 7 coins exceeds our maximum allowable transaction size, please retry spend using 6 or less coins</source>
+        <translation>I sjældne tilfælde overstiger en udgift med 7 mønter vores maksimale tilladte transaktionsstørrelse. Prøv igen med 6 eller færre mønter</translation>
+    </message>
+    <message>
+        <source>Preferred Denomination for automatically minted Zerocoin  (1/5/10/50/100/500/1000/5000), 0 for no preference. default: %u)</source>
+        <translation>Foretrukken Betegnelse for automatisk mintede Zerocoin (1/5/10/50/100/500/1000/5000), 0 uden præference. standard: %u)</translation>
+    </message>
+    <message>
+        <source>Specify custom backup path to add a copy of any automatic zFGC backup. If set as dir, every backup generates a timestamped file. If set as file, will rewrite to that file every backup. If backuppath is set as well, 4 backups will happen</source>
+        <translation>Angiv brugerdefineret backup-vej for at tilføje en kopi af enhver zFGC-backup. Hvis det er angivet som dig, genererer hver backup en tidsstempelet fil. Hvis den er angivet som fil, ønsker man at omskrive til den pågældende fil hver backup. Hvis backupath er indstillet, vil der ske 4 sikkerhedskopier</translation>
+    </message>
+    <message>
+        <source>Specify custom backup path to add a copy of any wallet backup. If set as dir, every backup generates a timestamped file. If set as file, will rewrite to that file every backup.</source>
+        <translation>Angiv en brugerdefineret backup-sti for at tilføje en kopi af en wallet-backup. Hvis det er angivet som dig, genererer hver backup en tidsstempelet fil. Hvis den er angivet som fil, ønsker man at omskrive til den pågældende fil hver backup.</translation>
+    </message>
+    <message>
+        <source>SwiftX requires inputs with at least 6 confirmations, you might need to wait a few minutes and try again.</source>
+        <translation>SwiftTX kræver mindst 6 bekræftelser. Vent nogle minutter og prøv igen.</translation>
     </message>
     <message>
         <source>&lt;category&gt; can be:</source>
@@ -4498,8 +5642,68 @@ For eksempel: alertnotify=Echo %% | mail - s "FantasyGold ALARM!" e-mail@adminis
         <translation>Forsøg at gennemtvinge reparation af korrumperet blokkæde</translation>
     </message>
     <message>
-        <source>Keep N FGCanonymized (default: %u)</source>
-        <translation>Behold N FGCanonymiserede (default: %u)</translation>
+        <source>CoinSpend: Accumulator witness does not verify</source>
+        <translation>CoinSpend: Akkumulator vidne bekræfter ikke</translation>
+    </message>
+    <message>
+        <source>Display the stake modifier calculations in the debug.log file.</source>
+        <translation>Vis beregning af stavmodifikator i debug.log-filen.</translation>
+    </message>
+    <message>
+        <source>Display verbose coin stake messages in the debug.log file.</source>
+        <translation>Vis verbose møntspilsmeddelelser i debug.log-filen.</translation>
+    </message>
+    <message>
+        <source>Enable publish hash block in &lt;address&gt;</source>
+        <translation>Aktivér publish hash-blok i &lt;address&gt;</translation>
+    </message>
+    <message>
+        <source>Enable publish hash transaction in &lt;address&gt;</source>
+        <translation>Aktivér publicering af hash-transaction I &lt;address&gt;</translation>
+    </message>
+    <message>
+        <source>Enable publish raw block in &lt;address&gt;</source>
+        <translation>Aktivér offentliggør rå blok I &lt;address&gt;</translation>
+    </message>
+    <message>
+        <source>Enable publish raw transaction in &lt;address&gt;</source>
+        <translation>Aktivér publicere rå transaktion i &lt;address&gt;</translation>
+    </message>
+    <message>
+        <source>Enable staking functionality (0-1, default: %u)</source>
+        <translation>Aktivér stakfunktionalitet (0-1, standard: %u)</translation>
+    </message>
+    <message>
+        <source>Error: A fatal internal error occurred, see debug.log for details</source>
+        <translation>Fejl! En fatal intern fejl opstod. Se debug.log for nærmere detaljer</translation>
+    </message>
+    <message>
+        <source>Error: No valid utxo!</source>
+        <translation>Fejl: Ingen gyldig udxo!</translation>
+    </message>
+    <message>
+        <source>Failed to create mint</source>
+        <translation>Kunne ikke oprette mynte</translation>
+    </message>
+    <message>
+        <source>Failed to deserialize</source>
+        <translation>Kunne ikke deserialisere</translation>
+    </message>
+    <message>
+        <source>Failed to find Zerocoins in wallet.dat</source>
+        <translation>Kunne ikke finde Zerocoins i wallet.dat</translation>
+    </message>
+    <message>
+        <source>Failed to select a zerocoin</source>
+        <translation>Kunne ikke vælge en zerocoin</translation>
+    </message>
+    <message>
+        <source>Failed to wipe zerocoinDB</source>
+        <translation>Kunne ikke tørre zerocoinDB</translation>
+    </message>
+    <message>
+        <source>Failed to write coin serial number into wallet</source>
+        <translation>Kunne ikke skrive møntserienummer i tegnebog</translation>
     </message>
     <message>
         <source>Keep at most &lt;n&gt; unconnectable transactions in memory (default: %u)</source>
@@ -4550,6 +5754,10 @@ For eksempel: alertnotify=Echo %% | mail - s "FantasyGold ALARM!" e-mail@adminis
         <translation>Indlæser masternode betalingscache...</translation>
     </message>
     <message>
+        <source>Loading sporks...</source>
+        <translation>Indlæser sporks ...</translation>
+    </message>
+    <message>
         <source>Loading wallet... (%3.2f %%)</source>
         <translation>Indlæser tegnebog... (%3.2f%%)</translation>
     </message>
@@ -4558,12 +5766,20 @@ For eksempel: alertnotify=Echo %% | mail - s "FantasyGold ALARM!" e-mail@adminis
         <translation>Indlæser tegnebog</translation>
     </message>
     <message>
+        <source>Location of the auth cookie (default: data dir)</source>
+        <translation>Placering af auth cookie (standard: data dir)</translation>
+    </message>
+    <message>
         <source>Lock is already in place.</source>
         <translation>Er allerede låst</translation>
     </message>
     <message>
         <source>Lock masternodes from masternode configuration file (default: %u)</source>
         <translation>Lås masternoder fra masternode konfiguratinsfilen (default: %u)</translation>
+    </message>
+    <message>
+        <source>Lookup(): Invalid -proxy address or hostname: '%s'</source>
+        <translation>Opslag (): Ugyldig-proxy adresse eller værtsnavn: '%s'</translation>
     </message>
     <message>
         <source>Maintain at most &lt;n&gt; connections to peers (default: %u)</source>
@@ -4590,12 +5806,20 @@ For eksempel: alertnotify=Echo %% | mail - s "FantasyGold ALARM!" e-mail@adminis
         <translation>Maksimal størrelse på per-connection send buffer, &lt;n&gt; *1000 bytes (default: %u)</translation>
     </message>
     <message>
+        <source>Mint did not make it into blockchain</source>
+        <translation>Mint gjorde det ikke til blockchain</translation>
+    </message>
+    <message>
         <source>Missing input transaction information.</source>
         <translation>Manglende transaktionsinformationsinput</translation>
     </message>
     <message>
         <source>Mixing in progress...</source>
         <translation>Usynliggørelse i gang</translation>
+    </message>
+    <message>
+        <source>Need address because change is not exact</source>
+        <translation>Har brug for adresse, fordi ændring ikke er nøjagtig</translation>
     </message>
     <message>
         <source>Need to specify a port with -whitebind: '%s'</source>
@@ -4642,12 +5866,12 @@ For eksempel: alertnotify=Echo %% | mail - s "FantasyGold ALARM!" e-mail@adminis
         <translation>Antal automatiske sikkerhedskopier af tegnebogen (default: 10)</translation>
     </message>
     <message>
-        <source>Obfuscation is idle.</source>
-        <translation>Tilsløringssystem ledigt</translation>
+        <source>Number of custom location backups to retain (default: %d)</source>
+        <translation>Antal brugerdefinerede positionsbackups til at beholde (standard: %d)</translation>
     </message>
     <message>
-        <source>Obfuscation options:</source>
-        <translation>Tilsløringsmuligheder</translation>
+        <source>Obfuscation is idle.</source>
+        <translation>Tilsløringssystem ledigt</translation>
     </message>
     <message>
         <source>Obfuscation request complete:</source>
@@ -4674,20 +5898,24 @@ For eksempel: alertnotify=Echo %% | mail - s "FantasyGold ALARM!" e-mail@adminis
         <translation>Kodeord for JSON-RPC forbindelser</translation>
     </message>
     <message>
+        <source>isValid(): Invalid -proxy address or hostname: '%s'</source>
+        <translation>isValid (): Ugyldig-proxy adresse eller værtsnavn: '%s'</translation>
+    </message>
+    <message>
+        <source>Preparing for resync...</source>
+        <translation>Forberedelse til genoptagelse ...</translation>
+    </message>
+    <message>
         <source>Prepend debug output with timestamp (default: %u)</source>
         <translation>Forbered debug output med tidsstempel (default %u)</translation>
     </message>
     <message>
-        <source>RPC SSL options: (see the Bitcoin Wiki for SSL setup instructions)</source>
-        <translation>RPC SSL optioner: (se "the bitcoin Wiki" for opsætningsinstruktioner - på engelsk)</translation>
+        <source>Print version and exit</source>
+        <translation>Udskriftsversion og exit</translation>
     </message>
     <message>
         <source>RPC server options:</source>
         <translation>RPC server optioner:</translation>
-    </message>
-    <message>
-        <source>RPC support for HTTP persistent connections (default: %d)</source>
-        <translation>RPC understøttelse for HTTP stående forbindelser (default: %d)</translation>
     </message>
     <message>
         <source>Randomly drop 1 of every &lt;n&gt; network messages</source>
@@ -4706,6 +5934,10 @@ For eksempel: alertnotify=Echo %% | mail - s "FantasyGold ALARM!" e-mail@adminis
         <translation>Modtag og vis P2P netværksalarmer (default: %u)</translation>
     </message>
     <message>
+        <source>Reindex the accumulator database</source>
+        <translation>Reindex akkumulatiedatabasen</translation>
+    </message>
+    <message>
         <source>Relay and mine data carrier transactions (default: %u)</source>
         <translation>Videresend og minér databærer transaktioner (default: %u)</translation>
     </message>
@@ -4722,6 +5954,14 @@ For eksempel: alertnotify=Echo %% | mail - s "FantasyGold ALARM!" e-mail@adminis
         <translation>Genskanner...</translation>
     </message>
     <message>
+        <source>ResetMintZerocoin finished: </source>
+        <translation>ResetSpentZerocoin færdig:</translation>
+    </message>
+    <message>
+        <source>ResetSpentZerocoin finished: </source>
+        <translation>ResetSpentZerocoin færdig:</translation>
+    </message>
+    <message>
         <source>Run a thread to flush wallet periodically (default: %u)</source>
         <translation>Kør en tråd periodevist for at rense tegnebogen ud (default %u)</translation>
     </message>
@@ -4732,14 +5972,6 @@ For eksempel: alertnotify=Echo %% | mail - s "FantasyGold ALARM!" e-mail@adminis
     <message>
         <source>Send transactions as zero-fee transactions if possible (default: %u)</source>
         <translation>Send transaktioner som nugebyrstransaktioner hvis muligt (default: %u)</translation>
-    </message>
-    <message>
-        <source>Server certificate file (default: %s)</source>
-        <translation>Servercertfikatfil (default %s)</translation>
-    </message>
-    <message>
-        <source>Server private key (default: %s)</source>
-        <translation>Server private nøgle (default: %s)</translation>
     </message>
     <message>
         <source>Session not complete!</source>
@@ -4768,6 +6000,10 @@ For eksempel: alertnotify=Echo %% | mail - s "FantasyGold ALARM!" e-mail@adminis
     <message>
         <source>Set minimum block size in bytes (default: %u)</source>
         <translation>Angiv minimums blokstørrelse i bytes (default: %u)</translation>
+    </message>
+    <message>
+        <source>Set the Maximum reorg depth (default: %u)</source>
+        <translation>Indstil højeste dybde dybde (standard: %u)</translation>
     </message>
     <message>
         <source>Set the masternode private key</source>
@@ -4830,8 +6066,16 @@ For eksempel: alertnotify=Echo %% | mail - s "FantasyGold ALARM!" e-mail@adminis
         <translation>Angiv Deres offentlige adresse</translation>
     </message>
     <message>
+        <source>Spend Valid</source>
+        <translation>Tilbring gyldig</translation>
+    </message>
+    <message>
         <source>Spend unconfirmed change when sending transactions (default: %u)</source>
         <translation>Brug ubekræftede returpenge når der sendes transaktioner (default: %u)</translation>
+    </message>
+    <message>
+        <source>Staking options:</source>
+        <translation>Staking muligheder:</translation>
     </message>
     <message>
         <source>Stop running after importing blocks from disk (default: %u)</source>
@@ -4848,10 +6092,6 @@ For eksempel: alertnotify=Echo %% | mail - s "FantasyGold ALARM!" e-mail@adminis
     <message>
         <source>Submitted to masternode, waiting in queue %s</source>
         <translation>Afsendt til masternode, venter i kø %s</translation>
-    </message>
-    <message>
-        <source>SwiftTX options:</source>
-        <translation>SwiftTX optioner:</translation>
     </message>
     <message>
         <source>Synchronization failed</source>
@@ -4882,6 +6122,26 @@ For eksempel: alertnotify=Echo %% | mail - s "FantasyGold ALARM!" e-mail@adminis
         <translation>Synkroniserer sporks...</translation>
     </message>
     <message>
+        <source>Syncing zFGC wallet...</source>
+        <translation>Syncing zFGC wallet ..</translation>
+    </message>
+    <message>
+        <source>The coin spend has been used</source>
+        <translation>Møntudgifterne er blevet brugt</translation>
+    </message>
+    <message>
+        <source>The new spend coin transaction did not verify</source>
+        <translation>Den nye udgiftsmønttransaktion bekræftede ikke</translation>
+    </message>
+    <message>
+        <source>The selected mint coin is an invalid coin</source>
+        <translation>Den valgte mintmønter er en ugyldig mønt</translation>
+    </message>
+    <message>
+        <source>The transaction did not verify</source>
+        <translation>Transaktionen bekræftede ikke</translation>
+    </message>
+    <message>
         <source>This help message</source>
         <translation>Denne hjælpemeddelelse</translation>
     </message>
@@ -4900,6 +6160,26 @@ For eksempel: alertnotify=Echo %% | mail - s "FantasyGold ALARM!" e-mail@adminis
     <message>
         <source>Threshold for disconnecting misbehaving peers (default: %u)</source>
         <translation>Terskel for frakoblíng af peers der udfører upassende handlinger (default: %u)</translation>
+    </message>
+    <message>
+        <source>Too many spends needed</source>
+        <translation>Alt for mange tilbringer nødvendig</translation>
+    </message>
+    <message>
+        <source>Tor control port password (default: empty)</source>
+        <translation>Tor-kontrolportadgangskode (standard: tom)</translation>
+    </message>
+    <message>
+        <source>Tor control port to use if onion listening enabled (default: %s)</source>
+        <translation>Tor-kontrolport, der skal bruges, hvis du lytter til løg (standard: %s)</translation>
+    </message>
+    <message>
+        <source>Transaction Created</source>
+        <translation>Transaktion oprettet</translation>
+    </message>
+    <message>
+        <source>Transaction Mint Started</source>
+        <translation>Transaktionsmynte startet</translation>
     </message>
     <message>
         <source>Transaction amount too small</source>
@@ -4934,12 +6214,28 @@ For eksempel: alertnotify=Echo %% | mail - s "FantasyGold ALARM!" e-mail@adminis
         <translation>Afsender sluttransaktionen.</translation>
     </message>
     <message>
+        <source>Try to spend with a higher security level to include more coins</source>
+        <translation>Prøv at bruge med et højere sikkerhedsniveau til at inkludere flere mønter</translation>
+    </message>
+    <message>
+        <source>Trying to spend an already spent serial #, try again.</source>
+        <translation>Forsøger at bruge en allerede brugt serie #, prøv igen.</translation>
+    </message>
+    <message>
         <source>Unable to bind to %s on this computer (bind returned error %s)</source>
         <translation>Det er ikke muligt at forbide til %s på denne computer (bind returnerede fejl %s)</translation>
     </message>
     <message>
+        <source>Unable to find transaction containing mint</source>
+        <translation>Kunne ikke finde transaktioner indeholdende mynte</translation>
+    </message>
+    <message>
         <source>Unable to sign spork message, wrong key?</source>
         <translation>Det var ikke muligt at signere spork meddelelsen. Er De sikker på De anvender den rigtige nøgle?</translation>
+    </message>
+    <message>
+        <source>Unable to start HTTP server. See debug log for details.</source>
+        <translation>Kan ikke starte HTTP-serveren. Se fejlfindingsloggen for detaljer.</translation>
     </message>
     <message>
         <source>Unknown network specified in -onlynet: '%s'</source>
@@ -4954,14 +6250,6 @@ For eksempel: alertnotify=Echo %% | mail - s "FantasyGold ALARM!" e-mail@adminis
         <translation>Opdater tegnebogen til det nyeste format</translation>
     </message>
     <message>
-        <source>Use N separate masternodes to anonymize funds  (2-8, default: %u)</source>
-        <translation>Brug N forskellige masternoder for at anonymisere saldi (2-8, default: %u)</translation>
-    </message>
-    <message>
-        <source>Use OpenSSL (https) for JSON-RPC connections</source>
-        <translation>Brug OpenSSL (https) til JSON-RPC forbindelser</translation>
-    </message>
-    <message>
         <source>Use UPnP to map the listening port (default: %u)</source>
         <translation>Anvend UPnP til at kortlægge den lyttende port (default: %u)</translation>
     </message>
@@ -4970,12 +6258,20 @@ For eksempel: alertnotify=Echo %% | mail - s "FantasyGold ALARM!" e-mail@adminis
         <translation>Anvend UPnP for at kortlægge lytteporten (default: 1 når der lyttes)</translation>
     </message>
     <message>
+        <source>Use a custom max chain reorganization depth (default: %u)</source>
+        <translation>Brug en brugerdefineret maks kædeomlægningsdybde (standard: %u)</translation>
+    </message>
+    <message>
         <source>Use the test network</source>
         <translation>Anvend testnetværket</translation>
     </message>
     <message>
         <source>Username for JSON-RPC connections</source>
         <translation>Brugernavn til JSON-RPC forbindelser</translation>
+    </message>
+    <message>
+        <source>Value is below the smallest available denomination (= 1) of zFGC</source>
+        <translation>Værdien er under den mindste tilgængelige værdi (= 1) for zFGC</translation>
     </message>
     <message>
         <source>Value more than Obfuscation pool maximum allows.</source>
@@ -4988,6 +6284,10 @@ For eksempel: alertnotify=Echo %% | mail - s "FantasyGold ALARM!" e-mail@adminis
     <message>
         <source>Verifying wallet...</source>
         <translation>Verificerer  tegnebog</translation>
+    </message>
+    <message>
+        <source>Version 1 zFGC require a security level of 100 to successfully spend.</source>
+        <translation>Version 1 zFGC kræver et sikkerhedsniveau på 100 til succes.</translation>
     </message>
     <message>
         <source>Wallet %s resides outside data directory %s</source>
@@ -5030,6 +6330,10 @@ For eksempel: alertnotify=Echo %% | mail - s "FantasyGold ALARM!" e-mail@adminis
         <translation>Prøver igen</translation>
     </message>
     <message>
+        <source>You don't have enough Zerocoins in your wallet</source>
+        <translation>Du har ikke nok Zerocoins i din tegnebog</translation>
+    </message>
+    <message>
         <source>You need to rebuild the database using -reindex to change -txindex</source>
         <translation>Databasen skal genopbygges ved hjælp af -reindex for at ændre -txindex</translation>
     </message>
@@ -5044,6 +6348,14 @@ For eksempel: alertnotify=Echo %% | mail - s "FantasyGold ALARM!" e-mail@adminis
     <message>
         <source>Zapping all transactions from wallet...</source>
         <translation>Skifter alle transaktioner i tegnebogen.</translation>
+    </message>
+    <message>
+        <source>ZeroMQ notification options:</source>
+        <translation>ZeroMQ notifikationsindstillinger:</translation>
+    </message>
+    <message>
+        <source>Zerocoin options:</source>
+        <translation>Zerocoin muligheder:</translation>
     </message>
     <message>
         <source>on startup</source>

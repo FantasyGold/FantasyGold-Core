@@ -17,11 +17,11 @@
    <item>
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
-      <number>3</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="tab_info">
       <attribute name="title">
-       <string>&amp;Information</string>
+       <string>Information</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout" columnstretch="0,0">
        <property name="horizontalSpacing">
@@ -252,8 +252,17 @@
        </item>
        <item row="10" column="1">
         <widget class="QLabel" name="masternodeCount">
+         <property name="cursor">
+          <cursorShape>IBeamCursor</cursorShape>
+         </property>
          <property name="text">
           <string>N/A</string>
+         </property>
+         <property name="textFormat">
+          <enum>Qt::PlainText</enum>
+         </property>
+         <property name="textInteractionFlags">
+          <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
          </property>
         </widget>
        </item>
@@ -343,14 +352,14 @@
         </widget>
        </item>
        <item row="16" column="0">
-        <widget class="QPushButton" name="openDebugLogfileButton">
+        <widget class="QtMaterialFlatButton" name="openDebugLogfileButton" native="true">
          <property name="toolTip">
           <string>Open the FGC debug log file from the current data directory. This can take a few seconds for large log files.</string>
          </property>
-         <property name="text">
-          <string>&amp;Open</string>
+         <property name="text" stdset="0">
+          <string>Open</string>
          </property>
-         <property name="autoDefault">
+         <property name="autoDefault" stdset="0">
           <bool>false</bool>
          </property>
         </widget>
@@ -359,7 +368,7 @@
      </widget>
      <widget class="QWidget" name="tab_console">
       <attribute name="title">
-       <string>&amp;Console</string>
+       <string>Console</string>
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_3">
        <property name="spacing">
@@ -390,37 +399,26 @@
           <number>3</number>
          </property>
          <item>
-          <widget class="QLabel" name="label">
-           <property name="text">
-            <string notr="true">&gt;</string>
-           </property>
-          </widget>
-         </item>
-         <item>
           <widget class="QLineEdit" name="lineEdit"/>
          </item>
          <item>
-          <widget class="QPushButton" name="clearButton">
+          <widget class="QtMaterialFlatButton" name="clearButton" native="true">
            <property name="maximumSize">
             <size>
-             <width>24</width>
+             <width>68</width>
              <height>24</height>
-            </size>
+            </size> 
            </property>
            <property name="toolTip">
             <string>Clear console</string>
            </property>
-           <property name="text">
-            <string/>
+           <property name="text" stdset="0">
+            <string>Clear</string>
            </property>
-           <property name="icon">
-            <iconset resource="../fantasygold.qrc">
-             <normaloff>:/icons/remove</normaloff>:/icons/remove</iconset>
-           </property>
-           <property name="shortcut">
+           <property name="shortcut" stdset="0">
             <string notr="true">Ctrl+L</string>
            </property>
-           <property name="autoDefault">
+           <property name="autoDefault" stdset="0">
             <bool>false</bool>
            </property>
           </widget>
@@ -431,7 +429,7 @@
      </widget>
      <widget class="QWidget" name="tab_nettraffic">
       <attribute name="title">
-       <string>&amp;Network Traffic</string>
+       <string>Network Traffic</string>
       </attribute>
       <layout class="QHBoxLayout" name="horizontalLayout_3">
        <item>
@@ -481,11 +479,11 @@
             </widget>
            </item>
            <item>
-            <widget class="QPushButton" name="btnClearTrafficGraph">
-             <property name="text">
-              <string>&amp;Clear</string>
+            <widget class="QtMaterialFlatButton" name="btnClearTrafficGraph" native="true">
+             <property name="text" stdset="0">
+              <string>Clear</string>
              </property>
-             <property name="autoDefault">
+             <property name="autoDefault" stdset="0">
               <bool>false</bool>
              </property>
             </widget>
@@ -684,21 +682,95 @@
      </widget>
      <widget class="QWidget" name="tab_peers">
       <attribute name="title">
-       <string>&amp;Peers</string>
+       <string>Peers</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout_2">
        <item row="0" column="0" rowspan="2">
-        <widget class="QTableView" name="peerWidget">
-         <property name="horizontalScrollBarPolicy">
-          <enum>Qt::ScrollBarAsNeeded</enum>
+        <layout class="QVBoxLayout" name="verticalLayout_101">
+         <property name="spacing">
+          <number>0</number>
          </property>
-         <property name="sortingEnabled">
-          <bool>true</bool>
-         </property>
-         <attribute name="horizontalHeaderHighlightSections">
-          <bool>false</bool>
-         </attribute>
-        </widget>
+         <item>
+          <widget class="QTableView" name="peerWidget">
+           <property name="contextMenuPolicy">
+            <enum>Qt::CustomContextMenu</enum>
+           </property>
+           <property name="horizontalScrollBarPolicy">
+            <enum>Qt::ScrollBarAsNeeded</enum>
+           </property>
+           <property name="sortingEnabled">
+            <bool>true</bool>
+           </property>
+           <attribute name="horizontalHeaderHighlightSections">
+            <bool>false</bool>
+           </attribute>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="banHeading">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="minimumSize">
+            <size>
+             <width>300</width>
+             <height>32</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>16777215</width>
+             <height>32</height>
+            </size>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>12</pointsize>
+            </font>
+           </property>
+           <property name="cursor">
+            <cursorShape>IBeamCursor</cursorShape>
+           </property>
+           <property name="text">
+            <string>Banned peers</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignBottom|Qt::AlignLeading|Qt::AlignLeft</set>
+           </property>
+           <property name="wordWrap">
+            <bool>true</bool>
+           </property>
+           <property name="textInteractionFlags">
+            <set>Qt::NoTextInteraction</set>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QTableView" name="banlistWidget">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="contextMenuPolicy">
+            <enum>Qt::CustomContextMenu</enum>
+           </property>
+           <property name="horizontalScrollBarPolicy">
+            <enum>Qt::ScrollBarAsNeeded</enum>
+           </property>
+           <property name="sortingEnabled">
+            <bool>true</bool>
+           </property>
+           <attribute name="horizontalHeaderHighlightSections">
+            <bool>false</bool>
+           </attribute>
+          </widget>
+         </item>
+        </layout>
        </item>
        <item row="0" column="1">
         <widget class="QLabel" name="peerHeading">
@@ -1066,12 +1138,25 @@
      </widget>
      <widget class="QWidget" name="tab_repair">
       <attribute name="title">
-       <string>&amp;Wallet Repair</string>
+       <string>Wallet Repair</string>
       </attribute>
-      <layout class="QGridLayout" name="gridLayout_4" columnstretch="0,1,0,2">
+      <layout class="QGridLayout" name="gridLayout_4" columnstretch="0,0,0,0">
        <property name="horizontalSpacing">
         <number>12</number>
        </property>
+       <item row="10" column="0" colspan="2">
+        <widget class="QtMaterialFlatButton" name="btn_resync">
+         <property name="minimumSize">
+          <size>
+           <width>100</width>
+           <height>23</height>
+          </size>
+         </property>
+         <property name="text">
+          <string>Delete local Blockchain Folders</string>
+         </property>
+        </widget>
+       </item>
        <item row="0" column="0" colspan="4">
         <widget class="QLabel" name="label_repair_header">
          <property name="font">
@@ -1138,14 +1223,14 @@
         </spacer>
        </item>
        <item row="4" column="0" colspan="2">
-        <widget class="QPushButton" name="btn_salvagewallet">
+        <widget class="QtMaterialFlatButton" name="btn_salvagewallet" native="true">
          <property name="minimumSize">
           <size>
            <width>100</width>
            <height>23</height>
           </size>
          </property>
-         <property name="text">
+         <property name="text" stdset="0">
           <string>Salvage wallet</string>
          </property>
         </widget>
@@ -1168,14 +1253,14 @@
         </widget>
        </item>
        <item row="5" column="0" colspan="2">
-        <widget class="QPushButton" name="btn_rescan">
+        <widget class="QtMaterialFlatButton" name="btn_rescan" native="true">
          <property name="minimumSize">
           <size>
            <width>100</width>
            <height>23</height>
           </size>
          </property>
-         <property name="text">
+         <property name="text" stdset="0">
           <string>Rescan blockchain files</string>
          </property>
         </widget>
@@ -1198,14 +1283,14 @@
         </widget>
        </item>
        <item row="6" column="0" colspan="2">
-        <widget class="QPushButton" name="btn_zapwallettxes1">
+        <widget class="QtMaterialFlatButton" name="btn_zapwallettxes1" native="true">
          <property name="minimumSize">
           <size>
            <width>100</width>
            <height>23</height>
           </size>
          </property>
-         <property name="text">
+         <property name="text" stdset="0">
           <string>Recover transactions 1</string>
          </property>
         </widget>
@@ -1228,14 +1313,14 @@
         </widget>
        </item>
        <item row="7" column="0" colspan="2">
-        <widget class="QPushButton" name="btn_zapwallettxes2">
+        <widget class="QtMaterialFlatButton" name="btn_zapwallettxes2" native="true">
          <property name="minimumSize">
           <size>
            <width>100</width>
            <height>23</height>
           </size>
          </property>
-         <property name="text">
+         <property name="text" stdset="0">
           <string>Recover transactions 2</string>
          </property>
         </widget>
@@ -1258,14 +1343,14 @@
         </widget>
        </item>
        <item row="8" column="0" colspan="2">
-        <widget class="QPushButton" name="btn_upgradewallet">
+        <widget class="QtMaterialFlatButton" name="btn_upgradewallet" native="true">
          <property name="minimumSize">
           <size>
            <width>100</width>
            <height>23</height>
           </size>
          </property>
-         <property name="text">
+         <property name="text" stdset="0">
           <string>Upgrade wallet format</string>
          </property>
         </widget>
@@ -1288,14 +1373,14 @@
         </widget>
        </item>
        <item row="9" column="0" colspan="2">
-        <widget class="QPushButton" name="btn_reindex">
+        <widget class="QtMaterialFlatButton" name="btn_reindex" native="true">
          <property name="minimumSize">
           <size>
            <width>100</width>
            <height>23</height>
           </size>
          </property>
-         <property name="text">
+         <property name="text" stdset="0">
           <string>Rebuild index</string>
          </property>
         </widget>
@@ -1317,7 +1402,7 @@
          </property>
         </widget>
        </item>
-       <item row="10" column="0">
+       <item row="11" column="0">
         <spacer name="verticalSpacer_repair2">
          <property name="orientation">
           <enum>Qt::Vertical</enum>
@@ -1330,6 +1415,23 @@
          </property>
         </spacer>
        </item>
+       <item row="10" column="2">
+        <widget class="QLabel" name="label_repair_resync_command">
+         <property name="text">
+          <string>-resync:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="10" column="3">
+        <widget class="QLabel" name="label_repair_resync">
+         <property name="text">
+          <string>Deletes all local blockchain folders so the wallet synchronizes from scratch.</string>
+         </property>
+         <property name="wordWrap">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
       </layout>
      </widget>
     </widget>
@@ -1337,6 +1439,11 @@
   </layout>
  </widget>
  <customwidgets>
+  <customwidget>
+   <class>QtMaterialFlatButton</class>
+   <extends>QWidget</extends>
+   <header>qtmaterialflatbutton.h</header>
+  </customwidget>
   <customwidget>
    <class>TrafficGraphWidget</class>
    <extends>QWidget</extends>

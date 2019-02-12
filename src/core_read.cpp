@@ -1,4 +1,5 @@
 // Copyright (c) 2009-2014 The Bitcoin developers
+// Copyright (c) 2015-2017 The PIVX developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -9,7 +10,7 @@
 #include "script/script.h"
 #include "serialize.h"
 #include "streams.h"
-#include "univalue/univalue.h"
+#include <univalue.h>
 #include "util.h"
 #include "utilstrencodings.h"
 #include "version.h"
@@ -24,14 +25,13 @@ using namespace boost;
 using namespace boost::algorithm;
 using namespace std;
 
-CScript ParseScript(std::string s)
-{
+CScript ParseScript(std::string s) {
     CScript result;
 
     static map<string, opcodetype> mapOpNames;
 
     if (mapOpNames.empty()) {
-        for (int op = 0; op <= OP_NOP10; op++) {
+        for (int op = 0; op <= OP_ZEROCOINSPEND; op++) {
             // Allow OP_RESERVED to get into mapOpNames
             if (op < OP_NOP && op != OP_RESERVED)
                 continue;
@@ -78,8 +78,7 @@ CScript ParseScript(std::string s)
     return result;
 }
 
-bool DecodeHexTx(CTransaction& tx, const std::string& strHexTx)
-{
+bool DecodeHexTx(CTransaction& tx, const std::string& strHexTx) {
     if (!IsHex(strHexTx))
         return false;
 
@@ -94,8 +93,7 @@ bool DecodeHexTx(CTransaction& tx, const std::string& strHexTx)
     return true;
 }
 
-bool DecodeHexBlk(CBlock& block, const std::string& strHexBlk)
-{
+bool DecodeHexBlk(CBlock& block, const std::string& strHexBlk) {
     if (!IsHex(strHexBlk))
         return false;
 
@@ -110,16 +108,14 @@ bool DecodeHexBlk(CBlock& block, const std::string& strHexBlk)
     return true;
 }
 
-uint256 ParseHashUV(const UniValue& v, const string& strName)
-{
+uint256 ParseHashUV(const UniValue& v, const string& strName) {
     string strHex;
     if (v.isStr())
         strHex = v.getValStr();
     return ParseHashStr(strHex, strName); // Note: ParseHashStr("") throws a runtime_error
 }
 
-uint256 ParseHashStr(const std::string& strHex, const std::string& strName)
-{
+uint256 ParseHashStr(const std::string& strHex, const std::string& strName) {
     if (!IsHex(strHex)) // Note: IsHex("") is false
         throw runtime_error(strName + " must be hexadecimal string (not '" + strHex + "')");
 
@@ -128,8 +124,7 @@ uint256 ParseHashStr(const std::string& strHex, const std::string& strName)
     return result;
 }
 
-vector<unsigned char> ParseHexUV(const UniValue& v, const string& strName)
-{
+vector<unsigned char> ParseHexUV(const UniValue& v, const string& strName) {
     string strHex;
     if (v.isStr())
         strHex = v.getValStr();

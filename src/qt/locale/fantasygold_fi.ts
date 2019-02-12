@@ -10,36 +10,36 @@
         <translation>Luo uusi osoite</translation>
     </message>
     <message>
-        <source>&amp;New</source>
-        <translation>&amp;Uusi</translation>
+        <source>New</source>
+        <translation>Uusi</translation>
     </message>
     <message>
         <source>Copy the currently selected address to the system clipboard</source>
         <translation>Kopioi valittu osoite leikepöydälle</translation>
     </message>
     <message>
-        <source>&amp;Copy</source>
-        <translation>&amp;Kopioi</translation>
+        <source>Copy</source>
+        <translation>Kopioi</translation>
     </message>
     <message>
         <source>Delete the currently selected address from the list</source>
         <translation>Poista valittu osoite listalta</translation>
     </message>
     <message>
-        <source>&amp;Delete</source>
-        <translation>&amp;Poista</translation>
+        <source>Delete</source>
+        <translation>Poista</translation>
     </message>
     <message>
         <source>Export the data in the current tab to a file</source>
         <translation>Vie tiedot nykyisestä välilehdestä tiedostoon</translation>
     </message>
     <message>
-        <source>&amp;Export</source>
-        <translation>&amp;Vie</translation>
+        <source>Export</source>
+        <translation>Vie</translation>
     </message>
     <message>
-        <source>C&amp;lose</source>
-        <translation>Su&amp;lje</translation>
+        <source>Close</source>
+        <translation>Sulje</translation>
     </message>
     <message>
         <source>Choose the address to send coins to</source>
@@ -50,8 +50,8 @@
         <translation>Valitse osoite jolla vastaanottaa kolikot</translation>
     </message>
     <message>
-        <source>C&amp;hoose</source>
-        <translation>V&amp;alitse</translation>
+        <source>Choose</source>
+        <translation>Valitse</translation>
     </message>
     <message>
         <source>Sending addresses</source>
@@ -70,16 +70,16 @@
         <translation>Nämä ovat sinun FantasyGold osoitteesi maksujen vastaanottamista varten. On suositeltavaa käyttää uutta vastaanottavaa osoitetta jokaiselle uudelle rahansiirrolle.</translation>
     </message>
     <message>
-        <source>&amp;Copy Address</source>
-        <translation>&amp;Kopioi osoite</translation>
+        <source>Copy Address</source>
+        <translation>Kopioi osoite</translation>
     </message>
     <message>
-        <source>Copy &amp;Label</source>
-        <translation>Kopioi &amp;Nimike</translation>
+        <source>Copy Label</source>
+        <translation>Kopioi Nimike</translation>
     </message>
     <message>
-        <source>&amp;Edit</source>
-        <translation>&amp;Muokkaa</translation>
+        <source>Edit</source>
+        <translation>Muokkaa</translation>
     </message>
     <message>
         <source>Export Address List</source>
@@ -93,7 +93,11 @@
         <source>Exporting Failed</source>
         <translation>Vienti epäonnistui</translation>
     </message>
-    </context>
+    <message>
+        <source>There was an error trying to save the address list to %1. Please try again.</source>
+        <translation>Tapahtui virhe osoitelistan tallennuksessa %1. Yritä uudestaan.</translation>
+    </message>
+</context>
 <context>
     <name>AddressTableModel</name>
     <message>
@@ -132,10 +136,6 @@
         <translation>Ottaa pois käytöstä tavallisen sendmoneyn kun käyttöjärjestelmä on kompromisoitu. Ei tarjoa todellista turvaa.</translation>
     </message>
     <message>
-        <source>For anonymization and staking only</source>
-        <translation>Vain anonymisointiin ja panostukseen</translation>
-    </message>
-    <message>
         <source>Enter the new passphrase to the wallet.&lt;br/&gt;Please use a passphrase of &lt;b&gt;ten or more random characters&lt;/b&gt;, or &lt;b&gt;eight or more words&lt;/b&gt;.</source>
         <translation>Syötä uusi salausavain lompakkoon &lt;br/&gt; Käytä salausavaimena &lt;b&gt;yli kymmentä satunnaista merkkiä&lt;/b&gt;, tai &lt;b&gt; kahdeksaa tai useampaa sanaa&lt;/b&gt;.</translation>
     </message>
@@ -172,16 +172,16 @@
         <translation>Vahvista lompakon salaus</translation>
     </message>
     <message>
-        <source>FantasyGold will close now to finish the encryption process. Remember that encrypting your wallet cannot fully protect your FGCs from being stolen by malware infecting your computer.</source>
-        <translation>FantasyGold sulkeutuu salausprosessin ajaksi. Muista, että lompakon salaus ei voi täysin suojella FGCien varkaudelta, jos tietokoneesi sisältää haittaohjelmia.</translation>
+        <source>FantasyGold will close now to finish the encryption process. Remember that encrypting your wallet cannot fully protect your FGCS from being stolen by malware infecting your computer.</source>
+        <translation>FantasyGold sulkeutuu salausprosessin ajaksi. Muista, että lompakon salaus ei voi täysin suojella FantasyGoldien varkaudelta, jos tietokoneesi sisältää haittaohjelmia.</translation>
     </message>
     <message>
         <source>Are you sure you wish to encrypt your wallet?</source>
         <translation>Oletko varma että tahdot salata lompakkosi?</translation>
     </message>
     <message>
-        <source>Warning: If you encrypt your wallet and lose your passphrase, you will &lt;b&gt;LOSE ALL OF YOUR FGC&lt;/b&gt;!</source>
-        <translation>Varoitus: Jos salaat lompakkosi ja unohdat salausavaimesi, &lt;b&gt;menetät kaikki FGCisi&lt;/b&gt;</translation>
+        <source>Warning: If you encrypt your wallet and lose your passphrase, you will &lt;b&gt;LOSE ALL OF YOUR FantasyGold&lt;/b&gt;!</source>
+        <translation>Varoitus: Jos salaat lompakkosi ja unohdat salausavaimesi, &lt;b&gt;menetät kaikki FantasyGoldisi&lt;/b&gt;</translation>
     </message>
     <message>
         <source>Wallet encrypted</source>
@@ -225,27 +225,21 @@
     </message>
 </context>
 <context>
+    <name>BanTableModel</name>
+    </context>
+<context>
     <name>Bip38ToolDialog</name>
     <message>
         <source>BIP 38 Tool</source>
         <translation>BIP 38 työkalu</translation>
     </message>
     <message>
-        <source>&amp;BIP 38 Encrypt</source>
-        <translation>&amp;BIP 38 Salaus</translation>
-    </message>
-    <message>
-        <source>Enter a FantasyGold Address that you would like to encrypt using BIP 38. Enter a passphrase in the middle box. Press encrypt to compute the encrypted private key.</source>
-        <translation>Syötä FantasyGold osoite, jonnka tahtoisit salata käyttäen BIP 38.
-Syötä salausavain laatikon keskelle. Paina salaa tuottaaksesi salatun yksityisavaimen.</translation>
+        <source>BIP 38 Encrypt</source>
+        <translation>BIP 38 Salaus</translation>
     </message>
     <message>
         <source>Address:</source>
         <translation>Osoite:</translation>
-    </message>
-    <message>
-        <source>The FantasyGold address to sign the message with</source>
-        <translation>FantasyGold osoite, jolla viesti allekirjoitetaan</translation>
     </message>
     <message>
         <source>Choose previously used address</source>
@@ -276,44 +270,24 @@ Syötä salausavain laatikon keskelle. Paina salaa tuottaaksesi salatun yksityis
         <translation>Kopioi nykyinen allekirjoitus järjestelmän leikepöydälle</translation>
     </message>
     <message>
-        <source>Sign the message to prove you own this FantasyGold address</source>
-        <translation>Allekirjoita viesti todistaaksesi, että omistat tämän FantasyGold osoitteen</translation>
+        <source>Encrypt Key</source>
+        <translation>Salaus Avain</translation>
     </message>
     <message>
-        <source>Encrypt &amp;Key</source>
-        <translation>Salaus &amp;Avain</translation>
+        <source>Clear All</source>
+        <translation>Tyhjennä Kaikki</translation>
     </message>
     <message>
-        <source>Reset all sign message fields</source>
-        <translation>Tyhjennä kaikki allekirjoita viesti kentät</translation>
-    </message>
-    <message>
-        <source>Clear &amp;All</source>
-        <translation>Tyhjennä &amp;Kaikki</translation>
-    </message>
-    <message>
-        <source>&amp;BIP 38 Decrypt</source>
-        <translation>&amp;BIP 38 salauksen avaus</translation>
+        <source>BIP 38 Decrypt</source>
+        <translation>BIP 38 salauksen avaus</translation>
     </message>
     <message>
         <source>Enter the BIP 38 encrypted private key. Enter the passphrase in the middle box. Click Decrypt Key to compute the private key. After the key is decrypted, clicking 'Import Address' will add this private key to the wallet.</source>
         <translation>Syötä BIP 38 salattu yksityisavain. Syötä salausavain laatikkoon. Paina Avaa Salaus tuottaaksesi yksityisavaimen. Kun avain on dekryptattu, painamalla "Import osoite" lisää tämän yksityisavaimen lompakkoon.</translation>
     </message>
     <message>
-        <source>The FantasyGold address the message was signed with</source>
-        <translation>FantasyGold osoite, jolla viesti allekirjoitettiin</translation>
-    </message>
-    <message>
-        <source>Verify the message to ensure it was signed with the specified FantasyGold address</source>
-        <translation>Vahvista että viesti on allekirjoitettu kyseessä olevalla FantasyGold osoitteella.</translation>
-    </message>
-    <message>
-        <source>Decrypt &amp;Key</source>
-        <translation>Salauksen avaus &amp;Avain</translation>
-    </message>
-    <message>
-        <source>Reset all verify message fields</source>
-        <translation>Tyhjennä kaikki vahvista viesti kentät</translation>
+        <source>Decrypt Key</source>
+        <translation>Salauksen avaus Avain</translation>
     </message>
     <message>
         <source>Decrypted Key:</source>
@@ -399,136 +373,136 @@ Syötä salausavain laatikon keskelle. Paina salaa tuottaaksesi salatun yksityis
         <translation>Solmu</translation>
     </message>
     <message>
-        <source>&amp;Overview</source>
-        <translation>&amp;Yleisnäkymä</translation>
+        <source>Overview</source>
+        <translation>Yleisnäkymä</translation>
     </message>
     <message>
         <source>Show general overview of wallet</source>
         <translation>Näytä yleinen näkymä lompakosta</translation>
     </message>
     <message>
-        <source>&amp;Send</source>
-        <translation>&amp;Lähetä</translation>
+        <source>Send</source>
+        <translation>Lähetä</translation>
     </message>
     <message>
-        <source>&amp;Receive</source>
-        <translation>&amp;Vastaanota</translation>
+        <source>Receive</source>
+        <translation>Vastaanota</translation>
     </message>
     <message>
-        <source>&amp;Transactions</source>
-        <translation>&amp;Rahansiirrot</translation>
+        <source>Transactions</source>
+        <translation>Rahansiirrot</translation>
     </message>
     <message>
         <source>Browse transaction history</source>
         <translation>Tarkastele rahansiirto historiaa</translation>
     </message>
     <message>
-        <source>E&amp;xit</source>
-        <translation>P&amp;oistu</translation>
+        <source>Exit</source>
+        <translation>Poistu</translation>
     </message>
     <message>
         <source>Quit application</source>
         <translation>Lopeta ohjelma</translation>
     </message>
     <message>
-        <source>About &amp;Qt</source>
-        <translation>Tietoa &amp;Qt</translation>
+        <source>About Qt</source>
+        <translation>Tietoa Qt</translation>
     </message>
     <message>
         <source>Show information about Qt</source>
         <translation>Näytä tietoja Qt:stä</translation>
     </message>
     <message>
-        <source>&amp;Options...</source>
-        <translation>&amp;Vaihtoehdot...</translation>
+        <source>Options...</source>
+        <translation>Vaihtoehdot...</translation>
     </message>
     <message>
-        <source>&amp;Show / Hide</source>
-        <translation>&amp;Näytä / Piilota</translation>
+        <source>Show / Hide</source>
+        <translation>Näytä / Piilota</translation>
     </message>
     <message>
         <source>Show or hide the main Window</source>
         <translation>Näytä tai piilota pääikkuna</translation>
     </message>
     <message>
-        <source>&amp;Encrypt Wallet...</source>
-        <translation>&amp;Salaa lompakko...</translation>
+        <source>Encrypt Wallet...</source>
+        <translation>Salaa lompakko...</translation>
     </message>
     <message>
         <source>Encrypt the private keys that belong to your wallet</source>
         <translation>Salaa yksityisavaimet jotka kuuluvat lompakkoosi</translation>
     </message>
     <message>
-        <source>&amp;Backup Wallet...</source>
-        <translation>&amp;Varmuuskopioi lompakko...</translation>
+        <source>Backup Wallet...</source>
+        <translation>Varmuuskopioi lompakko...</translation>
     </message>
     <message>
         <source>Backup wallet to another location</source>
         <translation>Varmuuskopioi lompakko toiseen sijaintiin</translation>
     </message>
     <message>
-        <source>&amp;Change Passphrase...</source>
-        <translation>&amp;Vaihda salausavain...</translation>
+        <source>Change Passphrase...</source>
+        <translation>Vaihda salausavain...</translation>
     </message>
     <message>
         <source>Change the passphrase used for wallet encryption</source>
         <translation>Vaihda salausavain, jota käytetään lompakon salaukseen</translation>
     </message>
     <message>
-        <source>&amp;Unlock Wallet...</source>
-        <translation>&amp;Avaa lompakko...</translation>
+        <source>Unlock Wallet...</source>
+        <translation>Avaa lompakko...</translation>
     </message>
     <message>
         <source>Unlock wallet</source>
         <translation>Avaa lompakko</translation>
     </message>
     <message>
-        <source>&amp;Lock Wallet</source>
-        <translation>&amp;Lukitse lompakko</translation>
+        <source>Lock Wallet</source>
+        <translation>Lukitse lompakko</translation>
     </message>
     <message>
-        <source>Sign &amp;message...</source>
-        <translation>Allekirjoita &amp;viesti...</translation>
+        <source>Sign message...</source>
+        <translation>Allekirjoita viesti...</translation>
     </message>
     <message>
-        <source>&amp;Verify message...</source>
-        <translation>Vahvista &amp;viesti...</translation>
+        <source>Verify message...</source>
+        <translation>Vahvista viesti...</translation>
     </message>
     <message>
-        <source>&amp;Information</source>
-        <translation>&amp;Informaatio</translation>
+        <source>Information</source>
+        <translation>Informaatio</translation>
     </message>
     <message>
         <source>Show diagnostic information</source>
         <translation>Näytä diagnostiikka informaatio</translation>
     </message>
     <message>
-        <source>&amp;Debug console</source>
-        <translation>&amp;Debug konsoli</translation>
+        <source>Debug console</source>
+        <translation>Debug konsoli</translation>
     </message>
     <message>
         <source>Open debugging console</source>
         <translation>Avaa debuggaus konsoli</translation>
     </message>
     <message>
-        <source>&amp;Network Monitor</source>
-        <translation>&amp;Verkkoliikenne monitori</translation>
+        <source>Network Monitor</source>
+        <translation>Verkkoliikenne monitori</translation>
     </message>
     <message>
         <source>Show network monitor</source>
         <translation>Näytä verkkoliikenne monitori</translation>
     </message>
     <message>
-        <source>&amp;Peers list</source>
-        <translation>&amp;Peer lista</translation>
+        <source>Peers list</source>
+        <translation>Peer lista</translation>
     </message>
     <message>
         <source>Show peers info</source>
         <translation>Näytä peer info</translation>
     </message>
     <message>
-        <source>Wallet &amp;Repair</source>
-        <translation>Lompakko &amp;Korjaa</translation>
+        <source>Wallet Repair</source>
+        <translation>Lompakko Korjaa</translation>
     </message>
     <message>
         <source>Show wallet repair options</source>
@@ -539,56 +513,56 @@ Syötä salausavain laatikon keskelle. Paina salaa tuottaaksesi salatun yksityis
         <translation>Avaa konfiguraatio tiedosto</translation>
     </message>
     <message>
-        <source>Show Automatic &amp;Backups</source>
-        <translation>Näytä automaattiset &amp;Varmuuskopiot</translation>
+        <source>Show Automatic Backups</source>
+        <translation>Näytä automaattiset Varmuuskopiot</translation>
     </message>
     <message>
         <source>Show automatically created wallet backups</source>
         <translation>Näytä automaattisesti luodut varmuuskopiot lompakosta</translation>
     </message>
     <message>
-        <source>&amp;Sending addresses...</source>
-        <translation>&amp;Lähettävät osoitteet...</translation>
+        <source>Sending addresses...</source>
+        <translation>Lähettävät osoitteet...</translation>
     </message>
     <message>
         <source>Show the list of used sending addresses and labels</source>
         <translation>Näytä lista käytettävistä lähettävistä osoitteista ja nimikkeistä</translation>
     </message>
     <message>
-        <source>&amp;Receiving addresses...</source>
-        <translation>&amp;Vastaanottavat osoitteet...</translation>
+        <source>Receiving addresses...</source>
+        <translation>Vastaanottavat osoitteet...</translation>
     </message>
     <message>
         <source>Show the list of used receiving addresses and labels</source>
         <translation>Näytä lista käytettävistä vastaanottavista osoitteista ja nimikkeistä</translation>
     </message>
     <message>
-        <source>Open &amp;URI...</source>
-        <translation>Avaa &amp;URI...</translation>
+        <source>Open URI...</source>
+        <translation>Avaa URI...</translation>
     </message>
     <message>
-        <source>&amp;Command-line options</source>
-        <translation>&amp;Komentolinja vaihtoehdot</translation>
+        <source>Command-line options</source>
+        <translation>Komentolinja vaihtoehdot</translation>
     </message>
     <message>
         <source>Synchronizing additional data: %p%</source>
         <translation>Synkronisoidaan lisätietoja: %p%</translation>
     </message>
     <message>
-        <source>&amp;File</source>
-        <translation>&amp;Tiedosto</translation>
+        <source>File</source>
+        <translation>Tiedosto</translation>
     </message>
     <message>
-        <source>&amp;Settings</source>
-        <translation>&amp;Asetukset</translation>
+        <source>Settings</source>
+        <translation>Asetukset</translation>
     </message>
     <message>
-        <source>&amp;Tools</source>
-        <translation>&amp;Työkalut</translation>
+        <source>Tools</source>
+        <translation>Työkalut</translation>
     </message>
     <message>
-        <source>&amp;Help</source>
-        <translation>&amp;Apua</translation>
+        <source>Help</source>
+        <translation>Apua</translation>
     </message>
     <message>
         <source>FantasyGold Core</source>
@@ -599,20 +573,20 @@ Syötä salausavain laatikon keskelle. Paina salaa tuottaaksesi salatun yksityis
         <translation>Lähetä kolikkoja FantasyGold osoitteeseen</translation>
     </message>
     <message>
-        <source>Request payments (generates QR codes and fantasygold: URIs)</source>
-        <translation>Pyydä maksuja (Generoi QR koodeja ja fantasygold: URIja)</translation>
+        <source>Request payments (generates QR codes and FantasyGold: URIs)</source>
+        <translation>Pyydä maksuja (Generoi QR koodeja ja FantasyGold: URIja)</translation>
     </message>
     <message>
-        <source>&amp;Masternodes</source>
-        <translation>&amp;Masternodet</translation>
+        <source>Masternodes</source>
+        <translation>Masternodet</translation>
     </message>
     <message>
         <source>Browse masternodes</source>
         <translation>Selaa masternodeja</translation>
     </message>
     <message>
-        <source>&amp;About FantasyGold Core</source>
-        <translation>FantasyGold Core &amp;ytimestä</translation>
+        <source>About FantasyGold Core</source>
+        <translation>FantasyGold Core ytimestä</translation>
     </message>
     <message>
         <source>Show information about FantasyGold Core</source>
@@ -631,28 +605,28 @@ Syötä salausavain laatikon keskelle. Paina salaa tuottaaksesi salatun yksityis
         <translation>Vahvista viestit varmistaaksesi, että ne allekirjoitettiin tietyllä FantasyGold osoiteella.</translation>
     </message>
     <message>
-        <source>&amp;BIP38 tool</source>
-        <translation>&amp;BIP38 työkalu</translation>
+        <source>BIP38 tool</source>
+        <translation>BIP38 työkalu</translation>
     </message>
     <message>
         <source>Encrypt and decrypt private keys using a passphrase</source>
         <translation>Salaa ja avaa yksityisavainten salaus käyttämällä salasanaa</translation>
     </message>
     <message>
-        <source>&amp;MultiSend</source>
-        <translation>&amp;MultiSend</translation>
+        <source>MultiSend</source>
+        <translation>MultiSend</translation>
     </message>
     <message>
         <source>MultiSend Settings</source>
         <translation>MultiSend asetukset</translation>
     </message>
     <message>
-        <source>Open Wallet &amp;Configuration File</source>
-        <translation>Avaa lompakko &amp;Konfiguraatiotiedosto</translation>
+        <source>Open Wallet Configuration File</source>
+        <translation>Avaa lompakko Konfiguraatiotiedosto</translation>
     </message>
     <message>
-        <source>Open &amp;Masternode Configuration File</source>
-        <translation>Avaa &amp;Masternode konfiguraatiotiedosto</translation>
+        <source>Open Masternode Configuration File</source>
+        <translation>Avaa Masternode konfiguraatiotiedosto</translation>
     </message>
     <message>
         <source>Open Masternode configuration file</source>
@@ -663,8 +637,8 @@ Syötä salausavain laatikon keskelle. Paina salaa tuottaaksesi salatun yksityis
         <translation>Avaa FantasyGold: URI tai pyydä maksua</translation>
     </message>
     <message>
-        <source>&amp;Blockchain explorer</source>
-        <translation>&amp;Blockchain tutkija</translation>
+        <source>Blockchain explorer</source>
+        <translation>Blockchain tutkija</translation>
     </message>
     <message>
         <source>Block explorer window</source>
@@ -701,10 +675,6 @@ Syötä salausavain laatikon keskelle. Paina salaa tuottaaksesi salatun yksityis
     <message>
         <source>%1 and %2</source>
         <translation>%1 ja %2</translation>
-    </message>
-    <message>
-        <source>%1 behind</source>
-        <translation>%1 takana</translation>
     </message>
     <message>
         <source>Catching up...</source>
@@ -813,6 +783,10 @@ Syötä salausavain laatikon keskelle. Paina salaa tuottaaksesi salatun yksityis
         <translation>Määrä</translation>
     </message>
     <message>
+        <source>Type</source>
+        <translation>Tyyppi</translation>
+    </message>
+    <message>
         <source>Date</source>
         <translation>Päivämäärä</translation>
     </message>
@@ -908,8 +882,8 @@ Syötä salausavain laatikon keskelle. Paina salaa tuottaaksesi salatun yksityis
         <translation>Muokkaa osoitetta</translation>
     </message>
     <message>
-        <source>&amp;Address</source>
-        <translation>&amp;Osoite</translation>
+        <source>Address</source>
+        <translation>Osoite</translation>
     </message>
     <message>
         <source>New receiving address</source>
@@ -988,12 +962,12 @@ Syötä salausavain laatikon keskelle. Paina salaa tuottaaksesi salatun yksityis
         <translation>Aktiivinen</translation>
     </message>
     <message>
-        <source>Start &amp;all</source>
-        <translation>Aloita &amp;kaikki</translation>
+        <source>Start all</source>
+        <translation>Aloita kaikki</translation>
     </message>
     <message>
-        <source>&amp;Update status</source>
-        <translation>&amp;Päivitä tila</translation>
+        <source>Update status</source>
+        <translation>Päivitä tila</translation>
     </message>
     <message>
         <source>0</source>
@@ -1079,6 +1053,10 @@ Syötä salausavain laatikon keskelle. Paina salaa tuottaaksesi salatun yksityis
         <translation>Lähetä Masternode palkkioihin</translation>
     </message>
     <message>
+        <source>(no label)</source>
+        <translation>(ei nimikettä)</translation>
+    </message>
+    <message>
         <source>The entered address:
 </source>
         <translation>Syötetty osoite:</translation>
@@ -1113,6 +1091,21 @@ Please check the address and try again.</source>
     </message>
 </context>
 <context>
+    <name>MultisigDialog</name>
+    <message>
+        <source>Status:</source>
+        <translation>Tila:</translation>
+    </message>
+    <message>
+        <source>0</source>
+        <translation>0</translation>
+    </message>
+    <message>
+        <source>Amount:</source>
+        <translation>Määrä:</translation>
+    </message>
+    </context>
+<context>
     <name>ObfuscationConfig</name>
     <message>
         <source>Configure Obfuscation</source>
@@ -1135,11 +1128,11 @@ Please check the address and try again.</source>
         <translation>Valitse yksityisyyden taso.</translation>
     </message>
     <message>
-        <source>Use 2 separate masternodes to mix funds up to 10000 FGC</source>
+        <source>Use 2 separate masternodes to mix funds up to 10000 FantasyGold</source>
         <translation>Käytä 2 erillistä masternodea sekoittaaksesi enintään 10000 FantasyGold</translation>
     </message>
     <message>
-        <source>Use 8 separate masternodes to mix funds up to 10000 FGC</source>
+        <source>Use 8 separate masternodes to mix funds up to 10000 FantasyGold</source>
         <translation>Käytä 8 erillistä masternodea sekoittaaksesi enintään 10000 FantasyGold</translation>
     </message>
     <message>
@@ -1147,11 +1140,11 @@ Please check the address and try again.</source>
         <translation>Käytä 16 erillistä masternodea</translation>
     </message>
     <message>
-        <source>This option is the quickest and will cost about ~0.025 FGC to anonymize 10000 FGC</source>
-        <translation>Tämä vaihtoehto on nopein ja maksaa noin ~0.025 FGC anonymoidaksesi 10000 FantasyGold</translation>
+        <source>This option is the quickest and will cost about ~0.025 FantasyGold to anonymize 10000 FantasyGold</source>
+        <translation>Tämä vaihtoehto on nopein ja maksaa noin ~0.025 FantasyGold anonymoidaksesi 10000 FantasyGold</translation>
     </message>
     <message>
-        <source>This option is moderately fast and will cost about 0.05 FGC to anonymize 10000 FGC</source>
+        <source>This option is moderately fast and will cost about 0.05 FantasyGold to anonymize 10000 FantasyGold</source>
         <translation>Tämä vaihtoehto on suhteellisen nopea ja maksaa 0.05 FantasyGold anonymoidaksesi 10000 FantasyGold</translation>
     </message>
     <message>
@@ -1159,7 +1152,7 @@ Please check the address and try again.</source>
         <translation>Tämä on hitain ja turvallisin vaihtoehto. Täydesti anonymisoiminen ei maksa mitään.</translation>
     </message>
     <message>
-        <source>0.1 FGC per 10000 FGC you anonymize.</source>
+        <source>0.1 FantasyGold per 10000 FantasyGold you anonymize.</source>
         <translation>0.1 per 10000 FantasyGold, jotka anonymisoit.</translation>
     </message>
     <message>
@@ -1189,8 +1182,8 @@ Please check the address and try again.</source>
         <translation>MB</translation>
     </message>
     <message>
-        <source>W&amp;allet</source>
-        <translation>L&amp;ompakko</translation>
+        <source>Wallet</source>
+        <translation>Lompakko</translation>
     </message>
     <message>
         <source>Accept connections from outside</source>
@@ -1201,8 +1194,8 @@ Please check the address and try again.</source>
         <translation>Salli sisääntulevat yhteydet</translation>
     </message>
     <message>
-        <source>&amp;Connect through SOCKS5 proxy (default proxy):</source>
-        <translation>&amp;Yhdistä SOCKS5 proxyn kautta (default proxy):</translation>
+        <source>Connect through SOCKS5 proxy (default proxy):</source>
+        <translation>Yhdistä SOCKS5 proxyn kautta (default proxy):</translation>
     </message>
     <message>
         <source>Expert</source>
@@ -1213,28 +1206,24 @@ Please check the address and try again.</source>
         <translation>Automaattisesti käynnistä FantasyGold kun kirjaudut sisään.</translation>
     </message>
     <message>
-        <source>&amp;Start FantasyGold on system login</source>
-        <translation>&amp;Aloita FantasyGold järjestelmän kirjautumisessa</translation>
+        <source>Start FantasyGold on system login</source>
+        <translation>Aloita FantasyGold järjestelmän kirjautumisessa</translation>
     </message>
     <message>
-        <source>Amount of FantasyGold to keep anonymized</source>
-        <translation>FantasyGold määrä joka pidetään anonymisoituna</translation>
-    </message>
-    <message>
-        <source>Enable coin &amp;control features</source>
-        <translation>Ota käyttöön coin &amp;kontrolli palvelut</translation>
+        <source>Enable coin control features</source>
+        <translation>Ota käyttöön coin kontrolli palvelut</translation>
     </message>
     <message>
         <source>Show Masternodes Tab</source>
         <translation>Näytä Masternode välilehti</translation>
     </message>
     <message>
-        <source>&amp;Spend unconfirmed change</source>
-        <translation>&amp;Käytä vahvistamaton vaihtoraha</translation>
+        <source>Spend unconfirmed change</source>
+        <translation>Käytä vahvistamaton vaihtoraha</translation>
     </message>
     <message>
-        <source>&amp;Network</source>
-        <translation>&amp;Verkko</translation>
+        <source>Network</source>
+        <translation>Verkko</translation>
     </message>
     <message>
         <source>The user interface language can be set here. This setting will take effect after restarting FantasyGold.</source>
@@ -1245,56 +1234,56 @@ Please check the address and try again.</source>
         <translation>Yhdistä FantasyGold verkkoon SOCKS5 proxyn kautta</translation>
     </message>
     <message>
-        <source>Proxy &amp;IP:</source>
-        <translation>Proxy &amp;IP:</translation>
+        <source>Proxy IP:</source>
+        <translation>Proxy IP:</translation>
     </message>
     <message>
         <source>IP address of the proxy (e.g. IPv4: 127.0.0.1 / IPv6: ::1)</source>
         <translation>Proxyn IP osoite  (esim. IPv4: 127.0.0.1 / IPv6: ::1)</translation>
     </message>
     <message>
-        <source>&amp;Port:</source>
-        <translation>&amp;Portti:</translation>
+        <source>Port:</source>
+        <translation>Portti:</translation>
     </message>
     <message>
         <source>Port of the proxy (e.g. 9050)</source>
         <translation>Proxyn portti (esim. 9050)</translation>
     </message>
     <message>
-        <source>&amp;Window</source>
-        <translation>&amp;Ikkuna</translation>
+        <source>Window</source>
+        <translation>Ikkuna</translation>
     </message>
     <message>
         <source>Show only a tray icon after minimizing the window.</source>
         <translation>Näytä vain tarjotin ikoni pienennettyäsi ikkunan.</translation>
     </message>
     <message>
-        <source>&amp;Minimize to the tray instead of the taskbar</source>
-        <translation>&amp;Pienennä tarjottimelle tehtäväpalkin sijaan</translation>
+        <source>Minimize to the tray instead of the taskbar</source>
+        <translation>Pienennä tarjottimelle tehtäväpalkin sijaan</translation>
     </message>
     <message>
         <source>Minimize instead of exit the application when the window is closed. When this option is enabled, the application will be closed only after selecting Quit in the menu.</source>
         <translation>Pienennä ikkuna poistumisen sijaan kun ikkuna suljetaan. Kun tämä vaihtoehto on valittuna, sovellus sulkeutuu vain kun se Lopetetaan valikosta.</translation>
     </message>
     <message>
-        <source>M&amp;inimize on close</source>
-        <translation>P&amp;ienennä suljettaessa</translation>
+        <source>Minimize on close</source>
+        <translation>Pienennä suljettaessa</translation>
     </message>
     <message>
-        <source>&amp;Display</source>
-        <translation>&amp;Näyttö</translation>
+        <source>Display</source>
+        <translation>Näyttö</translation>
     </message>
     <message>
-        <source>User Interface &amp;language:</source>
-        <translation>Käyttöliittymän &amp;kieli:</translation>
+        <source>User Interface language:</source>
+        <translation>Käyttöliittymän kieli:</translation>
     </message>
     <message>
         <source>User Interface Theme:</source>
         <translation>Käyttöliittymän teema:</translation>
     </message>
     <message>
-        <source>&amp;Unit to show amounts in:</source>
-        <translation>&amp;Yksikkö jossa määrä näytetään:</translation>
+        <source>Unit to show amounts in:</source>
+        <translation>Yksikkö jossa määrä näytetään:</translation>
     </message>
     <message>
         <source>Choose the default subdivision unit to show in the interface and when sending coins.</source>
@@ -1309,16 +1298,16 @@ Please check the address and try again.</source>
         <translation>Palauta kaikki asetukset oletuksiin</translation>
     </message>
     <message>
-        <source>&amp;Reset Options</source>
-        <translation>&amp;Palauta valinnat</translation>
+        <source>Reset Options</source>
+        <translation>Palauta valinnat</translation>
     </message>
     <message>
-        <source>&amp;OK</source>
-        <translation>&amp;OK</translation>
+        <source>OK</source>
+        <translation>OK</translation>
     </message>
     <message>
-        <source>&amp;Cancel</source>
-        <translation>&amp;Peruuta</translation>
+        <source>Cancel</source>
+        <translation>Peruuta</translation>
     </message>
     <message>
         <source>default</source>
@@ -1344,7 +1333,7 @@ Please check the address and try again.</source>
         <source>The supplied proxy address is invalid.</source>
         <translation>Tarjottu proxy osoite on virheellinen.</translation>
     </message>
-</context>
+    </context>
 <context>
     <name>OverviewPage</name>
     <message>
@@ -1376,28 +1365,12 @@ Please check the address and try again.</source>
         <translation>Panostus tai masternodem palkiinnot jotka eivät ole vielä kypsyneet.</translation>
     </message>
     <message>
-        <source>Balances</source>
-        <translation>Saldot</translation>
-    </message>
-    <message>
         <source>Total:</source>
         <translation>Määrä:</translation>
     </message>
     <message>
-        <source>Your current total balance</source>
-        <translation>Sinun nykyinen kokonaissaldo</translation>
-    </message>
-    <message>
         <source>Spendable:</source>
         <translation>Käytettävää:</translation>
-    </message>
-    <message>
-        <source>Status:</source>
-        <translation>Tila:</translation>
-    </message>
-    <message>
-        <source>Enabled/Disabled</source>
-        <translation>Päällä/Pois päältä</translation>
     </message>
     </context>
 <context>
@@ -1415,6 +1388,93 @@ Please check the address and try again.</source>
     </message>
 </context>
 <context>
+    <name>PrivacyDialog</name>
+    <message>
+        <source>0</source>
+        <translation>0</translation>
+    </message>
+    <message>
+        <source>Quantity:</source>
+        <translation>Määrä:</translation>
+    </message>
+    <message>
+        <source>Amount:</source>
+        <translation>Määrä:</translation>
+    </message>
+    <message>
+        <source>Choose previously used address</source>
+        <translation>Valitse aikaisemmin käytetty osoite</translation>
+    </message>
+    <message>
+        <source>Alt+A</source>
+        <translation>Alt+A</translation>
+    </message>
+    <message>
+        <source>Paste address from clipboard</source>
+        <translation>Liitä osoite leikepöydältä</translation>
+    </message>
+    <message>
+        <source>Alt+P</source>
+        <translation>Alt+P</translation>
+    </message>
+    <message>
+        <source>Label:</source>
+        <translation>Nimike:</translation>
+    </message>
+    <message>
+        <source>Enter a label for this address to add it to the list of used addresses</source>
+        <translation>Syötä nimike tälle osoittelle lisätäksesi se käytettävien osoitteiden listaan</translation>
+    </message>
+    <message>
+        <source>Amount:</source>
+        <translation>Määrä:</translation>
+    </message>
+    <message>
+        <source>Priority:</source>
+        <translation>Tärkeys:</translation>
+    </message>
+    <message>
+        <source>TextLabel</source>
+        <translation>TekstiNimike</translation>
+    </message>
+    <message>
+        <source>Fee:</source>
+        <translation>Taksa:</translation>
+    </message>
+    <message>
+        <source>no</source>
+        <translation>ei</translation>
+    </message>
+    <message>
+        <source>Bytes:</source>
+        <translation>Tavut:</translation>
+    </message>
+    <message>
+        <source>Insufficient funds!</source>
+        <translation>Puutteelliset varat!</translation>
+    </message>
+    <message>
+        <source>medium</source>
+        <translation>kohtalainen</translation>
+    </message>
+    <message>
+        <source>Change:</source>
+        <translation>Muutos:</translation>
+    </message>
+    <message>
+        <source>Copy quantity</source>
+        <translation>Kopioi määrä</translation>
+    </message>
+    <message>
+        <source>Copy amount</source>
+        <translation>Kopioi määrä</translation>
+    </message>
+    <message>
+        <source>Confirm send coins</source>
+        <translation>Vahvista kolikoiden lähetys</translation>
+    </message>
+    </context>
+<context>
     <name>QObject</name>
     <message>
         <source>Amount</source>
@@ -1424,12 +1484,12 @@ Please check the address and try again.</source>
 <context>
     <name>QRImageWidget</name>
     <message>
-        <source>&amp;Save Image...</source>
-        <translation>&amp;Tallenna Kuva...</translation>
+        <source>Save Image...</source>
+        <translation>Tallenna Kuva...</translation>
     </message>
     <message>
-        <source>&amp;Copy Image</source>
-        <translation>&amp;Kopioi Kuva</translation>
+        <source>Copy Image</source>
+        <translation>Kopioi Kuva</translation>
     </message>
     <message>
         <source>Save QR Code</source>
@@ -1443,8 +1503,8 @@ Please check the address and try again.</source>
         <translation>Työkaluikkuna</translation>
     </message>
     <message>
-        <source>&amp;Information</source>
-        <translation>&amp;Informaatio</translation>
+        <source>Information</source>
+        <translation>Informaatio</translation>
     </message>
     <message>
         <source>General</source>
@@ -1459,8 +1519,8 @@ Please check the address and try again.</source>
         <translation>Yhteyksien määrä</translation>
     </message>
     <message>
-        <source>&amp;Open</source>
-        <translation>&amp;Avaa</translation>
+        <source>Open</source>
+        <translation>Avaa</translation>
     </message>
     <message>
         <source>Startup time</source>
@@ -1483,20 +1543,20 @@ Please check the address and try again.</source>
         <translation>Masternodien määrä</translation>
     </message>
     <message>
-        <source>&amp;Console</source>
-        <translation>&amp;Konsoli</translation>
+        <source>Console</source>
+        <translation>Konsoli</translation>
     </message>
     <message>
         <source>Clear console</source>
         <translation>Tyhjennä konsoli</translation>
     </message>
     <message>
-        <source>&amp;Network Traffic</source>
-        <translation>&amp;Verkkoliikenne</translation>
+        <source>Network Traffic</source>
+        <translation>Verkkoliikenne</translation>
     </message>
     <message>
-        <source>&amp;Clear</source>
-        <translation>&amp;Tyhjennä</translation>
+        <source>Clear</source>
+        <translation>Tyhjennä</translation>
     </message>
     <message>
         <source>Totals</source>
@@ -1551,8 +1611,8 @@ Please check the address and try again.</source>
         <translation>Ping aika</translation>
     </message>
     <message>
-        <source>&amp;Wallet Repair</source>
-        <translation>&amp;Lompakon korjaus</translation>
+        <source>Wallet Repair</source>
+        <translation>Lompakon korjaus</translation>
     </message>
     <message>
         <source>Wallet In Use:</source>
@@ -1606,10 +1666,6 @@ Please check the address and try again.</source>
         <source>Unknown</source>
         <translation>Tuntematon</translation>
     </message>
-    <message>
-        <source>Fetching...</source>
-        <translation>Haetaan...</translation>
-    </message>
 </context>
 <context>
     <name>ReceiveCoinsDialog</name>
@@ -1618,12 +1674,12 @@ Please check the address and try again.</source>
         <translation>Uudelleenkäytä yksi aikaisemmista vastaanottavista osoitteista. &lt;br&gt; Osoitteen uudelleenkäytössä on turvallisuus- ja yksityisyysongelmia.&lt;br&gt; Älä käytä tätä ellet halua uudelleen käyttää vanhaa maksupyyntöä.</translation>
     </message>
     <message>
-        <source>R&amp;euse an existing receiving address (not recommended)</source>
-        <translation>U&amp;udelleenkäytä olemassaoleva vastaanottava osoite (Ei suositeltu)</translation>
+        <source>Reuse an existing receiving address (not recommended)</source>
+        <translation>Uudelleenkäytä olemassaoleva vastaanottava osoite (Ei suositeltu)</translation>
     </message>
     <message>
-        <source>&amp;Message:</source>
-        <translation>&amp;Viesti:</translation>
+        <source>Message:</source>
+        <translation>Viesti:</translation>
     </message>
     <message>
         <source>An optional label to associate with the new receiving address.</source>
@@ -1642,20 +1698,20 @@ Please check the address and try again.</source>
         <translation>Käytä tätä lomaketta luodaksesi maksupyyntöjä. Kaikki kentät ovat &lt;b&gt; vaihtoehtoisia&lt;/b&gt;.</translation>
     </message>
     <message>
-        <source>&amp;Label:</source>
-        <translation>&amp;Nimike:</translation>
+        <source>Label:</source>
+        <translation>Nimike:</translation>
     </message>
     <message>
         <source>An optional amount to request. Leave this empty or zero to not request a specific amount.</source>
         <translation>Pyydä vaihtoehtoinen määrä. Jätä tämä tyhjäksi tai 0, jos haluat pyytää ennaltamääräämättömän summan</translation>
     </message>
     <message>
-        <source>&amp;Amount:</source>
-        <translation>&amp;Määrä:</translation>
+        <source>Amount:</source>
+        <translation>Määrä:</translation>
     </message>
     <message>
-        <source>&amp;Request payment</source>
-        <translation>&amp;Pyydä maksua</translation>
+        <source>Request payment</source>
+        <translation>Pyydä maksua</translation>
     </message>
     <message>
         <source>Clear all fields of the form.</source>
@@ -1705,16 +1761,16 @@ Please check the address and try again.</source>
         <translation>QR Koodi</translation>
     </message>
     <message>
-        <source>Copy &amp;URI</source>
-        <translation>Kopioi &amp;URI</translation>
+        <source>Copy URI</source>
+        <translation>Kopioi URI</translation>
     </message>
     <message>
-        <source>Copy &amp;Address</source>
-        <translation>Kopioi &amp;Osoite</translation>
+        <source>Copy Address</source>
+        <translation>Kopioi Osoite</translation>
     </message>
     <message>
-        <source>&amp;Save Image...</source>
-        <translation>&amp;Tallenna Kuva...</translation>
+        <source>Save Image...</source>
+        <translation>Tallenna Kuva...</translation>
     </message>
     <message>
         <source>Request payment to %1</source>
@@ -1791,10 +1847,6 @@ Please check the address and try again.</source>
         <translation>Lähetä Kolikot</translation>
     </message>
     <message>
-        <source>automatically selected</source>
-        <translation>automaattisesti valittu</translation>
-    </message>
-    <message>
         <source>Insufficient funds!</source>
         <translation>Puutteelliset varat!</translation>
     </message>
@@ -1835,8 +1887,8 @@ Please check the address and try again.</source>
         <translation>Muutos:</translation>
     </message>
     <message>
-        <source>0 FGC</source>
-        <translation>0 FGC</translation>
+        <source>0 FantasyGold</source>
+        <translation>0 FantasyGold</translation>
     </message>
     <message>
         <source>Choose...</source>
@@ -1875,28 +1927,24 @@ Please check the address and try again.</source>
         <translation>Vahvista lähetys</translation>
     </message>
     <message>
-        <source>S&amp;end</source>
-        <translation>L&amp;ähetä</translation>
+        <source>Send</source>
+        <translation>Lähetä</translation>
     </message>
     <message>
         <source>Clear all fields of the form.</source>
         <translation>Tyhjennä kaikki kentät lomakkeesta</translation>
     </message>
     <message>
-        <source>Clear &amp;All</source>
-        <translation>Tyhjennä &amp;Kaikki</translation>
+        <source>Clear All</source>
+        <translation>Tyhjennä Kaikki</translation>
     </message>
     <message>
         <source>Send to multiple recipients at once</source>
         <translation>Lähetä useammalle vastaanottajalle kerralla</translation>
     </message>
     <message>
-        <source>Add &amp;Recipient</source>
-        <translation>Lisää &amp;Vastaanottaja</translation>
-    </message>
-    <message>
-        <source>SwiftTX</source>
-        <translation>SwiftTX</translation>
+        <source>Add Recipient</source>
+        <translation>Lisää Vastaanottaja</translation>
     </message>
     <message>
         <source>Balance:</source>
@@ -1915,11 +1963,7 @@ Please check the address and try again.</source>
         <translation>Kopioi taksa</translation>
     </message>
     <message>
-        <source>using</source>
-        <translation>käyttää</translation>
-    </message>
-    <message>
-        <source>Warning: Invalid FantasyGold address</source>
+        <source>Warning: Invalid FGC address</source>
         <translation>Varoitus: Virheellinen FantasyGold osoite</translation>
     </message>
     <message>
@@ -1953,6 +1997,10 @@ Please check the address and try again.</source>
     <message>
         <source>Error: The wallet was unlocked only to anonymize coins. Unlock canceled.</source>
         <translation>Virhe: Lompakko avattiin vain kolikoiden anonymisointiin. Avaus peruutettu.</translation>
+    </message>
+    <message>
+        <source>Pay only the minimum fee of %1</source>
+        <translation>Maksa vain %1 minimi taksa</translation>
     </message>
     <message>
         <source>(no label)</source>
@@ -1990,16 +2038,16 @@ Please check the address and try again.</source>
         <translation>Poista tämä merkintä</translation>
     </message>
     <message>
-        <source>&amp;Label:</source>
-        <translation>&amp;Nimike:</translation>
+        <source>Label:</source>
+        <translation>Nimike:</translation>
     </message>
     <message>
         <source>Enter a label for this address to add it to the list of used addresses</source>
         <translation>Syötä nimike tälle osoittelle lisätäksesi se käytettävien osoitteiden listaan</translation>
     </message>
     <message>
-        <source>A&amp;mount:</source>
-        <translation>M&amp;äärä:</translation>
+        <source>Amount:</source>
+        <translation>Määrä:</translation>
     </message>
     <message>
         <source>Message:</source>
@@ -2020,8 +2068,8 @@ Please check the address and try again.</source>
 <context>
     <name>SignVerifyMessageDialog</name>
     <message>
-        <source>&amp;Sign Message</source>
-        <translation>&amp;Allekirjoita viesti</translation>
+        <source>Sign Message</source>
+        <translation>Allekirjoita viesti</translation>
     </message>
     <message>
         <source>You can sign messages with your addresses to prove you own them. Be careful not to sign anything vague, as phishing attacks may try to trick you into signing your identity over to them. Only sign fully-detailed statements you agree to.</source>
@@ -2072,24 +2120,24 @@ Please check the address and try again.</source>
         <translation>Vahvista että viesti on allekirjoitettu kyseessä olevalla FantasyGold osoitteella.</translation>
     </message>
     <message>
-        <source>Sign &amp;Message</source>
-        <translation>Allekirjoita &amp;Viesti</translation>
+        <source>Sign Message</source>
+        <translation>Allekirjoita Viesti</translation>
     </message>
     <message>
         <source>Reset all sign message fields</source>
         <translation>Tyhjennä kaikki allekirjoita viesti kentät</translation>
     </message>
     <message>
-        <source>Clear &amp;All</source>
-        <translation>Tyhjennä &amp;Kaikki</translation>
+        <source>Clear All</source>
+        <translation>Tyhjennä Kaikki</translation>
     </message>
     <message>
-        <source>&amp;Verify Message</source>
-        <translation>&amp;Vahvista Viesti</translation>
+        <source>Verify Message</source>
+        <translation>Vahvista Viesti</translation>
     </message>
     <message>
-        <source>Verify &amp;Message</source>
-        <translation>Vahvista &amp;Viesti</translation>
+        <source>Verify Message</source>
+        <translation>Vahvista Viesti</translation>
     </message>
     <message>
         <source>Reset all verify message fields</source>
@@ -2165,6 +2213,10 @@ Please check the address and try again.</source>
     <message>
         <source>The Dash Core developers</source>
         <translation>Dash Core kehittäjät</translation>
+    </message>
+	<message>
+        <source>The Bulwark Core developers</source>
+        <translation>Bulwark Core kehittäjät</translation>
     </message>
     <message>
         <source>The FantasyGold Core developers</source>
@@ -2273,10 +2325,6 @@ Please check the address and try again.</source>
     <message>
         <source>Payment to yourself</source>
         <translation>Maksut itsellesi</translation>
-    </message>
-    <message>
-        <source>Minted</source>
-        <translation>Luotu</translation>
     </message>
     <message>
         <source>Mined</source>
@@ -2417,6 +2465,10 @@ Please check the address and try again.</source>
         <source>Exporting Successful</source>
         <translation>Vienti onnistui</translation>
     </message>
+    <message>
+        <source>The transaction history was successfully saved to %1.</source>
+        <translation>Rahansiirto historia onnistuneesti tallennettu %1</translation>
+    </message>
     </context>
 <context>
     <name>UnitDisplayStatusBarControl</name>
@@ -2442,8 +2494,8 @@ Please check the address and try again.</source>
 <context>
     <name>WalletView</name>
     <message>
-        <source>&amp;Export</source>
-        <translation>&amp;Vie</translation>
+        <source>Export</source>
+        <translation>Vie</translation>
     </message>
     <message>
         <source>Export the data in the current tab to a file</source>
@@ -2461,13 +2513,12 @@ Please check the address and try again.</source>
         <source>Wallet Data (*.dat)</source>
         <translation>Lompakko Data (*.dat)</translation>
     </message>
+</context>
+<context>
+    <name>zFGCControlDialog</name>
     <message>
-        <source>Backup Failed</source>
-        <translation>Varmuuskopiointi epäonnistui</translation>
-    </message>
-    <message>
-        <source>Backup Successful</source>
-        <translation>Varmuuskopiointi onnistui</translation>
+        <source>0</source>
+        <translation>0</translation>
     </message>
     </context>
 <context>

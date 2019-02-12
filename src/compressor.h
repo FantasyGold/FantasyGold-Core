@@ -25,8 +25,7 @@ class CScriptID;
  *  Other scripts up to 121 bytes require 1 byte + script length. Above
  *  that, scripts up to 16505 bytes require 2 bytes + script length.
  */
-class CScriptCompressor
-{
+class CScriptCompressor {
 private:
     /**
      * make this static for now (there are only 6 special scripts defined)
@@ -57,8 +56,7 @@ protected:
 public:
     CScriptCompressor(CScript& scriptIn) : script(scriptIn) {}
 
-    unsigned int GetSerializeSize(int nType, int nVersion) const
-    {
+    unsigned int GetSerializeSize(int nType, int nVersion) const {
         std::vector<unsigned char> compr;
         if (Compress(compr))
             return compr.size();
@@ -67,8 +65,7 @@ public:
     }
 
     template <typename Stream>
-    void Serialize(Stream& s, int nType, int nVersion) const
-    {
+    void Serialize(Stream& s, int nType, int nVersion) const {
         std::vector<unsigned char> compr;
         if (Compress(compr)) {
             s << CFlatData(compr);
@@ -80,8 +77,7 @@ public:
     }
 
     template <typename Stream>
-    void Unserialize(Stream& s, int nType, int nVersion)
-    {
+    void Unserialize(Stream& s, int nType, int nVersion) {
         unsigned int nSize = 0;
         s >> VARINT(nSize);
         if (nSize < nSpecialScripts) {
@@ -97,8 +93,7 @@ public:
 };
 
 /** wrapper for CTxOut that provides a more compact serialization */
-class CTxOutCompressor
-{
+class CTxOutCompressor {
 private:
     CTxOut& txout;
 
@@ -111,8 +106,7 @@ public:
     ADD_SERIALIZE_METHODS;
 
     template <typename Stream, typename Operation>
-    inline void SerializationOp(Stream& s, Operation ser_action, int nType, int nVersion)
-    {
+    inline void SerializationOp(Stream& s, Operation ser_action, int nType, int nVersion) {
         if (!ser_action.ForRead()) {
             uint64_t nVal = CompressAmount(txout.nValue);
             READWRITE(VARINT(nVal));

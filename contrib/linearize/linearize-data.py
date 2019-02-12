@@ -95,6 +95,7 @@ class BlockDataCopier:
 		self.settings = settings
 		self.blkindex = blkindex
 		self.blkmap = blkmap
+		self.blksize = 80
 
 		self.inFn = 0
 		self.inF = None
@@ -195,9 +196,12 @@ class BlockDataCopier:
 				print("Input file" + fname)
 				try:
 					self.inF = open(fname, "rb")
-				except IOError:
+				except IOError as ex:
+					print(ex)
+					if ex.errno != 2:
 					print("Premature end of block data")
 					return
+					break
 
 			inhdr = self.inF.read(8)
 			if (not inhdr or (inhdr[0] == "\0")):
@@ -208,12 +212,19 @@ class BlockDataCopier:
 
 			inMagic = inhdr[:4]
 			if (inMagic != self.settings['netmagic']):
-				print("Invalid magic: " + hexlify(inMagic).decode('utf-8'))
+				print(self.blksize)
+				print(inhdr)
+				print("Invalid magic at height " + str(self.blkCountOut) + " contains magic " + hexlify(inMagic).decode('utf-8'))
 				return
+			
+			blksize = self.blksize
+			if self.blkCountIn >= self.settings['zerocoin_height']:
+				blksize += 32
+			
 			inLenLE = inhdr[4:]
 			su = struct.unpack("<I", inLenLE)
-			inLen = su[0] - 80 # length without header
-			blk_hdr = self.inF.read(80)
+			inLen = su[0] - blksize # length without header
+			blk_hdr = self.inF.read(blksize)
 			inExtent = BlockExtent(self.inFn, self.inF.tell(), inhdr, blk_hdr, inLen)
 
 			self.hash_str = calc_hash_str(blk_hdr)
@@ -293,6 +304,8 @@ if __name__ == '__main__':
 		settings['out_of_order_cache_sz'] = 100 * 1000 * 1000
 	if 'debug_output' not in settings:
 		settings['debug_output'] = 'false'
+	if 'zerocoin_height' not in settings:
+		settings['zerocoin_height'] = 297501
 
 	settings['max_out_sz'] = int(settings['max_out_sz'])
 	settings['split_timestamp'] = int(settings['split_timestamp'])
@@ -300,6 +313,7 @@ if __name__ == '__main__':
 	settings['netmagic'] = unhexlify(settings['netmagic'].encode('utf-8'))
 	settings['out_of_order_cache_sz'] = int(settings['out_of_order_cache_sz'])
 	settings['debug_output'] = settings['debug_output'].lower()
+	settings['zerocoin_height'] = int(settings['zerocoin_height'])
 
 	if 'output_file' not in settings and 'output' not in settings:
 		print("Missing output file / directory")

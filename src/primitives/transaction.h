@@ -1,5 +1,6 @@
 // Copyright (c) 2009-2010 Satoshi Nakamoto
 // Copyright (c) 2009-2014 The Bitcoin developers
+// Copyright (c) 2015-2017 The PIVX developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -11,17 +12,23 @@
 #include "serialize.h"
 #include "uint256.h"
 
+#include <list>
+
 class CTransaction;
 
 /** An outpoint - a combination of a transaction hash and an index n into its vout */
-class COutPoint
-{
+class COutPoint {
 public:
     uint256 hash;
     uint32_t n;
 
-    COutPoint() { SetNull(); }
-    COutPoint(uint256 hashIn, uint32_t nIn) { hash = hashIn; n = nIn; }
+    COutPoint() {
+        SetNull();
+    }
+    COutPoint(uint256 hashIn, uint32_t nIn) {
+        hash = hashIn;
+        n = nIn;
+    }
 
     ADD_SERIALIZE_METHODS;
 
@@ -30,22 +37,24 @@ public:
         READWRITE(FLATDATA(*this));
     }
 
-    void SetNull() { hash.SetNull(); n = (uint32_t) -1; }
-    bool IsNull() const { return (hash.IsNull() && n == (uint32_t) -1); }
+    void SetNull() {
+        hash.SetNull();
+        n = (uint32_t) -1;
+    }
+    bool IsNull() const {
+        return (hash.IsNull() && n == (uint32_t) -1);
+    }
     bool IsMasternodeReward(const CTransaction* tx) const;
 
-    friend bool operator<(const COutPoint& a, const COutPoint& b)
-    {
+    friend bool operator<(const COutPoint& a, const COutPoint& b) {
         return (a.hash < b.hash || (a.hash == b.hash && a.n < b.n));
     }
 
-    friend bool operator==(const COutPoint& a, const COutPoint& b)
-    {
+    friend bool operator==(const COutPoint& a, const COutPoint& b) {
         return (a.hash == b.hash && a.n == b.n);
     }
 
-    friend bool operator!=(const COutPoint& a, const COutPoint& b)
-    {
+    friend bool operator!=(const COutPoint& a, const COutPoint& b) {
         return !(a == b);
     }
 
@@ -60,16 +69,14 @@ public:
  * transaction's output that it claims and a signature that matches the
  * output's public key.
  */
-class CTxIn
-{
+class CTxIn {
 public:
     COutPoint prevout;
     CScript scriptSig;
     uint32_t nSequence;
     CScript prevPubKey;
 
-    CTxIn()
-    {
+    CTxIn() {
         nSequence = std::numeric_limits<unsigned int>::max();
     }
 
@@ -85,20 +92,17 @@ public:
         READWRITE(nSequence);
     }
 
-    bool IsFinal() const
-    {
+    bool IsFinal() const {
         return (nSequence == std::numeric_limits<uint32_t>::max());
     }
 
-    friend bool operator==(const CTxIn& a, const CTxIn& b)
-    {
+    friend bool operator==(const CTxIn& a, const CTxIn& b) {
         return (a.prevout   == b.prevout &&
                 a.scriptSig == b.scriptSig &&
                 a.nSequence == b.nSequence);
     }
 
-    friend bool operator!=(const CTxIn& a, const CTxIn& b)
-    {
+    friend bool operator!=(const CTxIn& a, const CTxIn& b) {
         return !(a == b);
     }
 
@@ -108,15 +112,13 @@ public:
 /** An output of a transaction.  It contains the public key that the next input
  * must be able to sign with to claim it.
  */
-class CTxOut
-{
+class CTxOut {
 public:
     CAmount nValue;
     CScript scriptPubKey;
     int nRounds;
 
-    CTxOut()
-    {
+    CTxOut() {
         SetNull();
     }
 
@@ -130,53 +132,50 @@ public:
         READWRITE(scriptPubKey);
     }
 
-    void SetNull()
-    {
+    void SetNull() {
         nValue = -1;
         scriptPubKey.clear();
         nRounds = -10; // an initial value, should be no way to get this by calculations
     }
 
-    bool IsNull() const
-    {
+    bool IsNull() const {
         return (nValue == -1);
     }
 
-    void SetEmpty()
-    {
+    void SetEmpty() {
         nValue = 0;
         scriptPubKey.clear();
     }
 
-    bool IsEmpty() const
-    {
+    bool IsEmpty() const {
         return (nValue == 0 && scriptPubKey.empty());
     }
 
     uint256 GetHash() const;
 
-    bool IsDust(CFeeRate minRelayTxFee) const
-    {
-        // "Dust" is defined in terms of CTransaction::minRelayTxFee, which has units duffs-per-kilobyte.
+    bool IsDust(CFeeRate minRelayTxFee) const {
+        // "Dust" is defined in terms of CTransaction::minRelayTxFee, which has units ufgc-per-kilobyte.
         // If you'd pay more than 1/3 in fees to spend something, then we consider it dust.
         // A typical txout is 34 bytes big, and will need a CTxIn of at least 148 bytes to spend
-        // i.e. total is 148 + 32 = 182 bytes. Default -minrelaytxfee is 10000 duffs per kB
-        // and that means that fee per txout is 182 * 10000 / 1000 = 1820 duffs.
-        // So dust is a txout less than 1820 *3 = 5460 duffs
-        // with default -minrelaytxfee = minRelayTxFee = 10000 duffs per kB.
+        // i.e. total is 148 + 32 = 182 bytes. Default -minrelaytxfee is 10000 ufgc per kB
+        // and that means that fee per txout is 182 * 10000 / 1000 = 1820 ufgc.
+        // So dust is a txout less than 1820 *3 = 5460 ufgc
+        // with default -minrelaytxfee = minRelayTxFee = 10000 ufgc per kB.
         size_t nSize = GetSerializeSize(SER_DISK,0)+148u;
         return (nValue < 3*minRelayTxFee.GetFee(nSize));
     }
 
-    friend bool operator==(const CTxOut& a, const CTxOut& b)
-    {
+    bool IsZerocoinMint() const {
+        return !scriptPubKey.empty() && scriptPubKey.IsZerocoinMint();
+    }
+
+    friend bool operator==(const CTxOut& a, const CTxOut& b) {
         return (a.nValue       == b.nValue &&
                 a.scriptPubKey == b.scriptPubKey &&
                 a.nRounds      == b.nRounds);
     }
 
-    friend bool operator!=(const CTxOut& a, const CTxOut& b)
-    {
+    friend bool operator!=(const CTxOut& a, const CTxOut& b) {
         return !(a == b);
     }
 
@@ -188,8 +187,7 @@ struct CMutableTransaction;
 /** The basic transaction that is broadcasted on the network and contained in
  * blocks.  A transaction can contain multiple inputs and outputs.
  */
-class CTransaction
-{
+class CTransaction {
 private:
     /** Memory only. */
     const uint256 hash;
@@ -249,24 +247,43 @@ public:
     // Compute modified tx size for priority calculation (optionally given tx size)
     unsigned int CalculateModifiedSize(unsigned int nTxSize=0) const;
 
-    bool IsCoinBase() const
-    {
-        return (vin.size() == 1 && vin[0].prevout.IsNull());
+    bool IsZerocoinSpend() const {
+        return (vin.size() > 0 && vin[0].prevout.IsNull() && vin[0].scriptSig[0] == OP_ZEROCOINSPEND);
     }
 
-    bool IsCoinStake() const
-    {
+    bool IsZerocoinMint() const {
+        for(const CTxOut& txout : vout) {
+            if (txout.scriptPubKey.IsZerocoinMint())
+                return true;
+        }
+        return false;
+    }
+
+    bool ContainsZerocoins() const {
+        return IsZerocoinSpend() || IsZerocoinMint();
+    }
+
+    CAmount GetZerocoinMinted() const;
+    CAmount GetZerocoinSpent() const;
+    int GetZerocoinMintCount() const;
+
+    bool UsesUTXO(const COutPoint out);
+    std::list<COutPoint> GetOutPoints() const;
+
+    bool IsCoinBase() const {
+        return (vin.size() == 1 && vin[0].prevout.IsNull() && !ContainsZerocoins());
+    }
+
+    bool IsCoinStake() const {
         // ppcoin: the coin stake transaction is marked with the first output empty
         return (vin.size() > 0 && (!vin[0].prevout.IsNull()) && vout.size() >= 2 && vout[0].IsEmpty());
     }
 
-    friend bool operator==(const CTransaction& a, const CTransaction& b)
-    {
+    friend bool operator==(const CTransaction& a, const CTransaction& b) {
         return a.hash == b.hash;
     }
 
-    friend bool operator!=(const CTransaction& a, const CTransaction& b)
-    {
+    friend bool operator!=(const CTransaction& a, const CTransaction& b) {
         return a.hash != b.hash;
     }
 
@@ -276,8 +293,7 @@ public:
 };
 
 /** A mutable version of CTransaction. */
-struct CMutableTransaction
-{
+struct CMutableTransaction {
     int32_t nVersion;
     std::vector<CTxIn> vin;
     std::vector<CTxOut> vout;
@@ -304,13 +320,11 @@ struct CMutableTransaction
 
     std::string ToString() const;
 
-    friend bool operator==(const CMutableTransaction& a, const CMutableTransaction& b)
-    {
+    friend bool operator==(const CMutableTransaction& a, const CMutableTransaction& b) {
         return a.GetHash() == b.GetHash();
     }
 
-    friend bool operator!=(const CMutableTransaction& a, const CMutableTransaction& b)
-    {
+    friend bool operator!=(const CMutableTransaction& a, const CMutableTransaction& b) {
         return !(a == b);
     }
 

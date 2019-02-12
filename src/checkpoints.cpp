@@ -1,6 +1,6 @@
 // Copyright (c) 2009-2014 The Bitcoin developers
 // Copyright (c) 2014-2015 The Dash developers
-// // Copyright (c) 2015-2017 The Bulwark developers
+// Copyright (c) 2017-2018 The Bulwark Core Developers
 // Copyright (c) 2017-2018 The FantasyGold developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
@@ -15,8 +15,7 @@
 
 #include <boost/foreach.hpp>
 
-namespace Checkpoints
-{
+namespace Checkpoints {
 /**
      * How many times we expect transactions after the last checkpoint to
      * be slower. This number is a compromise, as it can't be accurate for
@@ -28,21 +27,20 @@ static const double SIGCHECK_VERIFICATION_FACTOR = 5.0;
 
 bool fEnabled = true;
 
-bool CheckBlock(int nHeight, const uint256& hash)
-{
+bool CheckBlock(int nHeight, const uint256& hash, bool fMatchesCheckpoint) {
     if (!fEnabled)
         return true;
 
     const MapCheckpoints& checkpoints = *Params().Checkpoints().mapCheckpoints;
 
     MapCheckpoints::const_iterator i = checkpoints.find(nHeight);
-    if (i == checkpoints.end()) return true;
+    // If looking for an exact match, then return false
+    if (i == checkpoints.end()) return !fMatchesCheckpoint;
     return hash == i->second;
 }
 
 //! Guess how far we are in the verification process at the given block index
-double GuessVerificationProgress(CBlockIndex* pindex, bool fSigchecks)
-{
+double GuessVerificationProgress(CBlockIndex* pindex, bool fSigchecks) {
     if (pindex == NULL)
         return 0.0;
 
@@ -73,8 +71,7 @@ double GuessVerificationProgress(CBlockIndex* pindex, bool fSigchecks)
     return fWorkBefore / (fWorkBefore + fWorkAfter);
 }
 
-int GetTotalBlocksEstimate()
-{
+int GetTotalBlocksEstimate() {
     if (!fEnabled)
         return 0;
 
@@ -83,8 +80,7 @@ int GetTotalBlocksEstimate()
     return checkpoints.rbegin()->first;
 }
 
-CBlockIndex* GetLastCheckpoint()
-{
+CBlockIndex* GetLastCheckpoint() {
     if (!fEnabled)
         return NULL;
 

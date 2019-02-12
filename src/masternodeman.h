@@ -1,6 +1,5 @@
 // Copyright (c) 2014-2015 The Dash developers
-// // Copyright (c) 2015-2017 The Bulwark developers
-// Copyright (c) 2017-2018 The FantasyGold developers
+// Copyright (c) 2015-2017 The PIVX developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -27,8 +26,7 @@ void DumpMasternodes();
 
 /** Access to the MN database (mncache.dat)
  */
-class CMasternodeDB
-{
+class CMasternodeDB {
 private:
     boost::filesystem::path pathMN;
     std::string strMagicMessage;
@@ -49,8 +47,7 @@ public:
     ReadResult Read(CMasternodeMan& mnodemanToLoad, bool fDryRun = false);
 };
 
-class CMasternodeMan
-{
+class CMasternodeMan {
 private:
     // critical section to protect the inner data structures
     mutable CCriticalSection cs;
@@ -79,8 +76,7 @@ public:
     ADD_SERIALIZE_METHODS;
 
     template <typename Stream, typename Operation>
-    inline void SerializationOp(Stream& s, Operation ser_action, int nType, int nVersion)
-    {
+    inline void SerializationOp(Stream& s, Operation ser_action, int nType, int nVersion) {
         LOCK(cs);
         READWRITE(vMasternodes);
         READWRITE(mAskedUsForMasternodeList);
@@ -130,8 +126,7 @@ public:
     /// Get the current winner for this block
     CMasternode* GetCurrentMasterNode(int mod = 1, int64_t nBlockHeight = 0, int minProtocol = 0);
 
-    std::vector<CMasternode> GetFullMasternodeVector()
-    {
+    std::vector<CMasternode> GetFullMasternodeVector() {
         Check();
         return vMasternodes;
     }
@@ -145,7 +140,9 @@ public:
     void ProcessMessage(CNode* pfrom, std::string& strCommand, CDataStream& vRecv);
 
     /// Return the number of (unique) Masternodes
-    int size() { return vMasternodes.size(); }
+    int size() {
+        return vMasternodes.size();
+    }
 
     int stable_size ();
 

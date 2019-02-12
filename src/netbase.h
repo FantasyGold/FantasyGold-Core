@@ -21,6 +21,8 @@ extern bool fNameLookup;
 
 /** -timeout default */
 static const int DEFAULT_CONNECT_TIMEOUT = 5000;
+//! -dns default
+static const int DEFAULT_NAME_LOOKUP = true;
 
 #ifdef WIN32
 // In MSVC, this is defined as a macro, undefine it to prevent a compile and link error
@@ -37,8 +39,7 @@ enum Network {
 };
 
 /** IP address (IPv6, or IPv4 using mapped IPv6 range (::FFFF:0:0/96)) */
-class CNetAddr
-{
+class CNetAddr {
 protected:
     unsigned char ip[16]; // in network byte order
 
@@ -96,16 +97,14 @@ public:
     ADD_SERIALIZE_METHODS;
 
     template <typename Stream, typename Operation>
-    inline void SerializationOp(Stream& s, Operation ser_action, int nType, int nVersion)
-    {
+    inline void SerializationOp(Stream& s, Operation ser_action, int nType, int nVersion) {
         READWRITE(FLATDATA(ip));
     }
 
     friend class CSubNet;
 };
 
-class CSubNet
-{
+class CSubNet {
 protected:
     /// Network (base) address
     CNetAddr network;
@@ -117,6 +116,7 @@ protected:
 public:
     CSubNet();
     explicit CSubNet(const std::string& strSubnet, bool fAllowLookup = false);
+    explicit CSubNet(const CNetAddr &addr);
 
     bool Match(const CNetAddr& addr) const;
 
@@ -125,11 +125,20 @@ public:
 
     friend bool operator==(const CSubNet& a, const CSubNet& b);
     friend bool operator!=(const CSubNet& a, const CSubNet& b);
+    friend bool operator<(const CSubNet& a, const CSubNet& b);
+
+    ADD_SERIALIZE_METHODS;
+
+    template <typename Stream, typename Operation>
+    inline void SerializationOp(Stream& s, Operation ser_action, int nType, int nVersion) {
+        READWRITE(network);
+        READWRITE(FLATDATA(netmask));
+        READWRITE(valid);
+    }
 };
 
 /** A combination of a network address (CNetAddr) and a (TCP) port */
-class CService : public CNetAddr
-{
+class CService : public CNetAddr {
 protected:
     unsigned short port; // host order
 
@@ -161,8 +170,7 @@ public:
     ADD_SERIALIZE_METHODS;
 
     template <typename Stream, typename Operation>
-    inline void SerializationOp(Stream& s, Operation ser_action, int nType, int nVersion)
-    {
+    inline void SerializationOp(Stream& s, Operation ser_action, int nType, int nVersion) {
         READWRITE(FLATDATA(ip));
         unsigned short portN = htons(port);
         READWRITE(portN);
@@ -171,15 +179,26 @@ public:
     }
 };
 
-typedef CService proxyType;
+class proxyType {
+  public:
+    proxyType(): randomize_credentials(false) {}
+    proxyType(const CService &proxy, bool randomize_credentials=false): proxy(proxy), randomize_credentials(randomize_credentials) {}
+
+    bool IsValid() const {
+        return proxy.IsValid();
+    }
+
+    CService proxy;
+    bool randomize_credentials;
+};
 
 enum Network ParseNetwork(std::string net);
 std::string GetNetworkName(enum Network net);
 void SplitHostPort(std::string in, int& portOut, std::string& hostOut);
-bool SetProxy(enum Network net, CService addrProxy);
+bool SetProxy(enum Network net, const proxyType &addrProxy);
 bool GetProxy(enum Network net, proxyType& proxyInfoOut);
 bool IsProxy(const CNetAddr& addr);
-bool SetNameProxy(CService addrProxy);
+bool SetNameProxy(const proxyType &addrProxy);
 bool HaveNameProxy();
 bool LookupHost(const char* pszName, std::vector<CNetAddr>& vIP, unsigned int nMaxSolutions = 0, bool fAllowLookup = true);
 bool Lookup(const char* pszName, CService& addr, int portDefault = 0, bool fAllowLookup = true);

@@ -1,5 +1,8 @@
 // Copyright (c) 2009-2010 Satoshi Nakamoto
 // Copyright (c) 2009-2014 The Bitcoin developers
+// Copyright (c) 2015-2017 The PIVX developers
+// Copyright (c) 2017-2018 The Bulwark Core Developers
+// Copyright (c) 2017-2018 The FantasyGold developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -10,17 +13,19 @@
 #include "tinyformat.h"
 #include "script/standard.h"
 #include "script/sign.h"
+#include "tinyformat.h"
 #include "utilstrencodings.h"
 #include "crypto/common.h"
 #include "util.h"
 
-uint256 CBlockHeader::GetHash() const
-{
+uint256 CBlockHeader::GetHash() const {
+    if(nVersion < 4)
     return Nist5(BEGIN(nVersion), END(nNonce));
+
+    return Hash(BEGIN(nVersion), END(nAccumulatorCheckpoint));
 }
 
-uint256 CBlock::BuildMerkleTree(bool* fMutated) const
-{
+uint256 CBlock::BuildMerkleTree(bool* fMutated) const {
     /* WARNING! If you're reading this because you're learning about crypto
        and/or designing a new system that will use merkle trees, keep in mind
        that the following merkle tree algorithm has a serious flaw related to
@@ -62,10 +67,8 @@ uint256 CBlock::BuildMerkleTree(bool* fMutated) const
         vMerkleTree.push_back(it->GetHash());
     int j = 0;
     bool mutated = false;
-    for (int nSize = vtx.size(); nSize > 1; nSize = (nSize + 1) / 2)
-    {
-        for (int i = 0; i < nSize; i += 2)
-        {
+    for (int nSize = vtx.size(); nSize > 1; nSize = (nSize + 1) / 2) {
+        for (int i = 0; i < nSize; i += 2) {
             int i2 = std::min(i+1, nSize-1);
             if (i2 == i + 1 && i2 + 1 == nSize && vMerkleTree[j+i] == vMerkleTree[j+i2]) {
                 // Two identical hashes at the end of the list at a particular level.
@@ -82,14 +85,12 @@ uint256 CBlock::BuildMerkleTree(bool* fMutated) const
     return (vMerkleTree.empty() ? uint256() : vMerkleTree.back());
 }
 
-std::vector<uint256> CBlock::GetMerkleBranch(int nIndex) const
-{
+std::vector<uint256> CBlock::GetMerkleBranch(int nIndex) const {
     if (vMerkleTree.empty())
         BuildMerkleTree();
     std::vector<uint256> vMerkleBranch;
     int j = 0;
-    for (int nSize = vtx.size(); nSize > 1; nSize = (nSize + 1) / 2)
-    {
+    for (int nSize = vtx.size(); nSize > 1; nSize = (nSize + 1) / 2) {
         int i = std::min(nIndex^1, nSize-1);
         vMerkleBranch.push_back(vMerkleTree[j+i]);
         nIndex >>= 1;
@@ -98,12 +99,10 @@ std::vector<uint256> CBlock::GetMerkleBranch(int nIndex) const
     return vMerkleBranch;
 }
 
-uint256 CBlock::CheckMerkleBranch(uint256 hash, const std::vector<uint256>& vMerkleBranch, int nIndex)
-{
+uint256 CBlock::CheckMerkleBranch(uint256 hash, const std::vector<uint256>& vMerkleBranch, int nIndex) {
     if (nIndex == -1)
         return uint256();
-    for (std::vector<uint256>::const_iterator it(vMerkleBranch.begin()); it != vMerkleBranch.end(); ++it)
-    {
+    for (std::vector<uint256>::const_iterator it(vMerkleBranch.begin()); it != vMerkleBranch.end(); ++it) {
         if (nIndex & 1)
             hash = Hash(BEGIN(*it), END(*it), BEGIN(hash), END(hash));
         else
@@ -113,8 +112,7 @@ uint256 CBlock::CheckMerkleBranch(uint256 hash, const std::vector<uint256>& vMer
     return hash;
 }
 
-std::string CBlock::ToString() const
-{
+std::string CBlock::ToString() const {
     std::stringstream s;
     s << strprintf("CBlock(hash=%s, ver=%d, hashPrevBlock=%s, hashMerkleRoot=%s, nTime=%u, nBits=%08x, nNonce=%u, vtx=%u)\n",
         GetHash().ToString(),
@@ -123,8 +121,7 @@ std::string CBlock::ToString() const
         hashMerkleRoot.ToString(),
         nTime, nBits, nNonce,
         vtx.size());
-    for (unsigned int i = 0; i < vtx.size(); i++)
-    {
+    for (unsigned int i = 0; i < vtx.size(); i++) {
         s << "  " << vtx[i].ToString() << "\n";
     }
     s << "  vMerkleTree: ";
@@ -134,28 +131,23 @@ std::string CBlock::ToString() const
     return s.str();
 }
 
-void CBlock::print() const
-{
+void CBlock::print() const {
     LogPrintf("%s", ToString());
 }
 
 // ppcoin: sign block
-bool CBlock::SignBlock(const CKeyStore& keystore)
-{
+bool CBlock::SignBlock(const CKeyStore& keystore) {
     std::vector<valtype> vSolutions;
     txnouttype whichType;
 
-    if(!IsProofOfStake())
-    {
-        for(unsigned int i = 0; i < vtx[0].vout.size(); i++)
-        {
+    if(!IsProofOfStake()) {
+        for(unsigned int i = 0; i < vtx[0].vout.size(); i++) {
             const CTxOut& txout = vtx[0].vout[i];
 
             if (!Solver(txout.scriptPubKey, whichType, vSolutions))
                 continue;
 
-            if (whichType == TX_PUBKEY)
-            {
+            if (whichType == TX_PUBKEY) {
                 // Sign
                 CKeyID keyID;
                 keyID = CKeyID(uint160(vSolutions[0]));
@@ -171,16 +163,13 @@ bool CBlock::SignBlock(const CKeyStore& keystore)
                 return true;
             }
         }
-    }
-    else
-    {
+    } else {
         const CTxOut& txout = vtx[1].vout[1];
 
         if (!Solver(txout.scriptPubKey, whichType, vSolutions))
             return false;
 
-        if (whichType == TX_PUBKEYHASH)
-        {
+        if (whichType == TX_PUBKEYHASH) {
 
             CKeyID keyID;
             keyID = CKeyID(uint160(vSolutions[0]));
@@ -195,9 +184,7 @@ bool CBlock::SignBlock(const CKeyStore& keystore)
 
             return true;
 
-        }
-        else if(whichType == TX_PUBKEY)
-        {
+        } else if(whichType == TX_PUBKEY) {
             CKeyID keyID;
             keyID = CPubKey(vSolutions[0]).GetID();
             CKey key;
@@ -216,8 +203,7 @@ bool CBlock::SignBlock(const CKeyStore& keystore)
     return false;
 }
 
-bool CBlock::CheckBlockSignature() const
-{
+bool CBlock::CheckBlockSignature() const {
     if (IsProofOfWork())
         return vchBlockSig.empty();
 
@@ -229,8 +215,7 @@ bool CBlock::CheckBlockSignature() const
     if (!Solver(txout.scriptPubKey, whichType, vSolutions))
         return false;
 
-    if (whichType == TX_PUBKEY)
-    {
+    if (whichType == TX_PUBKEY) {
         valtype& vchPubKey = vSolutions[0];
         CPubKey pubkey(vchPubKey);
         if (!pubkey.IsValid())
@@ -240,9 +225,7 @@ bool CBlock::CheckBlockSignature() const
             return false;
 
         return pubkey.Verify(GetHash(), vchBlockSig);
-    }
-    else if(whichType == TX_PUBKEYHASH)
-    {
+    } else if(whichType == TX_PUBKEYHASH) {
         valtype& vchPubKey = vSolutions[0];
         CKeyID keyID;
         keyID = CKeyID(uint160(vchPubKey));

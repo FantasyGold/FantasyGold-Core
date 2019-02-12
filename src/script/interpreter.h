@@ -19,8 +19,7 @@ class CTransaction;
 class uint256;
 
 /** Signature hash types/flags */
-enum
-{
+enum {
     SIGHASH_ALL = 1,
     SIGHASH_NONE = 2,
     SIGHASH_SINGLE = 3,
@@ -28,8 +27,7 @@ enum
 };
 
 /** Script verification flags */
-enum
-{
+enum {
     SCRIPT_VERIFY_NONE      = 0,
 
     // Evaluate P2SH subscripts (softfork safe, BIP16).
@@ -74,19 +72,16 @@ enum
 
 uint256 SignatureHash(const CScript &scriptCode, const CTransaction& txTo, unsigned int nIn, int nHashType);
 
-class BaseSignatureChecker
-{
+class BaseSignatureChecker {
 public:
-    virtual bool CheckSig(const std::vector<unsigned char>& scriptSig, const std::vector<unsigned char>& vchPubKey, const CScript& scriptCode) const
-    {
+    virtual bool CheckSig(const std::vector<unsigned char>& scriptSig, const std::vector<unsigned char>& vchPubKey, const CScript& scriptCode) const {
         return false;
     }
 
     virtual ~BaseSignatureChecker() {}
 };
 
-class TransactionSignatureChecker : public BaseSignatureChecker
-{
+class TransactionSignatureChecker : public BaseSignatureChecker {
 private:
     const CTransaction* txTo;
     unsigned int nIn;
@@ -99,8 +94,7 @@ public:
     bool CheckSig(const std::vector<unsigned char>& scriptSig, const std::vector<unsigned char>& vchPubKey, const CScript& scriptCode) const;
 };
 
-class MutableTransactionSignatureChecker : public TransactionSignatureChecker
-{
+class MutableTransactionSignatureChecker : public TransactionSignatureChecker {
 private:
     const CTransaction txTo;
 

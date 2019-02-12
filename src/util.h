@@ -1,7 +1,8 @@
 // Copyright (c) 2009-2010 Satoshi Nakamoto
 // Copyright (c) 2009-2014 The Bitcoin developers
 // Copyright (c) 2014-2015 The Dash developers
-// // Copyright (c) 2015-2017 The Bulwark developers
+// Copyright (c) 2015-2017 The PIVX developers
+// Copyright (c) 2017-2018 The Bulwark Core Developers
 // Copyright (c) 2017-2018 The FantasyGold developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
@@ -36,10 +37,12 @@ extern bool fMasterNode;
 extern bool fLiteMode;
 extern bool fEnableSwiftTX;
 extern int nSwiftTXDepth;
-extern int nObfuscationRounds;
+extern int nZeromintPercentage;
+extern const int64_t AUTOMINT_DELAY;
+extern int nPreferredDenom;
 extern int nAnonymizeFantasyGoldAmount;
 extern int nLiquidityProvider;
-extern bool fEnableObfuscation;
+extern bool fEnableZeromint;
 extern int64_t enforceMasternodePaymentsTime;
 extern std::string strMasterNodeAddr;
 extern int keysLoaded;
@@ -83,7 +86,7 @@ int LogPrintStr(const std::string& str);
     template <TINYFORMAT_ARGTYPES(n)>                                                           \
     static inline bool error(const char* format, TINYFORMAT_VARARGS(n))                         \
     {                                                                                           \
-        LogPrintStr("ERROR: " + tfm::format(format, TINYFORMAT_PASSARGS(n)) + "\n");            \
+        LogPrintStr(std::string("ERROR: ") + tfm::format(format, TINYFORMAT_PASSARGS(n)) + "\n");            \
         return false;                                                                           \
     }
 
@@ -93,13 +96,11 @@ TINYFORMAT_FOREACH_ARGNUM(MAKE_ERROR_AND_LOG_FUNC)
  * Zero-arg versions of logging and error, these are not covered by
  * TINYFORMAT_FOREACH_ARGNUM
  */
-static inline int LogPrint(const char* category, const char* format)
-{
+static inline int LogPrint(const char* category, const char* format) {
     if (!LogAcceptCategory(category)) return 0;
     return LogPrintStr(format);
 }
-static inline bool error(const char* format)
-{
+static inline bool error(const char* format) {
     LogPrintStr(std::string("ERROR: ") + format + "\n");
     return false;
 }
@@ -128,8 +129,7 @@ boost::filesystem::path GetTempPath();
 void ShrinkDebugFile();
 void runCommand(std::string strCommand);
 
-inline bool IsSwitchChar(char c)
-{
+inline bool IsSwitchChar(char c) {
 #ifdef WIN32
     return c == '-' || c == '/';
 #else
@@ -212,8 +212,7 @@ void RenameThread(const char* name);
  *    threadGroup.create_thread(boost::bind(&LoopForever<boost::function<void()> >, "nothing", f, milliseconds));
  */
 template <typename Callable>
-void LoopForever(const char* name, Callable func, int64_t msecs)
-{
+void LoopForever(const char* name, Callable func, int64_t msecs) {
     std::string s = strprintf("fantasygold-%s", name);
     RenameThread(s.c_str());
     LogPrintf("%s thread start\n", name);
@@ -238,8 +237,7 @@ void LoopForever(const char* name, Callable func, int64_t msecs)
  * .. and a wrapper that just calls func once
  */
 template <typename Callable>
-void TraceThread(const char* name, Callable func)
-{
+void TraceThread(const char* name, Callable func) {
     std::string s = strprintf("fantasygold-%s", name);
     RenameThread(s.c_str());
     try {

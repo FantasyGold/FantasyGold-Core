@@ -20,11 +20,10 @@ QT_BEGIN_NAMESPACE
 class QStackedWidget;
 QT_END_NAMESPACE
 
-class WalletFrame : public QFrame
-{
+class WalletFrame : public QFrame {
     Q_OBJECT
 
-public:
+  public:
     explicit WalletFrame(BitcoinGUI* _gui = 0);
     ~WalletFrame();
 
@@ -39,7 +38,7 @@ public:
 
     void showOutOfSyncWarning(bool fShow);
 
-private:
+  private:
     QStackedWidget* walletStack;
     BitcoinGUI* gui;
     ClientModel* clientModel;
@@ -49,7 +48,7 @@ private:
 
     WalletView* currentWalletView();
 
-public slots:
+  public slots:
     /** Switch to overview (home) page */
     void gotoOverviewPage();
     /** Switch to history (transactions) page */
@@ -58,20 +57,22 @@ public slots:
     void gotoMasternodePage();
     /** Switch to receive coins page */
     void gotoReceiveCoinsPage();
+    /** Switch to privacy page */
+    void gotoPrivacyPage();
     /** Switch to send coins page */
     void gotoSendCoinsPage(QString addr = "");
     /** Switch to explorer page */
     void gotoBlockExplorerPage();
     /** Show Sign/Verify Message dialog and switch to sign message tab */
     void gotoSignMessageTab(QString addr = "");
+    /** Switch to proposal page */
+    void gotoProposalPage();
     /** Show Sign/Verify Message dialog and switch to verify message tab */
     void gotoVerifyMessageTab(QString addr = "");
     /** Show MultiSend Dialog **/
     void gotoMultiSendDialog();
-
-/** show a multisig tab **/
+    /** show a multisig tab **/
     void gotoMultisigDialog(int index);
-
     /** Show BIP 38 tool - default to Encryption tab */
     void gotoBip38Tool();
 
@@ -85,6 +86,8 @@ public slots:
     void unlockWallet();
     /** Lock wallet */
     void lockWallet();
+    /** Toggle Wallet Lock State */
+    void toggleLockWallet();
 
     /** Show used sending addresses */
     void usedSendingAddresses();

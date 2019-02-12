@@ -1,11 +1,13 @@
 // Copyright (c) 2009-2010 Satoshi Nakamoto
 // Copyright (c) 2009-2014 The Bitcoin developers
+// Copyright (c) 2015-2017 The PIVX developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
 #ifndef BITCOIN_NET_H
 #define BITCOIN_NET_H
 
+#include "addrdb.h"
 #include "bloom.h"
 #include "compat.h"
 #include "hash.h"
@@ -34,8 +36,7 @@ class CAddrMan;
 class CBlockIndex;
 class CNode;
 
-namespace boost
-{
+namespace boost {
 class thread_group;
 } // namespace boost
 
@@ -67,6 +68,7 @@ void AddOneShot(std::string strDest);
 bool RecvLine(SOCKET hSocket, std::string& strLine);
 void AddressCurrentlyConnected(const CService& addr);
 CNode* FindNode(const CNetAddr& ip);
+CNode* FindNode(const CSubNet& subNet);
 CNode* FindNode(const std::string& addrName);
 CNode* FindNode(const CService& ip);
 CNode* ConnectNode(CAddress addrConnect, const char* pszDest = NULL, bool obfuScationMaster = false);
@@ -147,8 +149,7 @@ struct LocalServiceInfo {
 extern CCriticalSection cs_mapLocalHost;
 extern std::map<CNetAddr, LocalServiceInfo> mapLocalHost;
 
-class CNodeStats
-{
+class CNodeStats {
 public:
     NodeId nodeid;
     uint64_t nServices;
@@ -169,8 +170,7 @@ public:
 };
 
 
-class CNetMessage
-{
+class CNetMessage {
 public:
     bool in_data; // parsing header (false) or data (true)
 
@@ -183,8 +183,7 @@ public:
 
     int64_t nTime; // time (in microseconds) of message receipt.
 
-    CNetMessage(int nTypeIn, int nVersionIn) : hdrbuf(nTypeIn, nVersionIn), vRecv(nTypeIn, nVersionIn)
-    {
+    CNetMessage(int nTypeIn, int nVersionIn) : hdrbuf(nTypeIn, nVersionIn), vRecv(nTypeIn, nVersionIn) {
         hdrbuf.resize(24);
         in_data = false;
         nHdrPos = 0;
@@ -192,15 +191,13 @@ public:
         nTime = 0;
     }
 
-    bool complete() const
-    {
+    bool complete() const {
         if (!in_data)
             return false;
         return (hdr.nMessageSize == nDataPos);
     }
 
-    void SetVersion(int nVersionIn)
-    {
+    void SetVersion(int nVersionIn) {
         hdrbuf.SetVersion(nVersionIn);
         vRecv.SetVersion(nVersionIn);
     }
@@ -211,8 +208,7 @@ public:
 
 
 /** Information about a peer */
-class CNode
-{
+class CNode {
 public:
     // socket
     uint64_t nServices;
@@ -269,8 +265,9 @@ public:
 protected:
     // Denial-of-service detection/prevention
     // Key is IP address, value is banned-until-time
-    static std::map<CNetAddr, int64_t> setBanned;
+    static banmap_t setBanned;
     static CCriticalSection cs_setBanned;
+    static bool setBannedIsDirty;
 
     std::vector<std::string> vecRequestsFulfilled; //keep track of what client has asked for
 
@@ -323,23 +320,21 @@ private:
     void operator=(const CNode&);
 
 public:
-    NodeId GetId() const
-    {
+    NodeId GetId() const {
         return id;
     }
 
-    int GetRefCount()
-    {
+    int GetRefCount() {
         assert(nRefCount >= 0);
         return nRefCount;
     }
 
     // requires LOCK(cs_vRecvMsg)
-    unsigned int GetTotalRecvSize()
-    {
+    unsigned int GetTotalRecvSize() {
         unsigned int total = 0;
-        BOOST_FOREACH (const CNetMessage& msg, vRecvMsg)
+        BOOST_FOREACH(const CNetMessage& msg, vRecvMsg) {
             total += msg.vRecv.size() + 24;
+        }
         return total;
     }
 
@@ -347,32 +342,28 @@ public:
     bool ReceiveMsgBytes(const char* pch, unsigned int nBytes);
 
     // requires LOCK(cs_vRecvMsg)
-    void SetRecvVersion(int nVersionIn)
-    {
+    void SetRecvVersion(int nVersionIn) {
         nRecvVersion = nVersionIn;
-        BOOST_FOREACH (CNetMessage& msg, vRecvMsg)
+        BOOST_FOREACH(CNetMessage& msg, vRecvMsg) {
             msg.SetVersion(nVersionIn);
     }
+    }
 
-    CNode* AddRef()
-    {
+    CNode* AddRef() {
         nRefCount++;
         return this;
     }
 
-    void Release()
-    {
+    void Release() {
         nRefCount--;
     }
 
 
-    void AddAddressKnown(const CAddress& addr)
-    {
+    void AddAddressKnown(const CAddress& addr) {
         setAddrKnown.insert(addr);
     }
 
-    void PushAddress(const CAddress& addr)
-    {
+    void PushAddress(const CAddress& addr) {
         // Known checking here is only to save space from duplicates.
         // SendMessages will filter it again for knowns that were added
         // after addresses were pushed.
@@ -386,16 +377,14 @@ public:
     }
 
 
-    void AddInventoryKnown(const CInv& inv)
-    {
+    void AddInventoryKnown(const CInv& inv) {
         {
             LOCK(cs_inventory);
             setInventoryKnown.insert(inv);
         }
     }
 
-    void PushInventory(const CInv& inv)
-    {
+    void PushInventory(const CInv& inv) {
         {
             LOCK(cs_inventory);
             if (!setInventoryKnown.count(inv))
@@ -417,8 +406,7 @@ public:
     void PushVersion();
 
 
-    void PushMessage(const char* pszCommand)
-    {
+    void PushMessage(const char* pszCommand) {
         try {
             BeginMessage(pszCommand);
             EndMessage();
@@ -429,8 +417,7 @@ public:
     }
 
     template <typename T1>
-    void PushMessage(const char* pszCommand, const T1& a1)
-    {
+    void PushMessage(const char* pszCommand, const T1& a1) {
         try {
             BeginMessage(pszCommand);
             ssSend << a1;
@@ -442,8 +429,7 @@ public:
     }
 
     template <typename T1, typename T2>
-    void PushMessage(const char* pszCommand, const T1& a1, const T2& a2)
-    {
+    void PushMessage(const char* pszCommand, const T1& a1, const T2& a2) {
         try {
             BeginMessage(pszCommand);
             ssSend << a1 << a2;
@@ -455,8 +441,7 @@ public:
     }
 
     template <typename T1, typename T2, typename T3>
-    void PushMessage(const char* pszCommand, const T1& a1, const T2& a2, const T3& a3)
-    {
+    void PushMessage(const char* pszCommand, const T1& a1, const T2& a2, const T3& a3) {
         try {
             BeginMessage(pszCommand);
             ssSend << a1 << a2 << a3;
@@ -468,8 +453,7 @@ public:
     }
 
     template <typename T1, typename T2, typename T3, typename T4>
-    void PushMessage(const char* pszCommand, const T1& a1, const T2& a2, const T3& a3, const T4& a4)
-    {
+    void PushMessage(const char* pszCommand, const T1& a1, const T2& a2, const T3& a3, const T4& a4) {
         try {
             BeginMessage(pszCommand);
             ssSend << a1 << a2 << a3 << a4;
@@ -481,8 +465,7 @@ public:
     }
 
     template <typename T1, typename T2, typename T3, typename T4, typename T5>
-    void PushMessage(const char* pszCommand, const T1& a1, const T2& a2, const T3& a3, const T4& a4, const T5& a5)
-    {
+    void PushMessage(const char* pszCommand, const T1& a1, const T2& a2, const T3& a3, const T4& a4, const T5& a5) {
         try {
             BeginMessage(pszCommand);
             ssSend << a1 << a2 << a3 << a4 << a5;
@@ -494,8 +477,7 @@ public:
     }
 
     template <typename T1, typename T2, typename T3, typename T4, typename T5, typename T6>
-    void PushMessage(const char* pszCommand, const T1& a1, const T2& a2, const T3& a3, const T4& a4, const T5& a5, const T6& a6)
-    {
+    void PushMessage(const char* pszCommand, const T1& a1, const T2& a2, const T3& a3, const T4& a4, const T5& a5, const T6& a6) {
         try {
             BeginMessage(pszCommand);
             ssSend << a1 << a2 << a3 << a4 << a5 << a6;
@@ -507,8 +489,7 @@ public:
     }
 
     template <typename T1, typename T2, typename T3, typename T4, typename T5, typename T6, typename T7>
-    void PushMessage(const char* pszCommand, const T1& a1, const T2& a2, const T3& a3, const T4& a4, const T5& a5, const T6& a6, const T7& a7)
-    {
+    void PushMessage(const char* pszCommand, const T1& a1, const T2& a2, const T3& a3, const T4& a4, const T5& a5, const T6& a6, const T7& a7) {
         try {
             BeginMessage(pszCommand);
             ssSend << a1 << a2 << a3 << a4 << a5 << a6 << a7;
@@ -520,8 +501,7 @@ public:
     }
 
     template <typename T1, typename T2, typename T3, typename T4, typename T5, typename T6, typename T7, typename T8>
-    void PushMessage(const char* pszCommand, const T1& a1, const T2& a2, const T3& a3, const T4& a4, const T5& a5, const T6& a6, const T7& a7, const T8& a8)
-    {
+    void PushMessage(const char* pszCommand, const T1& a1, const T2& a2, const T3& a3, const T4& a4, const T5& a5, const T6& a6, const T7& a7, const T8& a8) {
         try {
             BeginMessage(pszCommand);
             ssSend << a1 << a2 << a3 << a4 << a5 << a6 << a7 << a8;
@@ -533,8 +513,7 @@ public:
     }
 
     template <typename T1, typename T2, typename T3, typename T4, typename T5, typename T6, typename T7, typename T8, typename T9>
-    void PushMessage(const char* pszCommand, const T1& a1, const T2& a2, const T3& a3, const T4& a4, const T5& a5, const T6& a6, const T7& a7, const T8& a8, const T9& a9)
-    {
+    void PushMessage(const char* pszCommand, const T1& a1, const T2& a2, const T3& a3, const T4& a4, const T5& a5, const T6& a6, const T7& a7, const T8& a8, const T9& a9) {
         try {
             BeginMessage(pszCommand);
             ssSend << a1 << a2 << a3 << a4 << a5 << a6 << a7 << a8 << a9;
@@ -546,8 +525,7 @@ public:
     }
 
     template <typename T1, typename T2, typename T3, typename T4, typename T5, typename T6, typename T7, typename T8, typename T9, typename T10>
-    void PushMessage(const char* pszCommand, const T1& a1, const T2& a2, const T3& a3, const T4& a4, const T5& a5, const T6& a6, const T7& a7, const T8& a8, const T9& a9, const T10& a10)
-    {
+    void PushMessage(const char* pszCommand, const T1& a1, const T2& a2, const T3& a3, const T4& a4, const T5& a5, const T6& a6, const T7& a7, const T8& a8, const T9& a9, const T10& a10) {
         try {
             BeginMessage(pszCommand);
             ssSend << a1 << a2 << a3 << a4 << a5 << a6 << a7 << a8 << a9 << a10;
@@ -559,8 +537,7 @@ public:
     }
 
     template <typename T1, typename T2, typename T3, typename T4, typename T5, typename T6, typename T7, typename T8, typename T9, typename T10, typename T11>
-    void PushMessage(const char* pszCommand, const T1& a1, const T2& a2, const T3& a3, const T4& a4, const T5& a5, const T6& a6, const T7& a7, const T8& a8, const T9& a9, const T10& a10, const T11& a11)
-    {
+    void PushMessage(const char* pszCommand, const T1& a1, const T2& a2, const T3& a3, const T4& a4, const T5& a5, const T6& a6, const T7& a7, const T8& a8, const T9& a9, const T10& a10, const T11& a11) {
         try {
             BeginMessage(pszCommand);
             ssSend << a1 << a2 << a3 << a4 << a5 << a6 << a7 << a8 << a9 << a10 << a11;
@@ -572,8 +549,7 @@ public:
     }
 
     template <typename T1, typename T2, typename T3, typename T4, typename T5, typename T6, typename T7, typename T8, typename T9, typename T10, typename T11, typename T12>
-    void PushMessage(const char* pszCommand, const T1& a1, const T2& a2, const T3& a3, const T4& a4, const T5& a5, const T6& a6, const T7& a7, const T8& a8, const T9& a9, const T10& a10, const T11& a11, const T12& a12)
-    {
+    void PushMessage(const char* pszCommand, const T1& a1, const T2& a2, const T3& a3, const T4& a4, const T5& a5, const T6& a6, const T7& a7, const T8& a8, const T9& a9, const T10& a10, const T11& a11, const T12& a12) {
         try {
             BeginMessage(pszCommand);
             ssSend << a1 << a2 << a3 << a4 << a5 << a6 << a7 << a8 << a9 << a10 << a11 << a12;
@@ -584,16 +560,14 @@ public:
         }
     }
 
-    bool HasFulfilledRequest(std::string strRequest)
-    {
+    bool HasFulfilledRequest(std::string strRequest) {
         BOOST_FOREACH (std::string& type, vecRequestsFulfilled) {
             if (type == strRequest) return true;
         }
         return false;
     }
 
-    void ClearFulfilledRequest(std::string strRequest)
-    {
+    void ClearFulfilledRequest(std::string strRequest) {
         std::vector<std::string>::iterator it = vecRequestsFulfilled.begin();
         while (it != vecRequestsFulfilled.end()) {
             if ((*it) == strRequest) {
@@ -604,8 +578,7 @@ public:
         }
     }
 
-    void FulfilledRequest(std::string strRequest)
-    {
+    void FulfilledRequest(std::string strRequest) {
         if (HasFulfilledRequest(strRequest)) return;
         vecRequestsFulfilled.push_back(strRequest);
     }
@@ -632,8 +605,19 @@ public:
     // new code.
     static void ClearBanned(); // needed for unit testing
     static bool IsBanned(CNetAddr ip);
-    static bool Ban(const CNetAddr& ip);
+    static bool IsBanned(CSubNet subNet);
+    static void Ban(const CNetAddr& ip, int64_t bantimeoffset = 0, bool sinceUnixEpoch = false);
+    static void Ban(const CSubNet& subNet, int64_t bantimeoffset = 0, bool sinceUnixEpoch = false);
+    static void DumpBanlist();
+    static bool Unban(const CNetAddr& ip);
+    static bool Unban(const CSubNet& subNet);
+    static bool BannedIsDirty();
+    static void GetBanned(banmap_t &banmap);
+    static void SetBanned(const banmap_t &banmap);
+    static void SetBannedIsDirty(bool dirty=true);
     void copyStats(CNodeStats& stats);
+    //!clean unused entries (if bantime has expired)
+    static void SweepBanned();
 
     static bool IsWhitelistedRange(const CNetAddr& ip);
     static void AddWhitelistedRange(const CSubNet& subnet);
@@ -644,10 +628,10 @@ public:
 
     static uint64_t GetTotalBytesRecv();
     static uint64_t GetTotalBytesSent();
+
 };
 
-class CExplicitNetCleanup
-{
+class CExplicitNetCleanup {
 public:
     static void callCleanup();
 };
@@ -659,8 +643,7 @@ void RelayTransactionLockReq(const CTransaction& tx, bool relayToAll = false);
 void RelayInv(CInv& inv);
 
 /** Access to the (IP) address database (peers.dat) */
-class CAddrDB
-{
+class CAddrDB {
 private:
     boost::filesystem::path pathAddr;
 
