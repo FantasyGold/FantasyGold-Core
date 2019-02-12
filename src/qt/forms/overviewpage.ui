@@ -57,7 +57,7 @@
        <number>6</number>
       </property>
       <item>
-       <layout class="QVBoxLayout" name="verticalLayout_Master" stretch="0,1">
+       <layout class="QVBoxLayout" name="verticalLayout_Master" stretch="0">
         <property name="leftMargin">
          <number>0</number>
         </property>
@@ -71,121 +71,12 @@
          <number>0</number>
         </property>
         <item>
-         <widget class="QFrame" name="frame_Header">
-          <layout class="QVBoxLayout" name="verticalLayout_Header" stretch="0">
-        <property name="leftMargin">
-         <number>0</number>
-        </property>
-        <property name="topMargin">
-         <number>0</number>
-        </property>
-        <property name="rightMargin">
-         <number>0</number>
-        </property>
-        <property name="bottomMargin">
-         <number>0</number>
-        </property>
-        <item>
-            <layout class="QHBoxLayout" name="horizontalLayout_Header" stretch="1,0,1">
-             <property name="spacing">
-              <number>6</number>
-             </property>
-             <item>
-              <widget class="QLabel" name="labelOverviewHeaderLeft">
-               <property name="minimumSize">
-                <size>
-                 <width>464</width>
-                 <height>60</height>
-                </size>
-               </property>
-               <property name="maximumSize">
-                <size>
-                 <width>16777215</width>
-                 <height>60</height>
-                </size>
-               </property>
-               <property name="font">
-                <font>
-                 <pointsize>20</pointsize>
-                 <weight>75</weight>
-                 <bold>true</bold>
-                </font>
-               </property>
-               <property name="text">
-                <string>OVERVIEW</string>
-               </property>
-               <property name="alignment">
-                <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <spacer name="horizontalSpacer_Header">
-               <property name="orientation">
-                <enum>Qt::Horizontal</enum>
-               </property>
-               <property name="sizeHint" stdset="0">
-                <size>
-                 <width>40</width>
-                 <height>20</height>
-                </size>
-               </property>
-              </spacer>
-             </item>
-             <item>
-              <widget class="QLabel" name="labelOverviewHeaderRight">
-               <property name="minimumSize">
-                <size>
-                 <width>464</width>
-                 <height>60</height>
-                </size>
-               </property>
-               <property name="maximumSize">
-                <size>
-                 <width>16777215</width>
-                 <height>60</height>
-                </size>
-               </property>
-               <property name="font">
-                <font>
-                 <pointsize>14</pointsize>
-                </font>
-               </property>
-               <property name="text">
-                <string/>
-               </property>
-               <property name="alignment">
-                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-               </property>
-              </widget>
-             </item>
-            </layout>
-           </item>
-          </layout>
-         </widget>
-        </item>
-        <item>
-         <widget class="QFrame" name="frame_Content">
-          <layout class="QVBoxLayout" name="verticalLayout_Content">
-           <property name="leftMargin">
-            <number>6</number>
-           </property>
-           <property name="topMargin">
-            <number>0</number>
-           </property>
-           <property name="rightMargin">
-            <number>6</number>
-           </property>
-           <property name="bottomMargin">
-            <number>0</number>
-           </property>
-           <item>
          <layout class="QHBoxLayout" name="horizontalLayout_Content" stretch="1,1">
           <property name="spacing">
            <number>6</number>
           </property>
           <item>
-              <layout class="QVBoxLayout" name="verticalLayout_left" stretch="1">
+           <layout class="QVBoxLayout" name="verticalLayout_left" stretch="0">
             <item>
              <widget class="QFrame" name="frameObfuscation">
               <property name="minimumSize">
@@ -214,24 +105,18 @@
                 <number>0</number>
                </property>
                <item>
-                   <widget class="QFrame" name="frame_CombinedBalances">
-                    <property name="minimumSize">
-                     <size>
-                      <width>470</width>
-                      <height>0</height>
-                     </size>
-                    </property>
+                <widget class="QFrame" name="frame_Balances">
                  <property name="frameShape">
                   <enum>QFrame::StyledPanel</enum>
                  </property>
                  <property name="frameShadow">
                   <enum>QFrame::Raised</enum>
                  </property>
-                    <layout class="QVBoxLayout" name="verticalLayout_5">
+                 <layout class="QVBoxLayout" name="verticalLayout_4">
                   <item>
-                      <layout class="QHBoxLayout" name="horizontalLayout_5" stretch="0,0,0">
+                   <layout class="QHBoxLayout" name="horizontalLayout_4">
                     <item>
-                        <widget class="QLabel" name="label_5z">
+                     <widget class="QLabel" name="label_5">
                       <property name="minimumSize">
                        <size>
                         <width>0</width>
@@ -245,11 +130,8 @@
                         <bold>true</bold>
                        </font>
                       </property>
-                         <property name="toolTip">
-                          <string>Combined Balance (including unconfirmed and immature coins)</string>
-                         </property>
                       <property name="text">
-                          <string>Combined Balance</string>
+                       <string>FGC Balances</string>
                       </property>
                      </widget>
                     </item>
@@ -273,7 +155,7 @@
                      </widget>
                     </item>
                     <item>
-                        <spacer name="horizontalSpacer_1">
+                     <spacer name="horizontalSpacer_3">
                       <property name="orientation">
                        <enum>Qt::Horizontal</enum>
                       </property>
@@ -288,7 +170,7 @@
                    </layout>
                   </item>
                   <item>
-                      <widget class="Line" name="line_CombinedBalance">
+                   <widget class="Line" name="line_Balance">
                     <property name="minimumSize">
                      <size>
                       <width>0</width>
@@ -307,19 +189,12 @@
                    </widget>
                   </item>
                   <item>
-                      <layout class="QGridLayout" name="gridLayout_3">
+                   <layout class="QGridLayout" name="gridLayout">
                     <property name="spacing">
                      <number>12</number>
                     </property>
-                       <item row="1" column="0">
-                        <widget class="QLabel" name="labelBalanceTextz">
-                      <property name="text">
-                          <string>Available:</string>
-                      </property>
-                     </widget>
-                    </item>
-                       <item row="1" column="1">
-                        <widget class="QLabel" name="labelBalancez">
+                    <item row="2" column="2">
+                     <widget class="QLabel" name="labelWatchPending">
                       <property name="font">
                        <font>
                         <weight>75</weight>
@@ -330,7 +205,7 @@
                        <cursorShape>IBeamCursor</cursorShape>
                       </property>
                       <property name="toolTip">
-                          <string>Your current spendable balance</string>
+                       <string>Unconfirmed transactions to watch-only addresses</string>
                       </property>
                       <property name="text">
                        <string notr="true">0.000 000 00 FGC</string>
@@ -343,15 +218,8 @@
                       </property>
                      </widget>
                     </item>
-                       <item row="2" column="0">
-                        <widget class="QLabel" name="labelTotalTextz">
-                      <property name="text">
-                       <string>Total:</string>
-                      </property>
-                     </widget>
-                    </item>
-                       <item row="2" column="1">
-                        <widget class="QLabel" name="labelTotalz">
+                    <item row="2" column="1">
+                     <widget class="QLabel" name="labelUnconfirmed">
                       <property name="font">
                        <font>
                         <weight>75</weight>
@@ -362,7 +230,64 @@
                        <cursorShape>IBeamCursor</cursorShape>
                       </property>
                       <property name="toolTip">
-                          <string>Total Balance, including all unavailable coins.</string>
+                       <string>Total of transactions that have yet to be confirmed, and do not yet count toward the spendable balance</string>
+                      </property>
+                      <property name="text">
+                       <string notr="true">0.000 000 00 FGC</string>
+                      </property>
+                      <property name="alignment">
+                       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                      </property>
+                      <property name="textInteractionFlags">
+                       <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="3" column="2">
+                     <widget class="QLabel" name="labelWatchImmature">
+                      <property name="font">
+                       <font>
+                        <weight>75</weight>
+                        <bold>true</bold>
+                       </font>
+                      </property>
+                      <property name="cursor">
+                       <cursorShape>IBeamCursor</cursorShape>
+                      </property>
+                      <property name="toolTip">
+                       <string>Staked or masternode rewards in watch-only addresses that has not yet matured</string>
+                      </property>
+                      <property name="text">
+                       <string notr="true">0.000 000 00 FGC</string>
+                      </property>
+                      <property name="alignment">
+                       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                      </property>
+                      <property name="textInteractionFlags">
+                       <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="4" column="0">
+                     <widget class="QLabel" name="labelTotalText">
+                      <property name="text">
+                       <string>Total:</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="3" column="1">
+                     <widget class="QLabel" name="labelImmature">
+                      <property name="font">
+                       <font>
+                        <weight>75</weight>
+                        <bold>true</bold>
+                       </font>
+                      </property>
+                      <property name="cursor">
+                       <cursorShape>IBeamCursor</cursorShape>
+                      </property>
+                      <property name="toolTip">
+                       <string>Staked or masternode rewards that has not yet matured</string>
                       </property>
                       <property name="text">
                        <string notr="true">0.000 000 00 FGC</string>
@@ -388,108 +313,60 @@
                       </property>
                      </spacer>
                     </item>
-                      </layout>
-                     </item>
-                     <item>
-                      <spacer name="verticalSpacer_1">
-                       <property name="orientation">
-                        <enum>Qt::Vertical</enum>
+                    <item row="3" column="0">
+                     <widget class="QLabel" name="labelImmatureText">
+                      <property name="text">
+                       <string>Immature:</string>
                        </property>
-                       <property name="sizeHint" stdset="0">
-                        <size>
-                         <width>20</width>
-                         <height>40</height>
-                        </size>
-                      </property>
-                      </spacer>
-                     </item>
-                    </layout>
                      </widget>
                     </item>
-                  <item>
-                   <widget class="QFrame" name="frame_Balances">
-                    <property name="frameShape">
-                     <enum>QFrame::StyledPanel</enum>
-                    </property>
-                    <property name="frameShadow">
-                     <enum>QFrame::Raised</enum>
-                    </property>
-                    <layout class="QVBoxLayout" name="verticalLayout_4">
-                     <item>
-                      <layout class="QHBoxLayout" name="horizontalLayout_4">
-                       <item>
-                        <widget class="QLabel" name="label_5">
-                         <property name="minimumSize">
-                          <size>
-                           <width>0</width>
-                           <height>20</height>
-                          </size>
-                         </property>
+                    <item row="4" column="1">
+                     <widget class="QLabel" name="labelTotal">
                       <property name="font">
                        <font>
-                           <pointsize>12</pointsize>
                         <weight>75</weight>
                         <bold>true</bold>
                        </font>
                       </property>
-                         <property name="text">
-                          <string>FGC Balance</string>
+                      <property name="cursor">
+                       <cursorShape>IBeamCursor</cursorShape>
                       </property>
-                        </widget>
-                       </item>
-                       <item>
-                        <widget class="QLabel" name="labelFGCPercent">
+                      <property name="toolTip">
+                       <string>Your current total balance</string>
+                      </property>
                       <property name="text">
-                          <string notr="true">0 %</string>
-                      </property>
-                        </widget>
-                       </item>
-                       <item>
-                        <spacer name="horizontalSpacer_3">
-                         <property name="orientation">
-                          <enum>Qt::Horizontal</enum>
-                      </property>
-                         <property name="sizeHint" stdset="0">
-                          <size>
-                           <width>40</width>
-                           <height>20</height>
-                          </size>
-                      </property>
-                        </spacer>
-                       </item>
-                      </layout>
-                    </item>
-                     <item>
-                      <widget class="Line" name="line_Balance">
-                       <property name="minimumSize">
-                        <size>
-                         <width>0</width>
-                         <height>1</height>
-                        </size>
-                       </property>
-                       <property name="maximumSize">
-                        <size>
-                         <width>16777215</width>
-                         <height>1</height>
-                        </size>
-                      </property>
-                       <property name="orientation">
-                        <enum>Qt::Horizontal</enum>
-                      </property>
-                      </widget>
-                     </item>
-                     <item>
-                      <layout class="QGridLayout" name="gridLayout">
-                       <property name="spacing">
-                        <number>12</number>
-                      </property>
-                       <item row="0" column="1">
-                        <widget class="QLabel" name="labelSpendable">
-                      <property name="text">
-                          <string>Spendable:</string>
+                       <string notr="true">0.000 000 00 FGC</string>
                       </property>
                       <property name="alignment">
                        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                      </property>
+                      <property name="textInteractionFlags">
+                       <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+                      </property>
+                     </widget>
+                       </item>
+                    <item row="4" column="2">
+                     <widget class="QLabel" name="labelWatchTotal">
+                      <property name="font">
+                       <font>
+                        <weight>75</weight>
+                        <bold>true</bold>
+                       </font>
+                       </property>
+                      <property name="cursor">
+                       <cursorShape>IBeamCursor</cursorShape>
+                      </property>
+                      <property name="toolTip">
+                       <string>Current total balance in watch-only addresses</string>
+                      </property>
+                      <property name="text">
+                       <string notr="true">0.000 000 00 FGC</string>
+                      </property>
+                      <property name="alignment">
+                       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                      </property>
+                      <property name="textInteractionFlags">
+                       <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
                       </property>
                      </widget>
                     </item>
@@ -567,250 +444,20 @@
                       </property>
                      </widget>
                     </item>
-                       <item row="2" column="1">
-                        <widget class="QLabel" name="labelUnconfirmed">
-                         <property name="font">
-                          <font>
-                           <weight>75</weight>
-                           <bold>true</bold>
-                          </font>
-                         </property>
-                         <property name="cursor">
-                          <cursorShape>IBeamCursor</cursorShape>
-                         </property>
-                         <property name="toolTip">
-                          <string>Total of transactions that have yet to be confirmed, and do not yet count toward the spendable balance</string>
-                         </property>
+                    <item row="0" column="1">
+                     <widget class="QLabel" name="labelSpendable">
                       <property name="text">
-                          <string notr="true">0.000 000 00 FGC</string>
+                       <string>Spendable:</string>
                       </property>
                       <property name="alignment">
                        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                       </property>
-                         <property name="textInteractionFlags">
-                          <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
-                    </property>
-                </widget>
-               </item>
-                       <item row="2" column="2">
-                        <widget class="QLabel" name="labelWatchPending">
-                      <property name="font">
-                       <font>
-                        <weight>75</weight>
-                        <bold>true</bold>
-                       </font>
-                      </property>
-                         <property name="cursor">
-                          <cursorShape>IBeamCursor</cursorShape>
-                         </property>
-                         <property name="toolTip">
-                          <string>Unconfirmed transactions to watch-only addresses</string>
-                         </property>
-                      <property name="text">
-                          <string notr="true">0.000 000 00 FGC</string>
-                         </property>
-                         <property name="alignment">
-                          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                         </property>
-                         <property name="textInteractionFlags">
-                          <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
-                      </property>
                      </widget>
-                    </item>
-                       <item row="3" column="0">
-                        <widget class="QLabel" name="labelImmatureText">
-                         <property name="text">
-                          <string>Immature:</string>
-                    </property>
-                   </widget>
-                  </item>
-                       <item row="3" column="1">
-                        <widget class="QLabel" name="labelImmature">
-                         <property name="font">
-                          <font>
-                           <weight>75</weight>
-                           <bold>true</bold>
-                          </font>
-                         </property>
-                         <property name="cursor">
-                          <cursorShape>IBeamCursor</cursorShape>
-                    </property>
-                      <property name="toolTip">
-                          <string>Staked or masternode rewards that has not yet matured</string>
-                      </property>
-                      <property name="text">
-                          <string notr="true">0.000 000 00 FGC</string>
-                         </property>
-                         <property name="alignment">
-                          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                         </property>
-                         <property name="textInteractionFlags">
-                          <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
-                      </property>
-                     </widget>
-                    </item>
-                       <item row="3" column="2">
-                        <widget class="QLabel" name="labelWatchImmature">
-                      <property name="font">
-                       <font>
-                        <weight>75</weight>
-                        <bold>true</bold>
-                       </font>
-                      </property>
-                      <property name="cursor">
-                       <cursorShape>IBeamCursor</cursorShape>
-                      </property>
-                      <property name="toolTip">
-                          <string>Staked or masternode rewards in watch-only addresses that has not yet matured</string>
-                      </property>
-                      <property name="text">
-                       <string notr="true">0.000 000 00 FGC</string>
-                      </property>
-                      <property name="alignment">
-                       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                      </property>
-                      <property name="textInteractionFlags">
-                       <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
-                      </property>
-                     </widget>
-                    </item>
-                       <item row="4" column="0">
-                        <widget class="QLabel" name="labelLockedBalanceText">
-                      <property name="toolTip">
-                          <string>Locked FGC or Masternode collaterals. These are excluded from zFGC minting.</string>
-                      </property>
-                      <property name="text">
-                          <string>Locked:</string>
-                      </property>
-                     </widget>
-                    </item>
-                       <item row="4" column="1">
-                        <widget class="QLabel" name="labelLockedBalance">
-                         <property name="font">
-                          <font>
-                           <weight>75</weight>
-                           <bold>true</bold>
-                          </font>
-                         </property>
-                         <property name="cursor">
-                          <cursorShape>IBeamCursor</cursorShape>
-                         </property>
-                         <property name="toolTip">
-                          <string>Locked FGC or Masternode collaterals. These are excluded from zFGC minting.</string>
-                      </property>
-                         <property name="text">
-                          <string notr="true">0.000 000 00 FGC</string>
-                      </property>
-                         <property name="alignment">
-                          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                      </property>
-                         <property name="textInteractionFlags">
-                          <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
-                      </property>
-                        </widget>
-                    </item>
-                       <item row="4" column="2">
-                        <widget class="QLabel" name="labelWatchLocked">
-                      <property name="font">
-                       <font>
-                        <weight>75</weight>
-                           <bold>true</bold>
-                          </font>
-                         </property>
-                         <property name="cursor">
-                          <cursorShape>IBeamCursor</cursorShape>
-                      </property>
-                      <property name="toolTip">
-                          <string>Current locked balance in watch-only addresses</string>
-                      </property>
-                      <property name="text">
-                          <string notr="true">0.000 000 00 FGC</string>
-                      </property>
-                      <property name="alignment">
-                       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                      </property>
-                         <property name="textInteractionFlags">
-                          <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
-                         </property>
-                     </widget>
-                    </item>
-                       <item row="5" column="0">
-                        <widget class="QLabel" name="labelTotalText">
-                      <property name="toolTip">
-                          <string>Your current FGC balance, unconfirmed and immature transactions included</string>
-                      </property>
-                      <property name="text">
-                          <string>Total:</string>
-                      </property>
-                     </widget>
-                    </item>
-                       <item row="5" column="1">
-                        <widget class="QLabel" name="labelTotal">
-                      <property name="font">
-                       <font>
-                        <weight>75</weight>
-                        <bold>true</bold>
-                       </font>
-                      </property>
-                         <property name="cursor">
-                          <cursorShape>IBeamCursor</cursorShape>
-                         </property>
-                      <property name="toolTip">
-                          <string>Your current FGCX balance, unconfirmed and immature transactions included</string>
-                      </property>
-                      <property name="text">
-                          <string notr="true">0.000 000 00 FGC</string>
-                      </property>
-                      <property name="alignment">
-                       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                      </property>
-                         <property name="textInteractionFlags">
-                          <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
-                      </property>
-                     </widget>
-                    </item>
-                       <item row="5" column="2">
-                        <widget class="QLabel" name="labelWatchTotal">
-                      <property name="font">
-                       <font>
-                        <weight>75</weight>
-                        <bold>true</bold>
-                       </font>
-                      </property>
-                         <property name="cursor">
-                          <cursorShape>IBeamCursor</cursorShape>
-                         </property>
-                      <property name="toolTip">
-                          <string>Current total balance in watch-only addresses</string>
-                      </property>
-                      <property name="text">
-                          <string notr="true">0.000 000 00 FGC</string>
-                      </property>
-                      <property name="alignment">
-                       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                      </property>
-                         <property name="textInteractionFlags">
-                          <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
-                         </property>
-                     </widget>
-                    </item>
-                       <item row="5" column="3">
-                        <spacer name="horizontalSpacer_9">
-                      <property name="orientation">
-                       <enum>Qt::Horizontal</enum>
-                      </property>
-                      <property name="sizeHint" stdset="0">
-                       <size>
-                        <width>40</width>
-                        <height>20</height>
-                       </size>
-                      </property>
-                     </spacer>
                     </item>
                    </layout>
                   </item>
                   <item>
-                      <spacer name="verticalSpacer_3">
+                   <spacer name="verticalSpacer">
                     <property name="orientation">
                      <enum>Qt::Vertical</enum>
                     </property>
@@ -826,18 +473,18 @@
                 </widget>
                </item>
                <item>
-                   <widget class="QFrame" name="frame_ZerocoinBalances">
+                <widget class="QFrame" name="frame_ZerocoinBalances">
                  <property name="frameShape">
                   <enum>QFrame::StyledPanel</enum>
                  </property>
                  <property name="frameShadow">
                   <enum>QFrame::Raised</enum>
                  </property>
-                    <layout class="QVBoxLayout" name="verticalLayout_7">
+                 <layout class="QVBoxLayout" name="verticalLayout_7">
                   <item>
-                      <layout class="QHBoxLayout" name="horizontalLayout_8" stretch="0,0,0">
+                   <layout class="QHBoxLayout" name="horizontalLayout_8" stretch="0">
                     <item>
-                        <widget class="QLabel" name="label_5z_3">
+                     <widget class="QLabel" name="label_5z_3">
                       <property name="minimumSize">
                        <size>
                         <width>0</width>
@@ -851,35 +498,279 @@
                         <bold>true</bold>
                        </font>
                       </property>
-                         <property name="text">
-                          <string>zFGC Balance</string>
-                      </property>
-                        </widget>
-                       </item>
-                       <item>
-                        <widget class="QLabel" name="labelzFGCPercent">
                       <property name="text">
-                          <string notr="true">0 %</string>
-                      </property>
+                       <string>Zerocoin Balance</string>
+                         </property>
                      </widget>
                     </item>
-                       <item>
-                        <spacer name="horizontalSpacer_11">
-                         <property name="orientation">
-                          <enum>Qt::Horizontal</enum>
-                         </property>
-                         <property name="sizeHint" stdset="0">
-                          <size>
-                           <width>40</width>
-                           <height>20</height>
-                          </size>
-                         </property>
-                        </spacer>
-                       </item>
                    </layout>
                   </item>
                   <item>
-                      <widget class="Line" name="line_ZerocoinBalance">
+                   <widget class="Line" name="line_ZerocoinBalance">
+                    <property name="minimumSize">
+                     <size>
+                      <width>0</width>
+                      <height>1</height>
+                     </size>
+                         </property>
+                    <property name="maximumSize">
+                     <size>
+                      <width>16777215</width>
+                      <height>1</height>
+                     </size>
+                      </property>
+                    <property name="orientation">
+                     <enum>Qt::Horizontal</enum>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <layout class="QGridLayout" name="gridLayout_5">
+                    <property name="spacing">
+                     <number>12</number>
+                    </property>
+                    <item row="4" column="0">
+                     <widget class="QLabel" name="labelzBalanceMatureText">
+                      <property name="toolTip">
+                       <string>Mature: more than 20 confirmation and more than 1 mint of the same denomination after it was minted.
+These zFGC are spendable.</string>
+                      </property>
+                      <property name="text">
+                       <string>Mature:</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="1" column="1">
+                     <widget class="QLabel" name="labelzBalance">
+                      <property name="font">
+                       <font>
+                        <weight>75</weight>
+                        <bold>true</bold>
+                       </font>
+                      </property>
+                      <property name="cursor">
+                       <cursorShape>IBeamCursor</cursorShape>
+                      </property>
+                      <property name="toolTip">
+                       <string>All available zFGC, unconfirmed and immature zFGC included.</string>
+                      </property>
+                      <property name="text">
+                       <string notr="true">0.000 000 00 FGC</string>
+                      </property>
+                      <property name="alignment">
+                       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                      </property>
+                      <property name="textInteractionFlags">
+                       <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="1" column="0">
+                     <widget class="QLabel" name="labelzBalanceText">
+                      <property name="toolTip">
+                       <string>All available zFGC, unconfirmed and immature zFGC included.</string>
+                      </property>
+                      <property name="text">
+                       <string>Total:</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="1" column="2">
+                     <spacer name="horizontalSpacer_8">
+                      <property name="orientation">
+                       <enum>Qt::Horizontal</enum>
+                         </property>
+                      <property name="sizeHint" stdset="0">
+                       <size>
+                        <width>40</width>
+                        <height>20</height>
+                       </size>
+                         </property>
+                     </spacer>
+                    </item>
+                    <item row="4" column="2">
+                     <spacer name="horizontalSpacer_4">
+                      <property name="orientation">
+                       <enum>Qt::Horizontal</enum>
+                      </property>
+                      <property name="sizeHint" stdset="0">
+                       <size>
+                        <width>40</width>
+                        <height>20</height>
+                       </size>
+                      </property>
+                     </spacer>
+                    </item>
+                    <item row="4" column="1">
+                     <widget class="QLabel" name="labelzBalanceMature">
+                      <property name="font">
+                       <font>
+                        <weight>75</weight>
+                           <bold>true</bold>
+                          </font>
+                         </property>
+                      <property name="toolTip">
+                       <string>Mature: more than 20 confirmation and more than 1 mint of the same denomination after it was minted.
+These zFGC are spendable.</string>
+                      </property>
+                      <property name="text">
+                       <string>0.000 000 00 FGC</string>
+                      </property>
+                      <property name="alignment">
+                       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="2" column="0">
+                     <widget class="QLabel" name="labelzBalanceUnconfirmedText">
+                      <property name="toolTip">
+                       <string>Unconfirmed: less than 20 confirmations
+Immature: confirmed, but less than 1 mint of the same denomination after it was minted</string>
+                      </property>
+                      <property name="text">
+                       <string>Unconfirmed:</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="2" column="1">
+                     <widget class="QLabel" name="labelzBalanceUnconfirmed">
+                      <property name="font">
+                       <font>
+                        <weight>75</weight>
+                        <bold>true</bold>
+                       </font>
+                      </property>
+                      <property name="toolTip">
+                       <string>Unconfirmed: less than 20 confirmations
+Immature: confirmed, but less than 1 mint of the same denomination after it was minted</string>
+                      </property>
+                      <property name="text">
+                       <string>0.000 000 00 FGC</string>
+                      </property>
+                      <property name="alignment">
+                       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="2" column="2">
+                     <spacer name="horizontalSpacer_5">
+                      <property name="orientation">
+                       <enum>Qt::Horizontal</enum>
+                      </property>
+                      <property name="sizeHint" stdset="0">
+                       <size>
+                        <width>40</width>
+                        <height>20</height>
+                       </size>
+                      </property>
+                     </spacer>
+                    </item>
+                    <item row="3" column="0">
+                     <widget class="QLabel" name="labelzBalanceImmatureText">
+                      <property name="toolTip">
+                       <string>Unconfirmed: less than 20 confirmations
+Immature: confirmed, but less than 1 mint of the same denomination after it was minted</string>
+                      </property>
+                      <property name="text">
+                       <string>Immature:</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="3" column="1">
+                     <widget class="QLabel" name="labelzBalanceImmature">
+                      <property name="font">
+                       <font>
+                        <weight>75</weight>
+                        <bold>true</bold>
+                       </font>
+                      </property>
+                      <property name="toolTip">
+                       <string>Unconfirmed: less than 20 confirmations
+Immature: confirmed, but less than 1 mint of the same denomination after it was minted</string>
+                      </property>
+                      <property name="text">
+                       <string>0.000 000 00 FGC</string>
+                      </property>
+                      <property name="alignment">
+                       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="3" column="2">
+                     <spacer name="horizontalSpacer_7">
+                      <property name="orientation">
+                       <enum>Qt::Horizontal</enum>
+                      </property>
+                      <property name="sizeHint" stdset="0">
+                       <size>
+                        <width>40</width>
+                        <height>20</height>
+                       </size>
+                      </property>
+                     </spacer>
+                    </item>
+                   </layout>
+                  </item>
+                  <item>
+                   <spacer name="verticalSpacer_4">
+                    <property name="orientation">
+                     <enum>Qt::Vertical</enum>
+                    </property>
+                    <property name="sizeHint" stdset="0">
+                     <size>
+                      <width>20</width>
+                      <height>40</height>
+                     </size>
+                    </property>
+                   </spacer>
+                  </item>
+                 </layout>
+                </widget>
+               </item>
+               <item>
+                <widget class="QFrame" name="frame_CombinedBalances">
+                 <property name="minimumSize">
+                  <size>
+                   <width>470</width>
+                   <height>0</height>
+                  </size>
+                 </property>
+                 <property name="frameShape">
+                  <enum>QFrame::StyledPanel</enum>
+                 </property>
+                 <property name="frameShadow">
+                  <enum>QFrame::Raised</enum>
+                 </property>
+                 <layout class="QVBoxLayout" name="verticalLayout_5">
+                  <item>
+                   <layout class="QHBoxLayout" name="horizontalLayout_5" stretch="0">
+                    <item>
+                     <widget class="QLabel" name="label_5z">
+                      <property name="minimumSize">
+                       <size>
+                        <width>0</width>
+                        <height>20</height>
+                       </size>
+                      </property>
+                      <property name="font">
+                       <font>
+                        <pointsize>12</pointsize>
+                        <weight>75</weight>
+                        <bold>true</bold>
+                       </font>
+                      </property>
+                      <property name="toolTip">
+                       <string>Combined Balances (including unconfirmed and immature coins)</string>
+                      </property>
+                      <property name="text">
+                       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Combined Balances&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                      </property>
+                     </widget>
+                    </item>
+                   </layout>
+                  </item>
+                  <item>
+                   <widget class="Line" name="line_CombinedBalance">
                     <property name="minimumSize">
                      <size>
                       <width>0</width>
@@ -898,32 +789,23 @@
                    </widget>
                   </item>
                   <item>
-                      <layout class="QGridLayout" name="gridLayout_5">
+                   <layout class="QGridLayout" name="gridLayout_3">
                     <property name="spacing">
                      <number>12</number>
                     </property>
-                       <item row="1" column="0">
-                        <widget class="QLabel" name="labelzBalanceMatureText">
-                      <property name="toolTip">
-                          <string>Mature: more than 20 confirmation and more than 1 mint of the same denomination after it was minted.
-These zFGC are spendable.</string>
-                      </property>
-                      <property name="text">
-                          <string>Available:</string>
-                      </property>
-                     </widget>
-                    </item>
-                       <item row="1" column="1">
-                        <widget class="QLabel" name="labelzBalanceMature">
+                    <item row="4" column="1">
+                     <widget class="QLabel" name="labelzBalancez">
                       <property name="font">
                        <font>
                         <weight>75</weight>
                         <bold>true</bold>
                        </font>
                       </property>
+                      <property name="cursor">
+                       <cursorShape>IBeamCursor</cursorShape>
+                      </property>
                       <property name="toolTip">
-                          <string>Mature: more than 20 confirmation and more than 1 mint of the same denomination after it was minted.
-These zFGC are spendable.</string>
+                       <string>Total of transactions that have yet to be confirmed, and do not yet count toward the spendable balance</string>
                       </property>
                       <property name="text">
                        <string notr="true">0.000 000 00 FGC</string>
@@ -931,30 +813,24 @@ These zFGC are spendable.</string>
                       <property name="alignment">
                        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                       </property>
-                     </widget>
-                    </item>
-                       <item row="2" column="0">
-                        <widget class="QLabel" name="labelzBalanceUnconfirmedText">
-                         <property name="toolTip">
-                          <string>Unconfirmed: less than 20 confirmations
-Immature: confirmed, but less than 1 mint of the same denomination after it was minted</string>
-                      </property>
-                      <property name="text">
-                          <string>Unconfirmed:</string>
+                      <property name="textInteractionFlags">
+                       <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
                       </property>
                      </widget>
                     </item>
-                       <item row="2" column="1">
-                        <widget class="QLabel" name="labelzBalanceUnconfirmed">
+                    <item row="6" column="1">
+                     <widget class="QLabel" name="labelTotalz">
                       <property name="font">
                        <font>
                         <weight>75</weight>
                         <bold>true</bold>
                        </font>
                       </property>
+                      <property name="cursor">
+                       <cursorShape>IBeamCursor</cursorShape>
+                      </property>
                       <property name="toolTip">
-                          <string>Unconfirmed: less than 20 confirmations
-Immature: confirmed, but less than 1 mint of the same denomination after it was minted</string>
+                       <string>Total Balance, including unconfirmed and immature coins.</string>
                       </property>
                       <property name="text">
                        <string notr="true">0.000 000 00 FGC</string>
@@ -962,91 +838,157 @@ Immature: confirmed, but less than 1 mint of the same denomination after it was 
                       <property name="alignment">
                        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                       </property>
-                     </widget>
-                    </item>
-                       <item row="3" column="0">
-                        <widget class="QLabel" name="labelzBalanceImmatureText">
-                      <property name="toolTip">
-                          <string>Unconfirmed: less than 20 confirmations
-Immature: confirmed, but less than 1 mint of the same denomination after it was minted</string>
-                      </property>
-                      <property name="text">
-                          <string>Immature:</string>
+                      <property name="textInteractionFlags">
+                       <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
                       </property>
                      </widget>
                     </item>
-                       <item row="3" column="1">
-                        <widget class="QLabel" name="labelzBalanceImmature">
-                         <property name="font">
-                          <font>
-                           <weight>75</weight>
-                           <bold>true</bold>
-                          </font>
+                    <item row="4" column="3">
+                     <spacer name="horizontalSpacer_6">
+                      <property name="orientation">
+                       <enum>Qt::Horizontal</enum>
+                      </property>
+                      <property name="sizeHint" stdset="0">
+                       <size>
+                        <width>40</width>
+                        <height>20</height>
+                       </size>
+                      </property>
+                     </spacer>
+                    </item>
+                    <item row="6" column="0">
+                     <widget class="QLabel" name="labelTotalTextz">
+                      <property name="text">
+                       <string>Total:</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="1" column="0">
+                     <widget class="QLabel" name="labelBalanceTextz">
+                      <property name="text">
+                       <string>FGC:</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="1" column="1">
+                     <widget class="QLabel" name="labelBalancez">
+                      <property name="font">
+                       <font>
+                        <weight>75</weight>
+                        <bold>true</bold>
+                       </font>
+                      </property>
+                      <property name="cursor">
+                       <cursorShape>IBeamCursor</cursorShape>
                       </property>
                       <property name="toolTip">
-                          <string>Unconfirmed: less than 20 confirmations
-Immature: confirmed, but less than 1 mint of the same denomination after it was minted</string>
+                       <string>Your current spendable balance</string>
                       </property>
                       <property name="text">
-                          <string notr="true">0.000 000 00 FGC</string>
+                       <string notr="true">0.000 000 00 FGC</string>
+                      </property>
+                      <property name="alignment">
+                       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                      </property>
+                      <property name="textInteractionFlags">
+                       <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="4" column="0">
+                     <widget class="QLabel" name="labelzBalanceTextz">
+                      <property name="toolTip">
+                       <string/>
+                      </property>
+                      <property name="text">
+                       <string>zFGC:</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="4" column="2">
+                     <widget class="QLabel" name="labelzFGCPercent">
+                      <property name="toolTip">
+                       <string>Current percentage of zFGC.
+If AutoMint is enabled this percentage will settle around the configured AutoMint percentage (default = 0%)</string>
+                      </property>
+                      <property name="text">
+                       <string>0 %</string>
                       </property>
                       <property name="alignment">
                        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                       </property>
                      </widget>
                     </item>
-                       <item row="4" column="0">
-                        <widget class="QLabel" name="labelzBalanceText">
-                      <property name="toolTip">
-                          <string>Your current zFGC balance, unconfirmed and immature zFGC included.</string>
-                      </property>
+                    <item row="6" column="2">
+                     <widget class="QLabel" name="label100Percent">
                       <property name="text">
-                          <string>Total:</string>
-                      </property>
-                     </widget>
-                    </item>
-                       <item row="4" column="1">
-                        <widget class="QLabel" name="labelzBalance">
-                         <property name="font">
-                          <font>
-                           <weight>75</weight>
-                           <bold>true</bold>
-                          </font>
-                      </property>
-                         <property name="cursor">
-                          <cursorShape>IBeamCursor</cursorShape>
-                      </property>
-                      <property name="toolTip">
-                          <string>Your current zFGC balance, unconfirmed and immature zFGC included.</string>
-                      </property>
-                      <property name="text">
-                          <string notr="true">0.000 000 00 FGC</string>
+                       <string/>
                       </property>
                       <property name="alignment">
                        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                       </property>
-                         <property name="textInteractionFlags">
-                          <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
-                         </property>
                      </widget>
                     </item>
-                       <item row="4" column="2">
-                        <spacer name="horizontalSpacer_4">
-                         <property name="orientation">
-                          <enum>Qt::Horizontal</enum>
+                    <item row="2" column="1">
+                     <widget class="QLabel" name="labelLockedBalance">
+                      <property name="toolTip">
+                       <string>Locked FGC or Masternode collaterals. These are excluded from zFGC minting.</string>
                       </property>
-                         <property name="sizeHint" stdset="0">
-                          <size>
-                           <width>40</width>
-                           <height>20</height>
-                          </size>
+                      <property name="text">
+                       <string>0.000 000 00 FGC</string>
                       </property>
-                        </spacer>
+                      <property name="alignment">
+                       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="2" column="0">
+                     <widget class="QLabel" name="labelLockedBalanceText">
+                      <property name="toolTip">
+                       <string>Locked FGC or Masternode collaterals. These are excluded from zFGC minting.</string>
+                      </property>
+                      <property name="text">
+                       <string>Locked:</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="3" column="0">
+                     <widget class="QLabel" name="labelUnLockedBalanceText">
+                      <property name="toolTip">
+                       <string>Unlocked FGCs. These can be used for zFGC minting.</string>
+                      </property>
+                      <property name="text">
+                       <string>Unlocked:</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="3" column="1">
+                     <widget class="QLabel" name="labelUnLockedBalance">
+                      <property name="toolTip">
+                       <string>Unlocked FGCs. These can be used for zFGC minting.</string>
+                      </property>
+                      <property name="text">
+                       <string>0.000 000 00 FGC</string>
+                      </property>
+                      <property name="alignment">
+                       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="3" column="2">
+                     <widget class="QLabel" name="labelFGCPercent">
+                      <property name="text">
+                       <string>0 %</string>
+                      </property>
+                      <property name="alignment">
+                       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                      </property>
+                     </widget>
                     </item>
                    </layout>
                   </item>
                   <item>
-                      <spacer name="verticalSpacer_4">
+                   <spacer name="verticalSpacer_3">
                     <property name="orientation">
                      <enum>Qt::Vertical</enum>
                     </property>
@@ -1082,7 +1024,7 @@ Immature: confirmed, but less than 1 mint of the same denomination after it was 
               <property name="frameShadow">
                <enum>QFrame::Raised</enum>
               </property>
-                 <layout class="QVBoxLayout" name="verticalLayout_1" stretch="0,0,0,0,0">
+              <layout class="QVBoxLayout" name="verticalLayout_1">
                <item>
                 <layout class="QHBoxLayout" name="horizontalLayout_2">
                  <item>
@@ -1160,9 +1102,15 @@ Immature: confirmed, but less than 1 mint of the same denomination after it was 
                </item>
                <item>
                 <widget class="QListView" name="listTransactions">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                   <horstretch>100</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
                  <property name="minimumSize">
                   <size>
-                      <width>0</width>
+                   <width>500</width>
                    <height>0</height>
                   </size>
                  </property>
@@ -1227,9 +1175,6 @@ Immature: confirmed, but less than 1 mint of the same denomination after it was 
            </layout>
           </item>
          </layout>
-        </item>
-       </layout>
-         </widget>
         </item>
        </layout>
       </item>
