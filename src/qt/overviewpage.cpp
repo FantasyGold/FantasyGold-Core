@@ -180,10 +180,9 @@ void OverviewPage::setBalance(const CAmount& balance, const CAmount& unconfirmed
     currentWatchImmatureBalance = watchImmatureBalance;
 
     CAmount nLockedBalance = 0;
-    CAmount nWatchOnlyLockedBalance = 0;
+   
     if (pwalletMain) {
         nLockedBalance = pwalletMain->GetLockedCoins();
-        nWatchOnlyLockedBalance = pwalletMain->GetLockedWatchOnlyBalance();
     }
 
     // FGC Balance
@@ -193,7 +192,7 @@ void OverviewPage::setBalance(const CAmount& balance, const CAmount& unconfirmed
 
     // FGC Watch-Only Balance
     CAmount nTotalWatchBalance = watchOnlyBalance + watchUnconfBalance;
-    CAmount nAvailableWatchBalance = watchOnlyBalance - watchImmatureBalance - nWatchOnlyLockedBalance;
+    CAmount nAvailableWatchBalance = watchOnlyBalance - watchImmatureBalance
 
     // zFGC Balance
     CAmount matureZerocoinBalance = zerocoinBalance - unconfirmedZerocoinBalance - immatureZerocoinBalance;
@@ -217,7 +216,6 @@ void OverviewPage::setBalance(const CAmount& balance, const CAmount& unconfirmed
     ui->labelWatchAvailable->setText(BitcoinUnits::floorHtmlWithUnit(nDisplayUnit, nAvailableWatchBalance, false, BitcoinUnits::separatorAlways));
     ui->labelWatchPending->setText(BitcoinUnits::floorHtmlWithUnit(nDisplayUnit, watchUnconfBalance, false, BitcoinUnits::separatorAlways));
     ui->labelWatchImmature->setText(BitcoinUnits::floorHtmlWithUnit(nDisplayUnit, watchImmatureBalance, false, BitcoinUnits::separatorAlways));
-    ui->labelWatchLocked->setText(BitcoinUnits::floorHtmlWithUnit(nDisplayUnit, nWatchOnlyLockedBalance, false, BitcoinUnits::separatorAlways));
     ui->labelWatchTotal->setText(BitcoinUnits::floorHtmlWithUnit(nDisplayUnit, nTotalWatchBalance, false, BitcoinUnits::separatorAlways));
 
     // zFGC labels
@@ -278,10 +276,9 @@ void OverviewPage::setBalance(const CAmount& balance, const CAmount& unconfirmed
 
     // FGC Locked
     bool showFGCLocked = settingShowAllBalances || nLockedBalance != 0;
-    bool showWatchOnlyFGCLocked = showFGCLocked || nWatchOnlyLockedBalance != 0;
+ 
     ui->labelLockedBalanceText->setVisible(showFGCLocked || showWatchOnlyFGCLocked);
-    ui->labelLockedBalance->setVisible(showFGCLocked || showWatchOnlyFGCLocked);
-    ui->labelWatchLocked->setVisible(showWatchOnlyFGCLocked && showWatchOnly);
+  
 
     // zFGC
     bool showzFGCAvailable = settingShowAllBalances || zerocoinBalance != matureZerocoinBalance;
