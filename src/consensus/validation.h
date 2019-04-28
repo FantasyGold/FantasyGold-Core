@@ -140,10 +140,12 @@ private:
     TxValidationResult m_result;
 public:
     bool Invalid(TxValidationResult result, bool ret = false,
-                 const std::string &_strRejectReason="",
-                 const std::string &_strDebugMessage="") {
+                 const std::string &reject_reason="",
+                 const std::string &debug_message="")
+    {
         m_result = result;
-        return ValidationState::Invalid(ret, _strRejectReason, _strDebugMessage);
+        ValidationState::Invalid(reject_reason, debug_message);
+        return ret;
     }
     TxValidationResult GetResult() const { return m_result; }
 };
@@ -153,10 +155,11 @@ private:
     BlockValidationResult m_result;
 public:
     bool Invalid(BlockValidationResult result, bool ret = false,
-                 const std::string &_strRejectReason="",
-                 const std::string &_strDebugMessage="") {
+                 const std::string &reject_reason="",
+                 const std::string &debug_message="") {
         m_result = result;
-        return ValidationState::Invalid(ret, _strRejectReason, _strDebugMessage);
+        ValidationState::Invalid(reject_reason, debug_message);
+        return ret;
     }
     BlockValidationResult GetResult() const { return m_result; }
 };
