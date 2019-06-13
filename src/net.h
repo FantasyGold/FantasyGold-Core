@@ -637,6 +637,8 @@ public:
  */
 class TransportDeserializer {
 public:
+    // prepare for next message
+    virtual void Reset() = 0;
     // returns true if the current deserialization is complete
     virtual bool Complete() const = 0;
     // set the serialization context version
@@ -660,10 +662,13 @@ private:
     unsigned int nHdrPos;
     unsigned int nDataPos;
 
-    const uint256& GetMessageHash() const;
-    int readHeader(const char *pch, unsigned int nBytes);
-    int readData(const char *pch, unsigned int nBytes);
-
+    
+    bool OversizedMessageDetected() const {
+        return (in_data && hdr.nMessageSize > MAX_PROTOCOL_MESSAGE_LENGTH);
+    }
+    int Read(const char *pch, unsigned int nBytes) {
+        return in_data ? readData(pch, nBytes) : readHeader(pch, nBytes);
+    }
     void Reset() {
         vRecv.clear();
         hdrbuf.clear();
