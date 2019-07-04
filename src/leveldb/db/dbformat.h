@@ -14,13 +14,11 @@
 #include "util/coding.h"
 #include "util/logging.h"
 
-namespace leveldb
-{
+namespace leveldb {
 
 // Grouping of constants.  We may want to make some of these
 // parameters set via options.
-namespace config
-{
+namespace config {
 static const int kNumLevels = 7;
 
 // Level-0 compaction is started when we hit this many files.
@@ -50,8 +48,7 @@ class InternalKey;
 // Value types encoded as the last component of internal keys.
 // DO NOT CHANGE THESE ENUM VALUES: they are embedded in the on-disk
 // data structures.
-enum ValueType
-{
+enum ValueType {
   kTypeDeletion = 0x0,
   kTypeValue = 0x1
 };
@@ -70,8 +67,7 @@ typedef uint64_t SequenceNumber;
 static const SequenceNumber kMaxSequenceNumber =
     ((0x1ull << 56) - 1);
 
-struct ParsedInternalKey
-{
+struct ParsedInternalKey {
   Slice user_key;
   SequenceNumber sequence;
   ValueType type;
@@ -83,8 +79,7 @@ struct ParsedInternalKey
 };
 
 // Return the length of the encoding of "key".
-inline size_t InternalKeyEncodingLength(const ParsedInternalKey& key)
-{
+inline size_t InternalKeyEncodingLength(const ParsedInternalKey& key) {
   return key.user_key.size() + 8;
 }
 
@@ -100,14 +95,12 @@ extern bool ParseInternalKey(const Slice& internal_key,
                              ParsedInternalKey* result);
 
 // Returns the user key portion of an internal key.
-inline Slice ExtractUserKey(const Slice& internal_key)
-{
+inline Slice ExtractUserKey(const Slice& internal_key) {
   assert(internal_key.size() >= 8);
   return Slice(internal_key.data(), internal_key.size() - 8);
 }
 
-inline ValueType ExtractValueType(const Slice& internal_key)
-{
+inline ValueType ExtractValueType(const Slice& internal_key) {
   assert(internal_key.size() >= 8);
   const size_t n = internal_key.size();
   uint64_t num = DecodeFixed64(internal_key.data() + n - 8);
@@ -117,8 +110,7 @@ inline ValueType ExtractValueType(const Slice& internal_key)
 
 // A comparator for internal keys that uses a specified comparator for
 // the user key portion and breaks ties by decreasing sequence number.
-class InternalKeyComparator : public Comparator
-{
+class InternalKeyComparator : public Comparator {
  private:
   const Comparator* user_comparator_;
  public:
@@ -130,17 +122,13 @@ class InternalKeyComparator : public Comparator
       const Slice& limit) const;
   virtual void FindShortSuccessor(std::string* key) const;
 
-    const Comparator* user_comparator() const
-    {
-        return user_comparator_;
-    }
+  const Comparator* user_comparator() const { return user_comparator_; }
 
   int Compare(const InternalKey& a, const InternalKey& b) const;
 };
 
 // Filter policy wrapper that converts from internal keys to user keys
-class InternalFilterPolicy : public FilterPolicy
-{
+class InternalFilterPolicy : public FilterPolicy {
  private:
   const FilterPolicy* const user_policy_;
  public:
@@ -153,55 +141,40 @@ class InternalFilterPolicy : public FilterPolicy
 // Modules in this directory should keep internal keys wrapped inside
 // the following class instead of plain strings so that we do not
 // incorrectly use string comparisons instead of an InternalKeyComparator.
-class InternalKey
-{
+class InternalKey {
  private:
   std::string rep_;
  public:
   InternalKey() { }   // Leave rep_ as empty to indicate it is invalid
-    InternalKey(const Slice& user_key, SequenceNumber s, ValueType t)
-    {
+  InternalKey(const Slice& user_key, SequenceNumber s, ValueType t) {
     AppendInternalKey(&rep_, ParsedInternalKey(user_key, s, t));
   }
 
-    void DecodeFrom(const Slice& s)
-    {
-        rep_.assign(s.data(), s.size());
-    }
-    Slice Encode() const
-    {
+  void DecodeFrom(const Slice& s) { rep_.assign(s.data(), s.size()); }
+  Slice Encode() const {
     assert(!rep_.empty());
     return rep_;
   }
 
-    Slice user_key() const
-    {
-        return ExtractUserKey(rep_);
-    }
+  Slice user_key() const { return ExtractUserKey(rep_); }
 
-    void SetFrom(const ParsedInternalKey& p)
-    {
+  void SetFrom(const ParsedInternalKey& p) {
     rep_.clear();
     AppendInternalKey(&rep_, p);
   }
 
-    void Clear()
-    {
-        rep_.clear();
-    }
+  void Clear() { rep_.clear(); }
 
   std::string DebugString() const;
 };
 
 inline int InternalKeyComparator::Compare(
-    const InternalKey& a, const InternalKey& b) const
-{
+    const InternalKey& a, const InternalKey& b) const {
   return Compare(a.Encode(), b.Encode());
 }
 
 inline bool ParseInternalKey(const Slice& internal_key,
-                             ParsedInternalKey* result)
-{
+                             ParsedInternalKey* result) {
   const size_t n = internal_key.size();
   if (n < 8) return false;
   uint64_t num = DecodeFixed64(internal_key.data() + n - 8);
@@ -213,8 +186,7 @@ inline bool ParseInternalKey(const Slice& internal_key,
 }
 
 // A helper class useful for DBImpl::Get()
-class LookupKey
-{
+class LookupKey {
  public:
   // Initialize *this for looking up user_key at a snapshot with
   // the specified sequence number.
@@ -223,22 +195,13 @@ class LookupKey
   ~LookupKey();
 
   // Return a key suitable for lookup in a MemTable.
-    Slice memtable_key() const
-    {
-        return Slice(start_, end_ - start_);
-    }
+  Slice memtable_key() const { return Slice(start_, end_ - start_); }
 
   // Return an internal key (suitable for passing to an internal iterator)
-    Slice internal_key() const
-    {
-        return Slice(kstart_, end_ - kstart_);
-    }
+  Slice internal_key() const { return Slice(kstart_, end_ - kstart_); }
 
   // Return the user key
-    Slice user_key() const
-    {
-        return Slice(kstart_, end_ - kstart_ - 8);
-    }
+  Slice user_key() const { return Slice(kstart_, end_ - kstart_ - 8); }
 
  private:
   // We construct a char array of the form:
@@ -258,8 +221,7 @@ class LookupKey
   void operator=(const LookupKey&);
 };
 
-inline LookupKey::~LookupKey()
-{
+inline LookupKey::~LookupKey() {
   if (start_ != space_) delete[] start_;
 }
 

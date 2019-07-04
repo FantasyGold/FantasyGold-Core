@@ -1,9 +1,9 @@
-// Copyright (c) 2009-2014 The Bitcoin Core developers
+// Copyright (c) 2009-2018 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
 #if defined(HAVE_CONFIG_H)
-#include "config/fantasygold-config.h"
+#include <config/bitcoin-config.h>
 #endif
 
 #include <cstddef>
@@ -35,8 +35,7 @@ bool sanity_test_memcpy()
 
     memcpy_int(memcpy_verify, memcpy_test, sizeof(memcpy_test));
 
-    for (unsigned int i = 0; i != T; ++i)
-    {
+    for (unsigned int i = 0; i != T; ++i) {
         if (memcpy_verify[i] != i)
             return false;
     }
@@ -57,7 +56,7 @@ bool sanity_test_fdelt()
 }
 #endif
 
-} // anon namespace
+} // namespace
 
 bool glibc_sanity_test()
 {

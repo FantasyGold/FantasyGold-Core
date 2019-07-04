@@ -3,9 +3,7 @@
 .vscode/
 autom4te.cache/
 build-aux/
-contrib/devtools/split-debug.sh
-qa/pull-tester/run-bitcoind-for-test.sh
-qa/pull-tester/tests-config.sh
+
 share/qt/Info.plist
 share/setup.nsi
 
@@ -28,14 +26,13 @@ src/qt/**/*.moc
 src/qt/**/qrc_*.cpp
 
 src/test/data/*.h
-src/test/buildenv.py
-
+*.exe
+*.lo
+*.la
 aclocal.m4
 config.log
 config.status
-configure
-libtool
-Makefile
+
 Makefile.in
 
 # Output binaries

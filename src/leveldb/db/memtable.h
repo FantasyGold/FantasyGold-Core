@@ -11,42 +11,32 @@
 #include "db/skiplist.h"
 #include "util/arena.h"
 
-namespace leveldb
-{
+namespace leveldb {
 
 class InternalKeyComparator;
 class Mutex;
 class MemTableIterator;
 
-class MemTable
-{
+class MemTable {
  public:
   // MemTables are reference counted.  The initial reference count
   // is zero and the caller must call Ref() at least once.
   explicit MemTable(const InternalKeyComparator& comparator);
 
   // Increase reference count.
-    void Ref()
-    {
-        ++refs_;
-    }
+  void Ref() { ++refs_; }
 
   // Drop reference count.  Delete if no more references exist.
-    void Unref()
-    {
+  void Unref() {
     --refs_;
     assert(refs_ >= 0);
-        if (refs_ <= 0)
-        {
+    if (refs_ <= 0) {
       delete this;
     }
   }
 
   // Returns an estimate of the number of bytes of data in use by this
-  // data structure.
-  //
-  // REQUIRES: external synchronization to prevent simultaneous
-  // operations on the same MemTable.
+  // data structure. It is safe to call when MemTable is being modified.
   size_t ApproximateMemoryUsage();
 
   // Return an iterator that yields the contents of the memtable.
@@ -73,8 +63,7 @@ class MemTable
  private:
   ~MemTable();  // Private since only Unref() should be used to delete it
 
-    struct KeyComparator
-    {
+  struct KeyComparator {
     const InternalKeyComparator comparator;
     explicit KeyComparator(const InternalKeyComparator& c) : comparator(c) { }
     int operator()(const char* a, const char* b) const;

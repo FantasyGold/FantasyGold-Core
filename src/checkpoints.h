@@ -1,43 +1,35 @@
-// Copyright (c) 2009-2014 The Bitcoin developers
+// Copyright (c) 2009-2018 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
 #ifndef BITCOIN_CHECKPOINTS_H
 #define BITCOIN_CHECKPOINTS_H
 
-#include "uint256.h"
+#include <uint256.h>
 
 #include <map>
 
 class CBlockIndex;
+struct CCheckpointData;
 
-/** 
+/**
  * Block-chain checkpoints are compiled-in sanity checks.
  * They are updated every release or three.
  */
-namespace Checkpoints {
-typedef std::map<int, uint256> MapCheckpoints;
+namespace Checkpoints
+{
 
-struct CCheckpointData {
-    const MapCheckpoints* mapCheckpoints;
-    int64_t nTimeLastCheckpoint;
-    int64_t nTransactionsLastCheckpoint;
-    double fTransactionsPerDay;
-};
+//! Checks that the block hash at height nHeight matches the expected hardened checkpoint
+bool CheckHardened(int nHeight, const uint256& hash, const CCheckpointData& data);
 
-//! Returns true if block passes checkpoint checks
-bool CheckBlock(int nHeight, const uint256& hash, bool fMatchesCheckpoint = false);
+//! Returns last CBlockIndex* that is a checkpoint
+CBlockIndex* GetLastCheckpoint(const CCheckpointData& data);
 
-//! Return conservative estimate of total number of blocks, 0 if unknown
-int GetTotalBlocksEstimate();
+//! Returns last CBlockIndex* from the auto selected checkpoint
+const CBlockIndex* AutoSelectSyncCheckpoint();
 
-//! Returns last CBlockIndex* in mapBlockIndex that is a checkpoint
-CBlockIndex* GetLastCheckpoint();
-
-double GuessVerificationProgress(CBlockIndex* pindex, bool fSigchecks = true);
-
-extern bool fEnabled;
-
+//! Check against automatically selected checkpoint
+bool CheckSync(int nHeight);
 } //namespace Checkpoints
 
 #endif // BITCOIN_CHECKPOINTS_H

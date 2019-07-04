@@ -10,10 +10,8 @@
 #ifndef STORAGE_LEVELDB_PORT_PORT_EXAMPLE_H_
 #define STORAGE_LEVELDB_PORT_PORT_EXAMPLE_H_
 
-namespace leveldb
-{
-namespace port
-{
+namespace leveldb {
+namespace port {
 
 // TODO(jorlow): Many of these belong more in the environment class rather than
 //               here. We should try moving them and see if it affects perf.
@@ -25,8 +23,7 @@ static const bool kLittleEndian = true /* or some other expression */;
 // ------------------ Threading -------------------
 
 // A Mutex represents an exclusive lock.
-class Mutex
-{
+class Mutex {
  public:
   Mutex();
   ~Mutex();
@@ -45,8 +42,7 @@ class Mutex
   void AssertHeld();
 };
 
-class CondVar
-{
+class CondVar {
  public:
   explicit CondVar(Mutex* mu);
   ~CondVar();
@@ -76,8 +72,7 @@ extern void InitOnce(port::OnceType*, void (*initializer)());
 
 // A type that holds a pointer that can be read or written atomically
 // (i.e., without word-tearing.)
-class AtomicPointer
-{
+class AtomicPointer {
  private:
   intptr_t rep_;
  public:
@@ -133,6 +128,16 @@ extern bool Snappy_Uncompress(const char* input_data, size_t input_length,
 // Else repeatedly calls (*func)(arg, data, n) and then returns true.
 // The concatenation of all "data[0,n-1]" fragments is the heap profile.
 extern bool GetHeapProfile(void (*func)(void*, const char*, int), void* arg);
+
+// Determine whether a working accelerated crc32 implementation exists
+// Returns true if AcceleratedCRC32C is safe to call
+bool HasAcceleratedCRC32C();
+
+// Extend the CRC to include the first n bytes of buf.
+//
+// Returns zero if the CRC cannot be extended using acceleration, else returns
+// the newly extended CRC value (which may also be zero).
+uint32_t AcceleratedCRC32C(uint32_t crc, const char* buf, size_t size);
 
 }  // namespace port
 }  // namespace leveldb

@@ -1,25 +1,24 @@
-// Copyright (c) 2011-2014 The Bitcoin developers
-// Copyright (c) 2014-2015 The Dash developers
-// Copyright (c) 2015-2017 The PIVX developers
-// Copyright (c) 2017-2018 The Bulwark Core Developers
-// Copyright (c) 2017-2018 The FantasyGold developers
-// Distributed under the MIT/X11 software license, see the accompanying
+// Copyright (c) 2011-2018 The Bitcoin Core developers
+// Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#include "guiutil.h"
+#include <qt/guiutil.h>
 
-#include "bitcoinaddressvalidator.h"
-#include "bitcoinunits.h"
-#include "qvalidatedlineedit.h"
-#include "walletmodel.h"
+#include <qt/bitcoinaddressvalidator.h>
+#include <qt/bitcoinunits.h>
+#include <qt/qvalidatedlineedit.h>
+#include <qt/walletmodel.h>
 
-#include "init.h"
-#include "main.h"
-#include "primitives/transaction.h"
-#include "protocol.h"
-#include "script/script.h"
-#include "script/standard.h"
-#include "util.h"
+#include <base58.h>
+#include <chainparams.h>
+#include <primitives/transaction.h>
+#include <key_io.h>
+#include <interfaces/node.h>
+#include <policy/policy.h>
+#include <protocol.h>
+#include <script/script.h>
+#include <script/standard.h>
+#include <util.h>
 
 #ifdef WIN32
 #ifdef _WIN32_WINNT
@@ -34,16 +33,12 @@
 #ifndef NOMINMAX
 #define NOMINMAX
 #endif
-#include "shellapi.h"
-#include "shlobj.h"
-#include "shlwapi.h"
+#include <shellapi.h>
+#include <shlobj.h>
+#include <shlwapi.h>
 #endif
 
-#include <boost/filesystem.hpp>
-#include <boost/filesystem/fstream.hpp>
-#if BOOST_FILESYSTEM_VERSION >= 3
-#include <boost/filesystem/detail/utf8_codecvt_facet.hpp>
-#endif
+#include <boost/scoped_array.hpp>
 
 #include <QAbstractItemView>
 #include <QApplication>
@@ -54,6 +49,7 @@
 #include <QDoubleValidator>
 #include <QFileDialog>
 #include <QFont>
+#include <QKeyEvent>
 #include <QLineEdit>
 #include <QSettings>
 #include <QTextDocument> // for Qt::mightBeRichText
@@ -62,94 +58,79 @@
 #include <QMouseEvent>
 
 
-#if BOOST_FILESYSTEM_VERSION >= 3
-static boost::filesystem::detail::utf8_codecvt_facet utf8;
+#if QT_VERSION >= 0x50200
+#include <QFontDatabase>
 #endif
+
+static fs::detail::utf8_codecvt_facet utf8;
 
 #if defined(Q_OS_MAC)
-extern double NSAppKitVersionNumber;
-#if !defined(NSAppKitVersionNumber10_8)
-#define NSAppKitVersionNumber10_8 1187
-#endif
-#if !defined(NSAppKitVersionNumber10_9)
-#define NSAppKitVersionNumber10_9 1265
-#endif
-#endif
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
 
-#define URI_SCHEME "fantasygold"
+#include <objc/objc-runtime.h>
+#include <CoreServices/CoreServices.h>
+#include <QProcess>
+#endif
 
 namespace GUIUtil {
-QString dateTimeStr(const QDateTime& date) {
+
+QString dateTimeStr(const QDateTime &date)
+{
     return date.date().toString(Qt::SystemLocaleShortDate) + QString(" ") + date.toString("hh:mm");
 }
 
-QString dateTimeStr(qint64 nTime) {
+QString dateTimeStr(qint64 nTime)
+{
     return dateTimeStr(QDateTime::fromTime_t((qint32)nTime));
 }
 
-QFont bitcoinAddressFont() {
+QFont fixedPitchFont()
+{
+#if QT_VERSION >= 0x50200
+    return QFontDatabase::systemFont(QFontDatabase::FixedFont);
+#else
     QFont font("Monospace");
     font.setStyleHint(QFont::Monospace);
     return font;
+#endif
 }
 
-void setupAddressWidget(QValidatedLineEdit* widget, QWidget* parent) {
+// Just some dummy data to generate a convincing random-looking (but consistent) address
+static const uint8_t dummydata[] = {0xeb,0x15,0x23,0x1d,0xfc,0xeb,0x60,0x92,0x58,0x86,0xb6,0x7d,0x06,0x52,0x99,0x92,0x59,0x15,0xae,0xb1,0x72,0xc0,0x66,0x47};
+
+// Generate a dummy address with invalid CRC, starting with the network prefix.
+static std::string DummyAddress(const CChainParams &params)
+{
+    std::vector<unsigned char> sourcedata = params.Base58Prefix(CChainParams::PUBKEY_ADDRESS);
+    sourcedata.insert(sourcedata.end(), dummydata, dummydata + sizeof(dummydata));
+    for(int i=0; i<256; ++i) { // Try every trailing byte
+        std::string s = EncodeBase58(sourcedata.data(), sourcedata.data() + sourcedata.size());
+        if (!IsValidDestinationString(s)) {
+            return s;
+        }
+        sourcedata[sourcedata.size()-1] += 1;
+    }
+    return "";
+}
+
+void setupAddressWidget(QValidatedLineEdit *widget, QWidget *parent)
+{
     parent->setFocusProxy(widget);
 
-    widget->setFont(bitcoinAddressFont());
+    widget->setFont(fixedPitchFont());
     // We don't want translators to use own addresses in translations
     // and this is the only place, where this address is supplied.
-    widget->setPlaceholderText(QObject::tr("Enter a FantasyGold address (e.g. %1)").arg("bWMiJk57wsPJuGFFJCp8MzSsvzepf7CFAi"));
+    widget->setPlaceholderText(QObject::tr("Enter a FantasyGold address (e.g. %1)").arg(
+        QString::fromStdString(DummyAddress(Params()))));
     widget->setValidator(new BitcoinAddressEntryValidator(parent));
     widget->setCheckValidator(new BitcoinAddressCheckValidator(parent));
 }
 
-void setupAliasWidget(QValidatedLineEdit* widget, QWidget* parent) {
-    parent->setFocusProxy(widget);
-
-    widget->setFont(bitcoinAddressFont());
-    widget->setPlaceholderText(QObject::tr("Enter a Masternode Alias (e.g. %1)").arg("mn1"));
-}
-
-void setupIPWidget(QValidatedLineEdit* widget, QWidget* parent) {
-    parent->setFocusProxy(widget);
-
-    widget->setFont(bitcoinAddressFont());
-    widget->setPlaceholderText(QObject::tr("Enter a VPS IP (e.g. %1)").arg("127.0.0.2:11771"));
-}
-
-void setupPrivKeyWidget(QValidatedLineEdit* widget, QWidget* parent) {
-    parent->setFocusProxy(widget);
-
-    widget->setFont(bitcoinAddressFont());
-    widget->setPlaceholderText(QObject::tr("Enter a Private Key (e.g. %1)").arg("93HaYBVUCYjEMeeH1Y4sBGLALQZE1Yc1K64xiqgX37tGBDQL8Xt"));
-}
-
-void setupTXIDWidget(QValidatedLineEdit* widget, QWidget* parent) {
-    parent->setFocusProxy(widget);
-
-    widget->setFont(bitcoinAddressFont());
-    widget->setPlaceholderText(QObject::tr("Enter a TX Output (e.g. %1)").arg("2bcd3c84c84f87eaa86e4e56834c92937a07f9e18718810b92e0d0324456a57c"));
-}
-
-void setupTXIDIndexWidget(QValidatedLineEdit* widget, QWidget* parent) {
-    parent->setFocusProxy(widget);
-
-    widget->setFont(bitcoinAddressFont());
-    widget->setPlaceholderText(QObject::tr("Enter a TX Index (e.g. %1)").arg("1"));
-}
-
-void setupAmountWidget(QLineEdit* widget, QWidget* parent) {
-    QDoubleValidator* amountValidator = new QDoubleValidator(parent);
-    amountValidator->setDecimals(8);
-    amountValidator->setBottom(0.0);
-    widget->setValidator(amountValidator);
-    widget->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
-}
-
-bool parseBitcoinURI(const QUrl& uri, SendCoinsRecipient* out) {
-    // return if URI is not valid or is no FantasyGold: URI
-    if (!uri.isValid() || uri.scheme() != QString(URI_SCHEME))
+bool parseBitcoinURI(const QUrl &uri, SendCoinsRecipient *out)
+{
+    // return if URI is not valid or is no bitcoin: URI
+    if(!uri.isValid() || uri.scheme() != QString("fantasygold"))
         return false;
 
     SendCoinsRecipient rv;
@@ -162,23 +143,31 @@ bool parseBitcoinURI(const QUrl& uri, SendCoinsRecipient* out) {
 
     QUrlQuery uriQuery(uri);
     QList<QPair<QString, QString> > items = uriQuery.queryItems();
-    for (QList<QPair<QString, QString> >::iterator i = items.begin(); i != items.end(); i++) {
+    for (QList<QPair<QString, QString> >::iterator i = items.begin(); i != items.end(); i++)
+    {
         bool fShouldReturnFalse = false;
-        if (i->first.startsWith("req-")) {
+        if (i->first.startsWith("req-"))
+        {
             i->first.remove(0, 4);
             fShouldReturnFalse = true;
         }
 
-        if (i->first == "label") {
+        if (i->first == "label")
+        {
             rv.label = i->second;
             fShouldReturnFalse = false;
         }
-        if (i->first == "message") {
+        if (i->first == "message")
+        {
             rv.message = i->second;
             fShouldReturnFalse = false;
-        } else if (i->first == "amount") {
-            if (!i->second.isEmpty()) {
-                if (!BitcoinUnits::parse(BitcoinUnits::FGC, i->second, &rv.amount)) {
+        }
+        else if (i->first == "amount")
+        {
+            if(!i->second.isEmpty())
+            {
+                if(!BitcoinUnits::parse(BitcoinUnits::BTC, i->second, &rv.amount))
+                {
                     return false;
                 }
             }
@@ -188,40 +177,39 @@ bool parseBitcoinURI(const QUrl& uri, SendCoinsRecipient* out) {
         if (fShouldReturnFalse)
             return false;
     }
-    if (out) {
+    if(out)
+    {
         *out = rv;
     }
     return true;
 }
 
-bool parseBitcoinURI(QString uri, SendCoinsRecipient* out) {
-    // Convert fantasygold:// to fantasygold:
-    //
-    //    Cannot handle this later, because fantasygold:// will cause Qt to see the part after // as host,
-    //    which will lower-case it (and thus invalidate the address).
-    if (uri.startsWith(URI_SCHEME "://", Qt::CaseInsensitive)) {
-        uri.replace(0, std::strlen(URI_SCHEME) + 3, URI_SCHEME ":");
-    }
+bool parseBitcoinURI(QString uri, SendCoinsRecipient *out)
+{
     QUrl uriInstance(uri);
     return parseBitcoinURI(uriInstance, out);
 }
 
-QString formatBitcoinURI(const SendCoinsRecipient& info) {
-    QString ret = QString(URI_SCHEME ":%1").arg(info.address);
+QString formatBitcoinURI(const SendCoinsRecipient &info)
+{
+    QString ret = QString("fantasygold:%1").arg(info.address);
     int paramCount = 0;
 
-    if (info.amount) {
-        ret += QString("?amount=%1").arg(BitcoinUnits::format(BitcoinUnits::FGC, info.amount, false, BitcoinUnits::separatorNever));
+    if (info.amount)
+    {
+        ret += QString("?amount=%1").arg(BitcoinUnits::format(BitcoinUnits::BTC, info.amount, false, BitcoinUnits::separatorNever));
         paramCount++;
     }
 
-    if (!info.label.isEmpty()) {
+    if (!info.label.isEmpty())
+    {
         QString lbl(QUrl::toPercentEncoding(info.label));
         ret += QString("%1label=%2").arg(paramCount == 0 ? "?" : "&").arg(lbl);
         paramCount++;
     }
 
-    if (!info.message.isEmpty()) {
+    if (!info.message.isEmpty())
+    {
         QString msg(QUrl::toPercentEncoding(info.message));
         ret += QString("%1message=%2").arg(paramCount == 0 ? "?" : "&").arg(msg);
         paramCount++;
@@ -230,55 +218,74 @@ QString formatBitcoinURI(const SendCoinsRecipient& info) {
     return ret;
 }
 
-bool isDust(const QString& address, const CAmount& amount) {
-    CTxDestination dest = CBitcoinAddress(address.toStdString()).Get();
+bool isDust(interfaces::Node& node, const QString& address, const CAmount& amount)
+{
+    CTxDestination dest = DecodeDestination(address.toStdString());
     CScript script = GetScriptForDestination(dest);
     CTxOut txOut(amount, script);
-    return txOut.IsDust(::minRelayTxFee);
+    return IsDust(txOut, node.getDustRelayFee());
 }
 
-QString HtmlEscape(const QString& str, bool fMultiLine) {
+QString HtmlEscape(const QString& str, bool fMultiLine)
+{
     QString escaped = str.toHtmlEscaped();
-    escaped = escaped.replace(" ", "&nbsp;");
-    if (fMultiLine) {
+    if(fMultiLine)
+    {
         escaped = escaped.replace("\n", "<br>\n");
     }
     return escaped;
 }
 
-QString HtmlEscape(const std::string& str, bool fMultiLine) {
+QString HtmlEscape(const std::string& str, bool fMultiLine)
+{
     return HtmlEscape(QString::fromStdString(str), fMultiLine);
 }
 
-void copyEntryData(QAbstractItemView* view, int column, int role) {
-    if (!view || !view->selectionModel())
+void copyEntryData(QAbstractItemView *view, int column, int role)
+{
+    if(!view || !view->selectionModel())
         return;
     QModelIndexList selection = view->selectionModel()->selectedRows(column);
 
-    if (!selection.isEmpty()) {
+    if(!selection.isEmpty())
+    {
         // Copy first item
         setClipboard(selection.at(0).data(role).toString());
     }
 }
 
-QString getEntryData(QAbstractItemView *view, int column, int role) {
-    if (!view || !view->selectionModel())
-        return QString();
-    QModelIndexList selection = view->selectionModel()->selectedRows(column);
+void copyEntryDataFromList(QAbstractItemView *view, int role)
+{
+    if(!view || !view->selectionModel())
+        return;
+    QModelIndexList selection = view->selectionModel()->selectedIndexes();
 
-    if (!selection.isEmpty()) {
-        // Return first item
-        return (selection.at(0).data(role).toString());
+    if(!selection.isEmpty())
+    {
+        // Copy first item
+        setClipboard(selection.at(0).data(role).toString());
     }
-    return QString();
 }
 
-QString getSaveFileName(QWidget* parent, const QString& caption, const QString& dir, const QString& filter, QString* selectedSuffixOut) {
+QList<QModelIndex> getEntryData(QAbstractItemView *view, int column)
+{
+    if(!view || !view->selectionModel())
+        return QList<QModelIndex>();
+    return view->selectionModel()->selectedRows(column);
+}
+
+QString getSaveFileName(QWidget *parent, const QString &caption, const QString &dir,
+    const QString &filter,
+    QString *selectedSuffixOut)
+{
     QString selectedFilter;
     QString myDir;
-    if (dir.isEmpty()) { // Default to user documents location
+    if(dir.isEmpty()) // Default to user documents location
+    {
         myDir = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation);
-    } else {
+    }
+    else
+    {
         myDir = dir;
     }
     /* Directly convert path to native OS path separators */
@@ -287,44 +294,56 @@ QString getSaveFileName(QWidget* parent, const QString& caption, const QString& 
     /* Extract first suffix from filter pattern "Description (*.foo)" or "Description (*.foo *.bar ...) */
     QRegExp filter_re(".* \\(\\*\\.(.*)[ \\)]");
     QString selectedSuffix;
-    if (filter_re.exactMatch(selectedFilter)) {
+    if(filter_re.exactMatch(selectedFilter))
+    {
         selectedSuffix = filter_re.cap(1);
     }
 
     /* Add suffix if needed */
     QFileInfo info(result);
-    if (!result.isEmpty()) {
-        if (info.suffix().isEmpty() && !selectedSuffix.isEmpty()) {
+    if(!result.isEmpty())
+    {
+        if(info.suffix().isEmpty() && !selectedSuffix.isEmpty())
+        {
             /* No suffix specified, add selected suffix */
-            if (!result.endsWith("."))
+            if(!result.endsWith("."))
                 result.append(".");
             result.append(selectedSuffix);
         }
     }
 
     /* Return selected suffix if asked to */
-    if (selectedSuffixOut) {
+    if(selectedSuffixOut)
+    {
         *selectedSuffixOut = selectedSuffix;
     }
     return result;
 }
 
-QString getOpenFileName(QWidget* parent, const QString& caption, const QString& dir, const QString& filter, QString* selectedSuffixOut) {
+QString getOpenFileName(QWidget *parent, const QString &caption, const QString &dir,
+    const QString &filter,
+    QString *selectedSuffixOut)
+{
     QString selectedFilter;
     QString myDir;
-    if (dir.isEmpty()) { // Default to user documents location
+    if(dir.isEmpty()) // Default to user documents location
+    {
         myDir = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation);
-    } else {
+    }
+    else
+    {
         myDir = dir;
     }
     /* Directly convert path to native OS path separators */
     QString result = QDir::toNativeSeparators(QFileDialog::getOpenFileName(parent, caption, myDir, filter, &selectedFilter));
 
-    if (selectedSuffixOut) {
+    if(selectedSuffixOut)
+    {
         /* Extract first suffix from filter pattern "Description (*.foo)" or "Description (*.foo *.bar ...) */
         QRegExp filter_re(".* \\(\\*\\.(.*)[ \\)]");
         QString selectedSuffix;
-        if (filter_re.exactMatch(selectedFilter)) {
+        if(filter_re.exactMatch(selectedFilter))
+        {
             selectedSuffix = filter_re.cap(1);
         }
         *selectedSuffixOut = selectedSuffix;
@@ -332,104 +351,106 @@ QString getOpenFileName(QWidget* parent, const QString& caption, const QString& 
     return result;
 }
 
-Qt::ConnectionType blockingGUIThreadConnection() {
-    if (QThread::currentThread() != qApp->thread()) {
+Qt::ConnectionType blockingGUIThreadConnection()
+{
+    if(QThread::currentThread() != qApp->thread())
+    {
         return Qt::BlockingQueuedConnection;
-    } else {
+    }
+    else
+    {
         return Qt::DirectConnection;
     }
 }
 
-bool checkPoint(const QPoint& p, const QWidget* w) {
-    QWidget* atW = QApplication::widgetAt(w->mapToGlobal(p));
+bool checkPoint(const QPoint &p, const QWidget *w)
+{
+    QWidget *atW = QApplication::widgetAt(w->mapToGlobal(p));
     if (!atW) return false;
     return atW->topLevelWidget() == w;
 }
 
-bool isObscured(QWidget* w) {
-    return !(checkPoint(QPoint(0, 0), w) && checkPoint(QPoint(w->width() - 1, 0), w) && checkPoint(QPoint(0, w->height() - 1), w) && checkPoint(QPoint(w->width() - 1, w->height() - 1), w) && checkPoint(QPoint(w->width() / 2, w->height() / 2), w));
+bool isObscured(QWidget *w)
+{
+    return !(checkPoint(QPoint(0, 0), w)
+        && checkPoint(QPoint(w->width() - 1, 0), w)
+        && checkPoint(QPoint(0, w->height() - 1), w)
+        && checkPoint(QPoint(w->width() - 1, w->height() - 1), w)
+        && checkPoint(QPoint(w->width() / 2, w->height() / 2), w));
 }
 
-void openDebugLogfile() {
-    boost::filesystem::path pathDebug = GetDataDir() / "debug.log";
+void bringToFront(QWidget* w)
+{
+#ifdef Q_OS_MAC
+    // Force application activation on macOS. With Qt 5.4 this is required when
+    // an action in the dock menu is triggered.
+    id app = objc_msgSend((id) objc_getClass("NSApplication"), sel_registerName("sharedApplication"));
+    objc_msgSend(app, sel_registerName("activateIgnoringOtherApps:"), YES);
+#endif
+
+    if (w) {
+        // activateWindow() (sometimes) helps with keyboard focus on Windows
+        if (w->isMinimized()) {
+            w->showNormal();
+        } else {
+            w->show();
+        }
+        w->activateWindow();
+        w->raise();
+    }
+}
+
+void openDebugLogfile()
+{
+    fs::path pathDebug = GetDataDir() / "debug.log";
 
     /* Open debug.log with the associated application */
-    if (boost::filesystem::exists(pathDebug))
+    if (fs::exists(pathDebug))
         QDesktopServices::openUrl(QUrl::fromLocalFile(boostPathToQString(pathDebug)));
 }
 
-void openConfigfile() {
-    boost::filesystem::path pathConfig = GetConfigFile();
+bool openBitcoinConf()
+{
+    boost::filesystem::path pathConfig = GetConfigFile(gArgs.GetArg("-conf", BITCOIN_CONF_FILENAME));
+
+    /* Create the file */
+    boost::filesystem::ofstream configFile(pathConfig, std::ios_base::app);
+
+    if (!configFile.good())
+        return false;
+
+    configFile.close();
 
     /* Open fantasygold.conf with the associated application */
-    if (boost::filesystem::exists(pathConfig))
-        QDesktopServices::openUrl(QUrl::fromLocalFile(boostPathToQString(pathConfig)));
-}
-
-void openMNConfigfile() {
-    boost::filesystem::path pathConfig = GetMasternodeConfigFile();
-
-    /* Open masternode.conf with the associated application */
-    if (boost::filesystem::exists(pathConfig))
-        QDesktopServices::openUrl(QUrl::fromLocalFile(boostPathToQString(pathConfig)));
-}
-
-void showBackups() {
-    boost::filesystem::path pathBackups = GetDataDir() / "backups";
-
-    /* Open folder with default browser */
-    if (boost::filesystem::exists(pathBackups))
-        QDesktopServices::openUrl(QUrl::fromLocalFile(boostPathToQString(pathBackups)));
-}
-
-void SubstituteFonts(const QString& language) {
-#if defined(Q_OS_MAC)
-// Background:
-// OSX's default font changed in 10.9 and QT is unable to find it with its
-// usual fallback methods when building against the 10.7 sdk or lower.
-// The 10.8 SDK added a function to let it find the correct fallback font.
-// If this fallback is not properly loaded, some characters may fail to
-// render correctly.
-//
-// The same thing happened with 10.10. .Helvetica Neue DeskInterface is now default.
-//
-// Solution: If building with the 10.7 SDK or lower and the user's platform
-// is 10.9 or higher at runtime, substitute the correct font. This needs to
-// happen before the QApplication is created.
-#if defined(MAC_OS_X_VERSION_MAX_ALLOWED) && MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_8
-    if (floor(NSAppKitVersionNumber) > NSAppKitVersionNumber10_8) {
-        if (floor(NSAppKitVersionNumber) <= NSAppKitVersionNumber10_9)
-            /* On a 10.9 - 10.9.x system */
-            QFont::insertSubstitution(".Lucida Grande UI", "Lucida Grande");
-        else {
-            /* 10.10 or later system */
-            if (language == "zh_CN" || language == "zh_TW" || language == "zh_HK") // traditional or simplified Chinese
-                QFont::insertSubstitution(".Helvetica Neue DeskInterface", "Heiti SC");
-            else if (language == "ja") // Japanesee
-                QFont::insertSubstitution(".Helvetica Neue DeskInterface", "Songti SC");
-            else
-                QFont::insertSubstitution(".Helvetica Neue DeskInterface", "Lucida Grande");
-        }
+    bool res = QDesktopServices::openUrl(QUrl::fromLocalFile(boostPathToQString(pathConfig)));
+#ifdef Q_OS_MAC
+    // Workaround for macOS-specific behavior; see #689.
+    if (!res) {
+        res = QProcess::startDetached("/usr/bin/open", QStringList{"-t", boostPathToQString(pathConfig)});
     }
 #endif
-#endif
+
+    return res;
 }
 
-ToolTipToRichTextFilter::ToolTipToRichTextFilter(int size_threshold, QObject* parent) : QObject(parent),
-    size_threshold(size_threshold) {
+ToolTipToRichTextFilter::ToolTipToRichTextFilter(int _size_threshold, QObject *parent) :
+    QObject(parent),
+    size_threshold(_size_threshold)
+{
+
 }
 
-bool ToolTipToRichTextFilter::eventFilter(QObject* obj, QEvent* evt) {
-    if (evt->type() == QEvent::ToolTipChange) {
-        QWidget* widget = static_cast<QWidget*>(obj);
+bool ToolTipToRichTextFilter::eventFilter(QObject *obj, QEvent *evt)
+{
+    if(evt->type() == QEvent::ToolTipChange)
+    {
+        QWidget *widget = static_cast<QWidget*>(obj);
         QString tooltip = widget->toolTip();
-        if (tooltip.size() > size_threshold && !tooltip.startsWith("<qt")) {
-            // Escape the current message as HTML and replace \n by <br> if it's not rich text
-            if (!Qt::mightBeRichText(tooltip))
-                tooltip = HtmlEscape(tooltip, true);
-            // Envelop with <qt></qt> to make sure Qt detects every tooltip as rich text
-            // and style='white-space:pre' to preserve line composition
-            tooltip = "<qt style='white-space:pre'>" + tooltip + "</qt>";
+        if(tooltip.size() > size_threshold && !tooltip.startsWith("<qt") && !Qt::mightBeRichText(tooltip))
+        {
+            // Envelop with <qt></qt> to make sure Qt detects this as rich text
+            // Escape the current message as HTML and replace \n by <br>
+            tooltip = "<qt>" + HtmlEscape(tooltip, true) + "</qt>";
             widget->setToolTip(tooltip);
             return true;
         }
@@ -437,41 +458,49 @@ bool ToolTipToRichTextFilter::eventFilter(QObject* obj, QEvent* evt) {
     return QObject::eventFilter(obj, evt);
 }
 
-void TableViewLastColumnResizingFixer::connectViewHeadersSignals() {
-    connect(tableView->horizontalHeader(), SIGNAL(sectionResized(int, int, int)), this, SLOT(on_sectionResized(int, int, int)));
+void TableViewLastColumnResizingFixer::connectViewHeadersSignals()
+{
+    connect(tableView->horizontalHeader(), SIGNAL(sectionResized(int,int,int)), this, SLOT(on_sectionResized(int,int,int)));
     connect(tableView->horizontalHeader(), SIGNAL(geometriesChanged()), this, SLOT(on_geometriesChanged()));
 }
 
 // We need to disconnect these while handling the resize events, otherwise we can enter infinite loops.
-void TableViewLastColumnResizingFixer::disconnectViewHeadersSignals() {
-    disconnect(tableView->horizontalHeader(), SIGNAL(sectionResized(int, int, int)), this, SLOT(on_sectionResized(int, int, int)));
+void TableViewLastColumnResizingFixer::disconnectViewHeadersSignals()
+{
+    disconnect(tableView->horizontalHeader(), SIGNAL(sectionResized(int,int,int)), this, SLOT(on_sectionResized(int,int,int)));
     disconnect(tableView->horizontalHeader(), SIGNAL(geometriesChanged()), this, SLOT(on_geometriesChanged()));
 }
 
 // Setup the resize mode, handles compatibility for Qt5 and below as the method signatures changed.
 // Refactored here for readability.
-void TableViewLastColumnResizingFixer::setViewHeaderResizeMode(int logicalIndex, QHeaderView::ResizeMode resizeMode) {
+void TableViewLastColumnResizingFixer::setViewHeaderResizeMode(int logicalIndex, QHeaderView::ResizeMode resizeMode)
+{
     tableView->horizontalHeader()->setSectionResizeMode(logicalIndex, resizeMode);
 }
 
-void TableViewLastColumnResizingFixer::resizeColumn(int nColumnIndex, int width) {
+void TableViewLastColumnResizingFixer::resizeColumn(int nColumnIndex, int width)
+{
     tableView->setColumnWidth(nColumnIndex, width);
     tableView->horizontalHeader()->resizeSection(nColumnIndex, width);
 }
 
-int TableViewLastColumnResizingFixer::getColumnsWidth() {
+int TableViewLastColumnResizingFixer::getColumnsWidth()
+{
     int nColumnsWidthSum = 0;
-    for (int i = 0; i < columnCount; i++) {
+    for (int i = 0; i < columnCount; i++)
+    {
         nColumnsWidthSum += tableView->horizontalHeader()->sectionSize(i);
     }
     return nColumnsWidthSum;
 }
 
-int TableViewLastColumnResizingFixer::getAvailableWidthForColumn(int column) {
+int TableViewLastColumnResizingFixer::getAvailableWidthForColumn(int column)
+{
     int nResult = lastColumnMinimumWidth;
     int nTableWidth = tableView->horizontalHeader()->width();
 
-    if (nTableWidth > 0) {
+    if (nTableWidth > 0)
+    {
         int nOtherColsWidth = getColumnsWidth() - tableView->horizontalHeader()->sectionSize(column);
         nResult = std::max(nResult, nTableWidth - nOtherColsWidth);
     }
@@ -479,39 +508,46 @@ int TableViewLastColumnResizingFixer::getAvailableWidthForColumn(int column) {
     return nResult;
 }
 
-// Make sure we don't make the columns wider than the tables viewport width.
-void TableViewLastColumnResizingFixer::adjustTableColumnsWidth() {
+// Make sure we don't make the columns wider than the table's viewport width.
+void TableViewLastColumnResizingFixer::adjustTableColumnsWidth()
+{
     disconnectViewHeadersSignals();
     resizeColumn(lastColumnIndex, getAvailableWidthForColumn(lastColumnIndex));
     connectViewHeadersSignals();
 
     int nTableWidth = tableView->horizontalHeader()->width();
     int nColsWidth = getColumnsWidth();
-    if (nColsWidth > nTableWidth) {
-        resizeColumn(secondToLastColumnIndex, getAvailableWidthForColumn(secondToLastColumnIndex));
+    if (nColsWidth > nTableWidth)
+    {
+        resizeColumn(secondToLastColumnIndex,getAvailableWidthForColumn(secondToLastColumnIndex));
     }
 }
 
 // Make column use all the space available, useful during window resizing.
-void TableViewLastColumnResizingFixer::stretchColumnWidth(int column) {
+void TableViewLastColumnResizingFixer::stretchColumnWidth(int column)
+{
     disconnectViewHeadersSignals();
     resizeColumn(column, getAvailableWidthForColumn(column));
     connectViewHeadersSignals();
 }
 
 // When a section is resized this is a slot-proxy for ajustAmountColumnWidth().
-void TableViewLastColumnResizingFixer::on_sectionResized(int logicalIndex, int oldSize, int newSize) {
+void TableViewLastColumnResizingFixer::on_sectionResized(int logicalIndex, int oldSize, int newSize)
+{
     adjustTableColumnsWidth();
     int remainingWidth = getAvailableWidthForColumn(logicalIndex);
-    if (newSize > remainingWidth) {
-        resizeColumn(logicalIndex, remainingWidth);
+    if (newSize > remainingWidth)
+    {
+       resizeColumn(logicalIndex, remainingWidth);
     }
 }
 
-// When the tabless geometry is ready, we manually perform the stretch of the "Message" column,
+// When the table's geometry is ready, we manually perform the stretch of the "Message" column,
 // as the "Stretch" resize mode does not allow for interactive resizing.
-void TableViewLastColumnResizingFixer::on_geometriesChanged() {
-    if ((getColumnsWidth() - this->tableView->horizontalHeader()->width()) != 0) {
+void TableViewLastColumnResizingFixer::on_geometriesChanged()
+{
+    if ((getColumnsWidth() - this->tableView->horizontalHeader()->width()) != 0)
+    {
         disconnectViewHeadersSignals();
         resizeColumn(secondToLastColumnIndex, getAvailableWidthForColumn(secondToLastColumnIndex));
         connectViewHeadersSignals();
@@ -522,85 +558,88 @@ void TableViewLastColumnResizingFixer::on_geometriesChanged() {
  * Initializes all internal variables and prepares the
  * the resize modes of the last 2 columns of the table and
  */
-TableViewLastColumnResizingFixer::TableViewLastColumnResizingFixer(QTableView* table, int lastColMinimumWidth, int allColsMinimumWidth) : tableView(table),
+TableViewLastColumnResizingFixer::TableViewLastColumnResizingFixer(QTableView* table, int lastColMinimumWidth, int allColsMinimumWidth, QObject *parent, int columnStretch) :
+    QObject(parent),
+    tableView(table),
     lastColumnMinimumWidth(lastColMinimumWidth),
-    allColumnsMinimumWidth(allColsMinimumWidth) {
+    allColumnsMinimumWidth(allColsMinimumWidth)
+{
     columnCount = tableView->horizontalHeader()->count();
     lastColumnIndex = columnCount - 1;
-    secondToLastColumnIndex = columnCount - 2;
+    secondToLastColumnIndex = columnCount - columnStretch;
     tableView->horizontalHeader()->setMinimumSectionSize(allColumnsMinimumWidth);
     setViewHeaderResizeMode(secondToLastColumnIndex, QHeaderView::Interactive);
     setViewHeaderResizeMode(lastColumnIndex, QHeaderView::Interactive);
 }
 
-/**
- * Class constructor.
- * @param[in] seconds   Number of seconds to convert to a DHMS string
- */
-DHMSTableWidgetItem::DHMSTableWidgetItem(const int64_t seconds) : QTableWidgetItem(),
-    value(seconds) {
-    this->setText(QString::fromStdString(DurationToDHMS(seconds)));
-}
-
-/**
- * Comparator overload to ensure that the "DHMS"-type durations as used in
- * the "active-since" list in the masternode tab are sorted by the elapsed
- * duration (versus the string value being sorted).
- * @param[in] item      Right hand side of the less than operator
- */
-bool DHMSTableWidgetItem::operator<(QTableWidgetItem const& item) const {
-    DHMSTableWidgetItem const* rhs =
-        dynamic_cast<DHMSTableWidgetItem const*>(&item);
-
-    if (!rhs)
-        return QTableWidgetItem::operator<(item);
-
-    return value < rhs->value;
-}
-
 #ifdef WIN32
-boost::filesystem::path static StartupShortcutPath() {
-    return GetSpecialFolderPath(CSIDL_STARTUP) / "FantasyGold.lnk";
+fs::path static StartupShortcutPath()
+{
+    std::string chain = gArgs.GetChainName();
+    if (chain == CBaseChainParams::MAIN)
+        return GetSpecialFolderPath(CSIDL_STARTUP) / "FantasyGold.lnk";
+    if (chain == CBaseChainParams::TESTNET) // Remove this special case when CBaseChainParams::TESTNET = "testnet4"
+        return GetSpecialFolderPath(CSIDL_STARTUP) / "FantasyGold (testnet).lnk";
+    return GetSpecialFolderPath(CSIDL_STARTUP) / strprintf("FantasyGold (%s).lnk", chain);
 }
 
-bool GetStartOnSystemStartup() {
-    // check for FantasyGold.lnk
-    return boost::filesystem::exists(StartupShortcutPath());
+bool GetStartOnSystemStartup()
+{
+    // check for Bitcoin*.lnk
+    return fs::exists(StartupShortcutPath());
 }
 
-bool SetStartOnSystemStartup(bool fAutoStart) {
+bool SetStartOnSystemStartup(bool fAutoStart)
+{
     // If the shortcut exists already, remove it for updating
-    boost::filesystem::remove(StartupShortcutPath());
+    fs::remove(StartupShortcutPath());
 
-    if (fAutoStart) {
-        CoInitialize(NULL);
+    if (fAutoStart)
+    {
+        CoInitialize(nullptr);
 
         // Get a pointer to the IShellLink interface.
-        IShellLink* psl = NULL;
-        HRESULT hres = CoCreateInstance(CLSID_ShellLink, NULL,
-                                        CLSCTX_INPROC_SERVER, IID_IShellLink,
-                                        reinterpret_cast<void**>(&psl));
+        IShellLink* psl = nullptr;
+        HRESULT hres = CoCreateInstance(CLSID_ShellLink, nullptr,
+            CLSCTX_INPROC_SERVER, IID_IShellLink,
+            reinterpret_cast<void**>(&psl));
 
-        if (SUCCEEDED(hres)) {
+        if (SUCCEEDED(hres))
+        {
             // Get the current executable path
             TCHAR pszExePath[MAX_PATH];
-            GetModuleFileName(NULL, pszExePath, sizeof(pszExePath));
+            GetModuleFileName(nullptr, pszExePath, sizeof(pszExePath));
 
-            TCHAR pszArgs[5] = TEXT("-min");
+            // Start client minimized
+            QString strArgs = "-min";
+            // Set -testnet /-regtest options
+            strArgs += QString::fromStdString(strprintf(" -testnet=%d -regtest=%d", gArgs.GetBoolArg("-testnet", false), gArgs.GetBoolArg("-regtest", false)));
+
+#ifdef UNICODE
+            boost::scoped_array<TCHAR> args(new TCHAR[strArgs.length() + 1]);
+            // Convert the QString to TCHAR*
+            strArgs.toWCharArray(args.get());
+            // Add missing '\0'-termination to string
+            args[strArgs.length()] = '\0';
+#endif
 
             // Set the path to the shortcut target
             psl->SetPath(pszExePath);
             PathRemoveFileSpec(pszExePath);
             psl->SetWorkingDirectory(pszExePath);
             psl->SetShowCmd(SW_SHOWMINNOACTIVE);
-            psl->SetArguments(pszArgs);
+#ifndef UNICODE
+            psl->SetArguments(strArgs.toStdString().c_str());
+#else
+            psl->SetArguments(args.get());
+#endif
 
             // Query IShellLink for the IPersistFile interface for
             // saving the shortcut in persistent storage.
-            IPersistFile* ppf = NULL;
-            hres = psl->QueryInterface(IID_IPersistFile,
-                                       reinterpret_cast<void**>(&ppf));
-            if (SUCCEEDED(hres)) {
+            IPersistFile* ppf = nullptr;
+            hres = psl->QueryInterface(IID_IPersistFile, reinterpret_cast<void**>(&ppf));
+            if (SUCCEEDED(hres))
+            {
                 WCHAR pwsz[MAX_PATH];
                 // Ensure that the string is ANSI.
                 MultiByteToWideChar(CP_ACP, 0, StartupShortcutPath().string().c_str(), -1, pwsz, MAX_PATH);
@@ -618,15 +657,13 @@ bool SetStartOnSystemStartup(bool fAutoStart) {
     }
     return true;
 }
-
 #elif defined(Q_OS_LINUX)
 
 // Follow the Desktop Application Autostart Spec:
-//  http://standards.freedesktop.org/autostart-spec/autostart-spec-latest.html
+// http://standards.freedesktop.org/autostart-spec/autostart-spec-latest.html
 
-boost::filesystem::path static GetAutostartDir() {
-    namespace fs = boost::filesystem;
-
+fs::path static GetAutostartDir()
+{
     char* pszConfigHome = getenv("XDG_CONFIG_HOME");
     if (pszConfigHome) return fs::path(pszConfigHome) / "autostart";
     char* pszHome = getenv("HOME");
@@ -634,20 +671,26 @@ boost::filesystem::path static GetAutostartDir() {
     return fs::path();
 }
 
-boost::filesystem::path static GetAutostartFilePath() {
-    return GetAutostartDir() / "fantasygold.desktop";
+fs::path static GetAutostartFilePath()
+{
+    std::string chain = gArgs.GetChainName();
+    if (chain == CBaseChainParams::MAIN)
+        return GetAutostartDir() / "fantasygold.desktop";
+    return GetAutostartDir() / strprintf("fantasygold-%s.lnk", chain);
 }
 
-bool GetStartOnSystemStartup() {
-    boost::filesystem::ifstream optionFile(GetAutostartFilePath());
+bool GetStartOnSystemStartup()
+{
+    fs::ifstream optionFile(GetAutostartFilePath());
     if (!optionFile.good())
         return false;
     // Scan through file for "Hidden=true":
     std::string line;
-    while (!optionFile.eof()) {
+    while (!optionFile.eof())
+    {
         getline(optionFile, line);
         if (line.find("Hidden") != std::string::npos &&
-                line.find("true") != std::string::npos)
+            line.find("true") != std::string::npos)
             return false;
     }
     optionFile.close();
@@ -655,25 +698,32 @@ bool GetStartOnSystemStartup() {
     return true;
 }
 
-bool SetStartOnSystemStartup(bool fAutoStart) {
+bool SetStartOnSystemStartup(bool fAutoStart)
+{
     if (!fAutoStart)
-        boost::filesystem::remove(GetAutostartFilePath());
-    else {
-        char pszExePath[MAX_PATH + 1];
-        memset(pszExePath, 0, sizeof(pszExePath));
-        if (readlink("/proc/self/exe", pszExePath, sizeof(pszExePath) - 1) == -1)
+        fs::remove(GetAutostartFilePath());
+    else
+    {
+        char pszExePath[MAX_PATH+1];
+        ssize_t r = readlink("/proc/self/exe", pszExePath, sizeof(pszExePath) - 1);
+        if (r == -1)
             return false;
+        pszExePath[r] = '\0';
 
-        boost::filesystem::create_directories(GetAutostartDir());
+        fs::create_directories(GetAutostartDir());
 
-        boost::filesystem::ofstream optionFile(GetAutostartFilePath(), std::ios_base::out | std::ios_base::trunc);
+        fs::ofstream optionFile(GetAutostartFilePath(), std::ios_base::out|std::ios_base::trunc);
         if (!optionFile.good())
             return false;
-        // Write a fantasygold.desktop file to the autostart directory:
+        std::string chain = gArgs.GetChainName();
+        // Write a bitcoin.desktop file to the autostart directory:
         optionFile << "[Desktop Entry]\n";
         optionFile << "Type=Application\n";
-        optionFile << "Name=FantasyGold\n";
-        optionFile << "Exec=" << pszExePath << " -min\n";
+        if (chain == CBaseChainParams::MAIN)
+            optionFile << "Name=FantasyGold\n";
+        else
+            optionFile << strprintf("Name=FantasyGold (%s)\n", chain);
+        optionFile << "Exec=" << pszExePath << strprintf(" -min -testnet=%d -regtest=%d\n", gArgs.GetBoolArg("-testnet", false), gArgs.GetBoolArg("-regtest", false));
         optionFile << "Terminal=false\n";
         optionFile << "Hidden=false\n";
         optionFile.close();
@@ -685,147 +735,108 @@ bool SetStartOnSystemStartup(bool fAutoStart) {
 #elif defined(Q_OS_MAC)
 // based on: https://github.com/Mozketo/LaunchAtLoginController/blob/master/LaunchAtLoginController.m
 
-#include <CoreFoundation/CoreFoundation.h>
-#include <CoreServices/CoreServices.h>
-
 LSSharedFileListItemRef findStartupItemInList(LSSharedFileListRef list, CFURLRef findUrl);
-LSSharedFileListItemRef findStartupItemInList(LSSharedFileListRef list, CFURLRef findUrl) {
-    // loop through the list of startup items and try to find the fantasygold app
-    CFArrayRef listSnapshot = LSSharedFileListCopySnapshot(list, NULL);
-    for (int i = 0; i < CFArrayGetCount(listSnapshot); i++) {
+LSSharedFileListItemRef findStartupItemInList(LSSharedFileListRef list, CFURLRef findUrl)
+{
+    CFArrayRef listSnapshot = LSSharedFileListCopySnapshot(list, nullptr);
+    if (listSnapshot == nullptr) {
+        return nullptr;
+    }
+
+    // loop through the list of startup items and try to find the bitcoin app
+    for(int i = 0; i < CFArrayGetCount(listSnapshot); i++) {
         LSSharedFileListItemRef item = (LSSharedFileListItemRef)CFArrayGetValueAtIndex(listSnapshot, i);
         UInt32 resolutionFlags = kLSSharedFileListNoUserInteraction | kLSSharedFileListDoNotMountVolumes;
-        CFURLRef currentItemURL = NULL;
-        LSSharedFileListItemResolve(item, resolutionFlags, &currentItemURL, NULL);
-        if (currentItemURL && CFEqual(currentItemURL, findUrl)) {
-            // found
-            CFRelease(currentItemURL);
-            return item;
-        }
-        if (currentItemURL) {
+        CFURLRef currentItemURL = nullptr;
+
+#if defined(MAC_OS_X_VERSION_MAX_ALLOWED) && MAC_OS_X_VERSION_MAX_ALLOWED >= 10100
+        if(&LSSharedFileListItemCopyResolvedURL)
+            currentItemURL = LSSharedFileListItemCopyResolvedURL(item, resolutionFlags, nullptr);
+#if defined(MAC_OS_X_VERSION_MIN_REQUIRED) && MAC_OS_X_VERSION_MIN_REQUIRED < 10100
+        else
+            LSSharedFileListItemResolve(item, resolutionFlags, &currentItemURL, nullptr);
+#endif
+#else
+        LSSharedFileListItemResolve(item, resolutionFlags, &currentItemURL, nullptr);
+#endif
+
+        if(currentItemURL) {
+            if (CFEqual(currentItemURL, findUrl)) {
+                // found
+                CFRelease(listSnapshot);
+                CFRelease(currentItemURL);
+                return item;
+            }
             CFRelease(currentItemURL);
         }
     }
-    return NULL;
+
+    CFRelease(listSnapshot);
+    return nullptr;
 }
 
-bool GetStartOnSystemStartup() {
+bool GetStartOnSystemStartup()
+{
     CFURLRef bitcoinAppUrl = CFBundleCopyBundleURL(CFBundleGetMainBundle());
-    LSSharedFileListRef loginItems = LSSharedFileListCreate(NULL, kLSSharedFileListSessionLoginItems, NULL);
+    if (bitcoinAppUrl == nullptr) {
+        return false;
+    }
+
+    LSSharedFileListRef loginItems = LSSharedFileListCreate(nullptr, kLSSharedFileListSessionLoginItems, nullptr);
     LSSharedFileListItemRef foundItem = findStartupItemInList(loginItems, bitcoinAppUrl);
+
+    CFRelease(bitcoinAppUrl);
     return !!foundItem; // return boolified object
 }
 
-bool SetStartOnSystemStartup(bool fAutoStart) {
+bool SetStartOnSystemStartup(bool fAutoStart)
+{
     CFURLRef bitcoinAppUrl = CFBundleCopyBundleURL(CFBundleGetMainBundle());
-    LSSharedFileListRef loginItems = LSSharedFileListCreate(NULL, kLSSharedFileListSessionLoginItems, NULL);
+    if (bitcoinAppUrl == nullptr) {
+        return false;
+    }
+
+    LSSharedFileListRef loginItems = LSSharedFileListCreate(nullptr, kLSSharedFileListSessionLoginItems, nullptr);
     LSSharedFileListItemRef foundItem = findStartupItemInList(loginItems, bitcoinAppUrl);
 
-    if (fAutoStart && !foundItem) {
-        // add fantasygold app to startup item list
-        LSSharedFileListInsertItemURL(loginItems, kLSSharedFileListItemBeforeFirst, NULL, NULL, bitcoinAppUrl, NULL, NULL);
-    } else if (!fAutoStart && foundItem) {
+    if(fAutoStart && !foundItem) {
+        // add bitcoin app to startup item list
+        LSSharedFileListInsertItemURL(loginItems, kLSSharedFileListItemBeforeFirst, nullptr, nullptr, bitcoinAppUrl, nullptr, nullptr);
+    }
+    else if(!fAutoStart && foundItem) {
         // remove item
         LSSharedFileListItemRemove(loginItems, foundItem);
     }
+
+    CFRelease(bitcoinAppUrl);
     return true;
 }
+#pragma GCC diagnostic pop
 #else
 
-bool GetStartOnSystemStartup() {
-    return false;
-}
-bool SetStartOnSystemStartup(bool fAutoStart) {
-    return false;
-}
+bool GetStartOnSystemStartup() { return false; }
+bool SetStartOnSystemStartup(bool fAutoStart) { return false; }
 
 #endif
 
-void saveWindowGeometry(const QString& strSetting, QWidget* parent) {
-    QSettings settings;
-    settings.setValue(strSetting + "Pos", parent->pos());
-    settings.setValue(strSetting + "Size", parent->size());
-}
-
-void restoreWindowGeometry(const QString& strSetting, const QSize& defaultSize, QWidget* parent) {
-    QSettings settings;
-    QPoint pos = settings.value(strSetting + "Pos").toPoint();
-    QSize size = settings.value(strSetting + "Size", defaultSize).toSize();
-
-    if (!pos.x() && !pos.y()) {
-        QRect screen = QApplication::desktop()->screenGeometry();
-        pos.setX((screen.width() - size.width()) / 2);
-        pos.setY((screen.height() - size.height()) / 2);
-    }
-
-    parent->resize(size);
-    parent->move(pos);
-}
-
-// Check whether a theme is not build-in
-bool isExternal(QString theme) {
-    if (theme.isEmpty())
-        return false;
-
-    return (theme.operator!=("default"));
-}
-
-// Open CSS when configured
-QString loadStyleSheet() {
-    QString styleSheet;
-    QSettings settings;
-    QString cssName;
-    QString theme = settings.value("theme", "").toString();
-
-    if (isExternal(theme)) {
-        // External CSS
-        settings.setValue("fCSSexternal", true);
-        boost::filesystem::path pathAddr = GetDataDir() / "themes/";
-        cssName = pathAddr.string().c_str() + theme + "/css/theme.css";
-    } else {
-        // Build-in CSS
-        settings.setValue("fCSSexternal", false);
-        if (!theme.isEmpty()) {
-            cssName = QString(":/css/") + theme;
-        } else {
-            cssName = QString(":/css/default");
-            settings.setValue("theme", "default");
-        }
-    }
-
-    QFile qFile(cssName);
-    if (qFile.open(QFile::ReadOnly)) {
-        styleSheet = QLatin1String(qFile.readAll());
-    }
-
-    return styleSheet;
-}
-
-void setClipboard(const QString& str) {
+void setClipboard(const QString& str)
+{
     QApplication::clipboard()->setText(str, QClipboard::Clipboard);
     QApplication::clipboard()->setText(str, QClipboard::Selection);
 }
 
-#if BOOST_FILESYSTEM_VERSION >= 3
-boost::filesystem::path qstringToBoostPath(const QString& path) {
-    return boost::filesystem::path(path.toStdString(), utf8);
+fs::path qstringToBoostPath(const QString &path)
+{
+    return fs::path(path.toStdString(), utf8);
 }
 
-QString boostPathToQString(const boost::filesystem::path& path) {
+QString boostPathToQString(const fs::path &path)
+{
     return QString::fromStdString(path.string(utf8));
 }
-#else
-#warning Conversion between boost path and QString can use invalid character encoding with boost_filesystem v2 and older
-boost::filesystem::path qstringToBoostPath(const QString& path) {
-    return boost::filesystem::path(path.toStdString());
-}
 
-QString boostPathToQString(const boost::filesystem::path& path) {
-    return QString::fromStdString(path.string());
-}
-#endif
-
-QString formatDurationStr(int secs) {
+QString formatDurationStr(int secs)
+{
     QStringList strList;
     int days = secs / 86400;
     int hours = (secs % 86400) / 3600;
@@ -844,23 +855,34 @@ QString formatDurationStr(int secs) {
     return strList.join(" ");
 }
 
-QString formatServicesStr(quint64 mask) {
+QString formatServicesStr(quint64 mask)
+{
     QStringList strList;
 
     // Just scan the last 8 bits for now.
     for (int i = 0; i < 8; i++) {
         uint64_t check = 1 << i;
-        if (mask & check) {
-            switch (check) {
-            case NODE_BLOOM:
-            case NODE_BLOOM_WITHOUT_MN:
-                strList.append(QObject::tr("BLOOM"));
-                break;
+        if (mask & check)
+        {
+            switch (check)
+            {
             case NODE_NETWORK:
-                strList.append(QObject::tr("NETWORK"));
+                strList.append("NETWORK");
+                break;
+            case NODE_GETUTXO:
+                strList.append("GETUTXO");
+                break;
+            case NODE_BLOOM:
+                strList.append("BLOOM");
+                break;
+            case NODE_WITNESS:
+                strList.append("WITNESS");
+                break;
+            case NODE_XTHIN:
+                strList.append("XTHIN");
                 break;
             default:
-                strList.append(QString("%1[%2]").arg(QObject::tr("UNKNOWN")).arg(check));
+                strList.append(QString("%1[%2]").arg("UNKNOWN").arg(check));
             }
         }
     }
@@ -871,8 +893,108 @@ QString formatServicesStr(quint64 mask) {
         return QObject::tr("None");
 }
 
-QString formatPingTime(double dPingTime) {
-    return dPingTime == 0 ? QObject::tr("N/A") : QString(QObject::tr("%1 ms")).arg(QString::number((int)(dPingTime * 1000), 10));
+QString formatPingTime(double dPingTime)
+{
+    return (dPingTime == std::numeric_limits<int64_t>::max()/1e6 || dPingTime == 0) ? QObject::tr("N/A") : QString(QObject::tr("%1 ms")).arg(QString::number((int)(dPingTime * 1000), 10));
+}
+
+QString formatTimeOffset(int64_t nTimeOffset)
+{
+  return QString(QObject::tr("%1 s")).arg(QString::number((int)nTimeOffset, 10));
+}
+
+QString formatNiceTimeOffset(qint64 secs)
+{
+    // Represent time from last generated block in human readable text
+    QString timeBehindText;
+    const int HOUR_IN_SECONDS = 60*60;
+    const int DAY_IN_SECONDS = 24*60*60;
+    const int WEEK_IN_SECONDS = 7*24*60*60;
+    const int YEAR_IN_SECONDS = 31556952; // Average length of year in Gregorian calendar
+    if(secs < 60)
+    {
+        timeBehindText = QObject::tr("%n second(s)","",secs);
+    }
+    else if(secs < 2*HOUR_IN_SECONDS)
+    {
+        timeBehindText = QObject::tr("%n minute(s)","",secs/60);
+    }
+    else if(secs < 2*DAY_IN_SECONDS)
+    {
+        timeBehindText = QObject::tr("%n hour(s)","",secs/HOUR_IN_SECONDS);
+    }
+    else if(secs < 2*WEEK_IN_SECONDS)
+    {
+        timeBehindText = QObject::tr("%n day(s)","",secs/DAY_IN_SECONDS);
+    }
+    else if(secs < YEAR_IN_SECONDS)
+    {
+        timeBehindText = QObject::tr("%n week(s)","",secs/WEEK_IN_SECONDS);
+    }
+    else
+    {
+        qint64 years = secs / YEAR_IN_SECONDS;
+        qint64 remainder = secs % YEAR_IN_SECONDS;
+        timeBehindText = QObject::tr("%1 and %2").arg(QObject::tr("%n year(s)", "", years)).arg(QObject::tr("%n week(s)","", remainder/WEEK_IN_SECONDS));
+    }
+    return timeBehindText;
+}
+
+QString formatBytes(uint64_t bytes)
+{
+    if(bytes < 1024)
+        return QString(QObject::tr("%1 B")).arg(bytes);
+    if(bytes < 1024 * 1024)
+        return QString(QObject::tr("%1 KB")).arg(bytes / 1024);
+    if(bytes < 1024 * 1024 * 1024)
+        return QString(QObject::tr("%1 MB")).arg(bytes / 1024 / 1024);
+
+    return QString(QObject::tr("%1 GB")).arg(bytes / 1024 / 1024 / 1024);
+}
+
+qreal calculateIdealFontSize(int width, const QString& text, QFont font, qreal minPointSize, qreal font_size) {
+    while(font_size >= minPointSize) {
+        font.setPointSizeF(font_size);
+        QFontMetrics fm(font);
+        if (fm.width(text) < width) {
+            break;
+        }
+        font_size -= 0.5;
+    }
+    return font_size;
+}
+
+void ClickableLabel::mouseReleaseEvent(QMouseEvent *event)
+{
+    Q_EMIT clicked(event->pos());
+}
+
+void ClickableProgressBar::mouseReleaseEvent(QMouseEvent *event)
+{
+    Q_EMIT clicked(event->pos());
+}
+
+bool ItemDelegate::eventFilter(QObject *object, QEvent *event)
+{
+    if (event->type() == QEvent::KeyPress) {
+        if (static_cast<QKeyEvent*>(event)->key() == Qt::Key_Escape) {
+            Q_EMIT keyEscapePressed();
+        }
+    }
+    return QItemDelegate::eventFilter(object, event);
+}
+
+void formatToolButtons(QToolButton *btn1, QToolButton *btn2, QToolButton *btn3)
+{
+    QList<QToolButton *> btnList;
+    if(btn1) btnList.append(btn1);
+    if(btn2) btnList.append(btn2);
+    if(btn3) btnList.append(btn3);
+    for(int i = 0; i < btnList.count(); i++)
+    {
+        QToolButton* btn = btnList[i];
+        btn->setIconSize(QSize(16, 16));
+    }
 }
 
 } // namespace GUIUtil

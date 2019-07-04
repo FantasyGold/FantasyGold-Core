@@ -19,8 +19,7 @@
 #include <stdint.h>
 #include "leveldb/status.h"
 
-namespace leveldb
-{
+namespace leveldb {
 
 class FileLock;
 class Logger;
@@ -29,8 +28,7 @@ class SequentialFile;
 class Slice;
 class WritableFile;
 
-class Env
-{
+class Env {
  public:
   Env() { }
   virtual ~Env();
@@ -70,6 +68,21 @@ class Env
   // The returned file will only be accessed by one thread at a time.
   virtual Status NewWritableFile(const std::string& fname,
                                  WritableFile** result) = 0;
+
+  // Create an object that either appends to an existing file, or
+  // writes to a new file (if the file does not exist to begin with).
+  // On success, stores a pointer to the new file in *result and
+  // returns OK.  On failure stores NULL in *result and returns
+  // non-OK.
+  //
+  // The returned file will only be accessed by one thread at a time.
+  //
+  // May return an IsNotSupportedError error if this Env does
+  // not allow appending to an existing file.  Users of Env (including
+  // the leveldb implementation) must be prepared to deal with
+  // an Env that does not support appending.
+  virtual Status NewAppendableFile(const std::string& fname,
+                                   WritableFile** result);
 
   // Returns true iff the named file exists.
   virtual bool FileExists(const std::string& fname) = 0;
@@ -154,8 +167,7 @@ class Env
 };
 
 // A file abstraction for reading sequentially through a file
-class SequentialFile
-{
+class SequentialFile {
  public:
   SequentialFile() { }
   virtual ~SequentialFile();
@@ -179,6 +191,9 @@ class SequentialFile
   // REQUIRES: External synchronization
   virtual Status Skip(uint64_t n) = 0;
 
+  // Get a name for the file, only for error reporting
+  virtual std::string GetName() const = 0;
+
  private:
   // No copying allowed
   SequentialFile(const SequentialFile&);
@@ -186,8 +201,7 @@ class SequentialFile
 };
 
 // A file abstraction for randomly reading the contents of a file.
-class RandomAccessFile
-{
+class RandomAccessFile {
  public:
   RandomAccessFile() { }
   virtual ~RandomAccessFile();
@@ -204,6 +218,9 @@ class RandomAccessFile
   virtual Status Read(uint64_t offset, size_t n, Slice* result,
                       char* scratch) const = 0;
 
+  // Get a name for the file, only for error reporting
+  virtual std::string GetName() const = 0;
+
  private:
   // No copying allowed
   RandomAccessFile(const RandomAccessFile&);
@@ -213,8 +230,7 @@ class RandomAccessFile
 // A file abstraction for sequential writing.  The implementation
 // must provide buffering since callers may append small fragments
 // at a time to the file.
-class WritableFile
-{
+class WritableFile {
  public:
   WritableFile() { }
   virtual ~WritableFile();
@@ -224,6 +240,9 @@ class WritableFile
   virtual Status Flush() = 0;
   virtual Status Sync() = 0;
 
+  // Get a name for the file, only for error reporting
+  virtual std::string GetName() const = 0;
+
  private:
   // No copying allowed
   WritableFile(const WritableFile&);
@@ -231,8 +250,7 @@ class WritableFile
 };
 
 // An interface for writing log messages.
-class Logger
-{
+class Logger {
  public:
   Logger() { }
   virtual ~Logger();
@@ -248,8 +266,7 @@ class Logger
 
 
 // Identifies a locked file.
-class FileLock
-{
+class FileLock {
  public:
   FileLock() { }
   virtual ~FileLock();
@@ -277,90 +294,61 @@ extern Status ReadFileToString(Env* env, const std::string& fname,
 // An implementation of Env that forwards all calls to another Env.
 // May be useful to clients who wish to override just part of the
 // functionality of another Env.
-class EnvWrapper : public Env
-{
+class EnvWrapper : public Env {
  public:
   // Initialize an EnvWrapper that delegates all calls to *t
   explicit EnvWrapper(Env* t) : target_(t) { }
   virtual ~EnvWrapper();
 
   // Return the target to which this Env forwards all calls
-    Env* target() const
-    {
-        return target_;
-    }
+  Env* target() const { return target_; }
 
   // The following text is boilerplate that forwards all methods to target()
-    Status NewSequentialFile(const std::string& f, SequentialFile** r)
-    {
+  Status NewSequentialFile(const std::string& f, SequentialFile** r) {
     return target_->NewSequentialFile(f, r);
   }
-    Status NewRandomAccessFile(const std::string& f, RandomAccessFile** r)
-    {
+  Status NewRandomAccessFile(const std::string& f, RandomAccessFile** r) {
     return target_->NewRandomAccessFile(f, r);
   }
-    Status NewWritableFile(const std::string& f, WritableFile** r)
-    {
+  Status NewWritableFile(const std::string& f, WritableFile** r) {
     return target_->NewWritableFile(f, r);
   }
-    bool FileExists(const std::string& f)
-    {
-        return target_->FileExists(f);
-    }
-    Status GetChildren(const std::string& dir, std::vector<std::string>* r)
-    {
+  Status NewAppendableFile(const std::string& f, WritableFile** r) {
+    return target_->NewAppendableFile(f, r);
+  }
+  bool FileExists(const std::string& f) { return target_->FileExists(f); }
+  Status GetChildren(const std::string& dir, std::vector<std::string>* r) {
     return target_->GetChildren(dir, r);
   }
-    Status DeleteFile(const std::string& f)
-    {
-        return target_->DeleteFile(f);
-    }
-    Status CreateDir(const std::string& d)
-    {
-        return target_->CreateDir(d);
-    }
-    Status DeleteDir(const std::string& d)
-    {
-        return target_->DeleteDir(d);
-    }
-    Status GetFileSize(const std::string& f, uint64_t* s)
-    {
+  Status DeleteFile(const std::string& f) { return target_->DeleteFile(f); }
+  Status CreateDir(const std::string& d) { return target_->CreateDir(d); }
+  Status DeleteDir(const std::string& d) { return target_->DeleteDir(d); }
+  Status GetFileSize(const std::string& f, uint64_t* s) {
     return target_->GetFileSize(f, s);
   }
-    Status RenameFile(const std::string& s, const std::string& t)
-    {
+  Status RenameFile(const std::string& s, const std::string& t) {
     return target_->RenameFile(s, t);
   }
-    Status LockFile(const std::string& f, FileLock** l)
-    {
+  Status LockFile(const std::string& f, FileLock** l) {
     return target_->LockFile(f, l);
   }
-    Status UnlockFile(FileLock* l)
-    {
-        return target_->UnlockFile(l);
-    }
-    void Schedule(void (*f)(void*), void* a)
-    {
+  Status UnlockFile(FileLock* l) { return target_->UnlockFile(l); }
+  void Schedule(void (*f)(void*), void* a) {
     return target_->Schedule(f, a);
   }
-    void StartThread(void (*f)(void*), void* a)
-    {
+  void StartThread(void (*f)(void*), void* a) {
     return target_->StartThread(f, a);
   }
-    virtual Status GetTestDirectory(std::string* path)
-    {
+  virtual Status GetTestDirectory(std::string* path) {
     return target_->GetTestDirectory(path);
   }
-    virtual Status NewLogger(const std::string& fname, Logger** result)
-    {
+  virtual Status NewLogger(const std::string& fname, Logger** result) {
     return target_->NewLogger(fname, result);
   }
-    uint64_t NowMicros()
-    {
+  uint64_t NowMicros() {
     return target_->NowMicros();
   }
-    void SleepForMicroseconds(int micros)
-    {
+  void SleepForMicroseconds(int micros) {
     target_->SleepForMicroseconds(micros);
   }
  private:

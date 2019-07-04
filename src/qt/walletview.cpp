@@ -1,251 +1,305 @@
-// Copyright (c) 2011-2013 The Bitcoin developers
-// Distributed under the MIT/X11 software license, see the accompanying
+// Copyright (c) 2011-2018 The Bitcoin Core developers
+// Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#include "walletview.h"
+#include <qt/walletview.h>
 
-#include "addressbookpage.h"
-#include "askpassphrasedialog.h"
-#include "bip38tooldialog.h"
-#include "bitcoingui.h"
-#include "blockexplorer.h"
-#include "clientmodel.h"
-#include "guiutil.h"
-#include "masternodeconfig.h"
-#include "multisenddialog.h"
-#include "multisigdialog.h"
-#include "optionsmodel.h"
-#include "overviewpage.h"
-#include "receivecoinsdialog.h"
-#include "privacydialog.h"
-#include "sendcoinsdialog.h"
-#include "signverifymessagedialog.h"
-#include "transactiontablemodel.h"
-#include "transactionview.h"
-#include "walletmodel.h"
-#include "proposallist.h"
-#include "qtmaterialflatbutton.h"
-#include "ui_interface.h"
+#include <qt/addressbookpage.h>
+#include <qt/askpassphrasedialog.h>
+#include <qt/bitcoingui.h>
+#include <qt/clientmodel.h>
+#include <qt/guiutil.h>
+#include <qt/optionsmodel.h>
+#include <qt/overviewpage.h>
+#include <qt/platformstyle.h>
+#include <qt/receivecoinsdialog.h>
+#include <qt/sendcoinsdialog.h>
+#include <qt/signverifymessagedialog.h>
+#include <qt/transactiontablemodel.h>
+#include <qt/tokentransactiontablemodel.h>
+#include <qt/tokentransactionrecord.h>
+#include <qt/transactionview.h>
+#include <qt/walletmodel.h>
+#include <qt/createcontract.h>
+#include <qt/sendtocontract.h>
+#include <qt/callcontract.h>
+#include <qt/fgctoken.h>
+#include <qt/restoredialog.h>
+
+#include <interfaces/node.h>
+#include <ui_interface.h>
 
 #include <QAction>
 #include <QActionGroup>
-#include <QCheckBox>
 #include <QFileDialog>
 #include <QHBoxLayout>
-#include <QLabel>
 #include <QProgressDialog>
 #include <QPushButton>
-#include <QSettings>
 #include <QVBoxLayout>
 
-WalletView::WalletView(QWidget* parent) : QStackedWidget(parent),
+WalletView::WalletView(const PlatformStyle *_platformStyle, QWidget *parent):
+    QStackedWidget(parent),
     clientModel(0),
-    walletModel(0) {
+    walletModel(0),
+    platformStyle(_platformStyle)
+{
     // Create tabs
-    overviewPage = new OverviewPage();
-    explorerWindow = new BlockExplorer(this);
+    overviewPage = new OverviewPage(platformStyle);
+
     transactionsPage = new QWidget(this);
-    QVBoxLayout* vbox = new QVBoxLayout();
-    QHBoxLayout* hbox_buttons = new QHBoxLayout();
-    transactionView = new TransactionView(this);
+    QVBoxLayout *vbox = new QVBoxLayout();
+    QHBoxLayout *hbox_buttons = new QHBoxLayout();
+    transactionView = new TransactionView(platformStyle, this);
     vbox->addWidget(transactionView);
-    QtMaterialFlatButton* exportButton = new QtMaterialFlatButton(tr("Export"), this);
+    QPushButton *exportButton = new QPushButton(tr("&Export"), this);
     exportButton->setToolTip(tr("Export the data in the current tab to a file"));
-#ifndef Q_OS_MAC // Icons on push buttons are very uncommon on Mac
-    exportButton->setIcon(QIcon(":/icons/export"));
-#endif
+    if (platformStyle->getImagesOnButtons()) {
+        exportButton->setIcon(platformStyle->MultiStatesIcon(":/icons/export", PlatformStyle::PushButton));
+    }
     hbox_buttons->addStretch();
-    // Sum of selected transactions
-    QLabel* transactionSumLabel = new QLabel();                // Label
-    transactionSumLabel->setObjectName("transactionSumLabel"); // Label ID as CSS-reference
-    transactionSumLabel->setText(tr("Selected amount:"));
-    hbox_buttons->addWidget(transactionSumLabel);
-
-    transactionSum = new QLabel();                   // Amount
-    transactionSum->setObjectName("transactionSum"); // Label ID as CSS-reference
-    transactionSum->setMinimumSize(200, 8);
-    transactionSum->setTextInteractionFlags(Qt::TextSelectableByMouse);
-    hbox_buttons->addWidget(transactionSum);
-
     hbox_buttons->addWidget(exportButton);
     vbox->addLayout(hbox_buttons);
     transactionsPage->setLayout(vbox);
 
-    privacyPage = new PrivacyDialog();
-    receiveCoinsPage = new ReceiveCoinsDialog();
-    sendCoinsPage = new SendCoinsDialog();
+    receiveCoinsPage = new ReceiveCoinsDialog(platformStyle);
+    sendCoinsPage = new SendCoinsDialog(platformStyle);
+
+    usedSendingAddressesPage = new AddressBookPage(platformStyle, AddressBookPage::ForEditing, AddressBookPage::SendingTab, this);
+    usedReceivingAddressesPage = new AddressBookPage(platformStyle, AddressBookPage::ForEditing, AddressBookPage::ReceivingTab, this);
+
+    createContractPage = new CreateContract(platformStyle);
+    sendToContractPage = new SendToContract(platformStyle);
+    callContractPage = new CallContract(platformStyle);
+
+    FGCTokenPage = new FGCToken(platformStyle);
 
     addWidget(overviewPage);
     addWidget(transactionsPage);
-    addWidget(privacyPage);
     addWidget(receiveCoinsPage);
     addWidget(sendCoinsPage);
-    addWidget(explorerWindow);
+    addWidget(createContractPage);
+    addWidget(sendToContractPage);
+    addWidget(callContractPage);
+    addWidget(FGCTokenPage);
 
-    QSettings settings;
-    if (settings.value("fShowMasternodesTab").toBool()) {
-        masternodeListPage = new MasternodeList();
-        addWidget(masternodeListPage);
-    }
+    connect(overviewPage, SIGNAL(outOfSyncWarningClicked()), this, SLOT(requestedSyncWarningInfo()));
 
-    QFont fontHeaderLeft;
-    fontHeaderLeft.setPointSize(20);
-    fontHeaderLeft.setBold(true);
-    fontHeaderLeft.setWeight(75);
-
-    QFont fontHeaderRight;
-    fontHeaderRight.setPointSize(14);
-
-    QVBoxLayout* vbox_2 = new QVBoxLayout();
-    proposalList = new ProposalList(this);
-    vbox_2->addWidget(proposalList);
-    vbox_2->setStretch(1, 1);
-    proposalListPage = new QWidget(this);
-    proposalListPage->setLayout(vbox_2);
-    addWidget(proposalListPage);
-
-    // Clicking on a transaction on the overview pre-selects the transaction on the transaction history page
-    connect(overviewPage, SIGNAL(transactionClicked(QModelIndex)), transactionView, SLOT(focusTransaction(QModelIndex)));
+    // Highlight transaction after send
+    connect(sendCoinsPage, SIGNAL(coinsSent(uint256)), transactionView, SLOT(focusTransaction(uint256)));
 
     // Double-clicking on a transaction on the transaction history page shows details
     connect(transactionView, SIGNAL(doubleClicked(QModelIndex)), transactionView, SLOT(showDetails()));
-
-    // Update wallet with sum of selected transactions
-    connect(transactionView, SIGNAL(trxAmount(QString)), this, SLOT(trxAmount(QString)));
 
     // Clicking on "Export" allows to export the transaction list
     connect(exportButton, SIGNAL(clicked()), transactionView, SLOT(exportClicked()));
 
     // Pass through messages from sendCoinsPage
-    connect(sendCoinsPage, SIGNAL(message(QString, QString, unsigned int)), this, SIGNAL(message(QString, QString, unsigned int)));
-
+    connect(sendCoinsPage, SIGNAL(message(QString,QString,unsigned int)), this, SIGNAL(message(QString,QString,unsigned int)));
     // Pass through messages from transactionView
-    connect(transactionView, SIGNAL(message(QString, QString, unsigned int)), this, SIGNAL(message(QString, QString, unsigned int)));
+    connect(transactionView, SIGNAL(message(QString,QString,unsigned int)), this, SIGNAL(message(QString,QString,unsigned int)));
 }
 
-WalletView::~WalletView() {
+WalletView::~WalletView()
+{
 }
 
-void WalletView::setBitcoinGUI(BitcoinGUI* gui) {
-    if (gui) {
-        // Clicking on a transaction on the overview page simply sends you to transaction history page
-        connect(overviewPage, SIGNAL(transactionClicked(QModelIndex)), gui, SLOT(gotoHistoryPage()));
+void WalletView::setBitcoinGUI(BitcoinGUI *gui)
+{
+    if (gui)
+    {
+        // Clicking on a show more button sends you to transaction history page
+        connect(overviewPage, SIGNAL(showMoreClicked()), gui, SLOT(gotoHistoryPage()));
+
+        // Navigate to transaction history page after send
+        connect(sendCoinsPage, SIGNAL(coinsSent(uint256)), gui, SLOT(gotoHistoryPage()));
 
         // Receive and report messages
-        connect(this, SIGNAL(message(QString, QString, unsigned int)), gui, SLOT(message(QString, QString, unsigned int)));
+        connect(this, SIGNAL(message(QString,QString,unsigned int)), gui, SLOT(message(QString,QString,unsigned int)));
 
         // Pass through encryption status changed signals
-        connect(this, SIGNAL(encryptionStatusChanged(int)), gui, SLOT(setEncryptionStatus(int)));
+        connect(this, SIGNAL(encryptionStatusChanged()), gui, SLOT(updateWalletStatus()));
 
         // Pass through transaction notifications
-        connect(this, SIGNAL(incomingTransaction(QString, int, CAmount, QString, QString)), gui, SLOT(incomingTransaction(QString, int, CAmount, QString, QString)));
+        connect(this, SIGNAL(incomingTransaction(QString,int,CAmount,QString,QString,QString,QString)), gui, SLOT(incomingTransaction(QString,int,CAmount,QString,QString,QString,QString)));
+
+        // Pass through token transaction notifications
+        connect(this, SIGNAL(incomingTokenTransaction(QString,QString,QString,QString,QString,QString,QString)), gui, SLOT(incomingTokenTransaction(QString,QString,QString,QString,QString,QString,QString)));
+
+        // Connect HD enabled state signal
+        connect(this, SIGNAL(hdEnabledStatusChanged()), gui, SLOT(updateWalletStatus()));
+
+        // Clicking on add token button sends you to add token page
+        connect(overviewPage, SIGNAL(addTokenClicked()), gui, SLOT(gotoAddTokenPage()));
     }
 }
 
-void WalletView::setClientModel(ClientModel* clientModel) {
-    this->clientModel = clientModel;
+void WalletView::setClientModel(ClientModel *_clientModel)
+{
+    this->clientModel = _clientModel;
 
-    overviewPage->setClientModel(clientModel);
-    sendCoinsPage->setClientModel(clientModel);
-    QSettings settings;
-    if (settings.value("fShowMasternodesTab").toBool()) {
-        masternodeListPage->setClientModel(clientModel);
-    }
+    overviewPage->setClientModel(_clientModel);
+    sendCoinsPage->setClientModel(_clientModel);
+    createContractPage->setClientModel(_clientModel);
+    sendToContractPage->setClientModel(_clientModel);
+    callContractPage->setClientModel(_clientModel);
+    FGCTokenPage->setClientModel(_clientModel);
 }
 
-void WalletView::setWalletModel(WalletModel* walletModel) {
-    this->walletModel = walletModel;
+void WalletView::setWalletModel(WalletModel *_walletModel)
+{
+    this->walletModel = _walletModel;
 
     // Put transaction list in tabs
-    transactionView->setModel(walletModel);
-    overviewPage->setWalletModel(walletModel);
-    QSettings settings;
-    if (settings.value("fShowMasternodesTab").toBool()) {
-        masternodeListPage->setWalletModel(walletModel);
-    }
-    privacyPage->setModel(walletModel);
-    receiveCoinsPage->setModel(walletModel);
-    sendCoinsPage->setModel(walletModel);
+    transactionView->setModel(_walletModel);
+    overviewPage->setWalletModel(_walletModel);
+    receiveCoinsPage->setModel(_walletModel);
+    sendCoinsPage->setModel(_walletModel);
+    createContractPage->setModel(_walletModel);
+    sendToContractPage->setModel(_walletModel);
+    callContractPage->setModel(_walletModel);
+    FGCTokenPage->setModel(_walletModel);
+    usedReceivingAddressesPage->setModel(_walletModel ? _walletModel->getAddressTableModel() : nullptr);
+    usedSendingAddressesPage->setModel(_walletModel ? _walletModel->getAddressTableModel() : nullptr);
 
-    if (walletModel) {
+    if (_walletModel)
+    {
         // Receive and pass through messages from wallet model
-        connect(walletModel, SIGNAL(message(QString, QString, unsigned int)), this, SIGNAL(message(QString, QString, unsigned int)));
+        connect(_walletModel, SIGNAL(message(QString,QString,unsigned int)), this, SIGNAL(message(QString,QString,unsigned int)));
 
         // Handle changes in encryption status
-        connect(walletModel, SIGNAL(encryptionStatusChanged(int)), this, SIGNAL(encryptionStatusChanged(int)));
+        connect(_walletModel, SIGNAL(encryptionStatusChanged()), this, SIGNAL(encryptionStatusChanged()));
         updateEncryptionStatus();
 
+        // update HD status
+        Q_EMIT hdEnabledStatusChanged();
+
         // Balloon pop-up for new transaction
-        connect(walletModel->getTransactionTableModel(), SIGNAL(rowsInserted(QModelIndex, int, int)),
-                this, SLOT(processNewTransaction(QModelIndex, int, int)));
+        connect(_walletModel->getTransactionTableModel(), SIGNAL(rowsInserted(QModelIndex,int,int)),
+                this, SLOT(processNewTransaction(QModelIndex,int,int)));
+
+        // Balloon pop-up for new token transaction
+        connect(_walletModel->getTokenTransactionTableModel(), SIGNAL(rowsInserted(QModelIndex,int,int)),
+                this, SLOT(processNewTokenTransaction(QModelIndex,int,int)));
 
         // Ask for passphrase if needed
-        connect(walletModel, SIGNAL(requireUnlock()), this, SLOT(unlockWallet()));
+        connect(_walletModel, SIGNAL(requireUnlock()), this, SLOT(unlockWallet()));
 
         // Show progress dialog
-        connect(walletModel, SIGNAL(showProgress(QString, int)), this, SLOT(showProgress(QString, int)));
+        connect(_walletModel, SIGNAL(showProgress(QString,int)), this, SLOT(showProgress(QString,int)));
     }
 }
 
-void WalletView::processNewTransaction(const QModelIndex& parent, int start, int /*end*/) {
+void WalletView::processNewTransaction(const QModelIndex& parent, int start, int /*end*/)
+{
     // Prevent balloon-spam when initial block download is in progress
-    if (!walletModel || !clientModel || clientModel->inInitialBlockDownload())
+    if (!walletModel || !clientModel || clientModel->node().isInitialBlockDownload())
         return;
 
-    TransactionTableModel* ttm = walletModel->getTransactionTableModel();
+    TransactionTableModel *ttm = walletModel->getTransactionTableModel();
     if (!ttm || ttm->processingQueuedTransactions())
         return;
 
     QString date = ttm->index(start, TransactionTableModel::Date, parent).data().toString();
     qint64 amount = ttm->index(start, TransactionTableModel::Amount, parent).data(Qt::EditRole).toULongLong();
     QString type = ttm->index(start, TransactionTableModel::Type, parent).data().toString();
-    QString address = ttm->index(start, TransactionTableModel::ToAddress, parent).data().toString();
+    QModelIndex index = ttm->index(start, 0, parent);
+    QString address = ttm->data(index, TransactionTableModel::AddressRole).toString();
+    QString label = ttm->data(index, TransactionTableModel::LabelRole).toString();
 
-    emit incomingTransaction(date, walletModel->getOptionsModel()->getDisplayUnit(), amount, type, address);
+    Q_EMIT incomingTransaction(date, walletModel->getOptionsModel()->getDisplayUnit(), amount, type, address, label, walletModel->getWalletName());
 }
 
-void WalletView::gotoOverviewPage() {
+void WalletView::processNewTokenTransaction(const QModelIndex &parent, int start, int /*end*/)
+{
+    // Prevent balloon-spam when initial block download is in progress
+    if (!walletModel || !clientModel || clientModel->node().isInitialBlockDownload())
+        return;
+
+    TokenTransactionTableModel *tttm = walletModel->getTokenTransactionTableModel();
+    if (!tttm || tttm->processingQueuedTransactions())
+        return;
+
+    QString date = tttm->index(start, TokenTransactionTableModel::Date, parent).data().toString();
+    QString amount(tttm->index(start, TokenTransactionTableModel::Amount, parent).data(TokenTransactionTableModel::FormattedAmountWithUnitRole).toString());
+    QString type = tttm->index(start, TokenTransactionTableModel::Type, parent).data().toString();
+    QModelIndex index = tttm->index(start, 0, parent);
+    QString address = tttm->data(index, TokenTransactionTableModel::AddressRole).toString();
+    QString label = tttm->data(index, TokenTransactionTableModel::LabelRole).toString();
+    QString title;
+    int txType = tttm->data(index, TokenTransactionTableModel::TypeRole).toInt();
+    switch (txType)
+    {
+    case TokenTransactionRecord::RecvWithAddress:
+    case TokenTransactionRecord::RecvFromOther:
+        title = tr("Incoming transaction");
+        break;
+    default:
+        title = tr("Sent transaction");
+        break;
+    }
+    Q_EMIT incomingTokenTransaction(date, amount, type, address, label, walletModel->getWalletName(), title);
+}
+
+void WalletView::gotoOverviewPage()
+{
     setCurrentWidget(overviewPage);
-    // Refresh UI-elements in case coins were locked/unlocked in CoinControl
-    walletModel->emitBalanceChanged();
 }
 
-void WalletView::gotoHistoryPage() {
+void WalletView::gotoHistoryPage()
+{
     setCurrentWidget(transactionsPage);
 }
 
-
-void WalletView::gotoBlockExplorerPage() {
-    setCurrentWidget(explorerWindow);
-}
-
-void WalletView::gotoMasternodePage() {
-    QSettings settings;
-    if (settings.value("fShowMasternodesTab").toBool()) {
-        setCurrentWidget(masternodeListPage);
-    }
-}
-
-void WalletView::gotoReceiveCoinsPage() {
+void WalletView::gotoReceiveCoinsPage()
+{
     setCurrentWidget(receiveCoinsPage);
 }
 
-void WalletView::gotoPrivacyPage() {
-    setCurrentWidget(privacyPage);
-    // Refresh UI-elements in case coins were locked/unlocked in CoinControl
-    walletModel->emitBalanceChanged();
-}
-
-void WalletView::gotoSendCoinsPage(QString addr) {
+void WalletView::gotoSendCoinsPage(QString addr)
+{
     setCurrentWidget(sendCoinsPage);
 
     if (!addr.isEmpty())
         sendCoinsPage->setAddress(addr);
 }
 
-void WalletView::gotoSignMessageTab(QString addr) {
+void WalletView::gotoCreateContractPage()
+{
+    setCurrentWidget(createContractPage);
+}
+
+void WalletView::gotoSendToContractPage()
+{
+    setCurrentWidget(sendToContractPage);
+}
+
+void WalletView::gotoCallContractPage()
+{
+    setCurrentWidget(callContractPage);
+}
+
+void WalletView::gotoSendTokenPage()
+{
+    setCurrentWidget(FGCTokenPage);
+    FGCTokenPage->on_goToSendTokenPage();
+}
+
+void WalletView::gotoReceiveTokenPage()
+{
+    setCurrentWidget(FGCTokenPage);
+    FGCTokenPage->on_goToReceiveTokenPage();
+}
+
+void WalletView::gotoAddTokenPage()
+{
+    setCurrentWidget(FGCTokenPage);
+    FGCTokenPage->on_goToAddTokenPage();
+}
+
+void WalletView::gotoSignMessageTab(QString addr)
+{
     // calls show() in showTab_SM()
-    SignVerifyMessageDialog* signVerifyMessageDialog = new SignVerifyMessageDialog(this);
+    SignVerifyMessageDialog *signVerifyMessageDialog = new SignVerifyMessageDialog(platformStyle, this);
     signVerifyMessageDialog->setAttribute(Qt::WA_DeleteOnClose);
     signVerifyMessageDialog->setModel(walletModel);
     signVerifyMessageDialog->showTab_SM(true);
@@ -254,13 +308,10 @@ void WalletView::gotoSignMessageTab(QString addr) {
         signVerifyMessageDialog->setAddress_SM(addr);
 }
 
-void WalletView::gotoProposalPage() {
-    setCurrentWidget(proposalListPage);
-}
-
-void WalletView::gotoVerifyMessageTab(QString addr) {
+void WalletView::gotoVerifyMessageTab(QString addr)
+{
     // calls show() in showTab_VM()
-    SignVerifyMessageDialog* signVerifyMessageDialog = new SignVerifyMessageDialog(this);
+    SignVerifyMessageDialog *signVerifyMessageDialog = new SignVerifyMessageDialog(platformStyle, this);
     signVerifyMessageDialog->setAttribute(Qt::WA_DeleteOnClose);
     signVerifyMessageDialog->setModel(walletModel);
     signVerifyMessageDialog->showTab_VM(true);
@@ -269,136 +320,133 @@ void WalletView::gotoVerifyMessageTab(QString addr) {
         signVerifyMessageDialog->setAddress_VM(addr);
 }
 
-void WalletView::gotoBip38Tool() {
-    Bip38ToolDialog* bip38ToolDialog = new Bip38ToolDialog(this);
-    //bip38ToolDialog->setAttribute(Qt::WA_DeleteOnClose);
-    bip38ToolDialog->setModel(walletModel);
-    bip38ToolDialog->showTab_ENC(true);
-}
-
-void WalletView::gotoMultiSendDialog() {
-    MultiSendDialog* multiSendDialog = new MultiSendDialog(this);
-    multiSendDialog->setModel(walletModel);
-    multiSendDialog->show();
-}
-
-void WalletView::gotoMultisigDialog(int index) {
-    MultisigDialog* multisig = new MultisigDialog(this);
-    multisig->setModel(walletModel);
-    multisig->showTab(index);
-}
-
-bool WalletView::handlePaymentRequest(const SendCoinsRecipient& recipient) {
+bool WalletView::handlePaymentRequest(const SendCoinsRecipient& recipient)
+{
     return sendCoinsPage->handlePaymentRequest(recipient);
 }
 
-void WalletView::showOutOfSyncWarning(bool fShow) {
+void WalletView::showOutOfSyncWarning(bool fShow)
+{
     overviewPage->showOutOfSyncWarning(fShow);
-    privacyPage->showOutOfSyncWarning(fShow);
 }
 
-void WalletView::updateEncryptionStatus() {
-    emit encryptionStatusChanged(walletModel->getEncryptionStatus());
+void WalletView::updateEncryptionStatus()
+{
+    Q_EMIT encryptionStatusChanged();
 }
 
-void WalletView::encryptWallet(bool status) {
-    if (!walletModel)
+void WalletView::encryptWallet(bool status)
+{
+    if(!walletModel)
         return;
-    AskPassphraseDialog dlg(status ? AskPassphraseDialog::Mode::Encrypt : AskPassphraseDialog::Mode::Decrypt, this, walletModel);
+    AskPassphraseDialog dlg(status ? AskPassphraseDialog::Encrypt : AskPassphraseDialog::Decrypt, this);
+    dlg.setModel(walletModel);
     dlg.exec();
 
     updateEncryptionStatus();
 }
 
-void WalletView::backupWallet() {
+void WalletView::backupWallet()
+{
     QString filename = GUIUtil::getSaveFileName(this,
-                       tr("Backup Wallet"), QString(),
-                       tr("Wallet Data (*.dat)"), NULL);
+        tr("Backup Wallet"), QString(),
+        tr("Wallet Data (*.dat)"), nullptr);
 
     if (filename.isEmpty())
         return;
 
-    if (!walletModel->backupWallet(filename)) {
-        emit message(tr("Backup Failed"), tr("There was an error trying to save the wallet data to %1.").arg(filename),
-                     CClientUIInterface::MSG_ERROR);
-    } else {
-        emit message(tr("Backup Successful"), tr("The wallet data was successfully saved to %1.").arg(filename),
-                     CClientUIInterface::MSG_INFORMATION);
+    if (!walletModel->wallet().backupWallet(filename.toLocal8Bit().data())) {
+        Q_EMIT message(tr("Backup Failed"), tr("There was an error trying to save the wallet data to %1.").arg(filename),
+            CClientUIInterface::MSG_ERROR);
+        }
+    else {
+        Q_EMIT message(tr("Backup Successful"), tr("The wallet data was successfully saved to %1.").arg(filename),
+            CClientUIInterface::MSG_INFORMATION);
     }
 }
 
-void WalletView::changePassphrase() {
-    AskPassphraseDialog dlg(AskPassphraseDialog::ChangePass, this, walletModel);
+void WalletView::restoreWallet()
+{
+    RestoreDialog dlg(this);
+    dlg.setModel(walletModel);
     dlg.exec();
 }
 
-void WalletView::unlockWallet() {
-    if (!walletModel)
-        return;
+void WalletView::changePassphrase()
+{
+    AskPassphraseDialog dlg(AskPassphraseDialog::ChangePass, this);
+    dlg.setModel(walletModel);
+    dlg.exec();
+}
 
-    if (walletModel->getEncryptionStatus() == WalletModel::Locked || walletModel->getEncryptionStatus() == WalletModel::UnlockedForAnonymizationOnly) {
-        AskPassphraseDialog dlg(AskPassphraseDialog::UnlockAnonymize, this, walletModel);
+void WalletView::unlockWallet(bool fromMenu)
+{
+    if(!walletModel)
+        return;
+    // Unlock wallet when requested by wallet model
+    if (walletModel->getEncryptionStatus() == WalletModel::Locked)
+    {
+        AskPassphraseDialog::Mode mode = fromMenu ?
+            AskPassphraseDialog::UnlockStaking : AskPassphraseDialog::Unlock;
+        AskPassphraseDialog dlg(mode, this);
+        dlg.setModel(walletModel);
         dlg.exec();
     }
 }
 
-void WalletView::lockWallet() {
-    if (!walletModel)
+void WalletView::lockWallet()
+{
+    if(!walletModel)
         return;
 
     walletModel->setWalletLocked(true);
 }
 
-void WalletView::toggleLockWallet() {
-    if (!walletModel)
+void WalletView::usedSendingAddresses()
+{
+    if(!walletModel)
         return;
 
-    WalletModel::EncryptionStatus encStatus = walletModel->getEncryptionStatus();
-
-    if (encStatus == walletModel->Locked) {
-        AskPassphraseDialog dlg(AskPassphraseDialog::UnlockAnonymize, this, walletModel);
-        dlg.exec();
-    } else if (encStatus == walletModel->Unlocked || encStatus == walletModel->UnlockedForAnonymizationOnly) {
-        walletModel->setWalletLocked(true);
-    }
+    GUIUtil::bringToFront(usedSendingAddressesPage);
 }
 
-void WalletView::usedSendingAddresses() {
-    if (!walletModel)
+void WalletView::usedReceivingAddresses()
+{
+    if(!walletModel)
         return;
-    AddressBookPage* dlg = new AddressBookPage(AddressBookPage::ForEditing, AddressBookPage::SendingTab, this);
-    dlg->setAttribute(Qt::WA_DeleteOnClose);
-    dlg->setModel(walletModel->getAddressTableModel());
-    dlg->show();
+
+    GUIUtil::bringToFront(usedReceivingAddressesPage);
 }
 
-void WalletView::usedReceivingAddresses() {
-    if (!walletModel)
-        return;
-    AddressBookPage* dlg = new AddressBookPage(AddressBookPage::ForEditing, AddressBookPage::ReceivingTab, this);
-    dlg->setAttribute(Qt::WA_DeleteOnClose);
-    dlg->setModel(walletModel->getAddressTableModel());
-    dlg->show();
-}
-
-void WalletView::showProgress(const QString& title, int nProgress) {
-    if (nProgress == 0) {
+void WalletView::showProgress(const QString &title, int nProgress)
+{
+    if (nProgress == 0)
+    {
         progressDialog = new QProgressDialog(title, "", 0, 100);
         progressDialog->setWindowModality(Qt::ApplicationModal);
         progressDialog->setMinimumDuration(0);
-        progressDialog->setCancelButton(0);
         progressDialog->setAutoClose(false);
         progressDialog->setValue(0);
-    } else if (nProgress == 100) {
-        if (progressDialog) {
+        progressDialog->setCancelButtonText(tr("Cancel"));
+    }
+    else if (nProgress == 100)
+    {
+        if (progressDialog)
+        {
             progressDialog->close();
             progressDialog->deleteLater();
         }
-    } else if (progressDialog)
-        progressDialog->setValue(nProgress);
+    }
+    else if (progressDialog) {
+        if (progressDialog->wasCanceled()) {
+            getWalletModel()->wallet().abortRescan();
+        } else {
+            progressDialog->setValue(nProgress);
+        }
+    }
 }
 
-/** Update wallet with the sum of the selected transactions */
-void WalletView::trxAmount(QString amount) {
-    transactionSum->setText(amount);
+void WalletView::requestedSyncWarningInfo()
+{
+    Q_EMIT outOfSyncWarningClicked();
 }

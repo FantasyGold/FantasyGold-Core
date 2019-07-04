@@ -10,12 +10,11 @@
 #include "leveldb/iterator.h"
 #include "leveldb/options.h"
 
-namespace leveldb
-{
+namespace leveldb {
 
 // Update Makefile if you change these
 static const int kMajorVersion = 1;
-static const int kMinorVersion = 18;
+static const int kMinorVersion = 20;
 
 struct Options;
 struct ReadOptions;
@@ -25,15 +24,13 @@ class WriteBatch;
 // Abstract handle to particular state of a DB.
 // A Snapshot is an immutable object and can therefore be safely
 // accessed from multiple threads without any external synchronization.
-class Snapshot
-{
+class Snapshot {
  protected:
   virtual ~Snapshot();
 };
 
 // A range of keys
-struct Range
-{
+struct Range {
   Slice start;          // Included in the range
   Slice limit;          // Not included in the range
 
@@ -44,8 +41,7 @@ struct Range
 // A DB is a persistent ordered map from keys to values.
 // A DB is safe for concurrent access from multiple threads without
 // any external synchronization.
-class DB
-{
+class DB {
  public:
   // Open the database with the specified "name".
   // Stores a pointer to a heap-allocated database in *dbptr and returns
@@ -119,6 +115,8 @@ class DB
   //     about the internal operation of the DB.
   //  "leveldb.sstables" - returns a multi-line string that describes all
   //     of the sstables that make up the db contents.
+  //  "leveldb.approximate-memory-usage" - returns the approximate number of
+  //     bytes of memory in use by the DB.
   virtual bool GetProperty(const Slice& property, std::string* value) = 0;
 
   // For each i in [0,n-1], store in "sizes[i]", the approximate

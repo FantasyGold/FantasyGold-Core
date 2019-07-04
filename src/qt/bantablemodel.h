@@ -1,12 +1,13 @@
-// Copyright (c) 2011-2013 The Bitcoin Core developers
+// Copyright (c) 2011-2018 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
 #ifndef BITCOIN_QT_BANTABLEMODEL_H
 #define BITCOIN_QT_BANTABLEMODEL_H
 
-#include "net.h"
-#include "addrdb.h"
+#include <net.h>
+
+#include <memory>
 
 #include <QAbstractTableModel>
 #include <QStringList>
@@ -14,31 +15,38 @@
 class ClientModel;
 class BanTablePriv;
 
+namespace interfaces {
+    class Node;
+}
+
 struct CCombinedBan {
     CSubNet subnet;
     CBanEntry banEntry;
 };
 
-class BannedNodeLessThan {
-  public:
+class BannedNodeLessThan
+{
+public:
     BannedNodeLessThan(int nColumn, Qt::SortOrder fOrder) :
         column(nColumn), order(fOrder) {}
     bool operator()(const CCombinedBan& left, const CCombinedBan& right) const;
 
-  private:
+private:
     int column;
     Qt::SortOrder order;
 };
 
 /**
-Qt model providing information about connected peers, similar to the
-"getpeerinfo" RPC call. Used by the rpc console UI.
-*/
-class BanTableModel : public QAbstractTableModel {
+   Qt model providing information about connected peers, similar to the
+   "getpeerinfo" RPC call. Used by the rpc console UI.
+ */
+class BanTableModel : public QAbstractTableModel
+{
     Q_OBJECT
 
-  public:
-    explicit BanTableModel(ClientModel *parent = 0);
+public:
+    explicit BanTableModel(interfaces::Node& node, ClientModel *parent = 0);
+    ~BanTableModel();
     void startAutoRefresh();
     void stopAutoRefresh();
 
@@ -48,7 +56,7 @@ class BanTableModel : public QAbstractTableModel {
     };
 
     /** @name Methods overridden from QAbstractTableModel
-    @{*/
+        @{*/
     int rowCount(const QModelIndex &parent) const;
     int columnCount(const QModelIndex &parent) const;
     QVariant data(const QModelIndex &index, int role) const;
@@ -59,13 +67,14 @@ class BanTableModel : public QAbstractTableModel {
     bool shouldShow();
     /*@}*/
 
-  public Q_SLOTS:
+public Q_SLOTS:
     void refresh();
 
-  private:
-    ClientModel * clientModel;
+private:
+    interfaces::Node& m_node;
+    ClientModel *clientModel;
     QStringList columns;
-    BanTablePriv *priv;
+    std::unique_ptr<BanTablePriv> priv;
 };
 
 #endif // BITCOIN_QT_BANTABLEMODEL_H

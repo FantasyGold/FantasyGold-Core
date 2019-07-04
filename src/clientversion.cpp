@@ -1,19 +1,18 @@
-// Copyright (c) 2012-2014 The Bitcoin developers
+// Copyright (c) 2012-2018 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#include "clientversion.h"
+#include <clientversion.h>
 
-#include "tinyformat.h"
+#include <tinyformat.h>
 
-#include <string>
 
 /**
  * Name of client reported in the 'version' message. Report the same name
- * for both fantasygoldd and fantasygold-qt, to make it harder for attackers to
+ * for both bitcoind and bitcoin-qt, to make it harder for attackers to
  * target servers or GUI users specifically.
  */
-const std::string CLIENT_NAME("FantasyGold Core");
+const std::string CLIENT_NAME("Satoshi");
 
 /**
  * Client version number
@@ -39,10 +38,10 @@ const std::string CLIENT_NAME("FantasyGold Core");
 
 //! First, include build.h if requested
 #ifdef HAVE_BUILD_INFO
-#include "build.h"
+#include <obj/build.h>
 #endif
 
-//! git will put "#define GIT_ARCHIVE 1" on the next line inside archives.
+//! git will put "#define GIT_ARCHIVE 1" on the next line inside archives. $Format:%n#define GIT_ARCHIVE 1$
 #ifdef GIT_ARCHIVE
 #define GIT_COMMIT_ID "$Format:%H$"
 #define GIT_COMMIT_DATE "$Format:%cD$"
@@ -67,40 +66,34 @@ const std::string CLIENT_NAME("FantasyGold Core");
 #endif
 #endif
 
-#ifndef BUILD_DATE
-#ifdef GIT_COMMIT_DATE
-#define BUILD_DATE GIT_COMMIT_DATE
-#else
-#define BUILD_DATE __DATE__ ", " __TIME__
-#endif
-#endif
-
 const std::string CLIENT_BUILD(BUILD_DESC CLIENT_VERSION_SUFFIX);
-const std::string CLIENT_DATE(BUILD_DATE);
 
-static std::string FormatVersion(int nVersion) {
+static std::string FormatVersion(int nVersion)
+{
     if (nVersion % 100 == 0)
         return strprintf("%d.%d.%d", nVersion / 1000000, (nVersion / 10000) % 100, (nVersion / 100) % 100);
     else
         return strprintf("%d.%d.%d.%d", nVersion / 1000000, (nVersion / 10000) % 100, (nVersion / 100) % 100, nVersion % 100);
 }
 
-std::string FormatFullVersion() {
-    return FormatVersion(CLIENT_VERSION);
-    //return CLIENT_BUILD;
+std::string FormatFullVersion()
+{
+    return CLIENT_BUILD;
 }
 
-/** 
- * Format the subversion field according to BIP 14 spec (https://github.com/bitcoin/bips/blob/master/bip-0014.mediawiki) 
+/**
+ * Format the subversion field according to BIP 14 spec (https://github.com/bitcoin/bips/blob/master/bip-0014.mediawiki)
  */
-std::string FormatSubVersion(const std::string& name, int nClientVersion, const std::vector<std::string>& comments) {
+std::string FormatSubVersion(const std::string& name, int nClientVersion, const std::vector<std::string>& comments)
+{
     std::ostringstream ss;
     ss << "/";
     ss << name << ":" << FormatVersion(nClientVersion);
-    if (!comments.empty()) {
+    if (!comments.empty())
+    {
         std::vector<std::string>::const_iterator it(comments.begin());
         ss << "(" << *it;
-        for (++it; it != comments.end(); ++it)
+        for(++it; it != comments.end(); ++it)
             ss << "; " << *it;
         ss << ")";
     }

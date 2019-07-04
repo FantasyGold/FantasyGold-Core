@@ -11,20 +11,16 @@
 #include "leveldb/slice.h"
 #include "leveldb/status.h"
 
-namespace leveldb
-{
+namespace leveldb {
 
 class SequentialFile;
 
-namespace log
-{
+namespace log {
 
-class Reader
-{
+class Reader {
  public:
   // Interface for reporting errors.
-    class Reporter
-    {
+  class Reporter {
    public:
     virtual ~Reporter();
 
@@ -77,9 +73,13 @@ class Reader
   // Offset at which to start looking for the first record to return
   uint64_t const initial_offset_;
 
+  // True if we are resynchronizing after a seek (initial_offset_ > 0). In
+  // particular, a run of kMiddleType and kLastType records can be silently
+  // skipped in this mode
+  bool resyncing_;
+
   // Extend record types with the following special values
-    enum
-    {
+  enum {
     kEof = kMaxRecordType + 1,
     // Returned whenever we find an invalid physical record.
     // Currently there are three situations in which this happens:

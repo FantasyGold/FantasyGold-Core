@@ -1,25 +1,31 @@
-// Copyright (c) 2011-2013 The Bitcoin developers
-// Distributed under the MIT/X11 software license, see the accompanying
+// Copyright (c) 2011-2018 The Bitcoin Core developers
+// Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
 #ifndef BITCOIN_QT_GUIUTIL_H
 #define BITCOIN_QT_GUIUTIL_H
 
-#include "amount.h"
+#include <amount.h>
+#include <fs.h>
 
 #include <QEvent>
 #include <QHeaderView>
+#include <QItemDelegate>
 #include <QMessageBox>
 #include <QObject>
 #include <QProgressBar>
 #include <QString>
 #include <QTableView>
-#include <QTableWidget>
-
-#include <boost/filesystem.hpp>
+#include <QLabel>
+#include <QToolButton>
 
 class QValidatedLineEdit;
 class SendCoinsRecipient;
+
+namespace interfaces
+{
+    class Node;
+}
 
 QT_BEGIN_NAMESPACE
 class QAbstractItemView;
@@ -30,50 +36,57 @@ class QUrl;
 class QWidget;
 QT_END_NAMESPACE
 
-/** Utility functions used by the FantasyGold Qt UI.
+/** Utility functions used by the Bitcoin Qt UI.
  */
-namespace GUIUtil {
-// Create human-readable string from date
-QString dateTimeStr(const QDateTime& datetime);
-QString dateTimeStr(qint64 nTime);
+namespace GUIUtil
+{
+    // Create human-readable string from date
+    QString dateTimeStr(const QDateTime &datetime);
+    QString dateTimeStr(qint64 nTime);
 
-// Render FantasyGold addresses in monospace font
-QFont bitcoinAddressFont();
+    // Return a monospace font
+    QFont fixedPitchFont();
 
-// Set up widgets for address and amounts
-void setupAddressWidget(QValidatedLineEdit* widget, QWidget* parent);
-void setupAliasWidget(QValidatedLineEdit* widget, QWidget* parent);
-void setupIPWidget(QValidatedLineEdit* widget, QWidget* parent);
-void setupPrivKeyWidget(QValidatedLineEdit* widget, QWidget* parent);
-void setupTXIDWidget(QValidatedLineEdit* widget, QWidget* parent);
-void setupTXIDIndexWidget(QValidatedLineEdit* widget, QWidget* parent);
-void setupAmountWidget(QLineEdit* widget, QWidget* parent);
+    // Set up widget for address
+    void setupAddressWidget(QValidatedLineEdit *widget, QWidget *parent);
 
-// Parse "fantasygold:" URI into recipient object, return true on successful parsing
-bool parseBitcoinURI(const QUrl& uri, SendCoinsRecipient* out);
-bool parseBitcoinURI(QString uri, SendCoinsRecipient* out);
-QString formatBitcoinURI(const SendCoinsRecipient& info);
+    // Parse "bitcoin:" URI into recipient object, return true on successful parsing
+    bool parseBitcoinURI(const QUrl &uri, SendCoinsRecipient *out);
+    bool parseBitcoinURI(QString uri, SendCoinsRecipient *out);
+    QString formatBitcoinURI(const SendCoinsRecipient &info);
 
-// Returns true if given address+amount meets "dust" definition
-bool isDust(const QString& address, const CAmount& amount);
+    // Returns true if given address+amount meets "dust" definition
+    bool isDust(interfaces::Node& node, const QString& address, const CAmount& amount);
 
-// HTML escaping for rich text controls
-QString HtmlEscape(const QString& str, bool fMultiLine = false);
-QString HtmlEscape(const std::string& str, bool fMultiLine = false);
+    // HTML escaping for rich text controls
+    QString HtmlEscape(const QString& str, bool fMultiLine=false);
+    QString HtmlEscape(const std::string& str, bool fMultiLine=false);
 
-/** Copy a field of the currently selected entry of a view to the clipboard. Does nothing if nothing
+    /** Copy a field of the currently selected entry of a view to the clipboard. Does nothing if nothing
         is selected.
        @param[in] column  Data column to extract from the model
        @param[in] role    Data role to extract from the model
        @see  TransactionView::copyLabel, TransactionView::copyAmount, TransactionView::copyAddress
      */
-void copyEntryData(QAbstractItemView* view, int column, int role = Qt::EditRole);
+    void copyEntryData(QAbstractItemView *view, int column, int role=Qt::EditRole);
 
-QString getEntryData(QAbstractItemView *view, int column, int role);
+    /** Copy a field of the currently selected entry of a view to the clipboard. Does nothing if nothing
+        is selected.
+       @param[in] role    Data role to extract from the model
+       @see  FGCToken::copyTokenAddress
+     */
+    void copyEntryDataFromList(QAbstractItemView *view, int role=Qt::EditRole);
 
-void setClipboard(const QString& str);
+    /** Return a field of the currently selected entry as a QString. Does nothing if nothing
+        is selected.
+       @param[in] column  Data column to extract from the model
+       @see  TransactionView::copyLabel, TransactionView::copyAmount, TransactionView::copyAddress
+     */
+    QList<QModelIndex> getEntryData(QAbstractItemView *view, int column);
 
-/** Get save filename, mimics QFileDialog::getSaveFileName, except that it appends a default suffix
+    void setClipboard(const QString& str);
+
+    /** Get save filename, mimics QFileDialog::getSaveFileName, except that it appends a default suffix
         when no suffix is provided by the user.
 
       @param[in] parent  Parent window (or 0)
@@ -83,9 +96,11 @@ void setClipboard(const QString& str);
       @param[out] selectedSuffixOut  Pointer to return the suffix (file type) that was selected (or 0).
                   Can be useful when choosing the save file format based on suffix.
      */
-QString getSaveFileName(QWidget* parent, const QString& caption, const QString& dir, const QString& filter, QString* selectedSuffixOut);
+    QString getSaveFileName(QWidget *parent, const QString &caption, const QString &dir,
+        const QString &filter,
+        QString *selectedSuffixOut);
 
-/** Get open filename, convenience wrapper for QFileDialog::getOpenFileName.
+    /** Get open filename, convenience wrapper for QFileDialog::getOpenFileName.
 
       @param[in] parent  Parent window (or 0)
       @param[in] caption Window caption (or empty, for default)
@@ -94,143 +109,155 @@ QString getSaveFileName(QWidget* parent, const QString& caption, const QString& 
       @param[out] selectedSuffixOut  Pointer to return the suffix (file type) that was selected (or 0).
                   Can be useful when choosing the save file format based on suffix.
      */
-QString getOpenFileName(QWidget* parent, const QString& caption, const QString& dir, const QString& filter, QString* selectedSuffixOut);
+    QString getOpenFileName(QWidget *parent, const QString &caption, const QString &dir,
+        const QString &filter,
+        QString *selectedSuffixOut);
 
-/** Get connection type to call object slot in GUI thread with invokeMethod. The call will be blocking.
+    /** Get connection type to call object slot in GUI thread with invokeMethod. The call will be blocking.
 
        @returns If called from the GUI thread, return a Qt::DirectConnection.
                 If called from another thread, return a Qt::BlockingQueuedConnection.
     */
-Qt::ConnectionType blockingGUIThreadConnection();
+    Qt::ConnectionType blockingGUIThreadConnection();
 
-// Determine whether a widget is hidden behind other windows
-bool isObscured(QWidget* w);
+    // Determine whether a widget is hidden behind other windows
+    bool isObscured(QWidget *w);
 
-// Open debug.log
-void openDebugLogfile();
+    // Activate, show and raise the widget
+    void bringToFront(QWidget* w);
 
-// Open fantasygold.conf
-void openConfigfile();
+    // Open debug.log
+    void openDebugLogfile();
 
-// Open masternode.conf
-void openMNConfigfile();
+    // Open the config file
+    bool openBitcoinConf();
 
-// Browse backup folder
-void showBackups();
-
-// Replace invalid default fonts with known good ones
-void SubstituteFonts(const QString& language);
-
-/** Qt event filter that intercepts ToolTipChange events, and replaces the tooltip with a rich text
+    /** Qt event filter that intercepts ToolTipChange events, and replaces the tooltip with a rich text
       representation if needed. This assures that Qt can word-wrap long tooltip messages.
       Tooltips longer than the provided size threshold (in characters) are wrapped.
      */
-class ToolTipToRichTextFilter : public QObject {
-    Q_OBJECT
+    class ToolTipToRichTextFilter : public QObject
+    {
+        Q_OBJECT
 
-  public:
-    explicit ToolTipToRichTextFilter(int size_threshold, QObject* parent = 0);
+    public:
+        explicit ToolTipToRichTextFilter(int size_threshold, QObject *parent = 0);
 
-  protected:
-    bool eventFilter(QObject* obj, QEvent* evt);
+    protected:
+        bool eventFilter(QObject *obj, QEvent *evt);
 
-  private:
-    int size_threshold;
-};
+    private:
+        int size_threshold;
+    };
 
-/**
+    /**
      * Makes a QTableView last column feel as if it was being resized from its left border.
      * Also makes sure the column widths are never larger than the table's viewport.
      * In Qt, all columns are resizable from the right, but it's not intuitive resizing the last column from the right.
-     * Usually our second to last columns behave as if stretched, and when on strech mode, columns aren't resizable
-     * interactively or programatically.
+     * Usually our second to last columns behave as if stretched, and when on stretch mode, columns aren't resizable
+     * interactively or programmatically.
      *
      * This helper object takes care of this issue.
      *
      */
-class TableViewLastColumnResizingFixer : public QObject {
-    Q_OBJECT
+    class TableViewLastColumnResizingFixer: public QObject
+    {
+        Q_OBJECT
 
-  public:
-    TableViewLastColumnResizingFixer(QTableView* table, int lastColMinimumWidth, int allColsMinimumWidth);
-    void stretchColumnWidth(int column);
+        public:
+            TableViewLastColumnResizingFixer(QTableView* table, int lastColMinimumWidth, int allColsMinimumWidth, QObject *parent, int columnStretch = 2);
+            void stretchColumnWidth(int column);
 
-  private:
-    QTableView* tableView;
-    int lastColumnMinimumWidth;
-    int allColumnsMinimumWidth;
-    int lastColumnIndex;
-    int columnCount;
-    int secondToLastColumnIndex;
+        private:
+            QTableView* tableView;
+            int lastColumnMinimumWidth;
+            int allColumnsMinimumWidth;
+            int lastColumnIndex;
+            int columnCount;
+            int secondToLastColumnIndex;
 
-    void adjustTableColumnsWidth();
-    int getAvailableWidthForColumn(int column);
-    int getColumnsWidth();
-    void connectViewHeadersSignals();
-    void disconnectViewHeadersSignals();
-    void setViewHeaderResizeMode(int logicalIndex, QHeaderView::ResizeMode resizeMode);
-    void resizeColumn(int nColumnIndex, int width);
+            void adjustTableColumnsWidth();
+            int getAvailableWidthForColumn(int column);
+            int getColumnsWidth();
+            void connectViewHeadersSignals();
+            void disconnectViewHeadersSignals();
+            void setViewHeaderResizeMode(int logicalIndex, QHeaderView::ResizeMode resizeMode);
+            void resizeColumn(int nColumnIndex, int width);
 
-  private slots:
-    void on_sectionResized(int logicalIndex, int oldSize, int newSize);
-    void on_geometriesChanged();
-};
+        private Q_SLOTS:
+            void on_sectionResized(int logicalIndex, int oldSize, int newSize);
+            void on_geometriesChanged();
+    };
 
-/**
-     * Extension to QTableWidgetItem that facilitates proper ordering for "DHMS"
-     * strings (primarily used in the masternode's "active" listing).
-     */
-class DHMSTableWidgetItem : public QTableWidgetItem {
-  public:
-    DHMSTableWidgetItem(const int64_t seconds);
-    virtual bool operator<(QTableWidgetItem const& item) const;
+    bool GetStartOnSystemStartup();
+    bool SetStartOnSystemStartup(bool fAutoStart);
 
-  private:
-    // Private backing value for DHMS string, used for sorting.
-    int64_t value;
-};
+    /* Convert QString to OS specific boost path through UTF-8 */
+    fs::path qstringToBoostPath(const QString &path);
 
-bool GetStartOnSystemStartup();
-bool SetStartOnSystemStartup(bool fAutoStart);
+    /* Convert OS specific boost path to QString through UTF-8 */
+    QString boostPathToQString(const fs::path &path);
 
-/** Save window size and position */
-void saveWindowGeometry(const QString& strSetting, QWidget* parent);
-/** Restore window size and position */
-void restoreWindowGeometry(const QString& strSetting, const QSize& defaultSizeIn, QWidget* parent);
+    /* Convert seconds into a QString with days, hours, mins, secs */
+    QString formatDurationStr(int secs);
 
-/** Load global CSS theme */
-QString loadStyleSheet();
+    /* Format CNodeStats.nServices bitmask into a user-readable string */
+    QString formatServicesStr(quint64 mask);
 
-/** Check whether a theme is not build-in */
-bool isExternal(QString theme);
+    /* Format a CNodeCombinedStats.dPingTime into a user-readable string or display N/A, if 0*/
+    QString formatPingTime(double dPingTime);
 
-/* Convert QString to OS specific boost path through UTF-8 */
-boost::filesystem::path qstringToBoostPath(const QString& path);
+    /* Format a CNodeCombinedStats.nTimeOffset into a user-readable string. */
+    QString formatTimeOffset(int64_t nTimeOffset);
 
-/* Convert OS specific boost path to QString through UTF-8 */
-QString boostPathToQString(const boost::filesystem::path& path);
+    QString formatNiceTimeOffset(qint64 secs);
 
-/* Convert seconds into a QString with days, hours, mins, secs */
-QString formatDurationStr(int secs);
+    QString formatBytes(uint64_t bytes);
 
-/* Format CNodeStats.nServices bitmask into a user-readable string */
-QString formatServicesStr(quint64 mask);
+    qreal calculateIdealFontSize(int width, const QString& text, QFont font, qreal minPointSize = 4, qreal startPointSize = 14);
 
-/* Format a CNodeCombinedStats.dPingTime into a user-readable string or display N/A, if 0*/
-QString formatPingTime(double dPingTime);
+    class ClickableLabel : public QLabel
+    {
+        Q_OBJECT
 
-/* Format a CNodeCombinedStats.nTimeOffset into a user-readable string. */
-QString formatTimeOffset(int64_t nTimeOffset);
+    Q_SIGNALS:
+        /** Emitted when the label is clicked. The relative mouse coordinates of the click are
+         * passed to the signal.
+         */
+        void clicked(const QPoint& point);
+    protected:
+        void mouseReleaseEvent(QMouseEvent *event);
+    };
 
-#if defined(Q_OS_MAC)
-class ProgressBar : public QProgressBar {
-    bool event(QEvent *e) {
-        return (e->type() != QEvent::StyleAnimationUpdate) ? QProgressBar::event(e) : false;
-    }
-};
-#else
-typedef QProgressBar ProgressBar;
-#endif
+    class ClickableProgressBar : public QProgressBar
+    {
+        Q_OBJECT
+
+    Q_SIGNALS:
+        /** Emitted when the progressbar is clicked. The relative mouse coordinates of the click are
+         * passed to the signal.
+         */
+        void clicked(const QPoint& point);
+    protected:
+        void mouseReleaseEvent(QMouseEvent *event);
+    };
+
+    typedef ClickableProgressBar ProgressBar;
+
+    class ItemDelegate : public QItemDelegate
+    {
+        Q_OBJECT
+    public:
+        ItemDelegate(QObject* parent) : QItemDelegate(parent) {}
+
+    Q_SIGNALS:
+        void keyEscapePressed();
+
+    private:
+        bool eventFilter(QObject *object, QEvent *event);
+    };
+
+    void formatToolButtons(QToolButton* btn1, QToolButton* btn2 = 0, QToolButton* btn3 = 0);
 
 } // namespace GUIUtil
 

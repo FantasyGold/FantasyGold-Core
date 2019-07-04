@@ -7,8 +7,7 @@
 
 #include <stddef.h>
 
-namespace leveldb
-{
+namespace leveldb {
 
 class Cache;
 class Comparator;
@@ -21,8 +20,7 @@ class Snapshot;
 // sequence of key,value pairs.  Each block may be compressed before
 // being stored in a file.  The following enum describes which
 // compression method (if any) is used to compress a block.
-enum CompressionType
-{
+enum CompressionType {
   // NOTE: do not change the values of existing entries, as these are
   // part of the persistent format on disk.
   kNoCompression     = 0x0,
@@ -30,8 +28,7 @@ enum CompressionType
 };
 
 // Options to control the behavior of a database (passed to DB::Open)
-struct Options
-{
+struct Options {
   // -------------------
   // Parameters that affect behavior
 
@@ -115,6 +112,18 @@ struct Options
   // Default: 16
   int block_restart_interval;
 
+  // Leveldb will write up to this amount of bytes to a file before
+  // switching to a new one.
+  // Most clients should leave this parameter alone.  However if your
+  // filesystem is more efficient with larger files, you could
+  // consider increasing the value.  The downside will be longer
+  // compactions and hence longer latency/performance hiccups.
+  // Another reason to increase this parameter might be when you are
+  // initially populating a large database.
+  //
+  // Default: 2MB
+  size_t max_file_size;
+
   // Compress blocks using the specified compression algorithm.  This
   // parameter can be changed dynamically.
   //
@@ -131,6 +140,12 @@ struct Options
   // efficiently detect that and will switch to uncompressed mode.
   CompressionType compression;
 
+  // EXPERIMENTAL: If true, append to existing MANIFEST and log files
+  // when a database is opened.  This can significantly speed up open.
+  //
+  // Default: currently false, but may become true later.
+  bool reuse_logs;
+
   // If non-NULL, use the specified filter policy to reduce disk reads.
   // Many applications will benefit from passing the result of
   // NewBloomFilterPolicy() here.
@@ -143,8 +158,7 @@ struct Options
 };
 
 // Options that control read operations
-struct ReadOptions
-{
+struct ReadOptions {
   // If true, all data read from underlying storage will be
   // verified against corresponding checksums.
   // Default: false
@@ -165,14 +179,12 @@ struct ReadOptions
   ReadOptions()
       : verify_checksums(false),
         fill_cache(true),
-          snapshot(NULL)
-    {
+        snapshot(NULL) {
   }
 };
 
 // Options that control write operations
-struct WriteOptions
-{
+struct WriteOptions {
   // If true, the write will be flushed from the operating system
   // buffer cache (by calling WritableFile::Sync()) before the write
   // is considered complete.  If this flag is true, writes will be
@@ -192,8 +204,7 @@ struct WriteOptions
   bool sync;
 
   WriteOptions()
-        : sync(false)
-    {
+      : sync(false) {
   }
 };
 

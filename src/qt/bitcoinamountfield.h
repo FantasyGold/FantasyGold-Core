@@ -1,11 +1,11 @@
-// Copyright (c) 2011-2013 The Bitcoin developers
-// Distributed under the MIT/X11 software license, see the accompanying
+// Copyright (c) 2011-2018 The Bitcoin Core developers
+// Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
 #ifndef BITCOIN_QT_BITCOINAMOUNTFIELD_H
 #define BITCOIN_QT_BITCOINAMOUNTFIELD_H
 
-#include "amount.h"
+#include <amount.h>
 
 #include <QWidget>
 
@@ -17,17 +17,18 @@ QT_END_NAMESPACE
 
 /** Widget for entering bitcoin amounts.
   */
-class BitcoinAmountField : public QWidget {
+class BitcoinAmountField: public QWidget
+{
     Q_OBJECT
 
     // ugly hack: for some unknown reason CAmount (instead of qint64) does not work here as expected
     // discussion: https://github.com/bitcoin/bitcoin/pull/5117
     Q_PROPERTY(qint64 value READ value WRITE setValue NOTIFY valueChanged USER true)
 
-  public:
-    explicit BitcoinAmountField(QWidget* parent = 0);
+public:
+    explicit BitcoinAmountField(QWidget *parent = 0);
 
-    CAmount value(bool* value = 0) const;
+    CAmount value(bool *value=0) const;
     void setValue(const CAmount& value);
 
     /** Set single step in satoshis **/
@@ -53,21 +54,25 @@ class BitcoinAmountField : public QWidget {
     /** Qt messes up the tab chain by default in some cases (issue https://bugreports.qt-project.org/browse/QTBUG-10907),
         in these cases we have to set it up manually.
     */
-    QWidget* setupTabChain(QWidget* prev);
+    QWidget *setupTabChain(QWidget *prev);
 
-  signals:
+    CAmount minimum() const;
+    void setMinimum(const CAmount& min);
+
+Q_SIGNALS:
     void valueChanged();
 
-  protected:
+protected:
     /** Intercept focus-in event and ',' key presses */
-    bool eventFilter(QObject* object, QEvent* event);
+    bool eventFilter(QObject *object, QEvent *event);
 
-  private:
-    AmountSpinBox* amount;
-    QValueComboBox* unit;
+private:
+    AmountSpinBox *amount;
+    QValueComboBox *unit;
 
-  private slots:
+private Q_SLOTS:
     void unitChanged(int idx);
+
 };
 
 #endif // BITCOIN_QT_BITCOINAMOUNTFIELD_H

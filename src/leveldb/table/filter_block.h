@@ -16,8 +16,7 @@
 #include "leveldb/slice.h"
 #include "util/hash.h"
 
-namespace leveldb
-{
+namespace leveldb {
 
 class FilterPolicy;
 
@@ -27,8 +26,7 @@ class FilterPolicy;
 //
 // The sequence of calls to FilterBlockBuilder must match the regexp:
 //      (StartBlock AddKey*)* Finish
-class FilterBlockBuilder
-{
+class FilterBlockBuilder {
  public:
   explicit FilterBlockBuilder(const FilterPolicy*);
 
@@ -51,8 +49,7 @@ class FilterBlockBuilder
   void operator=(const FilterBlockBuilder&);
 };
 
-class FilterBlockReader
-{
+class FilterBlockReader {
  public:
  // REQUIRES: "contents" and *policy must stay live while *this is live.
   FilterBlockReader(const FilterPolicy* policy, const Slice& contents);

@@ -1,4 +1,4 @@
-// Copyright (c) 2012-2014 The Bitcoin developers
+// Copyright (c) 2012-2018 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -10,7 +10,8 @@
 
 /** STL-like map container that only keeps the N elements with the highest value. */
 template <typename K, typename V>
-class limitedmap {
+class limitedmap
+{
 public:
     typedef K key_type;
     typedef V mapped_type;
@@ -26,39 +27,30 @@ protected:
     size_type nMaxSize;
 
 public:
-    limitedmap(size_type nMaxSizeIn = 0) {
+    explicit limitedmap(size_type nMaxSizeIn)
+    {
+        assert(nMaxSizeIn > 0);
         nMaxSize = nMaxSizeIn;
     }
-    const_iterator begin() const {
-        return map.begin();
-    }
-    const_iterator end() const {
-        return map.end();
-    }
-    size_type size() const {
-        return map.size();
-    }
-    bool empty() const {
-        return map.empty();
-    }
-    const_iterator find(const key_type& k) const {
-        return map.find(k);
-    }
-    size_type count(const key_type& k) const {
-        return map.count(k);
-    }
-    void insert(const value_type& x) {
+    const_iterator begin() const { return map.begin(); }
+    const_iterator end() const { return map.end(); }
+    size_type size() const { return map.size(); }
+    bool empty() const { return map.empty(); }
+    const_iterator find(const key_type& k) const { return map.find(k); }
+    size_type count(const key_type& k) const { return map.count(k); }
+    void insert(const value_type& x)
+    {
         std::pair<iterator, bool> ret = map.insert(x);
         if (ret.second) {
-            if (nMaxSize && map.size() == nMaxSize) {
+            if (map.size() > nMaxSize) {
                 map.erase(rmap.begin()->second);
                 rmap.erase(rmap.begin());
             }
             rmap.insert(make_pair(x.second, ret.first));
         }
-        return;
     }
-    void erase(const key_type& k) {
+    void erase(const key_type& k)
+    {
         iterator itTarget = map.find(k);
         if (itTarget == map.end())
             return;
@@ -72,9 +64,13 @@ public:
         // Shouldn't ever get here
         assert(0);
     }
-    void update(const_iterator itIn, const mapped_type& v) {
-        // TODO: When we switch to C++11, use map.erase(itIn, itIn) to get the non-const iterator.
-        iterator itTarget = map.find(itIn->first);
+    void update(const_iterator itIn, const mapped_type& v)
+    {
+        // Using map::erase() with empty range instead of map::find() to get a non-const iterator,
+        // since it is a constant time operation in C++11. For more details, see
+        // https://stackoverflow.com/questions/765148/how-to-remove-constness-of-const-iterator
+        iterator itTarget = map.erase(itIn, itIn);
+
         if (itTarget == map.end())
             return;
         std::pair<rmap_iterator, rmap_iterator> itPair = rmap.equal_range(itTarget->second);
@@ -88,15 +84,14 @@ public:
         // Shouldn't ever get here
         assert(0);
     }
-    size_type max_size() const {
-        return nMaxSize;
-    }
-    size_type max_size(size_type s) {
-        if (s)
-            while (map.size() > s) {
-                map.erase(rmap.begin()->second);
-                rmap.erase(rmap.begin());
-            }
+    size_type max_size() const { return nMaxSize; }
+    size_type max_size(size_type s)
+    {
+        assert(s > 0);
+        while (map.size() > s) {
+            map.erase(rmap.begin()->second);
+            rmap.erase(rmap.begin());
+        }
         nMaxSize = s;
         return nMaxSize;
     }

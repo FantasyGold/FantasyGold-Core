@@ -1,24 +1,24 @@
 ---
-name: "fantasygold-linux-1.2"
+name: "fantasygold-linux-0.17"
 enable_cache: true
 suites:
-- "trusty"
+- "bionic"
 architectures:
 - "amd64"
-packages: 
+packages:
 - "curl"
 - "g++-aarch64-linux-gnu"
-- "g++-4.8-aarch64-linux-gnu"
-- "gcc-4.8-aarch64-linux-gnu"
+- "g++-7-aarch64-linux-gnu"
+- "gcc-7-aarch64-linux-gnu"
 - "binutils-aarch64-linux-gnu"
 - "g++-arm-linux-gnueabihf"
-- "g++-4.8-arm-linux-gnueabihf"
-- "gcc-4.8-arm-linux-gnueabihf"
+- "g++-7-arm-linux-gnueabihf"
+- "gcc-7-arm-linux-gnueabihf"
 - "binutils-arm-linux-gnueabihf"
-- "g++-4.8-multilib"
-- "gcc-4.8-multilib"
+- "g++-7-multilib"
+- "gcc-7-multilib"
 - "binutils-gold"
-- "git-core"
+- "git"
 - "pkg-config"
 - "autoconf"
 - "libtool"
@@ -27,15 +27,25 @@ packages:
 - "bsdmainutils"
 - "ca-certificates"
 - "python"
-reference_datetime: "2015-06-01 00:00:00"
+- "cmake"
+- "libcurl4-openssl-dev"
+- "libgmp-dev"
+- "libmicrohttpd-dev"
+- "libminiupnpc-dev"
 remotes:
 - "url": "https://github.com/FantasyGold/FantasyGold-Core.git"
-  "dir": "FantasyGold-Core"
+  "dir": "fantasygold"
+- "url": "https://github.com/fantasygold/cpp-eth-fantasygold.git"
+  "dir": "cpp-eth-fantasygold"
 files: []
 script: |
+  #this is a hack since gitian has no natural support for submodules
+  #make sure this file exists... 
+  cp -r cpp-eth-fantasygold/* fantasygold/src/cpp-ethereum
+  cat fantasygold/src/cpp-ethereum/utils/libscrypt/b64.c 
 
   WRAP_DIR=$HOME/wrapped
-  HOSTS="i686-pc-linux-gnu x86_64-linux-gnu arm-linux-gnueabihf"
+  HOSTS="i686-pc-linux-gnu x86_64-linux-gnu arm-linux-gnueabihf aarch64-linux-gnu"
   CONFIGFLAGS="--enable-glibc-back-compat --enable-reduce-exports --disable-bench --disable-gui-tests"
   FAKETIME_HOST_PROGS=""
   FAKETIME_PROGS="date ar ranlib nm"
@@ -44,6 +54,7 @@ script: |
   HOST_LDFLAGS=-static-libstdc++
 
   export QT_RCC_TEST=1
+  export QT_RCC_SOURCE_DATE_OVERRIDE=1
   export GZIP="-9n"
   export TAR_OPTIONS="--mtime="$REFERENCE_DATE\\\ $REFERENCE_TIME""
   export TZ="UTC"
@@ -57,7 +68,7 @@ script: |
 
   function create_global_faketime_wrappers {
   for prog in ${FAKETIME_PROGS}; do
-    echo '#!/bin/bash' > ${WRAP_DIR}/${prog}
+    echo '#!/usr/bin/env bash' > ${WRAP_DIR}/${prog}
     echo "REAL=\`which -a ${prog} | grep -v ${WRAP_DIR}/${prog} | head -1\`" >> ${WRAP_DIR}/${prog}
     echo 'export LD_PRELOAD=/usr/lib/x86_64-linux-gnu/faketime/libfaketime.so.1' >> ${WRAP_DIR}/${prog}
     echo "export FAKETIME=\"$1\"" >> ${WRAP_DIR}/${prog}
@@ -69,7 +80,7 @@ script: |
   function create_per-host_faketime_wrappers {
   for i in $HOSTS; do
     for prog in ${FAKETIME_HOST_PROGS}; do
-        echo '#!/bin/bash' > ${WRAP_DIR}/${i}-${prog}
+        echo '#!/usr/bin/env bash' > ${WRAP_DIR}/${i}-${prog}
         echo "REAL=\`which -a ${i}-${prog} | grep -v ${WRAP_DIR}/${i}-${prog} | head -1\`" >> ${WRAP_DIR}/${i}-${prog}
         echo 'export LD_PRELOAD=/usr/lib/x86_64-linux-gnu/faketime/libfaketime.so.1' >> ${WRAP_DIR}/${i}-${prog}
         echo "export FAKETIME=\"$1\"" >> ${WRAP_DIR}/${i}-${prog}
@@ -99,7 +110,7 @@ script: |
   for prog in gcc g++; do
   rm -f ${WRAP_DIR}/${prog}
   cat << EOF > ${WRAP_DIR}/${prog}
-  #!/bin/bash
+  #!/usr/bin/env bash
   REAL="`which -a ${prog} | grep -v ${WRAP_DIR}/${prog} | head -1`"
   for var in "\$@"
   do
@@ -135,7 +146,7 @@ script: |
   # Create the release tarball using (arbitrarily) the first host
   ./autogen.sh
   CONFIG_SITE=${BASEPREFIX}/`echo "${HOSTS}" | awk '{print $1;}'`/share/config.site ./configure --prefix=/
-  make dist
+  make V=1 dist
   SOURCEDIST=`echo fantasygold-*.tar.gz`
   DISTNAME=`echo ${SOURCEDIST} | sed 's/.tar.*//'`
   # Correct tar file order
@@ -144,6 +155,9 @@ script: |
   tar xf ../$SOURCEDIST
   find fantasygold-* | sort | tar --no-recursion --mode='u+rw,go+r-w,a+X' --owner=0 --group=0 -c -T - | gzip -9n > ../$SOURCEDIST
   popd
+
+  # Workaround for tarball not building with the bare tag version (prep)
+  make -C src obj/build.h
 
   ORIGPATH="$PATH"
   # Extract the release tarball into a dir for each host and build
@@ -155,8 +169,24 @@ script: |
     mkdir -p ${INSTALLPATH}
     tar --strip-components=1 -xf ../$SOURCEDIST
 
+    # Workaround for tarball not building with the bare tag version
+    echo '#!/bin/true' >share/genbuild.sh
+    mkdir src/obj
+    cp ../src/obj/build.h src/obj/
+
     CONFIG_SITE=${BASEPREFIX}/${i}/share/config.site ./configure --prefix=/ --disable-ccache --disable-maintainer-mode --disable-dependency-tracking ${CONFIGFLAGS} CFLAGS="${HOST_CFLAGS}" CXXFLAGS="${HOST_CXXFLAGS}" LDFLAGS="${HOST_LDFLAGS}"
-    make ${MAKEOPTS}
+    make V=1 ${MAKEOPTS}
+    make V=1 ${MAKEOPTS} -C src check-security
+
+    #TODO: This is a quick hack that disables symbol checking for arm.
+    #      Instead, we should investigate why these are popping up.
+    #      For aarch64, we'll need to bump up the min GLIBC version, as the abi
+    #      support wasn't introduced until 2.17.
+    case $i in
+       aarch64-*) : ;;
+       arm-*) : ;;
+       *) make ${MAKEOPTS} -C src check-symbols ;;
+    esac
 
     make install DESTDIR=${INSTALLPATH}
     cd installed
@@ -164,12 +194,11 @@ script: |
     find . -name "lib*.a" -delete
     rm -rf ${DISTNAME}/lib/pkgconfig
     find ${DISTNAME}/bin -type f -executable -exec ../contrib/devtools/split-debug.sh {} {} {}.dbg \;
-    # find ${DISTNAME}/lib -type f -exec ../contrib/devtools/split-debug.sh {} {} {}.dbg \;
+    find ${DISTNAME}/lib -type f -exec ../contrib/devtools/split-debug.sh {} {} {}.dbg \;
     find ${DISTNAME} -not -name "*.dbg" | sort | tar --no-recursion --mode='u+rw,go+r-w,a+X' --owner=0 --group=0 -c -T - | gzip -9n > ${OUTDIR}/${DISTNAME}-${i}.tar.gz
     find ${DISTNAME} -name "*.dbg" | sort | tar --no-recursion --mode='u+rw,go+r-w,a+X' --owner=0 --group=0 -c -T - | gzip -9n > ${OUTDIR}/${DISTNAME}-${i}-debug.tar.gz
     cd ../../
     rm -rf distsrc-${i}
   done
-  mkdir -p $OUTDIR/src
   mkdir -p $OUTDIR/src
   mv $SOURCEDIST $OUTDIR/src

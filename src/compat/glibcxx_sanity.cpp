@@ -1,4 +1,4 @@
-// Copyright (c) 2009-2014 The Bitcoin developers
+// Copyright (c) 2009-2018 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -30,8 +30,7 @@ bool sanity_test_list(unsigned int size)
     if (test.size() != size)
         return false;
 
-    while (!test.empty())
-    {
+    while (!test.empty()) {
         if (test.back() != test.size())
             return false;
         test.pop_back();
@@ -39,7 +38,7 @@ bool sanity_test_list(unsigned int size)
     return true;
 }
 
-} // anon namespace
+} // namespace
 
 // trigger: string::at(x) on an empty string to trigger __throw_out_of_range_fmt.
 // test: force std::string to throw an out_of_range exception. Verify that
@@ -47,16 +46,11 @@ bool sanity_test_list(unsigned int size)
 bool sanity_test_range_fmt()
 {
     std::string test;
-    try
-    {
+    try {
         test.at(1);
-    }
-    catch (const std::out_of_range&)
-    {
+    } catch (const std::out_of_range&) {
         return true;
-    }
-    catch (...)
-    {
+    } catch (...) {
     }
     return false;
 }

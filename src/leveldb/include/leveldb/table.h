@@ -8,8 +8,7 @@
 #include <stdint.h>
 #include "leveldb/iterator.h"
 
-namespace leveldb
-{
+namespace leveldb {
 
 class Block;
 class BlockHandle;
@@ -22,8 +21,7 @@ class TableCache;
 // A Table is a sorted map from strings to strings.  Tables are
 // immutable and persistent.  A Table may be safely accessed from
 // multiple threads without external synchronization.
-class Table
-{
+class Table {
  public:
   // Attempt to open the table that is stored in bytes [0..file_size)
   // of "file", and read the metadata entries necessary to allow
@@ -61,10 +59,7 @@ class Table
   struct Rep;
   Rep* rep_;
 
-    explicit Table(Rep* rep)
-    {
-        rep_ = rep;
-    }
+  explicit Table(Rep* rep) { rep_ = rep; }
   static Iterator* BlockReader(void*, const ReadOptions&, const Slice&);
 
   // Calls (*handle_result)(arg, ...) with the entry found after a call

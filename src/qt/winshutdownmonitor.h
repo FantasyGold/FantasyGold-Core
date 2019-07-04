@@ -1,5 +1,5 @@
-// Copyright (c) 2014 The Bitcoin developers
-// Distributed under the MIT/X11 software license, see the accompanying
+// Copyright (c) 2014-2018 The Bitcoin Core developers
+// Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
 #ifndef BITCOIN_QT_WINSHUTDOWNMONITOR_H
@@ -13,10 +13,11 @@
 
 #include <QAbstractNativeEventFilter>
 
-class WinShutdownMonitor : public QAbstractNativeEventFilter {
-  public:
+class WinShutdownMonitor : public QAbstractNativeEventFilter
+{
+public:
     /** Implements QAbstractNativeEventFilter interface for processing Windows messages */
-    bool nativeEventFilter(const QByteArray& eventType, void* pMessage, long* pnResult);
+    bool nativeEventFilter(const QByteArray &eventType, void *pMessage, long *pnResult);
 
     /** Register the reason for blocking shutdown on Windows to allow clean client exit */
     static void registerShutdownBlockReason(const QString& strReason, const HWND& mainWinId);

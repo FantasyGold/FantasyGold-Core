@@ -1,22 +1,19 @@
 // Copyright (c) 2010 Satoshi Nakamoto
-// Copyright (c) 2009-2014 The Bitcoin developers
-// Copyright (c) 2014-2015 The Dash developers
-// Copyright (c) 2015-2017 The PIVX developers
-// Copyright (c) 2017-2018 The Bulwark Core Developers
-// Copyright (c) 2017-2018 The FantasyGold developers
-// Distributed under the MIT/X11 software license, see the accompanying
+// Copyright (c) 2009-2018 The Bitcoin Core developers
+// Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#include "noui.h"
+#include <noui.h>
 
-#include "ui_interface.h"
-#include "util.h"
+#include <ui_interface.h>
+#include <util.h>
 
 #include <cstdio>
 #include <stdint.h>
 #include <string>
 
-static bool noui_ThreadSafeMessageBox(const std::string& message, const std::string& caption, unsigned int style) {
+static bool noui_ThreadSafeMessageBox(const std::string& message, const std::string& caption, unsigned int style)
+{
     bool fSecure = style & CClientUIInterface::SECURE;
     style &= ~CClientUIInterface::SECURE;
 
@@ -42,12 +39,20 @@ static bool noui_ThreadSafeMessageBox(const std::string& message, const std::str
     return false;
 }
 
-static void noui_InitMessage(const std::string& message) {
+static bool noui_ThreadSafeQuestion(const std::string& /* ignored interactive message */, const std::string& message, const std::string& caption, unsigned int style)
+{
+    return noui_ThreadSafeMessageBox(message, caption, style);
+}
+
+static void noui_InitMessage(const std::string& message)
+{
     LogPrintf("init message: %s\n", message);
 }
 
-void noui_connect() {
-    // Connect fantasygoldd signal handlers
+void noui_connect()
+{
+    // Connect bitcoind signal handlers
     uiInterface.ThreadSafeMessageBox.connect(noui_ThreadSafeMessageBox);
+    uiInterface.ThreadSafeQuestion.connect(noui_ThreadSafeQuestion);
     uiInterface.InitMessage.connect(noui_InitMessage);
 }

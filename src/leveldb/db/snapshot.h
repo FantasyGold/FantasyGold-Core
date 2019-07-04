@@ -5,17 +5,16 @@
 #ifndef STORAGE_LEVELDB_DB_SNAPSHOT_H_
 #define STORAGE_LEVELDB_DB_SNAPSHOT_H_
 
+#include "db/dbformat.h"
 #include "leveldb/db.h"
 
-namespace leveldb
-{
+namespace leveldb {
 
 class SnapshotList;
 
 // Snapshots are kept in a doubly-linked list in the DB.
 // Each SnapshotImpl corresponds to a particular sequence number.
-class SnapshotImpl : public Snapshot
-{
+class SnapshotImpl : public Snapshot {
  public:
   SequenceNumber number_;  // const after creation
 
@@ -29,32 +28,18 @@ class SnapshotImpl : public Snapshot
   SnapshotList* list_;                 // just for sanity checks
 };
 
-class SnapshotList
-{
+class SnapshotList {
  public:
-    SnapshotList()
-    {
+  SnapshotList() {
     list_.prev_ = &list_;
     list_.next_ = &list_;
   }
 
-    bool empty() const
-    {
-        return list_.next_ == &list_;
-    }
-    SnapshotImpl* oldest() const
-    {
-        assert(!empty());
-        return list_.next_;
-    }
-    SnapshotImpl* newest() const
-    {
-        assert(!empty());
-        return list_.prev_;
-    }
+  bool empty() const { return list_.next_ == &list_; }
+  SnapshotImpl* oldest() const { assert(!empty()); return list_.next_; }
+  SnapshotImpl* newest() const { assert(!empty()); return list_.prev_; }
 
-    const SnapshotImpl* New(SequenceNumber seq)
-    {
+  const SnapshotImpl* New(SequenceNumber seq) {
     SnapshotImpl* s = new SnapshotImpl;
     s->number_ = seq;
     s->list_ = this;
@@ -65,8 +50,7 @@ class SnapshotList
     return s;
   }
 
-    void Delete(const SnapshotImpl* s)
-    {
+  void Delete(const SnapshotImpl* s) {
     assert(s->list_ == this);
     s->prev_->next_ = s->next_;
     s->next_->prev_ = s->prev_;

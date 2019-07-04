@@ -1,120 +1,84 @@
-FantasyGold Core Documentation
-=====================
-
-### Tables of Contents
-
-- [Setup](#setup)
-- [Running](#running)
-	- [Unix](#unix)
-	- [Windows](#windows)
-	- [OSX](#osx)
-	- [Need Help?](#need-help)
-	- [Ran into a Bug?](#ran-into-a-bug)
-- [Building](#building)
-- [Development](#development)
-	- [Wallet Information](#wallet-information)
-	- [Masternode Information](#masternode-information)
-	- [Proof-of-Stake Information](#proof-of-stake-information)
-	- [Governance Information](#governance-information)
-	- [Transactions](#transactions)
-	- [Miscellaneous](#miscellaneous)
-- [License](#license)
+Bitcoin Core
+=============
 
 Setup
 ---------------------
-[FantasyGold Core](http://fantasygoldcrypto.com.org/#downloads) is the original FantasyGold client and it builds the backbone of the network. However, it downloads and stores the entire history of FGC transactions; depending on the speed of your computer and network connection, the synchronization process can take anywhere from a few hours to a day or more. Thankfully you only have to do this once.
+Bitcoin Core is the original Bitcoin client and it builds the backbone of the network. It downloads and, by default, stores the entire history of Bitcoin transactions (which is currently several GBs); depending on the speed of your computer and network connection, the synchronization process can take anywhere from a few hours to a day or more.
+
+To download Bitcoin Core, visit [bitcoincore.org](https://bitcoincore.org/en/releases/).
 
 Running
 ---------------------
-The following are some helpful notes on how to run fgc on your native platform.
+The following are some helpful notes on how to run Bitcoin Core on your native platform.
 
 ### Unix
 
 Unpack the files into a directory and run:
 
-- ./fantasygold-qt (GUI) or ./fantasygoldd (headless)
+- `bin/bitcoin-qt` (GUI) or
+- `bin/bitcoind` (headless)
 
 ### Windows
 
-Unpack the files into a directory, and then run fantasygold-qt.exe.
+Unpack the files into a directory, and then run bitcoin-qt.exe.
 
-### OSX
+### macOS
 
-Drag FantasyGold-Qt to your applications folder, and then run FantasyGold-Qt.
+Drag Bitcoin Core to your applications folder, and then run Bitcoin Core.
 
 ### Need Help?
 
-* Ask for help on [Discord](https://discord.me/fantasygoldcrypto) or on the [FantasyGold Telegram](https://t.me/fantasygoldcrypto).
-* Join our [Reddit Community](https://www.reddit.com/r/FantasyGoldCoin/)
-* Tweet at [FantasyGold-Crypto](https://twitter.com/FantasyGoldCoin)
-
-### Ran into a Bug?
-
-* Submit an Issue on our [GitHub](https://github.com/FantasyGold/FantasyGold-Core.git/issues)
+* See the documentation at the [Bitcoin Wiki](https://en.bitcoin.it/wiki/Main_Page)
+for help and more information.
+* Ask for help on [#bitcoin](http://webchat.freenode.net?channels=bitcoin) on Freenode. If you don't have an IRC client use [webchat here](http://webchat.freenode.net?channels=bitcoin).
+* Ask for help on the [BitcoinTalk](https://bitcointalk.org/) forums, in the [Technical Support board](https://bitcointalk.org/index.php?board=4.0).
 
 Building
 ---------------------
-The following are developer notes on how to build fgc on your native platform. They are not complete guides, but include notes on the necessary libraries, compile flags, etc.
+The following are developer notes on how to build Bitcoin Core on your native platform. They are not complete guides, but include notes on the necessary libraries, compile flags, etc.
 
-- [Unix Build Notes](building/Linux-Build-Guide.md)
-- [MacOS Build Notes](building/MacOS-Build-Guide.md)
-- [Windows Build Notes](building/Windows-Build-Guide.md)
-- [NetBSD Build Notes](building/NetBSD-build-guide.md)
-- [OpenBSD Build Notes](building/OpenBSD-build-guide.md)
+- [Dependencies](dependencies.md)
+- [macOS Build Notes](build-osx.md)
+- [Unix Build Notes](build-unix.md)
+- [Windows Build Notes](build-windows.md)
+- [OpenBSD Build Notes](build-openbsd.md)
+- [NetBSD Build Notes](build-netbsd.md)
+- [Gitian Building Guide](gitian-building.md)
 
 Development
 ---------------------
-The FantasyGold repo's [root README](https://github.com/FantasyGold/FantasyGold-Core.git/blob/master/README.md) contains relevant information our parameters.
+The Bitcoin repo's [root README](/README.md) contains relevant information on the development process and automated testing.
 
-- [Developer Notes](miscellaneous/Developer-Notes.md)
-- [Multiwallet Qt Development](fantasygold-core/multiwallet-qt.md)
-- [Release Notes](release-notes/)
-- [Unit Tests](miscellaneous/unit-tests.md)
-- [Unauthenticated REST Interface](fantasygold-core/REST-interface.md)
-- [Dnsseed Policy](miscellaneous/dnsseed-policy.md)
+- [Developer Notes](developer-notes.md)
+- [Release Notes](release-notes.md)
+- [Release Process](release-process.md)
+- [Source Code Documentation (External Link)](https://dev.visucore.com/bitcoin/doxygen/)
+- [Translation Process](translation_process.md)
+- [Translation Strings Policy](translation_strings_policy.md)
+- [Travis CI](travis-ci.md)
+- [Unauthenticated REST Interface](REST-interface.md)
+- [Shared Libraries](shared-libraries.md)
+- [BIPS](bips.md)
+- [Dnsseed Policy](dnsseed-policy.md)
+- [Benchmarking](benchmarking.md)
 
-### Wallet Information
-
-- [Core Files](fantasygold-core/FantasyGold-Core-Files.md)
-- [Default Data Locations](fantasygold-core/Default-Data-Locations.md)
-- [Running FantasyGold](fantasygold-core/Running-FantasyGold.md)
-- [Init Commands](fantasygold-core/fantasygoldd-init.md)
-- [API Calls](fantasygold-core/FantasyGold-API-Calls.md)
-- [Bootstrap](fantasygold-core/Bootstrap.md)
-- [Traffic Reduction](fantasygold-core/Reduce-Traffic-in-FantasyGold-Core.md)
-- [Accounts](fantasygold-core/Accounts-Explained.md)
-- [Multisend](fantasygold-core/Multisend-Setup-Guide.md)
-- [Data Locations](fantasygold-core/Default-Data-Locations.md)
-- [TOR Support](fantasygold-core/TOR-Support-In-FantasyGold.md)
-
-### Masternode Information
-
-- [Masternode Commands](masternode/Masternode-Commands.md)
-- [Installation](masternode/Masternode-Installation.md)
-- [RPC Changes](masternode/Masternode-RPC-Changes.md)
-- [Refresh Guide](masternode/Refresh-Guide.md)
-
-### Proof-of-Stake Information
-
-- [Staking Guide](proof-of-stake/Staking-Guide.md)
-- [Staking Troubleshooting CLI](proof-of-stake/Staking-Troubleshooting-CLI.md)
-- [Staking Troubleshooting GUI](proof-of-stake/Staking-Troubleshooting-GUI.md)
-
-### Governance Information
-
-- [Governance](miscellaneous/Governance.md)
-
-### Transactions
-
-- [ZeroMQ](transactions/Broadcasting-with-ZeroMQ.md)
-- [SwiftTX](transactions/SwiftTX-Technical-Information.md)
+### Resources
+* Discuss on the [BitcoinTalk](https://bitcointalk.org/) forums, in the [Development & Technical Discussion board](https://bitcointalk.org/index.php?board=6.0).
+* Discuss project-specific development on #bitcoin-core-dev on Freenode. If you don't have an IRC client use [webchat here](http://webchat.freenode.net/?channels=bitcoin-core-dev).
+* Discuss general Bitcoin development on #bitcoin-dev on Freenode. If you don't have an IRC client use [webchat here](http://webchat.freenode.net/?channels=bitcoin-dev).
 
 ### Miscellaneous
-
-- [Assets Attribution](miscellaneous/assets-attribution.md)
+- [Assets Attribution](assets-attribution.md)
+- [Files](files.md)
+- [Fuzz-testing](fuzzing.md)
+- [Reduce Traffic](reduce-traffic.md)
+- [Tor Support](tor.md)
+- [Init Scripts (systemd/upstart/openrc)](init.md)
+- [ZMQ](zmq.md)
+- [PSBT support](psbt.md)
 
 License
 ---------------------
-Distributed under the [MIT/X11 software license](http://www.opensource.org/licenses/mit-license.php).
+Distributed under the [MIT software license](/COPYING).
 This product includes software developed by the OpenSSL Project for use in the [OpenSSL Toolkit](https://www.openssl.org/). This product includes
 cryptographic software written by Eric Young ([eay@cryptsoft.com](mailto:eay@cryptsoft.com)), and UPnP software written by Thomas Bernard.

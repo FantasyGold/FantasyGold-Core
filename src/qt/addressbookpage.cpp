@@ -1,94 +1,139 @@
-// Copyright (c) 2011-2014 The Bitcoin developers
-// Copyright (c) 2014-2015 The Dash developers
-// Copyright (c) 2015-2017 The PIVX developers
-// Copyright (c) 2017-2018 The Bulwark Core Developers
-// Copyright (c) 2017-2018 The FantasyGold developers
-// Distributed under the MIT/X11 software license, see the accompanying
+// Copyright (c) 2011-2018 The Bitcoin Core developers
+// Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
 #if defined(HAVE_CONFIG_H)
-#include "config/fantasygold-config.h"
+#include <config/bitcoin-config.h>
 #endif
 
-#include "addressbookpage.h"
-#include "ui_addressbookpage.h"
+#include <qt/addressbookpage.h>
+#include <qt/forms/ui_addressbookpage.h>
 
-#include "addresstablemodel.h"
-#include "bitcoingui.h"
-#include "csvmodelwriter.h"
-#include "editaddressdialog.h"
-#include "guiutil.h"
-#include "qtmaterialflatbutton.h"
+#include <qt/addresstablemodel.h>
+#include <qt/bitcoingui.h>
+#include <qt/csvmodelwriter.h>
+#include <qt/editaddressdialog.h>
+#include <qt/guiutil.h>
+#include <qt/platformstyle.h>
+#include <qt/styleSheet.h>
 
 #include <QIcon>
 #include <QMenu>
 #include <QMessageBox>
 #include <QSortFilterProxyModel>
 
-AddressBookPage::AddressBookPage(Mode mode, Tabs tab, QWidget* parent) : QDialog(parent, Qt::WindowSystemMenuHint | Qt::WindowTitleHint | Qt::WindowCloseButtonHint),
+class AddressBookSortFilterProxyModel final : public QSortFilterProxyModel
+{
+    const QString m_type;
+
+public:
+    AddressBookSortFilterProxyModel(const QString& type, QObject* parent)
+        : QSortFilterProxyModel(parent)
+        , m_type(type)
+    {
+        setDynamicSortFilter(true);
+        setFilterCaseSensitivity(Qt::CaseInsensitive);
+        setSortCaseSensitivity(Qt::CaseInsensitive);
+    }
+
+protected:
+    bool filterAcceptsRow(int row, const QModelIndex& parent) const
+    {
+        auto model = sourceModel();
+        auto label = model->index(row, AddressTableModel::Label, parent);
+
+        if (model->data(label, AddressTableModel::TypeRole).toString() != m_type) {
+            return false;
+        }
+
+        auto address = model->index(row, AddressTableModel::Address, parent);
+
+        if (filterRegExp().indexIn(model->data(address).toString()) < 0 &&
+            filterRegExp().indexIn(model->data(label).toString()) < 0) {
+            return false;
+        }
+
+        return true;
+    }
+};
+
+AddressBookPage::AddressBookPage(const PlatformStyle *platformStyle, Mode _mode, Tabs _tab, QWidget *parent) :
+    QDialog(parent),
     ui(new Ui::AddressBookPage),
     model(0),
-    mode(mode),
-    tab(tab) {
+    mode(_mode),
+    tab(_tab)
+{
     ui->setupUi(this);
 
-#ifdef Q_OS_MAC // Icons on push buttons are very uncommon on Mac
-    ui->newAddress->setIcon(QIcon());
-    ui->copyAddress->setIcon(QIcon());
-    ui->deleteAddress->setIcon(QIcon());
-    ui->exportButton->setIcon(QIcon());
-#endif
+    SetObjectStyleSheet(ui->tableView, StyleSheetNames::TableViewLight);
+    setStyleSheet("");
 
-    switch (mode) {
+    if (!platformStyle->getImagesOnButtons()) {
+        ui->newAddress->setIcon(QIcon());
+        ui->copyAddress->setIcon(QIcon());
+        ui->deleteAddress->setIcon(QIcon());
+        ui->exportButton->setIcon(QIcon());
+    } else {
+        ui->newAddress->setIcon(platformStyle->MultiStatesIcon(":/icons/add", PlatformStyle::PushButton, 0x5a5a5d));
+        ui->copyAddress->setIcon(platformStyle->MultiStatesIcon(":/icons/editcopy", PlatformStyle::PushButton, 0x5a5a5d));
+        ui->deleteAddress->setIcon(platformStyle->MultiStatesIcon(":/icons/remove", PlatformStyle::PushButton, 0x5a5a5d));
+        ui->exportButton->setIcon(platformStyle->MultiStatesIcon(":/icons/export", PlatformStyle::PushButton));
+    }
+
+    SetObjectStyleSheet(ui->newAddress, StyleSheetNames::ButtonWhite);
+    SetObjectStyleSheet(ui->copyAddress, StyleSheetNames::ButtonWhite);
+    SetObjectStyleSheet(ui->deleteAddress, StyleSheetNames::ButtonWhite);
+    SetObjectStyleSheet(ui->exportButton, StyleSheetNames::ButtonBlue);
+    SetObjectStyleSheet(ui->closeButton, StyleSheetNames::ButtonBlue);
+    switch(mode)
+    {
     case ForSelection:
-        switch (tab) {
-        case SendingTab:
-            setWindowTitle(tr("Choose the address to send coins to"));
-            break;
-        case ReceivingTab:
-            setWindowTitle(tr("Choose the address to receive coins with"));
-            break;
+        switch(tab)
+        {
+        case SendingTab: setWindowTitle(tr("Choose the address to send coins to")); break;
+        case ReceivingTab: setWindowTitle(tr("Choose the address to receive coins with")); break;
         }
         connect(ui->tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(accept()));
         ui->tableView->setEditTriggers(QAbstractItemView::NoEditTriggers);
         ui->tableView->setFocus();
-        ui->closeButton->setText(tr("Choose"));
+        ui->closeButton->setText(tr("C&hoose"));
         ui->exportButton->hide();
         break;
     case ForEditing:
-        switch (tab) {
-        case SendingTab:
-            setWindowTitle(tr("Sending addresses"));
-            break;
-        case ReceivingTab:
-            setWindowTitle(tr("Receiving addresses"));
-            break;
+        switch(tab)
+        {
+        case SendingTab: setWindowTitle(tr("Sending addresses")); break;
+        case ReceivingTab: setWindowTitle(tr("Receiving addresses")); break;
         }
         break;
     }
-    switch (tab) {
+    switch(tab)
+    {
     case SendingTab:
         ui->labelExplanation->setText(tr("These are your FantasyGold addresses for sending payments. Always check the amount and the receiving address before sending coins."));
         ui->deleteAddress->setVisible(true);
+        ui->newAddress->setVisible(true);
         break;
     case ReceivingTab:
         ui->labelExplanation->setText(tr("These are your FantasyGold addresses for receiving payments. It is recommended to use a new receiving address for each transaction."));
         ui->deleteAddress->setVisible(false);
+        ui->newAddress->setVisible(false);
         break;
     }
 
     // Context menu actions
-    QAction* copyAddressAction = new QAction(tr("&Copy Address"), this);
-    QAction* copyLabelAction = new QAction(tr("Copy &Label"), this);
-    QAction* editAction = new QAction(tr("&Edit"), this);
+    QAction *copyAddressAction = new QAction(tr("&Copy Address"), this);
+    QAction *copyLabelAction = new QAction(tr("Copy &Label"), this);
+    QAction *editAction = new QAction(tr("&Edit"), this);
     deleteAction = new QAction(ui->deleteAddress->text(), this);
 
     // Build context menu
-    contextMenu = new QMenu();
+    contextMenu = new QMenu(this);
     contextMenu->addAction(copyAddressAction);
     contextMenu->addAction(copyLabelAction);
     contextMenu->addAction(editAction);
-    if (tab == SendingTab)
+    if(tab == SendingTab)
         contextMenu->addAction(deleteAction);
     contextMenu->addSeparator();
 
@@ -103,32 +148,23 @@ AddressBookPage::AddressBookPage(Mode mode, Tabs tab, QWidget* parent) : QDialog
     connect(ui->closeButton, SIGNAL(clicked()), this, SLOT(accept()));
 }
 
-AddressBookPage::~AddressBookPage() {
+AddressBookPage::~AddressBookPage()
+{
     delete ui;
 }
 
-void AddressBookPage::setModel(AddressTableModel* model) {
-    this->model = model;
-    if (!model)
+void AddressBookPage::setModel(AddressTableModel *_model)
+{
+    this->model = _model;
+    if(!_model)
         return;
 
-    proxyModel = new QSortFilterProxyModel(this);
-    proxyModel->setSourceModel(model);
-    proxyModel->setDynamicSortFilter(true);
-    proxyModel->setSortCaseSensitivity(Qt::CaseInsensitive);
-    proxyModel->setFilterCaseSensitivity(Qt::CaseInsensitive);
-    switch (tab) {
-    case ReceivingTab:
-        // Receive filter
-        proxyModel->setFilterRole(AddressTableModel::TypeRole);
-        proxyModel->setFilterFixedString(AddressTableModel::Receive);
-        break;
-    case SendingTab:
-        // Send filter
-        proxyModel->setFilterRole(AddressTableModel::TypeRole);
-        proxyModel->setFilterFixedString(AddressTableModel::Send);
-        break;
-    }
+    auto type = tab == ReceivingTab ? AddressTableModel::Receive : AddressTableModel::Send;
+    proxyModel = new AddressBookSortFilterProxyModel(type, this);
+    proxyModel->setSourceModel(_model);
+
+    connect(ui->searchLineEdit, SIGNAL(textChanged(QString)), proxyModel, SLOT(setFilterWildcard(QString)));
+
     ui->tableView->setModel(proxyModel);
     ui->tableView->sortByColumn(0, Qt::AscendingOrder);
 
@@ -136,78 +172,87 @@ void AddressBookPage::setModel(AddressTableModel* model) {
     ui->tableView->horizontalHeader()->setSectionResizeMode(AddressTableModel::Label, QHeaderView::Stretch);
     ui->tableView->horizontalHeader()->setSectionResizeMode(AddressTableModel::Address, QHeaderView::ResizeToContents);
 
-    connect(ui->tableView->selectionModel(), SIGNAL(selectionChanged(QItemSelection, QItemSelection)),
-            this, SLOT(selectionChanged()));
+    connect(ui->tableView->selectionModel(), SIGNAL(selectionChanged(QItemSelection,QItemSelection)),
+        this, SLOT(selectionChanged()));
 
     // Select row for newly created address
-    connect(model, SIGNAL(rowsInserted(QModelIndex, int, int)), this, SLOT(selectNewAddress(QModelIndex, int, int)));
+    connect(_model, SIGNAL(rowsInserted(QModelIndex,int,int)), this, SLOT(selectNewAddress(QModelIndex,int,int)));
 
     selectionChanged();
 }
 
-void AddressBookPage::on_copyAddress_clicked() {
+void AddressBookPage::on_copyAddress_clicked()
+{
     GUIUtil::copyEntryData(ui->tableView, AddressTableModel::Address);
 }
 
-void AddressBookPage::onCopyLabelAction() {
+void AddressBookPage::onCopyLabelAction()
+{
     GUIUtil::copyEntryData(ui->tableView, AddressTableModel::Label);
 }
 
-void AddressBookPage::onEditAction() {
-    if (!model)
+void AddressBookPage::onEditAction()
+{
+    if(!model)
         return;
 
-    if (!ui->tableView->selectionModel())
+    if(!ui->tableView->selectionModel())
         return;
     QModelIndexList indexes = ui->tableView->selectionModel()->selectedRows();
-    if (indexes.isEmpty())
+    if(indexes.isEmpty())
         return;
 
     EditAddressDialog dlg(
         tab == SendingTab ?
         EditAddressDialog::EditSendingAddress :
-        EditAddressDialog::EditReceivingAddress,
-        this);
+        EditAddressDialog::EditReceivingAddress, this);
     dlg.setModel(model);
     QModelIndex origIndex = proxyModel->mapToSource(indexes.at(0));
     dlg.loadRow(origIndex.row());
     dlg.exec();
 }
 
-void AddressBookPage::on_newAddress_clicked() {
-    if (!model)
+void AddressBookPage::on_newAddress_clicked()
+{
+    if(!model)
         return;
 
-    EditAddressDialog dlg(
-        tab == SendingTab ?
-        EditAddressDialog::NewSendingAddress :
-        EditAddressDialog::NewReceivingAddress,
-        this);
+    if (tab == ReceivingTab) {
+        return;
+    }
+
+    EditAddressDialog dlg(EditAddressDialog::NewSendingAddress, this);
     dlg.setModel(model);
-    if (dlg.exec()) {
+    if(dlg.exec())
+    {
         newAddressToSelect = dlg.getAddress();
     }
 }
 
-void AddressBookPage::on_deleteAddress_clicked() {
-    QTableView* table = ui->tableView;
-    if (!table->selectionModel())
+void AddressBookPage::on_deleteAddress_clicked()
+{
+    QTableView *table = ui->tableView;
+    if(!table->selectionModel())
         return;
 
     QModelIndexList indexes = table->selectionModel()->selectedRows();
-    if (!indexes.isEmpty()) {
+    if(!indexes.isEmpty())
+    {
         table->model()->removeRow(indexes.at(0).row());
     }
 }
 
-void AddressBookPage::selectionChanged() {
+void AddressBookPage::selectionChanged()
+{
     // Set button states based on selected tab and selection
-    QTableView* table = ui->tableView;
-    if (!table->selectionModel())
+    QTableView *table = ui->tableView;
+    if(!table->selectionModel())
         return;
 
-    if (table->selectionModel()->hasSelection()) {
-        switch (tab) {
+    if(table->selectionModel()->hasSelection())
+    {
+        switch(tab)
+        {
         case SendingTab:
             // In sending tab, allow deletion of selection
             ui->deleteAddress->setEnabled(true);
@@ -222,26 +267,30 @@ void AddressBookPage::selectionChanged() {
             break;
         }
         ui->copyAddress->setEnabled(true);
-    } else {
+    }
+    else
+    {
         ui->deleteAddress->setEnabled(false);
         ui->copyAddress->setEnabled(false);
     }
 }
 
-void AddressBookPage::done(int retval) {
-    QTableView* table = ui->tableView;
-    if (!table->selectionModel() || !table->model())
+void AddressBookPage::done(int retval)
+{
+    QTableView *table = ui->tableView;
+    if(!table->selectionModel() || !table->model())
         return;
 
     // Figure out which address was selected, and return it
     QModelIndexList indexes = table->selectionModel()->selectedRows(AddressTableModel::Address);
 
-    foreach (QModelIndex index, indexes) {
+    for (const QModelIndex& index : indexes) {
         QVariant address = table->model()->data(index);
         returnValue = address.toString();
     }
 
-    if (returnValue.isEmpty()) {
+    if(returnValue.isEmpty())
+    {
         // If no address entry selected, return rejected
         retval = Rejected;
     }
@@ -249,11 +298,12 @@ void AddressBookPage::done(int retval) {
     QDialog::done(retval);
 }
 
-void AddressBookPage::on_exportButton_clicked() {
+void AddressBookPage::on_exportButton_clicked()
+{
     // CSV is currently the only supported format
     QString filename = GUIUtil::getSaveFileName(this,
-                       tr("Export Address List"), QString(),
-                       tr("Comma separated file (*.csv)"), NULL);
+        tr("Export Address List"), QString(),
+        tr("Comma separated file (*.csv)"), nullptr);
 
     if (filename.isNull())
         return;
@@ -265,22 +315,26 @@ void AddressBookPage::on_exportButton_clicked() {
     writer.addColumn("Label", AddressTableModel::Label, Qt::EditRole);
     writer.addColumn("Address", AddressTableModel::Address, Qt::EditRole);
 
-    if (!writer.write()) {
+    if(!writer.write()) {
         QMessageBox::critical(this, tr("Exporting Failed"),
-                              tr("There was an error trying to save the address list to %1. Please try again.").arg(filename));
+            tr("There was an error trying to save the address list to %1. Please try again.").arg(filename));
     }
 }
 
-void AddressBookPage::contextualMenu(const QPoint& point) {
+void AddressBookPage::contextualMenu(const QPoint &point)
+{
     QModelIndex index = ui->tableView->indexAt(point);
-    if (index.isValid()) {
+    if(index.isValid())
+    {
         contextMenu->exec(QCursor::pos());
     }
 }
 
-void AddressBookPage::selectNewAddress(const QModelIndex& parent, int begin, int /*end*/) {
+void AddressBookPage::selectNewAddress(const QModelIndex &parent, int begin, int /*end*/)
+{
     QModelIndex idx = proxyModel->mapFromSource(model->index(begin, AddressTableModel::Address, parent));
-    if (idx.isValid() && (idx.data(Qt::EditRole).toString() == newAddressToSelect)) {
+    if(idx.isValid() && (idx.data(Qt::EditRole).toString() == newAddressToSelect))
+    {
         // Select row of newly created address, once
         ui->tableView->setFocus();
         ui->tableView->selectRow(idx.row());
