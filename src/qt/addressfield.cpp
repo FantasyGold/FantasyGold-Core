@@ -1,4 +1,5 @@
-// Copyright (c) 2016-2017 The FantasyGold Core developers
+// Copyright (c) 2016-2017 The Qtum Core developers
+// Copyright (c) 2018-2019 The FantasyGold Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 

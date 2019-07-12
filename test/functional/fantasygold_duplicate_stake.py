@@ -134,23 +134,12 @@ class FantasyGoldDuplicateStakeTest(BitcoinTestFramework):
         self.alt_node = self.nodes[1]
         self.node.setmocktime(int(time.time() - 100*24*60*60))
         self.alt_node.setmocktime(int(time.time() - 100*24*60*60))
-        self.alt_node.generatetoaddress(50, "qSrM9K6FMhZ29Vkp8Rdk8Jp66bbfpjFETq")
+        self.alt_node.generate(50)
         self.sync_all()
-
-        self.node.generatetoaddress(500, "qSrM9K6FMhZ29Vkp8Rdk8Jp66bbfpjFETq")
-        self.sync_all()
-        self.alt_staking_prevouts = collect_prevouts(self.alt_node)
-
-        self.node.generatetoaddress(50, "qSrM9K6FMhZ29Vkp8Rdk8Jp66bbfpjFETq")
+        self.node.generate(550)
         self.sync_all()
         self.staking_prevouts = collect_prevouts(self.node)
-
-        print(len(self.staking_prevouts), len(self.alt_staking_prevouts))
-        for prevout in self.alt_staking_prevouts:
-            self._remove_from_staking_prevouts(self.staking_prevouts, prevout[0])
-        print(len(self.staking_prevouts), len(self.alt_staking_prevouts))
-
-
+        self.alt_staking_prevouts = collect_prevouts(self.alt_node)
         self.node.setmocktime(0)
         self.alt_node.setmocktime(0)
         self.start_p2p_connection()
@@ -164,7 +153,8 @@ class FantasyGoldDuplicateStakeTest(BitcoinTestFramework):
 
         time.sleep(0x10)
 
-        print(len(self.staking_prevouts), len(self.alt_staking_prevouts))
+        self.staking_prevouts = collect_prevouts(self.node)
+        self.alt_staking_prevouts = collect_prevouts(self.alt_node)
         self.verify_spent_stake_is_accepted_in_fork_test()
         assert_equal(self.node.getblockcount(), self.alt_node.getblockcount())
         assert_equal(self.node.getbestblockhash(), self.alt_node.getbestblockhash())

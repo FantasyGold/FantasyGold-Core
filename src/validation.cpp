@@ -2089,11 +2089,12 @@ static int64_t nTimeTotal = 0;
 static int64_t nBlocksTotal = 0;
 
 /////////////////////////////////////////////////////////////////////// fantasygold
-bool GetSpentCoinFromBlock(const CBlockIndex* pindex, COutPoint prevout, Coin* coin) {
+bool GetSpentCoinFromTip(COutPoint prevout, Coin* coin) {
+    CBlockIndex* tip = chainActive.Tip();
     std::shared_ptr<CBlock> pblock = std::make_shared<CBlock>();
     CBlock& block = *pblock;
-    if (!ReadBlockFromDisk(block, pindex, Params().GetConsensus())) {
-        return error("GetSpentCoinFromBlock(): Could not read block from disk");
+    if (!ReadBlockFromDisk(block, tip, Params().GetConsensus())) {
+        return error("GetSpentCoinFromTip(): Could not read block from disk");
     }
 
     for(size_t j = 1; j < block.vtx.size(); ++j) {
@@ -2102,18 +2103,18 @@ bool GetSpentCoinFromBlock(const CBlockIndex* pindex, COutPoint prevout, Coin* c
             const COutPoint& tmpprevout = tx->vin[k].prevout;
             if(tmpprevout == prevout) {
                 CBlockUndo undo;
-                if(!UndoReadFromDisk(undo, pindex)) {
-                    return error("GetSpentCoinFromBlock(): Could not read undo block from disk");
+                if(!UndoReadFromDisk(undo, tip)) {
+                    return error("GetSpentCoinFromTip(): Could not read undo block from disk");
                 }
 
                 if(undo.vtxundo.size() != block.vtx.size() - 1) {
-                    return error("GetSpentCoinFromBlock(): undo tx size not equal to block tx size");
+                    return error("GetSpentCoinFromTip(): undo tx size not equal to block tx size");
                 }
 
                 CTxUndo &txundo = undo.vtxundo[j-1]; // no vtxundo for coinbase
 
                 if(txundo.vprevout.size() != tx->vin.size()) {
-                    return error("GetSpentCoinFromBlock(): undo tx vin size not equal to block tx vin size");
+                    return error("GetSpentCoinFromTip(): undo tx vin size not equal to block tx vin size");
                 }
 
                 *coin = txundo.vprevout[k];
@@ -2635,10 +2636,6 @@ bool CChainState::ConnectBlock(const CBlock& block, CValidationState& state, CBl
     // Move this check from ContextualCheckBlock to ConnectBlock as it depends on DGP values
     if (GetBlockWeight(block) > dgpMaxBlockWeight) {
         return state.DoS(100, false, REJECT_INVALID, "bad-blk-weight", false, strprintf("%s : weight limit failed", __func__));
-    }
-
-    if (block.IsProofOfStake() && pindex->nHeight > chainparams.GetConsensus().nEnableHeaderSignatureHeight && !CheckBlockInputPubKeyMatchesOutputPubKey(block, view)) {
-        return state.DoS(100, false, REJECT_INVALID, "bad-blk-coinstake-input-output-mismatch");
     }
 
     // Check it again in case a previous version let a bad block in
@@ -4421,7 +4418,7 @@ static bool CheckBlockHeader(const CBlockHeader& block, CValidationState& state,
     // Check proof of stake matches claimed amount
     if (fCheckPOS && !IsInitialBlockDownload() && block.IsProofOfStake() && !CheckHeaderPoS(block, consensusParams))
         // May occur if behind on block chain sync
-        return state.DoS(50, false, REJECT_INVALID, "bad-cb-header", false, "proof of stake failed");
+        return state.DoS(1, false, REJECT_INVALID, "bad-cb-header", false, "proof of stake failed");
 
     return true;
 }
@@ -4906,10 +4903,35 @@ bool ProcessNewBlockHeaders(const std::vector<CBlockHeader>& headers, CValidatio
     {
         LOCK(cs_main);
         bool bFirst = true;
-        for (const CBlockHeader& header : headers) {
+        bool fInstantBan = false;
+        for (size_t i = 0; i < headers.size(); ++i) {
+            const CBlockHeader& header = headers[i];
+
+            // If the stake has been seen and the header has not yet been seen
+            if (!fReindex && !fImporting && !IsInitialBlockDownload() && header.IsProofOfStake() && setStakeSeen.count(std::make_pair(header.prevoutStake, header.nTime)) && !mapBlockIndex.count(header.GetHash())) {
+                // if it is the last header of the list
+                if(i+1 == headers.size()) {
+                    if (first_invalid) *first_invalid = header;
+                    if(fInstantBan) {
+                        // if we've seen a dupe stake header already in this list, then instaban
+                        return state.DoS(100, error("%s: duplicate proof-of-stake instant ban (%s, %d) for header %s", __func__, header.prevoutStake.ToString(), header.nTime, header.GetHash().ToString()), REJECT_INVALID, "dupe-stake");
+                    } else {
+                        // otherwise just reject the block until it is part of a longer list
+                        return state.DoS(0, error("%s: duplicate proof-of-stake (%s, %d) for header %s", __func__, header.prevoutStake.ToString(), header.nTime, header.GetHash().ToString()), REJECT_INVALID, "dupe-stake");
+                    }
+                } else {
+                    // if it is not part of the longest chain, then any error on a subsequent header should result in an instant ban
+                    fInstantBan = true;
+                }
+            }
+
             CBlockIndex *pindex = nullptr; // Use a temp pindex instead of ppindex to avoid a const_cast
             if (!g_chainstate.AcceptBlockHeader(header, state, chainparams, &pindex)) {
                 if (first_invalid) *first_invalid = header;
+                // if we have seen a duplicate stake in this header list previously, then ban immediately.
+                if(fInstantBan) {
+                    state.DoS(100, error("instant ban, due to duplicate header in the chain"), REJECT_INVALID, state.GetRejectReason());
+                }
                 return false;
             }
             if (ppindex) {

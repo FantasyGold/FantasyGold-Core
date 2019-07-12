@@ -117,7 +117,7 @@ public:
         consensus.nMinimumChainWork = uint256S("0x000000000000000000000000000000000000000000000002ea72da07ce28fa4e"); // fantasygold
 
         // By default assume that the signatures in ancestors of this block are valid.
-       // consensus.defaultAssumeValid = uint256S("0x0000f286807cd4035cadfe039e4691f4960794344640c234abeae3544310fb9c"); // block height
+        consensus.defaultAssumeValid = uint256S("0xa5b4947a26cbde596eb52a015a3be0733bf6192baedcf7d039ecf66a9d4672a7"); // block height
 
         /**
          * The message start string is designed to be unlikely to occur in normal data.
