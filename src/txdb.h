@@ -13,7 +13,6 @@
 #include <libdevcore/Common.h>
 #include <libdevcore/FixedHash.h>
 
-#include <map>
 #include <memory>
 #include <string>
 #include <utility>

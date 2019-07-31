@@ -11,7 +11,6 @@
 #include <validation.h>
 #include <util/convert.h>
 
-#include <list>
 #include <vector>
 
 static void AssembleBlock(benchmark::State& state)

@@ -18,7 +18,6 @@
 #include <pow.h>
 #include <pos.h>
 #include <primitives/transaction.h>
-#include <script/standard.h>
 #include <timedata.h>
 #include <util/convert.h>
 #include <util/moneystr.h>
@@ -30,7 +29,6 @@
 #endif
 
 #include <algorithm>
-#include <queue>
 #include <utility>
 
 unsigned int nMinerSleep = STAKER_POLLING_PERIOD;

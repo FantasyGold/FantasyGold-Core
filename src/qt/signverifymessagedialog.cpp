@@ -14,7 +14,6 @@
 #include <util/validation.h> // For strMessageMagic
 #include <wallet/wallet.h>
 #include <qt/styleSheet.h>
-#include <string>
 #include <vector>
 
 #include <QClipboard>

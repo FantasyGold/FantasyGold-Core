@@ -4,16 +4,12 @@
 
 #include <bench/bench.h>
 #include <chainparams.h>
-#include <coins.h>
 #include <consensus/merkle.h>
 #include <consensus/validation.h>
 #include <pow.h>
 #include <txmempool.h>
 #include <validation.h>
 #include <util/convert.h>
-
-#include <list>
-#include <vector>
 
 
 static void DuplicateInputs(benchmark::State& state)

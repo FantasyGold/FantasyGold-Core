@@ -11,7 +11,6 @@
 #include <regex>
 #include <iomanip>
 
-#include <stdarg.h>
 
 #if (defined(__FreeBSD__) || defined(__OpenBSD__) || defined(__DragonFly__))
 #include <pthread.h>
