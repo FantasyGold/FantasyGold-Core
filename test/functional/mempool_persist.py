@@ -40,7 +40,13 @@ import os
 import time
 
 from test_framework.test_framework import BitcoinTestFramework
-from test_framework.util import assert_equal, assert_raises_rpc_error, wait_until
+from test_framework.util import (
+    assert_equal,
+    assert_greater_than_or_equal,
+    assert_raises_rpc_error,
+    wait_until,
+)
+ 
 
 class MempoolPersistTest(BitcoinTestFramework):
     def set_test_params(self):
@@ -51,18 +57,13 @@ class MempoolPersistTest(BitcoinTestFramework):
         self.skip_if_no_wallet()
 
     def run_test(self):
-        chain_height = self.nodes[0].getblockcount()
-        assert_equal(chain_height, 600)
-
-        self.log.debug("Mine a single block to get out of IBD")
-        self.nodes[0].generate(1)
-        self.sync_all()
-
         self.log.debug("Send 5 transactions from node2 (to its own address)")
+        tx_creation_time_lower = int(time.time())
         for i in range(5):
             self.nodes[2].sendtoaddress(self.nodes[2].getnewaddress(), Decimal("10"))
         node2_balance = self.nodes[2].getbalance()
         self.sync_all()
+        tx_creation_time_lower = int(time.time())
 
         self.log.debug("Verify that node0 and node1 have 5 transactions in their mempools")
         assert_equal(len(self.nodes[0].getrawmempool()), 5)
