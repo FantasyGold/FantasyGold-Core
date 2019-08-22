@@ -296,6 +296,14 @@ void CWallet::UpgradeKeyMetadata()
     }
 }
 
+void CWallet::UpgradeKeyMetadata()
+{
+    AssertLockHeld(m_spk_man->cs_wallet);
+    if (m_spk_man) {
+        m_spk_man->UpgradeKeyMetadata();
+    }
+}
+
 bool CWallet::Unlock(const SecureString& strWalletPassphrase, bool accept_no_keys)
 {
     CCrypter crypter;
@@ -1371,6 +1379,26 @@ bool CWallet::CanGetAddresses(bool internal)
     return false;
 }
 
+bool CWallet::IsHDEnabled() const
+{
+    bool result = true;
+    if (auto spk_man = m_spk_man.get()) {
+        result &= spk_man->IsHDEnabled();
+    }
+    return result;
+}
+
+bool CWallet::CanGetAddresses(bool internal)
+{
+    {
+        auto spk_man = m_spk_man.get();
+        if (spk_man && spk_man->CanGetAddresses(internal)) {
+            return true;
+        }
+    }
+    return false;
+}
+
 void CWallet::SetWalletFlag(uint64_t flags)
 {
     LOCK(cs_wallet);
@@ -1448,6 +1476,49 @@ bool CWallet::DummySignTx(CMutableTransaction &txNew, const std::vector<CTxOut> 
         }
 
         nIn++;
+    }
+    return true;
+}
+
+bool CWallet::ImportScripts(const std::set<CScript> scripts, int64_t timestamp)
+{
+    auto spk_man = GetLegacyScriptPubKeyMan();
+    if (!spk_man) {
+        return false;
+    }
+    AssertLockHeld(spk_man->cs_wallet);
+    return spk_man->ImportScripts(scripts, timestamp);
+}
+
+bool CWallet::ImportPrivKeys(const std::map<CKeyID, CKey>& privkey_map, const int64_t timestamp)
+{
+    auto spk_man = GetLegacyScriptPubKeyMan();
+    if (!spk_man) {
+        return false;
+    }
+    AssertLockHeld(spk_man->cs_wallet);
+    return spk_man->ImportPrivKeys(privkey_map, timestamp);
+}
+
+bool CWallet::ImportPubKeys(const std::vector<CKeyID>& ordered_pubkeys, const std::map<CKeyID, CPubKey>& pubkey_map, const std::map<CKeyID, std::pair<CPubKey, KeyOriginInfo>>& key_origins, const bool add_keypool, const bool internal, const int64_t timestamp)
+{
+    auto spk_man = GetLegacyScriptPubKeyMan();
+    if (!spk_man) {
+        return false;
+    }
+    AssertLockHeld(spk_man->cs_wallet);
+    return spk_man->ImportPubKeys(ordered_pubkeys, pubkey_map, key_origins, add_keypool, internal, timestamp);
+}
+
+bool CWallet::ImportScriptPubKeys(const std::string& label, const std::set<CScript>& script_pub_keys, const bool have_solving_data, const bool apply_label, const int64_t timestamp)
+{
+    auto spk_man = GetLegacyScriptPubKeyMan();
+    if (!spk_man) {
+        return false;
+    }
+    AssertLockHeld(spk_man->cs_wallet);
+    if (!spk_man->ImportScriptPubKeys(label, script_pub_keys, have_solving_data, apply_label, timestamp)) {
+        return false;
     }
     return true;
 }
@@ -3578,6 +3649,15 @@ int64_t CWallet::GetOldestKeyPoolTime()
     return oldestKey;
 }
 
+int64_t CWallet::GetOldestKeyPoolTime()
+{
+    int64_t oldestKey = std::numeric_limits<int64_t>::max();
+    if (auto spk_man = m_spk_man.get()) {
+        oldestKey = spk_man->GetOldestKeyPoolTime();
+    }
+    return oldestKey;
+}
+
 std::map<CTxDestination, CAmount> CWallet::GetAddressBalances(interfaces::Chain::Lock& locked_chain)
 {
     std::map<CTxDestination, CAmount> balances;
@@ -4889,6 +4969,21 @@ void CWallet::StopStake()
         StakeFantasyGolds(false, 0);
     }
     stakeThread = 0;
+}
+
+ScriptPubKeyMan* CWallet::GetScriptPubKeyMan() const
+{
+    return m_spk_man.get();
+}
+
+const SigningProvider* CWallet::GetSigningProvider() const
+{
+    return m_spk_man.get();
+}
+
+LegacyScriptPubKeyMan* CWallet::GetLegacyScriptPubKeyMan() const
+{
+    return m_spk_man.get();
 }
 
 ScriptPubKeyMan* CWallet::GetScriptPubKeyMan() const

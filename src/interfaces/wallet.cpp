@@ -50,7 +50,7 @@ WalletTx MakeWalletTx(interfaces::Chain::Lock& locked_chain, CWallet& wallet, co
         result.txout_is_mine.emplace_back(wallet.IsMine(txout));
         result.txout_address.emplace_back();
         result.txout_address_is_mine.emplace_back(ExtractDestination(txout.scriptPubKey, result.txout_address.back()) ?
-                                                      wallet.IsMine(result.txout_address.back()) :
+                                                      IsMine(wallet, result.txout_address.back()) :
                                                       ISMINE_NO);
     }
     result.credit = wtx.GetCredit(locked_chain, ISMINE_ALL);
@@ -230,17 +230,10 @@ public:
         std::string error;
         return m_wallet->GetNewDestination(type, label, dest, error);
     }
-    bool getPubKey(const CKeyID& address, CPubKey& pub_key) override { return m_wallet->GetLegacyScriptPubKeyMan()->GetPubKey(address, pub_key); }
-    bool getPrivKey(const CKeyID& address, CKey& key) override { return m_wallet->GetLegacyScriptPubKeyMan()->GetKey(address, key); }
-    bool isSpendable(const CTxDestination& dest) override { return m_wallet->IsMine(dest) & ISMINE_SPENDABLE; }
-    bool haveWatchOnly() override
-    {
-        auto spk_man = m_wallet->GetLegacyScriptPubKeyMan();
-        if (spk_man) {
-            return spk_man->HaveWatchOnly();
-        }
-        return false;
-    };
+    bool getPubKey(const CKeyID& address, CPubKey& pub_key) override { return m_wallet->GetPubKey(address, pub_key); }
+    bool getPrivKey(const CKeyID& address, CKey& key) override { return m_wallet->GetKey(address, key); }
+    bool isSpendable(const CTxDestination& dest) override { return IsMine(*m_wallet, dest) & ISMINE_SPENDABLE; }
+    bool haveWatchOnly() override { return m_wallet->HaveWatchOnly(); };
     bool setAddressBook(const CTxDestination& dest, const std::string& name, const std::string& purpose) override
     {
         return m_wallet->SetAddressBook(dest, name, purpose);
@@ -263,7 +256,7 @@ public:
             *name = it->second.name;
         }
         if (is_mine) {
-            *is_mine = m_wallet->IsMine(dest);
+            *is_mine = IsMine(*m_wallet, dest);
         }
         if (purpose) {
             *purpose = it->second.purpose;
@@ -275,11 +268,11 @@ public:
         LOCK(m_wallet->cs_wallet);
         std::vector<WalletAddress> result;
         for (const auto& item : m_wallet->mapAddressBook) {
-            result.emplace_back(item.first, m_wallet->IsMine(item.first), item.second.name, item.second.purpose);
+            result.emplace_back(item.first, IsMine(*m_wallet, item.first), item.second.name, item.second.purpose);
         }
         return result;
     }
-    void learnRelatedScripts(const CPubKey& key, OutputType type) override { m_wallet->GetLegacyScriptPubKeyMan()->LearnRelatedScripts(key, type); }
+    void learnRelatedScripts(const CPubKey& key, OutputType type) override { m_wallet->LearnRelatedScripts(key, type); }
     bool addDestData(const CTxDestination& dest, const std::string& key, const std::string& value) override
     {
         LOCK(m_wallet->cs_wallet);
