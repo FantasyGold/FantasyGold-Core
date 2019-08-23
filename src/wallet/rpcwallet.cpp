@@ -2108,6 +2108,21 @@ static void ListTransactions(interfaces::Chain::Lock& locked_chain, CWallet* con
         }
     }
 }
+static const std::string TransactionDescriptionString()
+{
+    return "    \"confirmations\": n,                        (numeric) The number of confirmations for the transaction. Negative confirmations means the\n"
+           "                                                       transaction conflicted that many blocks ago.\n"
+           "    \"trusted\": xxx,                            (bool) Whether we consider the outputs of this unconfirmed transaction safe to spend.\n"
+           "    \"blockhash\": \"hashvalue\",                  (string) The block hash containing the transaction.\n"
+           "    \"blockindex\": n,                           (numeric) The index of the transaction in the block that includes it.\n"
+           "    \"blocktime\": xxx,                          (numeric) The block time in seconds since epoch (1 Jan 1970 GMT).\n"
+           "    \"txid\": \"transactionid\",                   (string) The transaction id.\n"
+           "    \"time\": xxx,                               (numeric) The transaction time in seconds since epoch (midnight Jan 1 1970 GMT).\n"
+           "    \"timereceived\": xxx,                       (numeric) The time received in seconds since epoch (midnight Jan 1 1970 GMT).\n"
+           "    \"comment\": \"...\",                          (string) If a comment is associated with the transaction, only present if not empty.\n"
+           "    \"bip125-replaceable\": \"yes|no|unknown\",    (string) Whether this transaction could be replaced due to BIP125 (replace-by-fee);\n"
+           "                                                     may be unknown for unconfirmed transactions not in the mempool\n";
+}
 
 UniValue listtransactions(const JSONRPCRequest& request)
 {
