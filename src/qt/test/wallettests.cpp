@@ -139,6 +139,7 @@ void TestGUI(interfaces::Node& node)
     node.context()->connman = std::move(test.m_node.connman);
     node.context()->mempool = std::move(test.m_node.mempool);
     node.context()->connman = std::move(test.m_node.connman);
+    node.context()->connman = std::move(test.m_node.connman);
     std::shared_ptr<CWallet> wallet = std::make_shared<CWallet>(node.context()->chain.get(), WalletLocation(), WalletDatabase::CreateMock());
     bool firstRun;
     wallet->LoadWallet(firstRun);
