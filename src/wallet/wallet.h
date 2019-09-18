@@ -129,7 +129,7 @@ enum WalletFeature
 };
 
 //! Default for -addresstype
-constexpr OutputType DEFAULT_ADDRESS_TYPE{OutputType::LEGACY};
+constexpr OutputType DEFAULT_ADDRESS_TYPE{OutputType::BECH32};
 
 //! Default for -changetype
 constexpr OutputType DEFAULT_CHANGE_TYPE{OutputType::CHANGE_AUTO};
