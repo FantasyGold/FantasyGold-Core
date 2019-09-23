@@ -10,12 +10,11 @@
 #include <chain.h>
 #include <chainparams.h>
 #include <coins.h>
-#include <node/coinstats.h>
 #include <consensus/validation.h>
 #include <core_io.h>
 #include <hash.h>
 #include <index/blockfilterindex.h>
-#include <key_io.h>
+#include <node/coinstats.h>
 #include <policy/feerate.h>
 #include <policy/policy.h>
 #include <policy/rbf.h>
@@ -40,7 +39,6 @@
 #include <txdb.h>
 #include <util/convert.h>
 
-#include <assert.h>
 #include <stdint.h>
 
 #include <univalue.h>
