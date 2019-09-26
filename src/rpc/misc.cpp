@@ -17,9 +17,9 @@
 #include <rpc/server.h>
 #include <rpc/util.h>
 #include <timedata.h>
-#ifdef ENABLE_BITCORE_RPC
+//usually tx mempool is only included when ifdef for ENABLE_BITCORE_RPC is enabled.
 #include <txmempool.h>
-#endif
+
 #include <util.h>
 #include <utilstrencodings.h>
 #ifdef ENABLE_WALLET
@@ -35,6 +35,179 @@
 #endif
 
 #include <univalue.h>
+// fantasygold
+UniValue getdgpinfo(const JSONRPCRequest& request)
+{
+    if (request.fHelp || request.params.size() != 0)
+        throw std::runtime_error(
+            "getdgpinfo\n"
+            "\nReturns an object containing DGP state info.\n"
+            "\nResult:\n"
+            "{\n"
+            "  \"maxblocksize\": xxxxx,           (numeric) current maximum block size\n"
+            "  \"mingasprice\": xxxxx,   (numeric) current minimum gas price\n"
+            "  \"blockgaslimit\": xxxxx,     (numeric) current block gas limit\n"
+            "}\n"
+            "\nExamples:\n"
+            + HelpExampleCli("getdgpinfo", "")
+            + HelpExampleRpc("getdgpinfo", "")
+        );
+
+
+    LOCK(cs_main);
+
+    FantasyGoldDGP fantasygoldDGP(globalState.get());
+
+    UniValue obj(UniValue::VOBJ);
+    obj.pushKV("maxblocksize", (uint64_t)fantasygoldDGP.getBlockSize(chainActive.Height()));
+    obj.pushKV("mingasprice", (uint64_t)fantasygoldDGP.getMinGasPrice(chainActive.Height()));
+    obj.pushKV("blockgaslimit", (uint64_t)fantasygoldDGP.getBlockGasLimit(chainActive.Height()));
+
+    return obj;
+}
+// let's remove this for testing bitcore. #ifdef ENABLE_BITCORE_RPC
+/**
+ * @note Do not add or change anything in the information returned by this
+ * method. `getinfo` exists for backwards-compatibility only. It combines
+ * information from wildly different sources in the program, which is a mess,
+ * and is thus planned to be deprecated eventually.
+ *
+ * Based on the source of the information, new information should be added to:
+ * - `getblockchaininfo`,
+ * - `getnetworkinfo` or
+ * - `getwalletinfo`
+ *
+ * Or alternatively, create a specific query method for the information.
+ **/
+UniValue getinfo(const JSONRPCRequest& request)
+{
+    if (request.fHelp || request.params.size() != 0)
+        throw runtime_error(
+            "getinfo\n"
+            "\nDEPRECATED. Returns an object containing various state info.\n"
+            "\nThis call was removed in version 2.0.0. It has been included for use with bitcore/insight. \n"
+            "Unless you need it for insight, you should use the appropriate fields from the following commands:\n"
+            "- getblockchaininfo: blocks, difficulty, chain\n"
+            "- getnetworkinfo: version, protocolversion, timeoffset, connections, proxy, relayfee, warnings\n"
+            "- getwalletinfo: balance, keypoololdest, keypoolsize, paytxfee, unlocked_until, walletversion\n"
+            "\nResult:\n"
+            "{\n"
+            "  \"version\": xxxxx,           (numeric) the server version\n"
+            "  \"protocolversion\": xxxxx,   (numeric) the protocol version\n"
+            "  \"walletversion\": xxxxx,     (numeric) the wallet version\n"
+            "  \"balance\": xxxxxxx,         (numeric) the total confirmed balance of the wallet in " + CURRENCY_UNIT + "\n"
+            "  \"stake\": xxxxxxx,           (numeric) the total stake balance of the wallet in " + CURRENCY_UNIT + "\n"
+            "  \"blocks\": xxxxxx,           (numeric) the current number of blocks processed in the server\n"
+            "  \"timeoffset\": xxxxx,        (numeric) the time offset\n"
+            "  \"connections\": xxxxx,       (numeric) the number of connections\n"
+            "  \"proxy\": \"host:port\",     (string, optional) the proxy used by the server\n"
+            "  \"difficulty\": xxxxxx,       (numeric) the current difficulty\n"
+            "  \"testnet\": true|false,      (boolean) if the server is using testnet or not\n"
+            "  \"keypoololdest\": xxxxxx,    (numeric) the timestamp (seconds since Unix epoch) of the oldest pre-generated key in the key pool\n"
+            "  \"keypoolsize\": xxxx,        (numeric) how many new keys are pre-generated\n"
+            "  \"unlocked_until\": ttt,      (numeric) the timestamp in seconds since epoch (midnight Jan 1 1970 GMT) that the wallet is unlocked for transfers, or 0 if the wallet is locked\n"
+            "  \"paytxfee\": x.xxxx,         (numeric) the transaction fee set in " + CURRENCY_UNIT + "/kB\n"
+            "  \"relayfee\": x.xxxx,         (numeric) minimum relay fee for non-free transactions in " + CURRENCY_UNIT + "/kB\n"
+            "  \"errors\": \"...\"           (string) any error messages\n"
+            "}\n"
+            "\nExamples:\n"
+            + HelpExampleCli("getinfo", "")
+            + HelpExampleRpc("getinfo", "")
+        );
+
+#ifdef ENABLE_WALLET
+    LOCK2(cs_main, pwalletMain ? &pwalletMain->cs_wallet : NULL);
+#else
+    LOCK(cs_main);
+#endif
+
+    proxyType proxy;
+    GetProxy(network, proxy)
+
+    UniValue obj(UniValue::VOBJ);
+    UniValue diff(UniValue::VOBJ);
+    obj.pushKV("version",               CLIENT_VERSION);
+    obj.pushKV("protocolversion",       PROTOCOL_VERSION);
+#ifdef ENABLE_WALLET
+    if (pwalletMain) {
+        obj.pushKV("walletversion",     pwallet->GetVersion());
+        obj.pushKV("balance",           ValueFromAmount(pwallet->GetBalance()));
+        obj.pushKV("stake",             ValueFromAmount(pwallet->GetStake()));
+    }
+#endif
+    obj.pushKV("blocks",                (int)chainActive.Height());
+    obj.pushKV("timeoffset",            GetTimeOffset());
+    if(g_connman)
+        obj.pushKV("connections",       (int)g_connman->GetNodeCount(CConnman::CONNECTIONS_ALL));
+    //obj.pushKV("proxy",         (proxy.IsValid() ? proxy.proxy.ToStringIPPort() : string()));
+    obj.pushKV("proxy",                 proxy.IsValid() ? proxy.proxy.ToStringIPPort() : std::string());
+    diff.pushKV("proof-of-work",        GetDifficulty(GetLastBlockIndex(pindexBestHeader, false)));
+    diff.pushKV("proof-of-stake",       GetDifficulty(GetLastBlockIndex(pindexBestHeader, true)));
+    //obj.pushKV("difficulty",    diff));
+    obj.pushKV("difficulty",            (double)GetDifficulty(chainActive.Tip()));
+    obj.pushKV("testnet",               Params().NetworkIDString() == CBaseChainParams::TESTNET);
+    obj.pushKV("moneysupply",           pindexBestHeader->nMoneySupply / COIN);
+    
+#ifdef ENABLE_WALLET
+    if (pwalletMain) {
+        //obj.pushKV("keypoololdest", pwalletMain->GetOldestKeyPoolTime());
+        //obj.pushKV("keypoolsize",   (int)pwalletMain->GetKeyPoolSize());
+        obj.pushKV("keypoololdest",     pwallet->GetOldestKeyPoolTime());
+        obj.pushKV("keypoolsize",       (int64_t)kpExternalSize);
+    }
+    if (pwallet->IsCrypted()) {
+        obj.pushKV("unlocked_until", pwallet->nRelockTime);
+    }
+    //if (pwalletMain && pwalletMain->IsCrypted())
+      //  obj.pushKV("unlocked_until", nWalletUnlockTime);
+        //obj.pushKV("paytxfee",      ValueFromAmount(payTxFee.GetFeePerK()));
+        obj.pushKV("paytxfee",          ValueFromAmount(pwallet->m_pay_tx_fee.GetFeePerK()));
+#endif
+//    obj.pushKV("relayfee",      ValueFromAmount(::minRelayTxFee.GetFeePerK()));
+    ret.pushKV("relayfee",              ValueFromAmount(::minRelayTxFee.GetFeePerK()));
+    obj.pushKV("errors",                GetWarnings("statusbar"));
+    return obj;
+}
+
+#ifdef ENABLE_WALLET
+class DescribeAddressVisitor : public boost::static_visitor<UniValue>
+{
+public:
+    UniValue operator()(const CNoDestination &dest) const { return UniValue(UniValue::VOBJ); }
+
+    UniValue operator()(const CKeyID &keyID) const {
+        UniValue obj(UniValue::VOBJ);
+        CPubKey vchPubKey;
+        obj.pushKV("isscript", false);
+        if (pwalletMain && pwalletMain->GetPubKey(keyID, vchPubKey)) {
+            obj.pushKV("pubkey", HexStr(vchPubKey));
+            obj.pushKV("iscompressed", vchPubKey.IsCompressed());
+        }
+        return obj;
+    }
+
+    UniValue operator()(const CScriptID &scriptID) const {
+        UniValue obj(UniValue::VOBJ);
+        CScript subscript;
+        obj.pushKV("isscript", true);
+        if (pwalletMain && pwalletMain->GetCScript(scriptID, subscript)) {
+            std::vector<CTxDestination> addresses;
+            txnouttype whichType;
+            int nRequired;
+            ExtractDestinations(subscript, whichType, addresses, nRequired);
+            obj.pushKV("script", GetTxnOutputType(whichType));
+            obj.pushKV("hex", HexStr(subscript.begin(), subscript.end()));
+            UniValue a(UniValue::VARR);
+            BOOST_FOREACH(const CTxDestination& addr, addresses)
+                a.push_back(CBitcoinAddress(addr).ToString());
+            obj.pushKV("addresses", a);
+            if (whichType == TX_MULTISIG)
+                obj.pushKV("sigsrequired", nRequired);
+        }
+        return obj;
+    }
+};
+#endif
 
 static UniValue validateaddress(const JSONRPCRequest& request)
 {
@@ -53,6 +226,7 @@ static UniValue validateaddress(const JSONRPCRequest& request)
             "  \"isvalid\" : true|false,       (boolean) If the address is valid or not. If not, this is the only property returned.\n"
             "  \"address\" : \"address\", (string) The fantasygold address validated\n"
             "  \"scriptPubKey\" : \"hex\",       (string) The hex encoded scriptPubKey generated by the address\n"
+            
             "  \"isscript\" : true|false,      (boolean) If the key is a script\n"
             "  \"iswitness\" : true|false,     (boolean) If the address is a witness address\n"
             "  \"witness_version\" : version   (numeric, optional) The version number of the witness program\n"
@@ -91,37 +265,7 @@ static UniValue validateaddress(const JSONRPCRequest& request)
 }
 
 
-// fantasygold
-UniValue getdgpinfo(const JSONRPCRequest& request)
-{
-    if (request.fHelp || request.params.size() != 0)
-        throw std::runtime_error(
-            "getdgpinfo\n"
-            "\nReturns an object containing DGP state info.\n"
-            "\nResult:\n"
-            "{\n"
-            "  \"maxblocksize\": xxxxx,           (numeric) current maximum block size\n"
-            "  \"mingasprice\": xxxxx,   (numeric) current minimum gas price\n"
-            "  \"blockgaslimit\": xxxxx,     (numeric) current block gas limit\n"
-            "}\n"
-            "\nExamples:\n"
-            + HelpExampleCli("getdgpinfo", "")
-            + HelpExampleRpc("getdgpinfo", "")
-        );
 
-
-    LOCK(cs_main);
-
-    FantasyGoldDGP fantasygoldDGP(globalState.get());
-
-    UniValue obj(UniValue::VOBJ);
-    obj.pushKV("maxblocksize", (uint64_t)fantasygoldDGP.getBlockSize(chainActive.Height()));
-    obj.pushKV("mingasprice", (uint64_t)fantasygoldDGP.getMinGasPrice(chainActive.Height()));
-    obj.pushKV("blockgaslimit", (uint64_t)fantasygoldDGP.getBlockGasLimit(chainActive.Height()));
-
-    return obj;
-}
-#ifdef ENABLE_BITCORE_RPC
 bool getAddressesFromParams(const UniValue& params, std::vector<std::pair<uint256, int> > &addresses)
 {
     if (params[0].isStr()) {
@@ -729,7 +873,7 @@ UniValue getaddresstxids(const JSONRPCRequest& request)
     return result;
 }
 ///////////////////////////////////////////////////////////////////////
-#endif
+//disable this for now to test bitcore. #endif
 
 // Needed even with !ENABLE_WALLET, to pass (ignored) pointers around
 class CWallet;
@@ -1100,23 +1244,12 @@ static UniValue echo(const JSONRPCRequest& request)
     return request.params;
 }
 
-static UniValue getinfo_deprecated(const JSONRPCRequest& request)
-{
-    throw JSONRPCError(RPC_METHOD_NOT_FOUND,
-        "getinfo\n"
-        "\nThis call was removed in version 0.16.0. Use the appropriate fields from:\n"
-        "- getblockchaininfo: blocks, difficulty, chain\n"
-        "- getnetworkinfo: version, protocolversion, timeoffset, connections, proxy, relayfee, warnings\n"
-        "- getwalletinfo: balance, keypoololdest, keypoolsize, paytxfee, unlocked_until, walletversion\n"
-        "\nfantasygold-cli has the option -getinfo to collect and format these in the old format."
-    );
-}
-
 static const CRPCCommand commands[] =
 { //  category              name                      actor (function)         argNames
   //  --------------------- ------------------------  -----------------------  ----------
     { "control",            "getmemoryinfo",          &getmemoryinfo,          {"mode"} },
     { "control",            "logging",                &logging,                {"include", "exclude"}},
+    { "control",            "getinfo",                &getinfo,                {} }, /* uses wallet if enabled */
     { "control",            "getdgpinfo",             &getdgpinfo,             {} },
     { "util",               "validateaddress",        &validateaddress,        {"address"} }, /* uses wallet if enabled */
     { "util",               "createmultisig",         &createmultisig,         {"nrequired","keys","address_type"} },
@@ -1127,11 +1260,11 @@ static const CRPCCommand commands[] =
     { "hidden",             "setmocktime",            &setmocktime,            {"timestamp"}},
     { "hidden",             "echo",                   &echo,                   {"arg0","arg1","arg2","arg3","arg4","arg5","arg6","arg7","arg8","arg9"}},
     { "hidden",             "echojson",               &echo,                   {"arg0","arg1","arg2","arg3","arg4","arg5","arg6","arg7","arg8","arg9"}},
-    { "hidden",             "getinfo",                &getinfo_deprecated,     {}},
+  //  { "hidden",             "getinfo",                &getinfo_deprecated,     {}},
 
 
   // fantasygold
-     #ifdef ENABLE_BITCORE_RPC  
+     // #ifdef ENABLE_BITCORE_RPC   //testing for bitcore compat
     { "util",               "getaddresstxids",        &getaddresstxids,        {"addresses"} },
     { "util",               "getaddressdeltas",       &getaddressdeltas,       {"addresses"} },
     { "util",               "getaddressbalance",      &getaddressbalance,      {"addresses"} },
@@ -1140,7 +1273,7 @@ static const CRPCCommand commands[] =
     { "util",               "getblockhashes",         &getblockhashes,         {"high","low","options"} },
     { "util",               "getspentinfo",           &getspentinfo,           {"argument"} },
   ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
-#endif
+// #endif //testing for bitcore compat
 };
 
 void RegisterMiscRPCCommands(CRPCTable &t)
