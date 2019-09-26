@@ -126,6 +126,7 @@ UniValue getinfo(const JSONRPCRequest& request)
 
     UniValue obj(UniValue::VOBJ);
     UniValue diff(UniValue::VOBJ);
+    size_t kpExternalSize = pwallet->KeypoolCountExternalKeys();
     obj.pushKV("version",               CLIENT_VERSION);
     obj.pushKV("protocolversion",       PROTOCOL_VERSION);
 #ifdef ENABLE_WALLET
