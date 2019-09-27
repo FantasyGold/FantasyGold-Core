@@ -19,6 +19,9 @@
 #include <timedata.h>
 //usually tx mempool is only included when ifdef for ENABLE_BITCORE_RPC is enabled.
 #include <txmempool.h>
+#include <pow.h>
+#include <pos.h>
+#include <init.h>
 
 #include <util.h>
 #include <utilstrencodings.h>
@@ -81,8 +84,14 @@ UniValue getdgpinfo(const JSONRPCRequest& request)
  **/
 UniValue getinfo(const JSONRPCRequest& request)
 {
+     std::shared_ptr<CWallet> const wallet = GetWalletForJSONRPCRequest(request);
+    CWallet* const pwallet = wallet.get();
+    if (!EnsureWalletIsAvailable(pwallet, request.fHelp)) {
+        return NullUniValue;
+    }
+
     if (request.fHelp || request.params.size() != 0)
-        throw runtime_error(
+        throw std::runtime_error(
             "getinfo\n"
             "\nDEPRECATED. Returns an object containing various state info.\n"
             "\nThis call was removed in version 2.0.0. It has been included for use with bitcore/insight. \n"
@@ -116,13 +125,12 @@ UniValue getinfo(const JSONRPCRequest& request)
         );
 
 #ifdef ENABLE_WALLET
-    LOCK2(cs_main, pwalletMain ? &pwalletMain->cs_wallet : NULL);
+    //LOCK2(cs_main, pwalletMain ? &pwalletMain->cs_wallet : NULL);
+    LOCK2(cs_main, pwallet->cs_wallet);
 #else
     LOCK(cs_main);
 #endif
 
-    proxyType proxy;
-    GetProxy(network, proxy)
 
     UniValue obj(UniValue::VOBJ);
     UniValue diff(UniValue::VOBJ);
@@ -130,7 +138,7 @@ UniValue getinfo(const JSONRPCRequest& request)
     obj.pushKV("version",               CLIENT_VERSION);
     obj.pushKV("protocolversion",       PROTOCOL_VERSION);
 #ifdef ENABLE_WALLET
-    if (pwalletMain) {
+    if (pwallet) {
         obj.pushKV("walletversion",     pwallet->GetVersion());
         obj.pushKV("balance",           ValueFromAmount(pwallet->GetBalance()));
         obj.pushKV("stake",             ValueFromAmount(pwallet->GetStake()));
@@ -141,7 +149,15 @@ UniValue getinfo(const JSONRPCRequest& request)
     if(g_connman)
         obj.pushKV("connections",       (int)g_connman->GetNodeCount(CConnman::CONNECTIONS_ALL));
     //obj.pushKV("proxy",         (proxy.IsValid() ? proxy.proxy.ToStringIPPort() : string()));
+    for(int n=0; n<NET_MAX; ++n)
+    {
+enum Network network = static_cast<enum Network>(n);
+        if(network == NET_UNROUTABLE || network == NET_INTERNAL)
+            continue;
+    proxyType proxy;
+    GetProxy(network, proxy);
     obj.pushKV("proxy",                 proxy.IsValid() ? proxy.proxy.ToStringIPPort() : std::string());
+    }
     diff.pushKV("proof-of-work",        GetDifficulty(GetLastBlockIndex(pindexBestHeader, false)));
     diff.pushKV("proof-of-stake",       GetDifficulty(GetLastBlockIndex(pindexBestHeader, true)));
     //obj.pushKV("difficulty",    diff));
@@ -150,7 +166,7 @@ UniValue getinfo(const JSONRPCRequest& request)
     obj.pushKV("moneysupply",           pindexBestHeader->nMoneySupply / COIN);
     
 #ifdef ENABLE_WALLET
-    if (pwalletMain) {
+    if (pwallet) {
         //obj.pushKV("keypoololdest", pwalletMain->GetOldestKeyPoolTime());
         //obj.pushKV("keypoolsize",   (int)pwalletMain->GetKeyPoolSize());
         obj.pushKV("keypoololdest",     pwallet->GetOldestKeyPoolTime());
@@ -165,7 +181,7 @@ UniValue getinfo(const JSONRPCRequest& request)
         obj.pushKV("paytxfee",          ValueFromAmount(pwallet->m_pay_tx_fee.GetFeePerK()));
 #endif
 //    obj.pushKV("relayfee",      ValueFromAmount(::minRelayTxFee.GetFeePerK()));
-    ret.pushKV("relayfee",              ValueFromAmount(::minRelayTxFee.GetFeePerK()));
+    obj.pushKV("relayfee",              ValueFromAmount(::minRelayTxFee.GetFeePerK()));
     obj.pushKV("errors",                GetWarnings("statusbar"));
     return obj;
 }
@@ -174,37 +190,55 @@ UniValue getinfo(const JSONRPCRequest& request)
 class DescribeAddressVisitor : public boost::static_visitor<UniValue>
 {
 public:
-    UniValue operator()(const CNoDestination &dest) const { return UniValue(UniValue::VOBJ); }
+    explicit DescribeAddressVisitor() {}
 
-    UniValue operator()(const CKeyID &keyID) const {
+    UniValue operator()(const CNoDestination& dest) const
+    {
+        return UniValue(UniValue::VOBJ);
+    }
+
+    UniValue operator()(const CKeyID& keyID) const
+    {
         UniValue obj(UniValue::VOBJ);
-        CPubKey vchPubKey;
         obj.pushKV("isscript", false);
-        if (pwalletMain && pwalletMain->GetPubKey(keyID, vchPubKey)) {
-            obj.pushKV("pubkey", HexStr(vchPubKey));
-            obj.pushKV("iscompressed", vchPubKey.IsCompressed());
-        }
+        obj.pushKV("iswitness", false);
         return obj;
     }
 
-    UniValue operator()(const CScriptID &scriptID) const {
+    UniValue operator()(const CScriptID& scriptID) const
+    {
         UniValue obj(UniValue::VOBJ);
-        CScript subscript;
         obj.pushKV("isscript", true);
-        if (pwalletMain && pwalletMain->GetCScript(scriptID, subscript)) {
-            std::vector<CTxDestination> addresses;
-            txnouttype whichType;
-            int nRequired;
-            ExtractDestinations(subscript, whichType, addresses, nRequired);
-            obj.pushKV("script", GetTxnOutputType(whichType));
-            obj.pushKV("hex", HexStr(subscript.begin(), subscript.end()));
-            UniValue a(UniValue::VARR);
-            BOOST_FOREACH(const CTxDestination& addr, addresses)
-                a.push_back(CBitcoinAddress(addr).ToString());
-            obj.pushKV("addresses", a);
-            if (whichType == TX_MULTISIG)
-                obj.pushKV("sigsrequired", nRequired);
-        }
+        obj.pushKV("iswitness", false);
+        return obj;
+    }
+
+    UniValue operator()(const WitnessV0KeyHash& id) const
+    {
+        UniValue obj(UniValue::VOBJ);
+        obj.pushKV("isscript", false);
+        obj.pushKV("iswitness", true);
+        obj.pushKV("witness_version", 0);
+        obj.pushKV("witness_program", HexStr(id.begin(), id.end()));
+        return obj;
+    }
+
+    UniValue operator()(const WitnessV0ScriptHash& id) const
+    {
+        UniValue obj(UniValue::VOBJ);
+        obj.pushKV("isscript", true);
+        obj.pushKV("iswitness", true);
+        obj.pushKV("witness_version", 0);
+        obj.pushKV("witness_program", HexStr(id.begin(), id.end()));
+        return obj;
+    }
+
+    UniValue operator()(const WitnessUnknown& id) const
+    {
+        UniValue obj(UniValue::VOBJ);
+        obj.pushKV("iswitness", true);
+        obj.pushKV("witness_version", (int)id.version);
+        obj.pushKV("witness_program", HexStr(id.program, id.program + id.length));
         return obj;
     }
 };
