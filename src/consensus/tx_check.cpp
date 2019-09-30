@@ -12,20 +12,17 @@ bool CheckTransaction(const CTransaction& tx, CValidationState &state, bool fChe
 {
     // Basic checks that don't depend on any context
     if (tx.vin.empty())
-        return state.Invalid(ValidationInvalidReason::CONSENSUS, false, REJECT_INVALID, "bad-txns-vin-empty");
+        return state.Invalid(ValidationInvalidReason::CONSENSUS, false, "bad-txns-vin-empty");
     if (tx.vout.empty())
-        return state.Invalid(ValidationInvalidReason::CONSENSUS, false, REJECT_INVALID, "bad-txns-vout-empty");
+        return state.Invalid(ValidationInvalidReason::CONSENSUS, false, "bad-txns-vout-empty");
     // Size limits (this doesn't take the witness into account, as that hasn't been checked for malleability)
-    if (::GetSerializeSize(tx, PROTOCOL_VERSION | SERIALIZE_TRANSACTION_NO_WITNESS) > MAX_TRANSACTION_BASE_SIZE || 
-        ::GetSerializeSize(tx, PROTOCOL_VERSION | SERIALIZE_TRANSACTION_NO_WITNESS) * WITNESS_SCALE_FACTOR > dgpMaxBlockWeight)
-        return state.Invalid(ValidationInvalidReason::CONSENSUS, false, REJECT_INVALID, "bad-txns-oversize");
+    if (::GetSerializeSize(tx, PROTOCOL_VERSION | SERIALIZE_TRANSACTION_NO_WITNESS) * WITNESS_SCALE_FACTOR > MAX_BLOCK_WEIGHT)
+        return state.Invalid(ValidationInvalidReason::CONSENSUS, false, "bad-txns-oversize");
 
     // Check for negative or overflow output values (see CVE-2010-5139)
     CAmount nValueOut = 0;
     for (const auto& txout : tx.vout)
     {
-        if (txout.IsEmpty() && !tx.IsCoinBase() && !tx.IsCoinStake())
-            return state.Invalid(ValidationInvalidReason::CONSENSUS, false, REJECT_INVALID, "bad-txns-vout-empty");
         if (txout.nValue < 0)
             return state.Invalid(ValidationInvalidReason::CONSENSUS, false, REJECT_INVALID, "bad-txns-vout-negative");
         if (txout.nValue > MAX_MONEY)

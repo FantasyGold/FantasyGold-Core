@@ -538,11 +538,11 @@ private:
     {
         CAmount mempoolRejectFee = m_pool.GetMinFee(gArgs.GetArg("-maxmempool", DEFAULT_MAX_MEMPOOL_SIZE) * 1000000).GetFee(package_size);
         if (mempoolRejectFee > 0 && package_fee < mempoolRejectFee) {
-            return state.Invalid(ValidationInvalidReason::TX_MEMPOOL_POLICY, false, REJECT_INSUFFICIENTFEE, "mempool min fee not met", strprintf("%d < %d", package_fee, mempoolRejectFee));
+            return state.Invalid(ValidationInvalidReason::TX_MEMPOOL_POLICY, false, "mempool min fee not met", strprintf("%d < %d", package_fee, mempoolRejectFee));
         }
 
         if (package_fee < ::minRelayTxFee.GetFee(package_size)) {
-            return state.Invalid(ValidationInvalidReason::TX_MEMPOOL_POLICY, false, REJECT_INSUFFICIENTFEE, "min relay fee not met", strprintf("%d < %d", package_fee, ::minRelayTxFee.GetFee(package_size)));
+            return state.Invalid(ValidationInvalidReason::TX_MEMPOOL_POLICY, false, "min relay fee not met", strprintf("%d < %d", package_fee, ::minRelayTxFee.GetFee(package_size)));
         }
         return true;
     }
@@ -597,16 +597,12 @@ bool MemPoolAccept::PreChecks(ATMPArgs& args, Workspace& ws)
 
     // Coinbase is only valid in a block, not as a loose transaction
     if (tx.IsCoinBase())
-        return state.Invalid(ValidationInvalidReason::CONSENSUS, false, REJECT_INVALID, "coinbase");
-
-    // ppcoin: coinstake is also only valid in a block, not as a loose transaction
-    if (tx.IsCoinStake())
-        return state.Invalid(ValidationInvalidReason::CONSENSUS, false, REJECT_INVALID, "coinstake");
+        return state.Invalid(ValidationInvalidReason::CONSENSUS, false, "coinbase");
 
     // Rather not work on nonstandard transactions (unless -testnet/-regtest)
     std::string reason;
     if (fRequireStandard && !IsStandardTx(tx, reason))
-        return state.Invalid(ValidationInvalidReason::TX_NOT_STANDARD, false, REJECT_NONSTANDARD, reason);
+        return state.Invalid(ValidationInvalidReason::TX_NOT_STANDARD, false, reason);
 
     // Do not work on transactions that are too small.
     // A transaction with 1 segwit input and 1 P2WPHK output has non-witness size of 82 bytes.

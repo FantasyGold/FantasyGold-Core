@@ -171,15 +171,15 @@ bool Consensus::CheckTxInputs(const CTransaction& tx, CValidationState& state, c
         assert(!coin.IsSpent());
 
         // If prev is coinbase, check that it's matured
-        if ((coin.IsCoinBase() || coin.IsCoinStake()) && nSpendHeight - coin.nHeight < COINBASE_MATURITY) {
-            return state.Invalid(ValidationInvalidReason::TX_PREMATURE_SPEND, false, REJECT_INVALID, "bad-txns-premature-spend-of-coinbase",
+        if (coin.IsCoinBase() && nSpendHeight - coin.nHeight < COINBASE_MATURITY) {
+            return state.Invalid(ValidationInvalidReason::TX_PREMATURE_SPEND, false, "bad-txns-premature-spend-of-coinbase",
                 strprintf("tried to spend coinbase at depth %d", nSpendHeight - coin.nHeight));
         }
 
         // Check for negative or overflow input values
         nValueIn += coin.out.nValue;
         if (!MoneyRange(coin.out.nValue) || !MoneyRange(nValueIn)) {
-            return state.Invalid(ValidationInvalidReason::CONSENSUS, false, REJECT_INVALID, "bad-txns-inputvalues-outofrange");
+            return state.Invalid(ValidationInvalidReason::CONSENSUS, false, "bad-txns-inputvalues-outofrange");
         }
     }
 
