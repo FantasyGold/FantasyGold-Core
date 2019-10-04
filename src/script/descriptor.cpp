@@ -755,10 +755,9 @@ std::unique_ptr<PubkeyProvider> ParsePubkey(const Span<const char>& sp, bool per
 
 /** Parse a script in a particular context. */
 std::unique_ptr<DescriptorImpl> ParseScript(Span<const char>& sp, ParseScriptContext ctx, FlatSigningProvider& out, std::string& error)
-{
-    using namespace spanparsing;
-
+ {
     auto expr = Expr(sp);
+    bool sorted_multi = false;
     if (Func("pk", expr)) {
         auto pubkey = ParsePubkey(expr, ctx != ParseScriptContext::P2WSH, out, error);
         if (!pubkey) return nullptr;
