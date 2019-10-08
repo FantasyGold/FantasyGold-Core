@@ -8,7 +8,7 @@
 #include <consensus/validation.h>
 #include <script/standard.h>
 
-bool CheckTransaction(const CTransaction& tx, CValidationState &state, bool fCheckDuplicateInputs)
+bool CheckTransaction(const CTransaction& tx, CValidationState& state)
 {
     // Basic checks that don't depend on any context
     if (tx.vin.empty())
