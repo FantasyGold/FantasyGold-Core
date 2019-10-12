@@ -15,10 +15,6 @@ if ENABLE_WALLET
 TEST_QT_MOC_CPP += \
   qt/test/moc_addressbooktests.cpp \
   qt/test/moc_wallettests.cpp
-if ENABLE_BIP70
-TEST_QT_MOC_CPP += \
-  qt/test/moc_paymentservertests.cpp
-endif # ENABLE_BIP70
 endif # ENABLE_WALLET
 
 TEST_QT_H = \
@@ -28,8 +24,6 @@ TEST_QT_H = \
   qt/test/rpcnestedtests.h \
   qt/test/uritests.h \
   qt/test/util.h \
-  qt/test/paymentrequestdata.h \
-  qt/test/paymentservertests.h \
   qt/test/wallettests.h
 
 TEST_BITCOIN_CPP = \
