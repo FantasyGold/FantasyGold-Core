@@ -14,7 +14,7 @@
 #include <QResizeEvent>
 #include <QPropertyAnimation>
 
-ModalOverlay::ModalOverlay(QWidget *parent, OverlayType _type) :
+ModalOverlay::ModalOverlay(bool enable_wallet, QWidget *parent) :
 QWidget(parent),
 ui(new Ui::ModalOverlay),
 bestHeaderHeight(0),
@@ -41,7 +41,10 @@ type(_type)
 
     blockProcessTime.clear();
     setVisible(false);
-
+    if (!enable_wallet) {
+        ui->infoText->setVisible(false);
+        ui->infoTextStrong->setText(tr("Bitcoin Core is currently syncing.  It will download headers and blocks from peers and validate them until reaching the tip of the block chain."));
+    }
     ui->stackedWidget->setCurrentIndex(type);
     ui->walletBackupButton->setVisible(type == OverlayType::Backup);
     ui->closeButton->setText(type == OverlayType::Backup ? tr("Maybe later") : tr("Hide"));
