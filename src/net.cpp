@@ -570,10 +570,7 @@ bool CNode::ReceiveMsgBytes(const char *pch, unsigned int nBytes, bool& complete
 
         // absorb network data
         int handled = m_deserializer->Read(pch, nBytes);
-        if (handled < 0) {
-            m_deserializer->Reset();
-            return false;
-        }
+        if (handled < 0) return false;
 
         if (m_deserializer->OversizedMessageDetected()) {
             LogPrint(BCLog::NET, "Oversized message from peer=%i, disconnecting\n", GetId());
