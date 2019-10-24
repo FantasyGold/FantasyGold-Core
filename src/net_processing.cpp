@@ -1062,6 +1062,39 @@ void EraseOrphansFor(NodeId peer)
     if (nErased > 0) LogPrint(BCLog::MEMPOOL, "Erased %d orphan tx from peer=%d\n", nErased, peer);
 }
 
+/**
+ * Potentially ban a node based on the contents of a TxValidationState object
+ *
+ * @return Returns true if the peer was punished (probably disconnected)
+ *
+ * Changes here may need to be reflected in TxRelayMayResultInDisconnect().
+ */
+static bool MaybePunishNodeForTx(NodeId nodeid, const TxValidationState& state, const std::string& message = "") {
+    switch (state.GetResult()) {
+    case TxValidationResult::TX_RESULT_UNSET:
+        break;
+    // The node is providing invalid data:
+    case TxValidationResult::TX_CONSENSUS:
+        {
+            LOCK(cs_main);
+            Misbehaving(nodeid, 100, message);
+            return true;
+        }
+    // Conflicting (but not necessarily invalid) data or different policy:
+    case TxValidationResult::TX_RECENT_CONSENSUS_CHANGE:
+    case TxValidationResult::TX_NOT_STANDARD:
+    case TxValidationResult::TX_MISSING_INPUTS:
+    case TxValidationResult::TX_PREMATURE_SPEND:
+    case TxValidationResult::TX_WITNESS_MUTATED:
+    case TxValidationResult::TX_CONFLICT:
+    case TxValidationResult::TX_MEMPOOL_POLICY:
+        break;
+    }
+    if (message != "") {
+        LogPrint(BCLog::NET, "peer=%d: %s\n", nodeid, message);
+    }
+    return false;
+}
 
 unsigned int LimitOrphanTxSize(unsigned int nMaxOrphans)
 {
