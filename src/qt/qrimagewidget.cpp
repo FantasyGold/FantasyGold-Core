@@ -71,7 +71,6 @@ bool QRImageWidget::setQR(const QString& data, const QString& text)
 
     if (!text.isEmpty()) {
         QFont font = GUIUtil::fixedPitchFont();
-        font.setStyleStrategy(QFont::NoAntialias);
         QRect paddedRect = qrAddrImage.rect();
 
         // calculate ideal font size
