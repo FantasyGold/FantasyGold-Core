@@ -619,8 +619,8 @@ bool CWallet::HaveWatchOnly() const
 
 void CWallet::UpgradeKeyMetadata()
 {
-    AssertLockHeld(m_spk_man->cs_wallet);
     if (m_spk_man) {
+        AssertLockHeld(m_spk_man->cs_wallet);
         m_spk_man->UpgradeKeyMetadata();
     }
 }
