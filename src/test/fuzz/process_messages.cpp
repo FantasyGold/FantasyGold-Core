@@ -11,7 +11,7 @@
 #include <test/fuzz/util.h>
 #include <test/util/mining.h>
 #include <test/util/net.h>
-#include <test/util/setup_common.h>
+#include <test/util/util/setup_common.h>
 #include <util/memory.h>
 #include <validation.h>
 #include <validationinterface.h>

@@ -4,7 +4,7 @@
 
 #include <test/fuzz/fuzz.h>
 
-#include <test/util/setup_common.h>
+#include <test/util/util/setup_common.h>
 
 #include <cstdint>
 #include <unistd.h>

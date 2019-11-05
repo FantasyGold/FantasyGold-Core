@@ -39,8 +39,8 @@ bench_bench_fantasygold_SOURCES = \
   bench/lockedpool.cpp \
   bench/poly1305.cpp \
   bench/prevector.cpp \
-  test/setup_common.h \
-  test/setup_common.cpp \
+  test/util/setup_common.h \
+  test/util/setup_common.cpp \
   test/util.h \
   test/util.cpp
 

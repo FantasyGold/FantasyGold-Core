@@ -9,7 +9,7 @@
 #include <util/system.h>
 #include <util/strencodings.h>
 #include <util/string.h>
-#include <test/util/setup_common.h>
+#include <test/util/util/setup_common.h>
 
 #include <string>
 #include <vector>

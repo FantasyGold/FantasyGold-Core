@@ -7,7 +7,7 @@
 #include <coins.h>
 #include <script/standard.h>
 #include <streams.h>
-#include <test/util/setup_common.h>
+#include <test/util/util/setup_common.h>
 #include <uint256.h>
 #include <undo.h>
 #include <util/strencodings.h>

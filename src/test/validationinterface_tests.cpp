@@ -6,7 +6,7 @@
 #include <consensus/validation.h>
 #include <primitives/block.h>
 #include <scheduler.h>
-#include <test/util/setup_common.h>
+#include <test/util/util/setup_common.h>
 #include <util/check.h>
 #include <validationinterface.h>
 

@@ -9,7 +9,7 @@
 #include <key_io.h>
 #include <streams.h>
 #include <util/strencodings.h>
-#include <test/util/setup_common.h>
+#include <test/util/util/setup_common.h>
 
 #include <string>
 #include <vector>

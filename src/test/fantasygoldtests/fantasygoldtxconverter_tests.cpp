@@ -1,5 +1,5 @@
 #include <boost/test/unit_test.hpp>
-#include <test/util/setup_common.h>
+#include <test/util/util/setup_common.h>
 #include <consensus/merkle.h>
 #include <chainparams.h>
 #include <miner.h>

@@ -14,7 +14,7 @@
 #include <test/fuzz/FuzzedDataProvider.h>
 #include <test/fuzz/fuzz.h>
 #include <test/util/mining.h>
-#include <test/util/setup_common.h>
+#include <test/util/util/setup_common.h>
 #include <util/memory.h>
 #include <validationinterface.h>
 #include <version.h>

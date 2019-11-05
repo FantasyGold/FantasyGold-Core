@@ -4,7 +4,7 @@
 
 #include <dbwrapper.h>
 #include <uint256.h>
-#include <test/util/setup_common.h>
+#include <test/util/util/setup_common.h>
 #include <util/memory.h>
 
 #include <memory>

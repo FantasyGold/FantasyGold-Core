@@ -4,7 +4,7 @@
 #include <boost/test/unit_test.hpp>
 #include <cuckoocache.h>
 #include <script/sigcache.h>
-#include <test/util/setup_common.h>
+#include <test/util/util/setup_common.h>
 #include <random.h>
 #include <thread>
 #include <deque>

@@ -5,7 +5,7 @@
 #include <util/memory.h>
 #include <util/system.h>
 
-#include <test/util/setup_common.h>
+#include <test/util/util/setup_common.h>
 
 #include <memory>
 

@@ -10,7 +10,7 @@
 #include <pow.h>
 #include <script/standard.h>
 #include <test/util/blockfilter.h>
-#include <test/util/setup_common.h>
+#include <test/util/util/setup_common.h>
 #include <util/time.h>
 #include <validation.h>
 

@@ -8,7 +8,7 @@ unit tests as possible).
 
 The build system is set up to compile an executable called `test_bitcoin`
 that runs all of the unit tests. The main source file for the test library is found in
-`util/setup_common.cpp`.
+`util/util/setup_common.cpp`.
 
 ### Compiling/running unit tests
 

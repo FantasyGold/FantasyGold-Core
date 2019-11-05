@@ -7,7 +7,7 @@
 #include <noui.h>
 #include <util/string.h>
 #include <test/util/logging.h>
-#include <test/util/setup_common.h>
+#include <test/util/util/setup_common.h>
 #include <timedata.h>
 #include <warnings.h>
 
