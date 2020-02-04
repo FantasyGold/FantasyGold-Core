@@ -658,6 +658,14 @@ struct CoinSelectionParams
     CoinSelectionParams() {}
 };
 
+struct Delegation
+{
+    CKeyID staker;
+    uint8_t fee;
+    uint blockHeight;
+    std::vector<unsigned char> PoD; //Proof Of Delegation
+};
+
 class WalletRescanReserver; //forward declarations for ScanForWalletTransactions/RescanFromTime
 /**
  * A CWallet is an extension of a keystore, which also maintains a set of transactions and balances,
@@ -834,6 +842,9 @@ private:
     bool CreateCoinStakeFromDelegate(interfaces::Chain::Lock& locked_chain, const FillableSigningProvider &keystore, unsigned int nBits, const CAmount& nTotalFees, uint32_t nTimeBlock, CMutableTransaction& tx, CKey& key, std::set<std::pair<const CWalletTx*,unsigned int> >& setCoins, std::vector<COutPoint>& setDelegateCoins, std::vector<unsigned char>& vchPoD, COutPoint& headerPrevout);
     bool GetDelegationStaker(const uint160& keyid, Delegation& delegation);
     const CWalletTx* GetCoinSuperStaker(const std::set<std::pair<const CWalletTx*,unsigned int> >& setCoins, const PKHash& superStaker, COutPoint& prevout, CAmount& nValueRet);
+
+    bool CreateCoinStakeFromMine(interfaces::Chain::Lock& locked_chain, const CKeyStore &keystore, unsigned int nBits, const CAmount& nTotalFees, uint32_t nTimeBlock, CMutableTransaction& tx, CKey& key, std::set<std::pair<const CWalletTx*,unsigned int> >& setCoins);
+    bool CreateCoinStakeFromDelegate(interfaces::Chain::Lock& locked_chain, const CKeyStore &keystore, unsigned int nBits, const CAmount& nTotalFees, uint32_t nTimeBlock, CMutableTransaction& tx, CKey& key, std::set<std::pair<const CWalletTx*,unsigned int> >& setDelegateCoins);
 
 public:
     /*
