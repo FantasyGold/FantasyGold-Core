@@ -29,9 +29,9 @@ bool FantasyGoldVersionChecker::newVersionAvailable()
 QList<Version> FantasyGoldVersionChecker::getVersions()
 {
     QNetworkAccessManager manager;
-    QNetworkReply *response = manager.get(QNetworkRequest(QUrl(FGC_RELEASES)));
+    QNetworkReply *response = manager.get(QNetworkRequest(QUrl(FANTASYGOLD_RELEASES)));
     QEventLoop event;
-    connect(response, SIGNAL(finished()), &event, SLOT(quit()));
+    connect(response, &QNetworkReply::finished, &event, &QEventLoop::quit);
     event.exec();
     QString html = response->readAll();
 

@@ -1,15 +1,16 @@
-// Copyright (c) 2012-2018 The Bitcoin Core developers
+// Copyright (c) 2012-2019 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
 #include <rpc/server.h>
 #include <rpc/client.h>
+#include <rpc/util.h>
 
 #include <core_io.h>
-#include <key_io.h>
-#include <netbase.h>
-
-#include <test/test_bitcoin.h>
+#include <init.h>
+#include <interfaces/chain.h>
+#include <test/setup_common.h>
+#include <util/time.h>
 
 #include <boost/algorithm/string.hpp>
 #include <boost/test/unit_test.hpp>
@@ -28,10 +29,9 @@ UniValue CallRPC(std::string args)
     request.strMethod = strMethod;
     request.params = RPCConvertValues(strMethod, vArgs);
     request.fHelp = false;
-    BOOST_CHECK(tableRPC[strMethod]);
-    rpcfn_type method = tableRPC[strMethod]->actor;
+    if (RPCIsInWarmup(nullptr)) SetRPCWarmupFinished();
     try {
-        UniValue result = (*method)(request);
+        UniValue result = tableRPC.execute(request);
         return result;
     }
     catch (const UniValue& objError) {
@@ -112,10 +112,14 @@ BOOST_AUTO_TEST_CASE(rpc_rawsign)
     std::string notsigned = r.get_str();
     std::string privkey1 = "\"KzsXybp9jX64P5ekX1KUxRQ79Jht9uzW7LorgwE65i5rWACL6LQe\"";
     std::string privkey2 = "\"Kyhdf5LuKTRx4ge69ybABsiUAWjVRK4XGxAKk2FQLp2HjGMy87Z4\"";
+    InitInterfaces interfaces;
+    interfaces.chain = interfaces::MakeChain();
+    g_rpc_interfaces = &interfaces;
     r = CallRPC(std::string("signrawtransactionwithkey ")+notsigned+" [] "+prevout);
     BOOST_CHECK(find_value(r.get_obj(), "complete").get_bool() == false);
     r = CallRPC(std::string("signrawtransactionwithkey ")+notsigned+" ["+privkey1+","+privkey2+"] "+prevout);
     BOOST_CHECK(find_value(r.get_obj(), "complete").get_bool() == true);
+    g_rpc_interfaces = nullptr;
 }
 
 BOOST_AUTO_TEST_CASE(rpc_createraw_op_return)
@@ -141,9 +145,9 @@ BOOST_AUTO_TEST_CASE(rpc_format_monetary_values)
     BOOST_CHECK(ValueFromAmount(50000000LL).write() == "0.50000000");
     BOOST_CHECK(ValueFromAmount(89898989LL).write() == "0.89898989");
     BOOST_CHECK(ValueFromAmount(100000000LL).write() == "1.00000000");
-    BOOST_CHECK(ValueFromAmount(21000000024999990LL).write() == "210000000.24999990");
-    BOOST_CHECK(ValueFromAmount(21000000024999999LL).write() == "210000000.24999999");
-    BOOST_CHECK(ValueFromAmount(21000000025000000LL).write() == "210000000.25000000");
+    BOOST_CHECK(ValueFromAmount(10782240624999990LL).write() == "107822406.24999990");
+    BOOST_CHECK(ValueFromAmount(10782240624999999LL).write() == "107822406.24999999");
+    BOOST_CHECK(ValueFromAmount(10782240625000000LL).write() == "107822406.25000000");
 
     BOOST_CHECK_EQUAL(ValueFromAmount(0).write(), "0.00000000");
     BOOST_CHECK_EQUAL(ValueFromAmount((COIN/10000)*123456789).write(), "12345.67890000");
@@ -187,9 +191,9 @@ BOOST_AUTO_TEST_CASE(rpc_parse_monetary_values)
     BOOST_CHECK_EQUAL(AmountFromValue(ValueFromString("0.50000000")), 50000000LL);
     BOOST_CHECK_EQUAL(AmountFromValue(ValueFromString("0.89898989")), 89898989LL);
     BOOST_CHECK_EQUAL(AmountFromValue(ValueFromString("1.00000000")), 100000000LL);
-    BOOST_CHECK_EQUAL(AmountFromValue(ValueFromString("210000000.2499999")), 21000000024999990LL);
-    BOOST_CHECK_EQUAL(AmountFromValue(ValueFromString("210000000.24999999")), 21000000024999999LL);
-    BOOST_CHECK_EQUAL(AmountFromValue(ValueFromString("210000000.25")), 21000000025000000LL);
+    BOOST_CHECK_EQUAL(AmountFromValue(ValueFromString("107822406.2499999")), 10782240624999990LL);
+    BOOST_CHECK_EQUAL(AmountFromValue(ValueFromString("107822406.24999999")), 10782240624999999LL);
+    BOOST_CHECK_EQUAL(AmountFromValue(ValueFromString("107822406.25")), 10782240625000000LL);
 
     BOOST_CHECK_EQUAL(AmountFromValue(ValueFromString("1e-8")), COIN/100000000);
     BOOST_CHECK_EQUAL(AmountFromValue(ValueFromString("0.1e-7")), COIN/100000000);

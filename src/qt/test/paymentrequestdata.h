@@ -457,7 +457,7 @@ d2hj739GDLz0b5KuJ2SG6VknMRQM976w/m2qlq0ccVGaaZ2zMIGfpzL3p6adwx/5\
 ";
 
 //
-// Payment request with amount overflow (amount is set to 210000000.26 FGC)
+// Payment request with amount overflow (amount is set to 107822406.26 FANTASYGOLD)
 //
 const char* paymentrequest5_cert2_BASE64 =
 "Egt4NTA5K3NoYTI1NhryBArvBDCCAmswggFToAMCAQICAQEwDQYJKoZIhvcNAQELBQAwITEfMB0G\
@@ -475,5 +475,4 @@ tYuqV5tXSuaNYfx04W++Ii4SJAiAgZWzwMyTExIZdqkUEPQG/jXuVKaLF0rH0wOfayIk74aIrBi7\
 zOHHBSoAKoABg1l5FGBRmbyvqBREKkATBA5QGcguG8Iw/iJQpfMKRlpOW3o6sSVJ7CgmZkZobQYr\
 OegVQj5qNLJh6uL5Aov8V4ztufpiVLAYIdosjYYDNrlNXM2tTcVEfjXyKP+kVAUsjGmx4S7lDwcg\
 ZsuHrJQPssyVc6/sW7rKpvOXi38jVMA=";
-
 #endif // BITCOIN_QT_TEST_PAYMENTREQUESTDATA_H

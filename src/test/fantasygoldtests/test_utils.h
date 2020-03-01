@@ -1,7 +1,8 @@
-#include <util.h>
+#include <util/system.h>
 #include <validation.h>
-#include <utilstrencodings.h>
-#include <test/test_bitcoin.h>
+#include <util/strencodings.h>
+#include <util/convert.h>
+#include <test/setup_common.h>
 #include <boost/filesystem/operations.hpp>
 #include <fs.h>
 
@@ -62,8 +63,8 @@ inline FantasyGoldTransaction createFantasyGoldTransaction(valtype data, dev::u2
 inline std::pair<std::vector<ResultExecute>, ByteCodeExecResult> executeBC(std::vector<FantasyGoldTransaction> txs){
     CBlock block(generateBlock());
     FantasyGoldDGP fantasygoldDGP(globalState.get(), fGettingValuesDGP);
-    uint64_t blockGasLimit = fantasygoldDGP.getBlockGasLimit(chainActive.Tip()->nHeight + 1);
-    ByteCodeExec exec(block, txs, blockGasLimit, chainActive.Tip());
+    uint64_t blockGasLimit = fantasygoldDGP.getBlockGasLimit(ChainActive().Tip()->nHeight + 1);
+    ByteCodeExec exec(block, txs, blockGasLimit, ChainActive().Tip());
     exec.performByteCode();
     std::vector<ResultExecute> res = exec.getResult();
     ByteCodeExecResult bceExecRes;

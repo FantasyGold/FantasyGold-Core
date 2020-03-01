@@ -14,6 +14,12 @@
    <string>Form</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_7">
+   <property name="leftMargin">
+    <number>0</number>
+   </property>
+   <property name="rightMargin">
+    <number>0</number>
+   </property>
    <item>
     <widget class="QStackedWidget" name="stackedWidget">
      <property name="currentIndex">
@@ -34,7 +40,21 @@
         <number>0</number>
        </property>
        <item>
+        <layout class="QVBoxLayout" name="verticalLayout_11">
+         <property name="leftMargin">
+          <number>9</number>
+         </property>
+         <property name="topMargin">
+          <number>0</number>
+         </property>
+         <property name="rightMargin">
+          <number>9</number>
+         </property>
+         <item>
         <layout class="QHBoxLayout" name="horizontalLayout">
+           <property name="rightMargin">
+            <number>9</number>
+           </property>
          <item>
           <widget class="QLabel" name="labelTitle">
            <property name="font">
@@ -74,13 +94,6 @@
            </property>
           </widget>
          </item>
-         <item>
-          <widget class="QLabel" name="labelToken">
-           <property name="text">
-            <string>Token</string>
-           </property>
-          </widget>
-         </item>
         </layout>
        </item>
        <item>
@@ -109,14 +122,17 @@
             <property name="leftMargin">
              <number>12</number>
             </property>
+              <property name="rightMargin">
+               <number>9</number>
+              </property>
             <property name="horizontalSpacing">
              <number>15</number>
             </property>
             <property name="verticalSpacing">
              <number>12</number>
             </property>
-            <item row="0" column="1">
-             <widget class="QValidatedTextEdit" name="textEditBytecode">
+              <item row="1" column="1">
+               <widget class="QValidatedTextEdit" name="textEditInterface">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                 <horstretch>0</horstretch>
@@ -134,44 +150,8 @@
               </property>
              </widget>
             </item>
-            <item row="0" column="0">
-             <layout class="QVBoxLayout" name="verticalLayout">
-              <item>
-               <widget class="QLabel" name="labelBytecode">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="minimumSize">
-                 <size>
-                  <width>100</width>
-                  <height>0</height>
-                 </size>
-                </property>
-                <property name="text">
-                 <string>Bytecode</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <spacer name="verticalSpacer_2">
-                <property name="orientation">
-                 <enum>Qt::Vertical</enum>
-                </property>
-                <property name="sizeHint" stdset="0">
-                 <size>
-                  <width>20</width>
-                  <height>40</height>
-                 </size>
-                </property>
-               </spacer>
-              </item>
-             </layout>
-            </item>
-            <item row="1" column="1">
-             <widget class="QValidatedTextEdit" name="textEditInterface">
+              <item row="0" column="1">
+               <widget class="QValidatedTextEdit" name="textEditBytecode">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                 <horstretch>0</horstretch>
@@ -201,7 +181,7 @@
                 </property>
                 <property name="minimumSize">
                  <size>
-                  <width>100</width>
+                    <width>160</width>
                   <height>0</height>
                  </size>
                 </property>
@@ -210,18 +190,28 @@
                 </property>
                </widget>
               </item>
+               </layout>
+              </item>
+              <item row="0" column="0">
+               <layout class="QVBoxLayout" name="verticalLayout">
               <item>
-               <spacer name="verticalSpacer">
-                <property name="orientation">
-                 <enum>Qt::Vertical</enum>
+                 <widget class="QLabel" name="labelBytecode">
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
                 </property>
-                <property name="sizeHint" stdset="0">
+                  <property name="minimumSize">
                  <size>
-                  <width>20</width>
-                  <height>40</height>
+                    <width>160</width>
+                    <height>0</height>
                  </size>
                 </property>
-               </spacer>
+                  <property name="text">
+                   <string>Bytecode</string>
+                  </property>
+                 </widget>
               </item>
              </layout>
             </item>
@@ -230,6 +220,23 @@
          </layout>
         </widget>
        </item>
+        </layout>
+       </item>
+       <item>
+        <widget class="Line" name="hContractLine">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <layout class="QVBoxLayout" name="verticalLayout_12">
+         <property name="leftMargin">
+          <number>9</number>
+         </property>
+         <property name="rightMargin">
+          <number>9</number>
+         </property>
        <item>
         <widget class="QGroupBox" name="groupBoxConstructor">
          <property name="title">
@@ -253,7 +260,7 @@
                <x>0</x>
                <y>0</y>
                <width>656</width>
-               <height>172</height>
+                 <height>133</height>
               </rect>
              </property>
              <layout class="QVBoxLayout" name="verticalLayout_5"/>
@@ -263,6 +270,23 @@
          </layout>
         </widget>
        </item>
+        </layout>
+       </item>
+       <item>
+        <widget class="Line" name="hContractLine2">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <layout class="QVBoxLayout" name="verticalLayout_14">
+         <property name="leftMargin">
+          <number>9</number>
+         </property>
+         <property name="rightMargin">
+          <number>9</number>
+         </property>
        <item>
         <widget class="QGroupBox" name="groupBoxOptional">
          <property name="title">
@@ -301,7 +325,7 @@
             </property>
             <property name="minimumSize">
              <size>
-              <width>130</width>
+                <width>160</width>
               <height>0</height>
              </size>
             </property>
@@ -339,7 +363,7 @@
             </property>
             <property name="minimumSize">
              <size>
-              <width>130</width>
+                <width>160</width>
               <height>0</height>
              </size>
             </property>
@@ -384,19 +408,21 @@
         </widget>
        </item>
       </layout>
+       </item>
+      </layout>
      </widget>
     </widget>
    </item>
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout_3">
      <property name="leftMargin">
-      <number>9</number>
+      <number>18</number>
      </property>
      <property name="topMargin">
       <number>9</number>
      </property>
      <property name="rightMargin">
-      <number>9</number>
+      <number>18</number>
      </property>
      <property name="bottomMargin">
       <number>9</number>

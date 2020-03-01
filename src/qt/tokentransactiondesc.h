@@ -1,5 +1,5 @@
-#ifndef FGC_QT_TOKENTRANSACTIONDESC_H
-#define FGC_QT_TOKENTRANSACTIONDESC_H
+#ifndef FANTASYGOLD_QT_TOKENTRANSACTIONDESC_H
+#define FANTASYGOLD_QT_TOKENTRANSACTIONDESC_H
 
 #include <QObject>
 #include <QString>
@@ -26,4 +26,4 @@ private:
     static QString FormatTxStatus(interfaces::Wallet& wallet, const interfaces::TokenTx& wtx);
 };
 
-#endif // FGC_QT_TOKENTRANSACTIONDESC_H
+#endif // FANTASYGOLD_QT_TOKENTRANSACTIONDESC_H

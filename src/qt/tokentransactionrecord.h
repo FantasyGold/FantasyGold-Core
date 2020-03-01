@@ -1,8 +1,9 @@
-#ifndef FGC_QT_TOKENTRANSACTIONRECORD_H
-#define FGC_QT_TOKENTRANSACTIONRECORD_H
+#ifndef FANTASYGOLD_QT_TOKENTRANSACTIONRECORD_H
+#define FANTASYGOLD_QT_TOKENTRANSACTIONRECORD_H
 
 #include <amount.h>
 #include <uint256.h>
+#include <util/convert.h>
 
 #include <QList>
 #include <QString>

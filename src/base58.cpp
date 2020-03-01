@@ -6,6 +6,7 @@
 
 #include <hash.h>
 #include <uint256.h>
+#include <util/strencodings.h>
 
 #include <assert.h>
 #include <string.h>

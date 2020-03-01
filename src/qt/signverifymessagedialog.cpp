@@ -11,7 +11,7 @@
 #include <qt/walletmodel.h>
 
 #include <key_io.h>
-#include <validation.h> // For strMessageMagic
+#include <util/validation.h> // For strMessageMagic
 #include <wallet/wallet.h>
 #include <qt/styleSheet.h>
 #include <string>
@@ -22,24 +22,24 @@
 SignVerifyMessageDialog::SignVerifyMessageDialog(const PlatformStyle *_platformStyle, QWidget *parent) :
     QDialog(parent),
     ui(new Ui::SignVerifyMessageDialog),
-    model(0),
+    model(nullptr),
     platformStyle(_platformStyle)
 {
     ui->setupUi(this);
 
-    ui->addressBookButton_SM->setIcon(platformStyle->MultiStatesIcon(":/icons/address-book", PlatformStyle::PushButton));
-    ui->pasteButton_SM->setIcon(platformStyle->MultiStatesIcon(":/icons/editpaste", PlatformStyle::PushButton));
-    ui->copySignatureButton_SM->setIcon(platformStyle->MultiStatesIcon(":/icons/editcopy", PlatformStyle::PushButton));
+    ui->addressBookButton_SM->setIcon(platformStyle->MultiStatesIcon(":/icons/address-book", PlatformStyle::PushButtonIcon));
+    ui->pasteButton_SM->setIcon(platformStyle->MultiStatesIcon(":/icons/editpaste", PlatformStyle::PushButtonIcon));
+    ui->copySignatureButton_SM->setIcon(platformStyle->MultiStatesIcon(":/icons/editcopy", PlatformStyle::PushButtonIcon));
     ui->signMessageButton_SM->setIcon(platformStyle->MultiStatesIcon(":/icons/edit", PlatformStyle::PushButton));
-    ui->clearButton_SM->setIcon(platformStyle->MultiStatesIcon(":/icons/remove", PlatformStyle::PushButton, 0x5a5a5d));
-    ui->addressBookButton_VM->setIcon(platformStyle->MultiStatesIcon(":/icons/address-book", PlatformStyle::PushButton));
+    ui->clearButton_SM->setIcon(platformStyle->MultiStatesIcon(":/icons/remove", PlatformStyle::PushButtonLight));
+    ui->addressBookButton_VM->setIcon(platformStyle->MultiStatesIcon(":/icons/address-book", PlatformStyle::PushButtonIcon));
     ui->verifyMessageButton_VM->setIcon(platformStyle->MultiStatesIcon(":/icons/transaction_0", PlatformStyle::PushButton));
-    ui->clearButton_VM->setIcon(platformStyle->MultiStatesIcon(":/icons/remove", PlatformStyle::PushButton, 0x5a5a5d));
+    ui->clearButton_VM->setIcon(platformStyle->MultiStatesIcon(":/icons/remove", PlatformStyle::PushButtonLight));
 
-    SetObjectStyleSheet(ui->clearButton_SM, StyleSheetNames::ButtonWhite);
-    SetObjectStyleSheet(ui->clearButton_VM, StyleSheetNames::ButtonWhite);
-    SetObjectStyleSheet(ui->signMessageButton_SM, StyleSheetNames::ButtonBlue);
-    SetObjectStyleSheet(ui->verifyMessageButton_VM, StyleSheetNames::ButtonBlue);
+    SetObjectStyleSheet(ui->clearButton_SM, StyleSheetNames::ButtonLight);
+    SetObjectStyleSheet(ui->clearButton_VM, StyleSheetNames::ButtonLight);
+    SetObjectStyleSheet(ui->signMessageButton_SM, StyleSheetNames::ButtonGray);
+    SetObjectStyleSheet(ui->verifyMessageButton_VM, StyleSheetNames::ButtonGray);
     SetObjectStyleSheet(ui->addressBookButton_SM, StyleSheetNames::ButtonTransparent);
     SetObjectStyleSheet(ui->pasteButton_SM, StyleSheetNames::ButtonTransparent);
     SetObjectStyleSheet(ui->copySignatureButton_SM, StyleSheetNames::ButtonTransparent);
@@ -129,8 +129,8 @@ void SignVerifyMessageDialog::on_signMessageButton_SM_clicked()
         ui->statusLabel_SM->setText(tr("The entered address is invalid.") + QString(" ") + tr("Please check the address and try again."));
         return;
     }
-    const CKeyID* keyID = boost::get<CKeyID>(&destination);
-    if (!keyID) {
+    const PKHash* pkhash = boost::get<PKHash>(&destination);
+    if (!pkhash) {
         ui->addressIn_SM->setValid(false);
         ui->statusLabel_SM->setStyleSheet("QLabel { color: red; }");
         ui->statusLabel_SM->setText(tr("The entered address does not refer to a key.") + QString(" ") + tr("Please check the address and try again."));
@@ -146,7 +146,7 @@ void SignVerifyMessageDialog::on_signMessageButton_SM_clicked()
     }
 
     CKey key;
-    if (!model->wallet().getPrivKey(*keyID, key))
+    if (!model->wallet().getPrivKey(CKeyID(*pkhash), key))
     {
         ui->statusLabel_SM->setStyleSheet("QLabel { color: red; }");
         ui->statusLabel_SM->setText(tr("Private key for the entered address is not available."));
@@ -207,7 +207,7 @@ void SignVerifyMessageDialog::on_verifyMessageButton_VM_clicked()
         ui->statusLabel_VM->setText(tr("The entered address is invalid.") + QString(" ") + tr("Please check the address and try again."));
         return;
     }
-    if (!boost::get<CKeyID>(&destination)) {
+    if (!boost::get<PKHash>(&destination)) {
         ui->addressIn_VM->setValid(false);
         ui->statusLabel_VM->setStyleSheet("QLabel { color: red; }");
         ui->statusLabel_VM->setText(tr("The entered address does not refer to a key.") + QString(" ") + tr("Please check the address and try again."));
@@ -238,7 +238,7 @@ void SignVerifyMessageDialog::on_verifyMessageButton_VM_clicked()
         return;
     }
 
-    if (!(CTxDestination(pubkey.GetID()) == destination)) {
+    if (!(CTxDestination(PKHash(pubkey)) == destination)) {
         ui->statusLabel_VM->setStyleSheet("QLabel { color: red; }");
         ui->statusLabel_VM->setText(QString("<nobr>") + tr("Message verification failed.") + QString("</nobr>"));
         return;

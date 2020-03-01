@@ -11,12 +11,12 @@
 #include <clientversion.h>
 #include <streams.h>
 
+#include <algorithm>
+
 
 RecentRequestsTableModel::RecentRequestsTableModel(WalletModel *parent) :
     QAbstractTableModel(parent), walletModel(parent)
 {
-    nReceiveRequestsMaxId = 0;
-
     // Load entries from wallet
     std::vector<std::string> vReceiveRequests;
     parent->loadReceiveRequests(vReceiveRequests);
@@ -26,7 +26,7 @@ RecentRequestsTableModel::RecentRequestsTableModel(WalletModel *parent) :
     /* These columns must match the indices in the ColumnIndex enumeration */
     columns << tr("Date") << tr("Label") << tr("Message") << getAmountTitle();
 
-    connect(walletModel->getOptionsModel(), SIGNAL(displayUnitChanged(int)), this, SLOT(updateDisplayUnit()));
+    connect(walletModel->getOptionsModel(), &OptionsModel::displayUnitChanged, this, &RecentRequestsTableModel::updateDisplayUnit);
 }
 
 RecentRequestsTableModel::~RecentRequestsTableModel()
@@ -204,7 +204,7 @@ void RecentRequestsTableModel::addNewRequest(RecentRequestEntry &recipient)
 
 void RecentRequestsTableModel::sort(int column, Qt::SortOrder order)
 {
-    qSort(list.begin(), list.end(), RecentRequestEntryLessThan(column, order));
+    std::sort(list.begin(), list.end(), RecentRequestEntryLessThan(column, order));
     Q_EMIT dataChanged(index(0, 0, QModelIndex()), index(list.size() - 1, NUMBER_OF_COLUMNS - 1, QModelIndex()));
 }
 

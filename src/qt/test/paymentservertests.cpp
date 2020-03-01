@@ -13,9 +13,10 @@
 #include <random.h>
 #include <script/script.h>
 #include <script/standard.h>
-#include <util.h>
-#include <utilstrencodings.h>
+#include <test/setup_common.h>
+#include <util/strencodings.h>
 
+#include <openssl/ssl.h>
 #include <openssl/x509.h>
 #include <openssl/x509_vfy.h>
 
@@ -39,8 +40,8 @@ X509 *parse_b64der_cert(const char* cert_data)
 static SendCoinsRecipient handleRequest(PaymentServer* server, std::vector<unsigned char>& data)
 {
     RecipientCatcher sigCatcher;
-    QObject::connect(server, SIGNAL(receivedPaymentRequest(SendCoinsRecipient)),
-        &sigCatcher, SLOT(getRecipient(SendCoinsRecipient)));
+    QObject::connect(server, &PaymentServer::receivedPaymentRequest,
+        &sigCatcher, &RecipientCatcher::getRecipient);
 
     // Write data to a temp file:
     QTemporaryFile f;
@@ -57,8 +58,8 @@ static SendCoinsRecipient handleRequest(PaymentServer* server, std::vector<unsig
     // which will lead to a test failure anyway.
     QCoreApplication::sendEvent(&object, &event);
 
-    QObject::disconnect(server, SIGNAL(receivedPaymentRequest(SendCoinsRecipient)),
-        &sigCatcher, SLOT(getRecipient(SendCoinsRecipient)));
+    QObject::disconnect(server, &PaymentServer::receivedPaymentRequest,
+        &sigCatcher, &RecipientCatcher::getRecipient);
 
     // Return results from sigCatcher
     return sigCatcher.recipient;
@@ -66,7 +67,8 @@ static SendCoinsRecipient handleRequest(PaymentServer* server, std::vector<unsig
 
 void PaymentServerTests::paymentServerTests()
 {
-    SelectParams(CBaseChainParams::MAIN);
+    SSL_library_init();
+    BasicTestingSetup testing_setup(CBaseChainParams::MAIN);
     auto node = interfaces::MakeNode();
     OptionsModel optionsModel(*node);
     PaymentServer* server = new PaymentServer(nullptr, false);
@@ -181,17 +183,17 @@ void PaymentServerTests::paymentServerTests()
     QCOMPARE(PaymentServer::verifyExpired(r.paymentRequest.getDetails()), true);
 
     // Test BIP70 DoS protection:
-    unsigned char randData[BIP70_MAX_PAYMENTREQUEST_SIZE + 1];
-    GetRandBytes(randData, sizeof(randData));
+    auto randdata = FastRandomContext().randbytes(BIP70_MAX_PAYMENTREQUEST_SIZE + 1);
+
     // Write data to a temp file:
     QTemporaryFile tempFile;
     tempFile.open();
-    tempFile.write((const char*)randData, sizeof(randData));
+    tempFile.write((const char*)randdata.data(), randdata.size());
     tempFile.close();
     // compares 50001 <= BIP70_MAX_PAYMENTREQUEST_SIZE == false
     QCOMPARE(PaymentServer::verifySize(tempFile.size()), false);
 
-    // Payment request with amount overflow (amount is set to 210000000.26 FGC):
+    // Payment request with amount overflow (amount is set to 107822406.26 FANTASYGOLD):
     data = DecodeBase64(paymentrequest5_cert2_BASE64);
     byteArray = QByteArray((const char*)data.data(), data.size());
     r.paymentRequest.parse(byteArray);

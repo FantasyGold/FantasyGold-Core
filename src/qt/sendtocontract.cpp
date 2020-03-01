@@ -9,7 +9,7 @@
 #include <qt/bitcoinunits.h>
 #include <qt/optionsmodel.h>
 #include <validation.h>
-#include <utilmoneystr.h>
+#include <util/moneystr.h>
 #include <qt/abifunctionfield.h>
 #include <qt/contractabi.h>
 #include <qt/tabbarinfo.h>
@@ -56,21 +56,21 @@ SendToContract::SendToContract(const PlatformStyle *platformStyle, QWidget *pare
     // Setup ui components
     Q_UNUSED(platformStyle);
     ui->setupUi(this);
-    ui->saveInfoButton->setIcon(platformStyle->MultiStatesIcon(":/icons/filesave", PlatformStyle::PushButton));
-    ui->loadInfoButton->setIcon(platformStyle->MultiStatesIcon(":/icons/address-book", PlatformStyle::PushButton));
-    ui->pasteAddressButton->setIcon(platformStyle->MultiStatesIcon(":/icons/editpaste", PlatformStyle::PushButton));
+    ui->saveInfoButton->setIcon(platformStyle->MultiStatesIcon(":/icons/filesave", PlatformStyle::PushButtonIcon));
+    ui->loadInfoButton->setIcon(platformStyle->MultiStatesIcon(":/icons/address-book", PlatformStyle::PushButtonIcon));
+    ui->pasteAddressButton->setIcon(platformStyle->MultiStatesIcon(":/icons/editpaste", PlatformStyle::PushButtonIcon));
     // Format tool buttons
     GUIUtil::formatToolButtons(ui->saveInfoButton, ui->loadInfoButton, ui->pasteAddressButton);
 
     // Set stylesheet
-    SetObjectStyleSheet(ui->pushButtonClearAll, StyleSheetNames::ButtonBlack);
+    SetObjectStyleSheet(ui->pushButtonClearAll, StyleSheetNames::ButtonDark);
 
     m_ABIFunctionField = new ABIFunctionField(platformStyle, ABIFunctionField::SendTo, ui->scrollAreaFunction);
     ui->scrollAreaFunction->setWidget(m_ABIFunctionField);
     ui->lineEditAmount->setEnabled(true);
     ui->labelContractAddress->setToolTip(tr("The contract address that will receive the funds and data."));
-    ui->labelAmount->setToolTip(tr("The amount in FGC to send. Default = 0."));
-    ui->labelSenderAddress->setToolTip(tr("The quantum address that will be used as sender."));
+    ui->labelAmount->setToolTip(tr("The amount in FANTASYGOLD to send. Default = 0."));
+    ui->labelSenderAddress->setToolTip(tr("The fantasygold address that will be used as sender."));
 
     m_tabInfo = new TabBarInfo(ui->stackedWidget);
     m_tabInfo->addTab(0, tr("Send To Contract"));
@@ -104,16 +104,16 @@ SendToContract::SendToContract(const PlatformStyle *platformStyle, QWidget *pare
     m_contractABI = new ContractABI();
 
     // Connect signals with slots
-    connect(ui->pushButtonClearAll, SIGNAL(clicked()), SLOT(on_clearAllClicked()));
-    connect(ui->pushButtonSendToContract, SIGNAL(clicked()), SLOT(on_sendToContractClicked()));
-    connect(ui->lineEditContractAddress, SIGNAL(textChanged(QString)), SLOT(on_updateSendToContractButton()));
-    connect(ui->textEditInterface, SIGNAL(textChanged()), SLOT(on_newContractABI()));
-    connect(ui->stackedWidget, SIGNAL(currentChanged(int)), SLOT(on_updateSendToContractButton()));
-    connect(m_ABIFunctionField, SIGNAL(functionChanged()), SLOT(on_functionChanged()));
-    connect(ui->saveInfoButton, SIGNAL(clicked()), SLOT(on_saveInfoClicked()));
-    connect(ui->loadInfoButton, SIGNAL(clicked()), SLOT(on_loadInfoClicked()));
-    connect(ui->pasteAddressButton, SIGNAL(clicked()), SLOT(on_pasteAddressClicked()));
-    connect(ui->lineEditContractAddress, SIGNAL(textChanged(QString)), SLOT(on_contractAddressChanged()));
+    connect(ui->pushButtonClearAll, &QPushButton::clicked, this, &SendToContract::on_clearAllClicked);
+    connect(ui->pushButtonSendToContract, &QPushButton::clicked, this, &SendToContract::on_sendToContractClicked);
+    connect(ui->lineEditContractAddress, &QValidatedLineEdit::textChanged, this, &SendToContract::on_updateSendToContractButton);
+    connect(ui->textEditInterface, &QValidatedTextEdit::textChanged, this, &SendToContract::on_newContractABI);
+    connect(ui->stackedWidget, &QStackedWidget::currentChanged, this, &SendToContract::on_updateSendToContractButton);
+    connect(m_ABIFunctionField, &ABIFunctionField::functionChanged, this, &SendToContract::on_functionChanged);
+    connect(ui->saveInfoButton, &QToolButton::clicked, this, &SendToContract::on_saveInfoClicked);
+    connect(ui->loadInfoButton, &QToolButton::clicked, this, &SendToContract::on_loadInfoClicked);
+    connect(ui->pasteAddressButton, &QToolButton::clicked, this, &SendToContract::on_pasteAddressClicked);
+    connect(ui->lineEditContractAddress, &QValidatedLineEdit::textChanged, this, &SendToContract::on_contractAddressChanged);
 
     // Set contract address validator
     QRegularExpression regEx;
@@ -134,6 +134,12 @@ void SendToContract::setModel(WalletModel *_model)
     m_model = _model;
     m_contractModel = m_model->getContractTableModel();
     ui->lineEditSenderAddress->setWalletModel(m_model);
+
+    if (m_model && m_model->getOptionsModel())
+        connect(m_model->getOptionsModel(), &OptionsModel::displayUnitChanged, this, &SendToContract::updateDisplayUnit);
+
+    // update the display unit, to not use the default ("FANTASYGOLD")
+    updateDisplayUnit();
 }
 
 bool SendToContract::isValidContractAddress()
@@ -205,7 +211,7 @@ void SendToContract::on_sendToContractClicked()
         QVariant result;
         QString errorMessage;
         QString resultJson;
-        int unit = m_model->getOptionsModel()->getDisplayUnit();
+        int unit = BitcoinUnits::BTC;
         uint64_t gasLimit = ui->lineEditGasLimit->value();
         CAmount gasPrice = ui->lineEditGasPrice->value();
         int func = m_ABIFunctionField->getSelectedFunction();
@@ -231,13 +237,13 @@ void SendToContract::on_sendToContractClicked()
         questionString.append(tr("<b>%1</b>?")
                               .arg(ui->lineEditContractAddress->text()));
 
-        SendConfirmationDialog confirmationDialog(tr("Confirm sending to contract."), questionString, 3, this);
+        SendConfirmationDialog confirmationDialog(tr("Confirm sending to contract."), questionString, "", "", SEND_CONFIRM_DELAY, this);
         confirmationDialog.exec();
         QMessageBox::StandardButton retval = (QMessageBox::StandardButton)confirmationDialog.result();
         if(retval == QMessageBox::Yes)
         {
             // Execute RPC command line
-            if(errorMessage.isEmpty() && m_execRPCCommand->exec(m_model->node(), m_model->wallet(), lstParams, result, resultJson, errorMessage))
+            if(errorMessage.isEmpty() && m_execRPCCommand->exec(m_model->node(), m_model, lstParams, result, resultJson, errorMessage))
             {
                 ContractResult *widgetResult = new ContractResult(ui->stackedWidget);
                 widgetResult->setResultData(result, FunctionABI(), m_ABIFunctionField->getParamsValues(), ContractResult::SendToResult);
@@ -260,8 +266,8 @@ void SendToContract::on_gasInfoChanged(quint64 blockGasLimit, quint64 minGasPric
 {
     Q_UNUSED(nGasPrice);
     ui->labelGasLimit->setToolTip(tr("Gas limit. Default = %1, Max = %2").arg(DEFAULT_GAS_LIMIT_OP_CREATE).arg(blockGasLimit));
-    ui->labelGasPrice->setToolTip(tr("Gas price: FGC price per gas unit. Default = %1, Min = %2").arg(QString::fromStdString(FormatMoney(DEFAULT_GAS_PRICE))).arg(QString::fromStdString(FormatMoney(minGasPrice))));
-    ui->lineEditGasPrice->setMinimum(minGasPrice);
+    ui->labelGasPrice->setToolTip(tr("Gas price: FANTASYGOLD price per gas unit. Default = %1, Min = %2").arg(QString::fromStdString(FormatMoney(DEFAULT_GAS_PRICE))).arg(QString::fromStdString(FormatMoney(minGasPrice))));
+    ui->lineEditGasPrice->SetMinValue(minGasPrice);
     ui->lineEditGasLimit->setMaximum(blockGasLimit);
 }
 
@@ -369,6 +375,16 @@ void SendToContract::on_contractAddressChanged()
                 ui->textEditInterface->setText(m_contractModel->abiForAddress(contractAddress));
             }
         }
+    }
+}
+
+void SendToContract::updateDisplayUnit()
+{
+    if(m_model && m_model->getOptionsModel())
+    {
+        // Update sendAmount and gasPriceAmount with the current unit
+        ui->lineEditGasPrice->setDisplayUnit(m_model->getOptionsModel()->getDisplayUnit());
+        ui->lineEditAmount->setDisplayUnit(m_model->getOptionsModel()->getDisplayUnit());
     }
 }
 

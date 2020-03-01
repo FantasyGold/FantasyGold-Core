@@ -5,21 +5,6 @@
 #include <versionbits.h>
 #include <consensus/params.h>
 
-const struct VBDeploymentInfo VersionBitsDeploymentInfo[Consensus::MAX_VERSION_BITS_DEPLOYMENTS] = {
-    {
-        /*.name =*/ "testdummy",
-        /*.gbt_force =*/ true,
-    },
-    {
-        /*.name =*/ "csv",
-        /*.gbt_force =*/ true,
-    },
-    {
-        /*.name =*/ "segwit",
-        /*.gbt_force =*/ true,
-    }
-};
-
 ThresholdState AbstractThresholdConditionChecker::GetStateFor(const CBlockIndex* pindexPrev, const Consensus::Params& params, ThresholdConditionCache& cache) const
 {
     int nPeriod = Period(params);
@@ -109,7 +94,6 @@ ThresholdState AbstractThresholdConditionChecker::GetStateFor(const CBlockIndex*
     return state;
 }
 
-// return the numerical statistics of blocks signalling the specified BIP9 condition in this current period
 BIP9Stats AbstractThresholdConditionChecker::GetStateStatisticsFor(const CBlockIndex* pindex, const Consensus::Params& params) const
 {
     BIP9Stats stats = {};

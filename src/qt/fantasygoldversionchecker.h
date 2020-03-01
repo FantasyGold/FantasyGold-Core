@@ -1,9 +1,9 @@
-#ifndef FGCVERSIONCHECKER_H
-#define FGCVERSIONCHECKER_H
+#ifndef FANTASYGOLDVERSIONCHECKER_H
+#define FANTASYGOLDVERSIONCHECKER_H
 
 #include <QObject>
 
-#define FGC_RELEASES "https://github.com/FantasyGold/FantasyGold-Core/releases"
+#define FANTASYGOLD_RELEASES "https://github.com/FantasyGold/FantasyGold-Core/releases"
 
 class Version {
 
@@ -95,4 +95,4 @@ private:
     Version currentVersion;
 };
 
-#endif // FGCVERSIONCHECKER_H
+#endif // FANTASYGOLDVERSIONCHECKER_H

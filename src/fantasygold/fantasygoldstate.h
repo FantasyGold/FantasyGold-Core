@@ -5,6 +5,7 @@
 #include <crypto/sha256.h>
 #include <crypto/ripemd160.h>
 #include <uint256.h>
+#include <util/convert.h>
 #include <primitives/transaction.h>
 #include <fantasygold/fantasygoldtransaction.h>
 
@@ -12,7 +13,7 @@
 #include <libethcore/SealEngine.h>
 
 using OnOpFunc = std::function<void(uint64_t, uint64_t, dev::eth::Instruction, dev::bigint, dev::bigint, 
-    dev::bigint, dev::eth::VM*, dev::eth::ExtVMFace const*)>;
+    dev::bigint, dev::eth::VMFace const*, dev::eth::ExtVMFace const*)>;
 using plusAndMinus = std::pair<dev::u256, dev::u256>;
 using valtype = std::vector<unsigned char>;
 
@@ -29,9 +30,20 @@ struct Vin{
     uint8_t alive;
 };
 
+class FantasyGoldTransactionReceipt: public dev::eth::TransactionReceipt {
+public:
+    FantasyGoldTransactionReceipt(dev::h256 const& state_root, dev::h256 const& utxo_root, dev::u256 const& gas_used, dev::eth::LogEntries const& log) : dev::eth::TransactionReceipt(state_root, gas_used, log), m_utxoRoot(utxo_root) {}
+
+    dev::h256 const& utxoRoot() const {
+        return m_utxoRoot;
+    }
+private:
+    dev::h256 m_utxoRoot;
+};
+
 struct ResultExecute{
     dev::eth::ExecutionResult execRes;
-    dev::eth::TransactionReceipt txRec;
+    FantasyGoldTransactionReceipt txRec;
     CTransaction tx;
 };
 
@@ -128,6 +140,8 @@ private:
 	dev::eth::SecureTrieDB<dev::Address, dev::OverlayDB> stateUTXO;
 
 	std::unordered_map<dev::Address, Vin> cacheUTXO;
+
+	void validateTransfersWithChangeLog();
 };
 
 

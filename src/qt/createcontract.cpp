@@ -9,7 +9,7 @@
 #include <qt/bitcoinunits.h>
 #include <qt/optionsmodel.h>
 #include <validation.h>
-#include <utilmoneystr.h>
+#include <util/moneystr.h>
 #include <qt/addressfield.h>
 #include <qt/abifunctionfield.h>
 #include <qt/contractabi.h>
@@ -51,7 +51,7 @@ CreateContract::CreateContract(const PlatformStyle *platformStyle, QWidget *pare
     ui->setupUi(this);
 
     // Set stylesheet
-    SetObjectStyleSheet(ui->pushButtonClearAll, StyleSheetNames::ButtonBlack);
+    SetObjectStyleSheet(ui->pushButtonClearAll, StyleSheetNames::ButtonDark);
 
     setLinkLabels();
     m_ABIFunctionField = new ABIFunctionField(platformStyle, ABIFunctionField::Create, ui->scrollAreaConstructor);
@@ -87,11 +87,11 @@ CreateContract::CreateContract(const PlatformStyle *platformStyle, QWidget *pare
     m_contractABI = new ContractABI();
 
     // Connect signals with slots
-    connect(ui->pushButtonClearAll, SIGNAL(clicked()), SLOT(on_clearAllClicked()));
-    connect(ui->pushButtonCreateContract, SIGNAL(clicked()), SLOT(on_createContractClicked()));
-    connect(ui->textEditBytecode, SIGNAL(textChanged()), SLOT(on_updateCreateButton()));
-    connect(ui->textEditInterface, SIGNAL(textChanged()), SLOT(on_newContractABI()));
-    connect(ui->stackedWidget, SIGNAL(currentChanged(int)), SLOT(on_updateCreateButton()));
+    connect(ui->pushButtonClearAll, &QPushButton::clicked, this, &CreateContract::on_clearAllClicked);
+    connect(ui->pushButtonCreateContract, &QPushButton::clicked, this, &CreateContract::on_createContractClicked);
+    connect(ui->textEditBytecode, &QValidatedTextEdit::textChanged, this, &CreateContract::on_updateCreateButton);
+    connect(ui->textEditInterface, &QValidatedTextEdit::textChanged, this, &CreateContract::on_newContractABI);
+    connect(ui->stackedWidget, &QStackedWidget::currentChanged, this, &CreateContract::on_updateCreateButton);
 
     // Set bytecode validator
     QRegularExpression regEx;
@@ -110,16 +110,19 @@ CreateContract::~CreateContract()
 void CreateContract::setLinkLabels()
 {
     ui->labelSolidity->setOpenExternalLinks(true);
-    ui->labelSolidity->setText("<a href=\"https://remix.ethereum.org/\">Solidity compiler</a>");
-
-    ui->labelToken->setOpenExternalLinks(true);
-    ui->labelToken->setText("<a href=\"https://github.com/FantasyGold/FGC20Token\">Token template</a>");
+    ui->labelSolidity->setText("<a href=\"https://qmix.fantasygold.io/\">Solidity compiler</a>");
 }
 
 void CreateContract::setModel(WalletModel *_model)
 {
     m_model = _model;
     ui->lineEditSenderAddress->setWalletModel(m_model);
+
+    if (m_model && m_model->getOptionsModel())
+        connect(m_model->getOptionsModel(), &OptionsModel::displayUnitChanged, this, &CreateContract::updateDisplayUnit);
+
+    // update the display unit, to not use the default ("FANTASYGOLD")
+    updateDisplayUnit();
 }
 
 bool CreateContract::isValidBytecode()
@@ -185,7 +188,7 @@ void CreateContract::on_createContractClicked()
         QVariant result;
         QString errorMessage;
         QString resultJson;
-        int unit = m_model->getOptionsModel()->getDisplayUnit();
+        int unit = BitcoinUnits::BTC;
         uint64_t gasLimit = ui->lineEditGasLimit->value();
         CAmount gasPrice = ui->lineEditGasPrice->value();
         int func = m_ABIFunctionField->getSelectedFunction();
@@ -207,13 +210,13 @@ void CreateContract::on_createContractClicked()
 
         QString questionString = tr("Are you sure you want to create contract? <br />");
 
-        SendConfirmationDialog confirmationDialog(tr("Confirm contract creation."), questionString, 3, this);
+        SendConfirmationDialog confirmationDialog(tr("Confirm contract creation."), questionString, "", "", SEND_CONFIRM_DELAY, this);
         confirmationDialog.exec();
         QMessageBox::StandardButton retval = (QMessageBox::StandardButton)confirmationDialog.result();
         if(retval == QMessageBox::Yes)
         {
             // Execute RPC command line
-            if(errorMessage.isEmpty() && m_execRPCCommand->exec(m_model->node(), m_model->wallet(), lstParams, result, resultJson, errorMessage))
+            if(errorMessage.isEmpty() && m_execRPCCommand->exec(m_model->node(), m_model, lstParams, result, resultJson, errorMessage))
             {
                 ContractResult *widgetResult = new ContractResult(ui->stackedWidget);
                 widgetResult->setResultData(result, FunctionABI(), QList<QStringList>(), ContractResult::CreateResult);
@@ -236,8 +239,8 @@ void CreateContract::on_gasInfoChanged(quint64 blockGasLimit, quint64 minGasPric
 {
     Q_UNUSED(nGasPrice);
     ui->labelGasLimit->setToolTip(tr("Gas limit. Default = %1, Max = %2").arg(DEFAULT_GAS_LIMIT_OP_CREATE).arg(blockGasLimit));
-    ui->labelGasPrice->setToolTip(tr("Gas price: FGC price per gas unit. Default = %1, Min = %2").arg(QString::fromStdString(FormatMoney(DEFAULT_GAS_PRICE))).arg(QString::fromStdString(FormatMoney(minGasPrice))));
-    ui->lineEditGasPrice->setMinimum(minGasPrice);
+    ui->labelGasPrice->setToolTip(tr("Gas price: FANTASYGOLD price per gas unit. Default = %1, Min = %2").arg(QString::fromStdString(FormatMoney(DEFAULT_GAS_PRICE))).arg(QString::fromStdString(FormatMoney(minGasPrice))));
+    ui->lineEditGasPrice->SetMinValue(minGasPrice);
     ui->lineEditGasLimit->setMaximum(blockGasLimit);
 }
 
@@ -268,6 +271,15 @@ void CreateContract::on_newContractABI()
     m_ABIFunctionField->setContractABI(m_contractABI);
 
     on_updateCreateButton();
+}
+
+void CreateContract::updateDisplayUnit()
+{
+    if(m_model && m_model->getOptionsModel())
+    {
+        // Update gasPriceAmount with the current unit
+        ui->lineEditGasPrice->setDisplayUnit(m_model->getOptionsModel()->getDisplayUnit());
+    }
 }
 
 QString CreateContract::toDataHex(int func, QString& errorMessage)

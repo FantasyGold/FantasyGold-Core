@@ -1,7 +1,7 @@
-#ifndef FGCTRANSACTION_H
-#define FGCTRANSACTION_H
+#ifndef FANTASYGOLDTRANSACTION_H
+#define FANTASYGOLDTRANSACTION_H
 
-#include <libethcore/Transaction.h>
+#include <libethereum/Transaction.h>
 
 struct VersionVM{
     //this should be portable, see https://stackoverflow.com/questions/31726191/is-there-a-portable-alternative-to-c-bitfields
@@ -21,8 +21,7 @@ struct VersionVM{
         return *(uint32_t*)this;
     }
     static VersionVM fromRaw(uint32_t val){
-        VersionVM x;
-        memcpy(&x, &val, sizeof(uint32_t));
+        VersionVM x = *(VersionVM*)&val;
         return x;
     }
     static VersionVM GetNoExec(){
@@ -47,13 +46,13 @@ class FantasyGoldTransaction : public dev::eth::Transaction{
 
 public:
 
-    FantasyGoldTransaction() : nVout(0) {}
+    FantasyGoldTransaction() : nVout(0), hasRefundSender(false) {}
 
     FantasyGoldTransaction(dev::u256 const& _value, dev::u256 const& _gasPrice, dev::u256 const& _gas, dev::bytes const& _data, dev::u256 const& _nonce = dev::Invalid256):
-		dev::eth::Transaction(_value, _gasPrice, _gas, _data, _nonce) {}
+        dev::eth::Transaction(_value, _gasPrice, _gas, _data, _nonce) , nVout(0), hasRefundSender(false) {}
 
     FantasyGoldTransaction(dev::u256 const& _value, dev::u256 const& _gasPrice, dev::u256 const& _gas, dev::Address const& _dest, dev::bytes const& _data, dev::u256 const& _nonce = dev::Invalid256):
-		dev::eth::Transaction(_value, _gasPrice, _gas, _dest, _data, _nonce) {}
+        dev::eth::Transaction(_value, _gasPrice, _gas, _dest, _data, _nonce) , nVout(0), hasRefundSender(false) {}
 
     void setHashWith(const dev::h256 hash) { m_hashWith = hash; }
 
@@ -69,10 +68,16 @@ public:
     VersionVM getVersion() const{
         return version;
     }
+
+    void setRefundSender(const dev::Address _refundSender) { refundSender = _refundSender; hasRefundSender = true;}
+
+    dev::Address getRefundSender() const { return hasRefundSender ? refundSender : sender();}
+
 private:
 
     uint32_t nVout;
     VersionVM version;
-
+    dev::Address refundSender;
+    bool hasRefundSender;
 };
 #endif

@@ -1,12 +1,12 @@
 [Desktop Entry]
-Version=1.0
-Name=Bitcoin Core
+Version=2.1.0
+Name=FantasyGold Core
 Comment=Connect to the FantasyGold P2P Network
 Exec=fantasygold-qt %u
 Terminal=false
 Type=Application
 Icon=fantasygold128
 MimeType=x-scheme-handler/fantasygold;
-Categories=Office;Finance;
+Categories=Network;Office;Finance;
 StartupWMClass=FantasyGold-qt
 Name[en_US]=fantasygold-qt

@@ -6,44 +6,59 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>850</width>
-    <height>570</height>
+    <width>935</width>
+    <height>589</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Send Coins</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_6">
+   <property name="leftMargin">
+    <number>0</number>
+   </property>
+   <property name="rightMargin">
+    <number>0</number>
+   </property>
+   <property name="bottomMargin">
+    <number>0</number>
+   </property>
    <item>
-    <widget class="QGroupBox" name="groupBoxCoinControl">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
+    <layout class="QVBoxLayout" name="verticalLayout_11">
+     <property name="leftMargin">
+      <number>30</number>
      </property>
-     <property name="maximumSize">
-      <size>
-       <width>16777215</width>
-       <height>16777215</height>
-      </size>
+     <property name="topMargin">
+      <number>9</number>
      </property>
-     <property name="title">
-      <string>Coin Control Features</string>
-     </property>
-     <layout class="QVBoxLayout" name="verticalLayoutCoinControl2">
-      <property name="spacing">
-       <number>6</number>
+     <property name="rightMargin">
+      <number>30</number>
       </property>
+     <item>
+      <widget class="QWidget" name="coinControlWidget" native="true">
+       <layout class="QVBoxLayout" name="verticalLayout_9">
       <property name="leftMargin">
-       <number>9</number>
+         <number>0</number>
       </property>
       <property name="topMargin">
-       <number>9</number>
+         <number>0</number>
       </property>
       <property name="rightMargin">
-       <number>9</number>
+         <number>0</number>
+        </property>
+        <property name="bottomMargin">
+         <number>0</number>
+        </property>
+        <item>
+         <widget class="QLabel" name="label_2">
+          <property name="text">
+           <string>Coin Control Features</string>
       </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QWidget" name="coinControlContentsWidget" native="true">
+          <layout class="QVBoxLayout" name="verticalLayout_8">
       <property name="bottomMargin">
        <number>6</number>
       </property>
@@ -206,7 +221,7 @@
                   <number>0</number>
                  </property>
                  <property name="textInteractionFlags">
-                  <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+                       <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
                  </property>
                 </widget>
                </item>
@@ -235,7 +250,7 @@
                   <string notr="true">0</string>
                  </property>
                  <property name="textInteractionFlags">
-                  <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+                       <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
                  </property>
                 </widget>
                </item>
@@ -286,7 +301,7 @@
                   <string notr="true">0.00 BTC</string>
                  </property>
                  <property name="textInteractionFlags">
-                  <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+                       <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
                  </property>
                 </widget>
                </item>
@@ -315,7 +330,7 @@
                   <string notr="true">no</string>
                  </property>
                  <property name="textInteractionFlags">
-                  <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+                       <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
                  </property>
                 </widget>
                </item>
@@ -366,7 +381,7 @@
                   <string notr="true">0.00 BTC</string>
                  </property>
                  <property name="textInteractionFlags">
-                  <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+                       <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
                  </property>
                 </widget>
                </item>
@@ -417,7 +432,7 @@
                   <string notr="true">0.00 BTC</string>
                  </property>
                  <property name="textInteractionFlags">
-                  <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+                       <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
                  </property>
                 </widget>
                </item>
@@ -446,7 +461,7 @@
                   <string notr="true">0.00 BTC</string>
                  </property>
                  <property name="textInteractionFlags">
-                  <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+                       <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
                  </property>
                 </widget>
                </item>
@@ -469,7 +484,7 @@
            <number>5</number>
           </property>
           <property name="rightMargin">
-           <number>5</number>
+                <number>0</number>
           </property>
           <item>
            <widget class="QCheckBox" name="checkBoxCoinControlChange">
@@ -536,6 +551,11 @@
      </layout>
     </widget>
    </item>
+       </layout>
+      </widget>
+     </item>
+    </layout>
+   </item>
    <item>
     <widget class="QWidget" name="widgetRecipients" native="true">
      <property name="sizePolicy">
@@ -549,13 +569,13 @@
        <number>0</number>
       </property>
       <property name="leftMargin">
-       <number>0</number>
+       <number>30</number>
       </property>
       <property name="topMargin">
        <number>0</number>
       </property>
       <property name="rightMargin">
-       <number>0</number>
+       <number>30</number>
       </property>
       <property name="bottomMargin">
        <number>0</number>
@@ -566,15 +586,68 @@
          <number>3</number>
         </property>
         <property name="rightMargin">
-         <number>6</number>
+         <number>0</number>
         </property>
         <property name="bottomMargin">
-         <number>9</number>
+         <number>0</number>
         </property>
-        <item alignment="Qt::AlignBottom">
-         <widget class="QLabel" name="label_2">
+        <item>
+         <widget class="QLabel" name="label">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>20</width>
+            <height>50</height>
+           </size>
+          </property>
           <property name="text">
-           <string>Recipients</string>
+           <string>Balance:</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer name="horizontalSpacer_8">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeType">
+           <enum>QSizePolicy::Fixed</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>10</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <widget class="QLabel" name="labelBalance">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>20</width>
+            <height>50</height>
+           </size>
+          </property>
+          <property name="cursor">
+           <cursorShape>IBeamCursor</cursorShape>
+        </property>
+          <property name="text">
+           <string notr="true">123.456 BTC</string>
+          </property>
+          <property name="textInteractionFlags">
+           <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
           </property>
          </widget>
         </item>
@@ -592,7 +665,7 @@
          </spacer>
         </item>
         <item>
-         <widget class="QPushButton" name="addButton">
+         <widget class="FantasyGoldPushButton" name="addButton">
           <property name="toolTip">
            <string>Send to multiple recipients at once</string>
           </property>
@@ -600,7 +673,7 @@
            <string>Add &amp;Recipient</string>
           </property>
           <property name="icon">
-           <iconset resource="../bitcoin.qrc">
+           <iconset>
             <normaloff>:/icons/add_recipient</normaloff>:/icons/add_recipient</iconset>
           </property>
           <property name="autoDefault">
@@ -620,8 +693,8 @@
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>830</width>
-           <height>136</height>
+           <width>873</width>
+           <height>68</height>
           </rect>
          </property>
          <layout class="QVBoxLayout" name="verticalLayout_2" stretch="0,1">
@@ -681,6 +754,17 @@
     </spacer>
    </item>
    <item>
+    <layout class="QVBoxLayout" name="verticalLayout_10">
+     <property name="leftMargin">
+      <number>30</number>
+     </property>
+     <property name="rightMargin">
+      <number>30</number>
+     </property>
+     <property name="bottomMargin">
+      <number>20</number>
+     </property>
+     <item>
     <layout class="QHBoxLayout" name="horizontalLayoutFee1">
      <property name="bottomMargin">
       <number>0</number>
@@ -705,12 +789,9 @@
            </property>
            <property name="font">
             <font>
-             <weight>75</weight>
-             <bold>true</bold>
+               <weight>50</weight>
+               <bold>false</bold>
             </font>
-           </property>
-           <property name="styleSheet">
-            <string notr="true">font-weight:bold;</string>
            </property>
            <property name="text">
             <string>Transaction Fee:</string>
@@ -1001,28 +1082,15 @@
              <item>
               <layout class="QHBoxLayout" name="horizontalLayoutFee8">
                <item>
-                <widget class="QCheckBox" name="checkBoxMinimumFee">
-                 <property name="toolTip">
-                  <string>Paying only the minimum fee is just fine as long as there is less transaction volume than space in the blocks. But be aware that this can end up in a never confirming transaction once there is more demand for bitcoin transactions than the network can process.</string>
-                 </property>
-                 <property name="text">
-                  <string/>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QLabel" name="labelMinFeeWarning">
+                  <widget class="QLabel" name="labelCustomFeeWarning">
                  <property name="enabled">
                   <bool>true</bool>
                  </property>
                  <property name="toolTip">
-                  <string>Paying only the minimum fee is just fine as long as there is less transaction volume than space in the blocks. But be aware that this can end up in a never confirming transaction once there is more demand for bitcoin transactions than the network can process.</string>
+                    <string>When there is less transaction volume than space in the blocks, miners as well as relaying nodes may enforce a minimum fee. Paying only this minimum fee is just fine, but be aware that this can result in a never confirming transaction once there is more demand for bitcoin transactions than the network can process.</string>
                  </property>
                  <property name="text">
-                  <string>(read the tooltip)</string>
-                 </property>
-                 <property name="margin">
-                  <number>5</number>
+                    <string>A too low fee might result in a never confirming transaction (read the tooltip)</string>
                  </property>
                 </widget>
                </item>
@@ -1045,6 +1113,9 @@
            </widget>
           </widget>
          </item>
+          </layout>
+         </widget>
+        </item>
          <item>
           <widget class="QCheckBox" name="optInRBF">
            <property name="toolTip">
@@ -1059,10 +1130,19 @@
        </widget>
       </item>
      </layout>
-    </widget>
    </item>
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout">
+    <widget class="QWidget" name="buttonsContainerWhite" native="true">
+     <layout class="QHBoxLayout" name="horizontalLayout_2">
+      <property name="leftMargin">
+       <number>30</number>
+      </property>
+      <property name="topMargin">
+       <number>15</number>
+      </property>
+      <property name="rightMargin">
+       <number>30</number>
+      </property>
      <item>
       <spacer name="horizontalSpacer">
        <property name="orientation">
@@ -1111,60 +1191,10 @@
        </property>
       </widget>
      </item>
-     <item>
-      <layout class="QHBoxLayout" name="horizontalLayout_2">
-       <property name="spacing">
-        <number>3</number>
-       </property>
-       <item>
-        <widget class="QLabel" name="label">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="maximumSize">
-          <size>
-           <width>0</width>
-           <height>0</height>
-          </size>
-         </property>
-         <property name="text">
-          <string>Balance:</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QLabel" name="labelBalance">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="maximumSize">
-          <size>
-           <width>0</width>
-           <height>0</height>
-          </size>
-         </property>
-         <property name="cursor">
-          <cursorShape>IBeamCursor</cursorShape>
-         </property>
-         <property name="text">
-          <string notr="true">123.456 BTC</string>
-         </property>
-         <property name="textInteractionFlags">
-          <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
-         </property>
+     </layout>
         </widget>
        </item>
       </layout>
-     </item>
-    </layout>
-   </item>
-  </layout>
  </widget>
  <customwidgets>
   <customwidget>
@@ -1177,6 +1207,11 @@
    <extends>QLineEdit</extends>
    <header>qt/bitcoinamountfield.h</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>FantasyGoldPushButton</class>
+   <extends>QPushButton</extends>
+   <header>qt/fantasygoldpushbutton.h</header>
   </customwidget>
  </customwidgets>
  <resources>

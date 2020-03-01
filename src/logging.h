@@ -19,6 +19,8 @@
 static const bool DEFAULT_LOGTIMEMICROS = false;
 static const bool DEFAULT_LOGIPS        = false;
 static const bool DEFAULT_LOGTIMESTAMPS = true;
+static const bool DEFAULT_LOGTHREADNAMES = false;
+static const bool DEFAULT_SHOWEVMLOGS   = false;
 extern const char * const DEFAULT_DEBUGLOGFILE;
 extern const char * const DEFAULT_DEBUGVMLOGFILE;
 
@@ -59,13 +61,25 @@ namespace BCLog {
         ALL         = ~(uint32_t)0,
     };
 
+    struct LogMsg
+    {
+        LogMsg(const std::string& _msg, bool _useVMLog) :
+            msg(_msg),
+            useVMLog(_useVMLog)
+        {}
+
+        std::string msg;
+        bool useVMLog;
+    };
+
     class Logger
     {
     private:
-        FILE* m_fileout = nullptr;
-        FILE* m_fileoutVM = nullptr;
-        std::mutex m_file_mutex;
-        std::list<std::string> m_msgs_before_open;
+        mutable std::mutex m_cs;                   // Can not use Mutex from sync.h because in debug mode it would cause a deadlock when a potential deadlock was detected
+        FILE* m_fileout = nullptr;                 // GUARDED_BY(m_cs)
+        FILE* m_fileoutVM = nullptr;               // GUARDED_BY(m_cs)
+        std::list<LogMsg> m_msgs_before_open; // GUARDED_BY(m_cs)
+        bool m_buffering{true};                    //!< Buffer messages before logging can be started. GUARDED_BY(m_cs)
 
         /**
          * m_started_new_line is a state variable that will suppress printing of
@@ -85,6 +99,8 @@ namespace BCLog {
 
         bool m_log_timestamps = DEFAULT_LOGTIMESTAMPS;
         bool m_log_time_micros = DEFAULT_LOGTIMEMICROS;
+        bool m_log_threadnames = DEFAULT_LOGTHREADNAMES;
+        bool m_show_evm_logs = DEFAULT_SHOWEVMLOGS;
 
         fs::path m_file_path;
         fs::path m_file_pathVM;
@@ -94,9 +110,17 @@ namespace BCLog {
         void LogPrintStr(const std::string &str, bool useVMLog = false);
 
         /** Returns whether logs will be written to any output */
-        bool Enabled() const { return m_print_to_console || m_print_to_file; }
+        bool Enabled() const
+        {
+            std::lock_guard<std::mutex> scoped_lock(m_cs);
+            return m_buffering || m_print_to_console || m_print_to_file;
+        }
 
-        bool OpenDebugLog();
+        /** Start logging (and flush all buffered messages) */
+        bool StartLogging();
+        /** Only for testing */
+        void DisconnectTestLogger();
+
         void ShrinkDebugFile();
 
         uint32_t GetCategoryMask() const { return m_categories.load(); }
@@ -113,12 +137,12 @@ namespace BCLog {
 
 } // namespace BCLog
 
-extern BCLog::Logger* const g_logger;
+BCLog::Logger& LogInstance();
 
 /** Return true if log accepts specified category */
 static inline bool LogAcceptCategory(BCLog::LogFlags category)
 {
-    return g_logger->WillLogCategory(category);
+    return LogInstance().WillLogCategory(category);
 }
 
 /** Returns a string with the log categories. */
@@ -130,42 +154,31 @@ std::vector<CLogCategoryActive> ListActiveLogCategories();
 /** Return true if str parses as a log category and set the flag */
 bool GetLogCategory(BCLog::LogFlags& flag, const std::string& str);
 
-/** Get format string from VA_ARGS for error reporting */
-template<typename... Args> std::string FormatStringFromLogArgs(const char *fmt, const Args&... args) { return fmt; }
-
-static inline void MarkUsed() {}
-template<typename T, typename... Args> static inline void MarkUsed(const T& t, const Args&... args)
-{
-    (void)t;
-    MarkUsed(args...);
-}
-
 // Be conservative when using LogPrintf/error or other things which
 // unconditionally log to debug.log! It should not be the case that an inbound
 // peer can fill up a user's disk with debug.log entries.
 
-#ifdef USE_COVERAGE
-#define LogPrintf(...) do { MarkUsed(__VA_ARGS__); } while(0)
-#define LogPrint(category, ...) do { MarkUsed(__VA_ARGS__); } while(0)
-#else
-#define LogPrintf(...) do { \
-    if (g_logger->Enabled()) { \
-        std::string _log_msg_; /* Unlikely name to avoid shadowing variables */ \
-        try { \
-            _log_msg_ = tfm::format(__VA_ARGS__); \
-        } catch (tinyformat::format_error &fmterr) { \
-            /* Original format string will have newline so don't add one here */ \
-            _log_msg_ = "Error \"" + std::string(fmterr.what()) + "\" while formatting log message: " + FormatStringFromLogArgs(__VA_ARGS__); \
-        } \
-        g_logger->LogPrintStr(_log_msg_); \
-    } \
-} while(0)
+template <typename... Args>
+static inline void LogPrintf(const char* fmt, const Args&... args)
+{
+    if (LogInstance().Enabled()) {
+        std::string log_msg;
+        try {
+            log_msg = tfm::format(fmt, args...);
+        } catch (tinyformat::format_error& fmterr) {
+            /* Original format string will have newline so don't add one here */
+            log_msg = "Error \"" + std::string(fmterr.what()) + "\" while formatting log message: " + fmt;
+        }
+        LogInstance().LogPrintStr(log_msg);
+    }
+}
 
-#define LogPrint(category, ...) do { \
-    if (LogAcceptCategory((category))) { \
-        LogPrintf(__VA_ARGS__); \
-    } \
-} while(0)
-#endif
+template <typename... Args>
+static inline void LogPrint(const BCLog::LogFlags& category, const Args&... args)
+{
+    if (LogAcceptCategory((category))) {
+        LogPrintf(args...);
+    }
+}
 
 #endif // BITCOIN_LOGGING_H

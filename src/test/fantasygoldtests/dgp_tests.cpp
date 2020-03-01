@@ -1,10 +1,11 @@
 #include <boost/test/unit_test.hpp>
 #include <fantasygoldtests/test_utils.h>
 #include <script/standard.h>
+#include <chainparams.h>
 
 namespace dgpTest{
 
-std::vector<valtype> code = {
+const std::vector<valtype> code = {
     /*setInitialAdmin()*/
     valtype(ParseHex("6fb81cbb")),
     /*
@@ -273,17 +274,18 @@ struct EVMScheduleCustom : public dev::eth::EVMSchedule{
     }
 };
 
-EVMScheduleCustom EVMScheduleContractGasSchedule(true,true,true,true,{{10,10,10,10,10,10,10,10}},10,50,30,6,200,20000,5000,15000,
+const EVMScheduleCustom EVMScheduleContractGasSchedule(true,true,true,true,{{10,10,10,10,10,10,10,10}},10,50,30,6,200,20000,5000,15000,
     1,375,8,375,32000,700,2300,9000,25000,24000,3,512,200,21000,53000,4,68,3,700,700,400,5000,24576);
-EVMScheduleCustom EVMScheduleContractGasSchedule2(true,true,true,true,{{13,10,10,10,10,10,10,10}},10,50,30,6,200,20000,5000,15000,
+const EVMScheduleCustom EVMScheduleContractGasSchedule2(true,true,true,true,{{13,10,10,10,10,10,10,10}},10,50,30,6,200,20000,5000,15000,
     1,375,8,375,32000,700,2300,9000,25000,24000,3,512,200,21000,53000,4,68,3,700,700,400,5000,300);
-EVMScheduleCustom EVMScheduleContractGasSchedule3(true,true,true,true,{{13,13,10,10,10,10,10,10}},10,50,30,6,200,20000,5000,15000,
+const EVMScheduleCustom EVMScheduleContractGasSchedule3(true,true,true,true,{{13,13,10,10,10,10,10,10}},10,50,30,6,200,20000,5000,15000,
     1,375,8,375,32000,700,2300,9000,25000,24000,3,512,200,21000,53000,4,68,3,700,700,400,600,300);
 
-dev::h256 hash = dev::h256(ParseHex("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"));
+const dev::h256 hash = dev::h256(ParseHex("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"));
 
 void contractLoading(){
-    dev::eth::ChainParams cp((dev::eth::genesisInfo(dev::eth::Network::fantasygoldMainNetwork)));
+    const CChainParams& chainparams = Params();
+    dev::eth::ChainParams cp((chainparams.EVMGenesisInfo(dev::eth::Network::fantasygoldMainNetwork, 1400)));
     globalState->populateFrom(cp.genesisState);
     globalSealEngine = std::unique_ptr<dev::eth::SealEngineFace>(cp.createSealEngine());
     globalState->db().commit();
@@ -302,7 +304,9 @@ bool compareEVMSchedule(const dev::eth::EVMSchedule& a, const dev::eth::EVMSched
     a.txDataNonZeroGas == b.txDataNonZeroGas && a.copyGas == b.copyGas && a.extcodesizeGas == b.extcodesizeGas &&
     a.extcodecopyGas == b.extcodecopyGas && a.balanceGas == b.balanceGas && a.suicideGas == b.suicideGas &&
     a.maxCodeSize == b.maxCodeSize && a.exceptionalFailedCodeDeposit == b.exceptionalFailedCodeDeposit &&
-    a.haveDelegateCall == b.haveDelegateCall && a.eip150Mode == b.eip150Mode && a.eip158Mode == b.eip158Mode)
+    a.haveDelegateCall == b.haveDelegateCall && a.eip150Mode == b.eip150Mode && a.eip158Mode == b.eip158Mode&&
+    a.haveRevert == b.haveRevert && a.haveStaticCall == b.haveStaticCall && a.haveReturnData == b.haveReturnData &&
+    a.blockRewardOverwrite == b.blockRewardOverwrite)
         return true;
     return false;
 }
@@ -313,7 +317,7 @@ bool compareUint64(const uint64_t& value1, const uint64_t& value2){
     return false;
 }
 
-void createTestContractsAndBlocks(TestChain100Setup* testChain100Setup, valtype& code1, valtype& code2, valtype& code3, dev::Address addr){
+void createTestContractsAndBlocks(TestChain100Setup* testChain100Setup, const valtype& code1, const valtype& code2, const valtype& code3, dev::Address addr){
     std::function<void(size_t n)> generateBlocks = [&](size_t n){
         dev::h256 oldHashStateRoot = globalState->rootHash();
         dev::h256 oldHashUTXORoot = globalState->rootHashUTXO();
@@ -371,6 +375,14 @@ BOOST_AUTO_TEST_CASE(gas_schedule_default_state_test2){
     FantasyGoldDGP fantasygoldDGP(globalState.get());
     dev::eth::EVMSchedule schedule = fantasygoldDGP.getGasSchedule(0);
     BOOST_CHECK(compareEVMSchedule(schedule, dev::eth::EIP158Schedule));
+}
+
+BOOST_AUTO_TEST_CASE(gas_schedule_default_state_test3){
+    initState();
+    contractLoading();
+    FantasyGoldDGP fantasygoldDGP(globalState.get());
+    dev::eth::EVMSchedule schedule = fantasygoldDGP.getGasSchedule(1400);
+    BOOST_CHECK(compareEVMSchedule(schedule, dev::eth::ConstantinopleSchedule));
 }
 
 BOOST_AUTO_TEST_CASE(gas_schedule_one_paramsInstance_introductory_block_1_test1){

@@ -1,10 +1,11 @@
-#ifndef FGC_QT_TOKENTOKENTRANSACTIONTABLEMODEL_H
-#define FGC_QT_TOKENTOKENTRANSACTIONTABLEMODEL_H
+#ifndef FANTASYGOLD_QT_TOKENTOKENTRANSACTIONTABLEMODEL_H
+#define FANTASYGOLD_QT_TOKENTOKENTRANSACTIONTABLEMODEL_H
 
 #include <qt/bitcoinunits.h>
 
 #include <QAbstractTableModel>
 #include <QStringList>
+#include <QColor>
 
 #include <memory>
 
@@ -87,6 +88,10 @@ private:
     TokenTransactionTablePriv *priv;
     bool fProcessingQueuedTransactions;
     const PlatformStyle *platformStyle;
+    QColor color_unconfirmed;
+    QColor color_negative;
+    QColor color_bareaddress;
+    QColor color_black;
 
     void subscribeToCoreSignals();
     void unsubscribeFromCoreSignals();
@@ -116,4 +121,4 @@ public Q_SLOTS:
     friend class TokenTransactionTablePriv;
 };
 
-#endif // FGC_QT_TOKENTOKENTRANSACTIONTABLEMODEL_H
+#endif // FANTASYGOLD_QT_TOKENTOKENTRANSACTIONTABLEMODEL_H

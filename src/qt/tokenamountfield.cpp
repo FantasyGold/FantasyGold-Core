@@ -1,4 +1,4 @@
-﻿#include <qt/tokenamountfield.h>
+#include <qt/tokenamountfield.h>
 
 #include <qt/bitcoinunits.h>
 #include <qt/styleSheet.h>
@@ -27,7 +27,7 @@ public:
     {
         setAlignment(Qt::AlignRight);
 
-        connect(lineEdit(), SIGNAL(textEdited(QString)), this, SIGNAL(valueChanged()));
+        connect(lineEdit(), &QLineEdit::textEdited, this, &TokenAmountSpinBox::valueChanged);
     }
 
     QValidator::State validate(QString &text, int &pos) const
@@ -178,7 +178,7 @@ Q_SIGNALS:
     void valueChanged();
 };
 
-#include "tokenamountfield.moc"
+#include <qt/tokenamountfield.moc>
 
 TokenAmountField::TokenAmountField(QWidget *parent) :
     QWidget(parent),
@@ -194,7 +194,7 @@ TokenAmountField::TokenAmountField(QWidget *parent) :
     layout->setContentsMargins(0,0,0,0);
 
     setLayout(layout);
-    connect(amount, SIGNAL(valueChanged()), this, SIGNAL(valueChanged()));
+    connect(amount, &TokenAmountSpinBox::valueChanged, this, &TokenAmountField::valueChanged);
 }
 
 void TokenAmountField::clear()

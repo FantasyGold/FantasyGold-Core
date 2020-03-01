@@ -8,63 +8,49 @@
 #include <qt/walletmodel.h>
 
 #include <QDialog>
-#include <QImage>
-#include <QLabel>
-#include <QPainter>
+
+class PlatformStyle;
+class ReceiveCoinsDialog;
 
 namespace Ui {
     class ReceiveRequestDialog;
 }
-
-QT_BEGIN_NAMESPACE
-class QMenu;
-QT_END_NAMESPACE
-
-/* Label widget for QR code. This image can be dragged, dropped, copied and saved
- * to disk.
- */
-class QRImageWidget : public QLabel
-{
-    Q_OBJECT
-
-public:
-    explicit QRImageWidget(QWidget *parent = 0);
-    QImage exportImage();
-
-public Q_SLOTS:
-    void saveImage();
-    void copyImage();
-
-protected:
-    virtual void mousePressEvent(QMouseEvent *event);
-    virtual void contextMenuEvent(QContextMenuEvent *event);
-
-private:
-    QMenu *contextMenu;
-};
 
 class ReceiveRequestDialog : public QDialog
 {
     Q_OBJECT
 
 public:
-    explicit ReceiveRequestDialog(QWidget *parent = 0);
+    explicit ReceiveRequestDialog(const PlatformStyle *platformStyle, QWidget *parent = nullptr);
     ~ReceiveRequestDialog();
 
     void setModel(WalletModel *model);
     void setInfo(const SendCoinsRecipient &info);
-    static bool createQRCode(QLabel * label, SendCoinsRecipient info, bool showAddress = false);
+
+public Q_SLOTS:
+    void clear();
+    void reject();
+    void accept();
 
 private Q_SLOTS:
     void on_btnCopyURI_clicked();
     void on_btnCopyAddress_clicked();
+    void on_btnRefreshAddress_clicked();
+    void on_btnRequestPayment_clicked();
+    void on_btnClear_clicked();
 
     void update();
+
+private:
+    bool refreshAddress();
+    bool getDefaultAddress();
 
 private:
     Ui::ReceiveRequestDialog *ui;
     WalletModel *model;
     SendCoinsRecipient info;
+    const PlatformStyle *platformStyle;
+    ReceiveCoinsDialog* requestPaymentDialog;
 };
 
 #endif // BITCOIN_QT_RECEIVEREQUESTDIALOG_H

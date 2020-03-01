@@ -4,17 +4,12 @@
 
 #include <qt/test/rpcnestedtests.h>
 
-#include <chainparams.h>
-#include <consensus/validation.h>
-#include <fs.h>
 #include <interfaces/node.h>
-#include <validation.h>
-#include <rpc/register.h>
 #include <rpc/server.h>
 #include <qt/rpcconsole.h>
-#include <test/test_bitcoin.h>
+#include <test/setup_common.h>
 #include <univalue.h>
-#include <util.h>
+#include <util/system.h>
 
 #include <QDir>
 #include <QtGlobal>
@@ -41,7 +36,7 @@ void RPCNestedTests::rpcNestedTests()
 
     TestingSetup test;
 
-    SetRPCWarmupFinished();
+    if (RPCIsInWarmup(nullptr)) SetRPCWarmupFinished();
 
     std::string result;
     std::string result2;
@@ -75,7 +70,7 @@ void RPCNestedTests::rpcNestedTests()
     QVERIFY(result == result2);
 
     RPCConsole::RPCExecuteCommandLine(*node, result, "getblock(getbestblockhash())[tx][0]", &filtered);
-    QVERIFY(result == "445f47dbb97c4ccad83a131158776d06dcd0bf85ba26d2f5fb7845b5cd7311e8");
+    QVERIFY(result == "ed34050eb5909ee535fcb07af292ea55f3d2f291187617b44d3282231405b96d");
     QVERIFY(filtered == "getblock(getbestblockhash())[tx][0]");
 
     RPCConsole::RPCParseCommandLine(nullptr, result, "importprivkey", false, &filtered);
@@ -120,7 +115,6 @@ void RPCNestedTests::rpcNestedTests()
     RPCConsole::RPCExecuteCommandLine(*node, result, "rpcNestedTest(   abc   ,   cba )");
     QVERIFY(result == "[\"abc\",\"cba\"]");
 
-#if QT_VERSION >= 0x050300
     // do the QVERIFY_EXCEPTION_THROWN checks only with Qt5.3 and higher (QVERIFY_EXCEPTION_THROWN was introduced in Qt5.3)
     QVERIFY_EXCEPTION_THROWN(RPCConsole::RPCExecuteCommandLine(*node, result, "getblockchaininfo() .\n"), std::runtime_error); //invalid syntax
     QVERIFY_EXCEPTION_THROWN(RPCConsole::RPCExecuteCommandLine(*node, result, "getblockchaininfo() getblockchaininfo()"), std::runtime_error); //invalid syntax
@@ -131,5 +125,4 @@ void RPCNestedTests::rpcNestedTests()
     QVERIFY_EXCEPTION_THROWN(RPCConsole::RPCExecuteCommandLine(*node, result, "rpcNestedTest abc,,abc"), std::runtime_error); //don't tollerate empty arguments when using ,
     QVERIFY_EXCEPTION_THROWN(RPCConsole::RPCExecuteCommandLine(*node, result, "rpcNestedTest(abc,,abc)"), std::runtime_error); //don't tollerate empty arguments when using ,
     QVERIFY_EXCEPTION_THROWN(RPCConsole::RPCExecuteCommandLine(*node, result, "rpcNestedTest(abc,,)"), std::runtime_error); //don't tollerate empty arguments when using ,
-#endif
 }

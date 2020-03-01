@@ -7,7 +7,7 @@
 
 #include <hash.h>
 #include <tinyformat.h>
-#include <utilstrencodings.h>
+#include <util/strencodings.h>
 
 std::string COutPoint::ToString() const
 {
@@ -93,7 +93,7 @@ CAmount CTransaction::GetValueOut() const
 
 unsigned int CTransaction::GetTotalSize() const
 {
-    return ::GetSerializeSize(*this, SER_NETWORK, PROTOCOL_VERSION);
+    return ::GetSerializeSize(*this, PROTOCOL_VERSION);
 }
 
 std::string CTransaction::ToString() const
@@ -154,4 +154,25 @@ bool CTransaction::HasOpCall() const
         }
     }
     return false;
+}
+
+template <class T>
+bool hasOpSender(const T& txTo)
+{
+    for(const CTxOut& v : txTo.vout){
+        if(v.scriptPubKey.HasOpSender()){
+            return true;
+        }
+    }
+    return false;
+}
+
+bool CTransaction::HasOpSender() const
+{
+    return hasOpSender(*this);
+}
+
+bool CMutableTransaction::HasOpSender() const
+{
+    return hasOpSender(*this);
 }

@@ -89,13 +89,11 @@ template<typename Stream> inline void ser_writedata32(Stream &s, uint32_t obj)
     obj = htole32(obj);
     s.write((char*)&obj, 4);
 }
-///////////////////////////////////////////////// // fantasygold
 template<typename Stream> inline void ser_writedata32be(Stream &s, uint32_t obj)
 {
     obj = htobe32(obj);
     s.write((char*)&obj, 4);
 }
-/////////////////////////////////////////////////
 template<typename Stream> inline void ser_writedata64(Stream &s, uint64_t obj)
 {
     obj = htole64(obj);
@@ -125,14 +123,12 @@ template<typename Stream> inline uint32_t ser_readdata32(Stream &s)
     s.read((char*)&obj, 4);
     return le32toh(obj);
 }
-//////////////////////////////////////////////////////////////////// // fantasygold
 template<typename Stream> inline uint32_t ser_readdata32be(Stream &s)
 {
     uint32_t obj;
     s.read((char*)&obj, 4);
     return be32toh(obj);
 }
-////////////////////////////////////////////////////////////////////
 template<typename Stream> inline uint64_t ser_readdata64(Stream &s)
 {
     uint64_t obj;
@@ -559,6 +555,7 @@ template<typename Stream, unsigned int N, typename T> inline void Unserialize(St
  * vectors of unsigned char are a special case and are intended to be serialized as a single opaque blob.
  */
 template<typename Stream, typename T, typename A> void Serialize_impl(Stream& os, const std::vector<T, A>& v, const unsigned char&);
+template<typename Stream, typename T, typename A> void Serialize_impl(Stream& os, const std::vector<T, A>& v, const bool&);
 template<typename Stream, typename T, typename A, typename V> void Serialize_impl(Stream& os, const std::vector<T, A>& v, const V&);
 template<typename Stream, typename T, typename A> inline void Serialize(Stream& os, const std::vector<T, A>& v);
 template<typename Stream, typename T, typename A> void Unserialize_impl(Stream& is, std::vector<T, A>& v, const unsigned char&);
@@ -674,7 +671,7 @@ void Unserialize_impl(Stream& is, prevector<N, T>& v, const unsigned char&)
     while (i < nSize)
     {
         unsigned int blk = std::min(nSize - i, (unsigned int)(1 + 4999999 / sizeof(T)));
-        v.resize(i + blk);
+        v.resize_uninitialized(i + blk);
         is.read((char*)&v[i], blk * sizeof(T));
         i += blk;
     }
@@ -692,8 +689,8 @@ void Unserialize_impl(Stream& is, prevector<N, T>& v, const V&)
         nMid += 5000000 / sizeof(T);
         if (nMid > nSize)
             nMid = nSize;
-        v.resize(nMid);
-        for (; i < nMid; i++)
+        v.resize_uninitialized(nMid);
+        for (; i < nMid; ++i)
             Unserialize(is, v[i]);
     }
 }
@@ -715,6 +712,18 @@ void Serialize_impl(Stream& os, const std::vector<T, A>& v, const unsigned char&
     WriteCompactSize(os, v.size());
     if (!v.empty())
         os.write((char*)v.data(), v.size() * sizeof(T));
+}
+
+template<typename Stream, typename T, typename A>
+void Serialize_impl(Stream& os, const std::vector<T, A>& v, const bool&)
+{
+    // A special case for std::vector<bool>, as dereferencing
+    // std::vector<bool>::const_iterator does not result in a const bool&
+    // due to std::vector's special casing for bool arguments.
+    WriteCompactSize(os, v.size());
+    for (bool elem : v) {
+        ::Serialize(os, elem);
+    }
 }
 
 template<typename Stream, typename T, typename A, typename V>
@@ -916,10 +925,9 @@ class CSizeComputer
 protected:
     size_t nSize;
 
-    const int nType;
     const int nVersion;
 public:
-    CSizeComputer(int nTypeIn, int nVersionIn) : nSize(0), nType(nTypeIn), nVersion(nVersionIn) {}
+    explicit CSizeComputer(int nVersionIn) : nSize(0), nVersion(nVersionIn) {}
 
     void write(const char *psz, size_t _nSize)
     {
@@ -944,7 +952,6 @@ public:
     }
 
     int GetVersion() const { return nVersion; }
-    int GetType() const { return nType; }
 };
 
 template<typename Stream>
@@ -995,21 +1002,15 @@ inline void WriteCompactSize(CSizeComputer &s, uint64_t nSize)
 }
 
 template <typename T>
-size_t GetSerializeSize(const T& t, int nType, int nVersion = 0)
+size_t GetSerializeSize(const T& t, int nVersion = 0)
 {
-    return (CSizeComputer(nType, nVersion) << t).size();
+    return (CSizeComputer(nVersion) << t).size();
 }
 
-template <typename S, typename T>
-size_t GetSerializeSize(const S& s, const T& t)
+template <typename... T>
+size_t GetSerializeSizeMany(int nVersion, const T&... t)
 {
-    return (CSizeComputer(s.GetType(), s.GetVersion()) << t).size();
-}
-
-template <typename S, typename... T>
-size_t GetSerializeSizeMany(const S& s, const T&... t)
-{
-    CSizeComputer sc(s.GetType(), s.GetVersion());
+    CSizeComputer sc(nVersion);
     SerializeMany(sc, t...);
     return sc.size();
 }
