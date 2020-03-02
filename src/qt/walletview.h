@@ -22,7 +22,7 @@ class AddressBookPage;
 class CreateContract;
 class SendToContract;
 class CallContract;
-class QRCToken;
+class FGCToken;
 class StakePage;
 
 QT_BEGIN_NAMESPACE
