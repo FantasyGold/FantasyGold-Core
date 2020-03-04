@@ -38,9 +38,9 @@ packages:
 - "libmicrohttpd-dev"
 - "libminiupnpc-dev"
 remotes:
-- "url": "https://github.com/FantasyGold-Core/fantasygold.git"
+- "url": "https://github.com/FantasyGold/FantasyGold-Core.git"
   "dir": "fantasygold"
-- "url": "https://github.com/FantasyGold-Core/cpp-eth-fantasygold.git"
+- "url": "https://github.com/FantasyGold/cpp-eth-fantasygold.git"
   "dir": "cpp-eth-fantasygold"
 files: []
 script: |

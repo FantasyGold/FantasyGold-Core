@@ -587,8 +587,8 @@ void SetupServerArgs()
 
 std::string LicenseInfo()
 {
-    const std::string URL_SOURCE_CODE = "<https://github.com/FantasyGold-Core/fantasygold>";
-    const std::string URL_WEBSITE = "<https://fantasygold.org>";
+    const std::string URL_SOURCE_CODE = "<https://github.com/FantasyGold/FantasyGold-Core>";
+    const std::string URL_WEBSITE = "<https://FantasyGold.io>";
 
     return CopyrightHolders(strprintf(_("Copyright (C) %i").translated, COPYRIGHT_YEAR) + " ") + "\n" +
            "\n" +

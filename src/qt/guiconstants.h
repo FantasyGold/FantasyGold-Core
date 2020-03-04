@@ -43,7 +43,7 @@ static const int TOOLTIP_WRAP_THRESHOLD = 80;
 #define SPINNER_FRAMES 36
 
 #define QAPP_ORG_NAME "FantasyGold"
-#define QAPP_ORG_DOMAIN "fantasygold.org"
+#define QAPP_ORG_DOMAIN "FantasyGold.io"
 #define QAPP_APP_NAME_DEFAULT "FantasyGold-Qt"
 #define QAPP_APP_NAME_TESTNET "FantasyGold-Qt-testnet"
 #define QAPP_APP_NAME_REGTEST "FantasyGold-Qt-regtest"

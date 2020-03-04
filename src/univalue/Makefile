@@ -90,7 +90,7 @@ NORMAL_UNINSTALL = :
 PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = x86_64-pc-linux-gnu
-host_triplet = x86_64-w64-mingw32
+host_triplet = x86_64-pc-linux-gnu
 TESTS = test/object$(EXEEXT) test/unitester$(EXEEXT) \
 	test/no_nul$(EXEEXT)
 noinst_PROGRAMS = $(am__EXEEXT_1) test/test_json$(EXEEXT)
@@ -413,7 +413,7 @@ am__set_TESTS_bases = \
   bases=`echo $$bases`
 RECHECK_LOGS = $(TEST_LOGS)
 TEST_SUITE_LOG = test-suite.log
-TEST_EXTENSIONS = .exe .test
+TEST_EXTENSIONS =  .test
 LOG_DRIVER = $(SHELL) $(top_srcdir)/build-aux/test-driver
 LOG_COMPILE = $(LOG_COMPILER) $(AM_LOG_FLAGS) $(LOG_FLAGS)
 am__set_b = \
@@ -427,7 +427,7 @@ am__set_b = \
       b='$*';; \
   esac
 am__test_logs1 = $(TESTS:=.log)
-am__test_logs2 = $(am__test_logs1:.exe.log=.log)
+am__test_logs2 = $(am__test_logs1:.log=.log)
 TEST_LOGS = $(am__test_logs2:.test.log=.log)
 TEST_LOG_DRIVER = $(SHELL) $(top_srcdir)/build-aux/test-driver
 TEST_LOG_COMPILE = $(TEST_LOG_COMPILER) $(AM_TEST_LOG_FLAGS) \
@@ -463,35 +463,35 @@ distuninstallcheck_listfiles = find . -type f -print
 am__distuninstallcheck_listfiles = $(distuninstallcheck_listfiles) \
   | sed 's|^\./|$(prefix)/|' | grep -v '$(infodir)/dir$$'
 distcleancheck_listfiles = find . -type f -print
-ACLOCAL = ${SHELL} /home/silence/FGC-Core/src/univalue/build-aux/missing aclocal-1.15
+ACLOCAL = ${SHELL} /home/dev/Desktop/fantasygold-core/src/univalue/build-aux/missing aclocal-1.15
 AMTAR = $${TAR-tar}
 AM_DEFAULT_VERBOSITY = 0
-AR = x86_64-w64-mingw32-ar
-AUTOCONF = ${SHELL} /home/silence/FGC-Core/src/univalue/build-aux/missing autoconf
-AUTOHEADER = ${SHELL} /home/silence/FGC-Core/src/univalue/build-aux/missing autoheader
-AUTOMAKE = ${SHELL} /home/silence/FGC-Core/src/univalue/build-aux/missing automake-1.15
-AWK = mawk
+AR = ar
+AUTOCONF = ${SHELL} /home/dev/Desktop/fantasygold-core/src/univalue/build-aux/missing autoconf
+AUTOHEADER = ${SHELL} /home/dev/Desktop/fantasygold-core/src/univalue/build-aux/missing autoheader
+AUTOMAKE = ${SHELL} /home/dev/Desktop/fantasygold-core/src/univalue/build-aux/missing automake-1.15
+AWK = gawk
 BUILD_EXEEXT = 
-CC = x86_64-w64-mingw32-gcc
-CCDEPMODE = depmode=none
-CFLAGS = -pipe -O2 -g
-CPP = x86_64-w64-mingw32-gcc -E
-CPPFLAGS = -I/home/silence/FGC-Core/depends/x86_64-w64-mingw32/share/../include/ 
-CXX = x86_64-w64-mingw32-g++
-CXXCPP = x86_64-w64-mingw32-g++ -E
-CXXDEPMODE = depmode=none
-CXXFLAGS = -pipe -O2 -g
+CC = gcc
+CCDEPMODE = depmode=gcc3
+CFLAGS = -g -O2
+CPP = gcc -E
+CPPFLAGS = 
+CXX = g++
+CXXCPP = g++ -E
+CXXDEPMODE = depmode=gcc3
+CXXFLAGS = -g -O2
 CYGPATH_W = echo
 DEFS = -DHAVE_CONFIG_H
 DEPDIR = .deps
-DLLTOOL = x86_64-w64-mingw32-dlltool
+DLLTOOL = false
 DSYMUTIL = 
 DUMPBIN = 
 ECHO_C = 
 ECHO_N = -n
 ECHO_T = 
 EGREP = /bin/grep -E
-EXEEXT = .exe
+EXEEXT = 
 FGREP = /bin/grep -F
 GREP = /bin/grep
 INSTALL = /usr/bin/install -c
@@ -499,12 +499,12 @@ INSTALL_DATA = ${INSTALL} -m 644
 INSTALL_PROGRAM = ${INSTALL}
 INSTALL_SCRIPT = ${INSTALL}
 INSTALL_STRIP_PROGRAM = $(install_sh) -c -s
-LD = /usr/bin/x86_64-w64-mingw32-ld
-LDFLAGS = -L/home/silence/FGC-Core/depends/x86_64-w64-mingw32/share/../lib 
+LD = /usr/bin/ld -m elf_x86_64
+LDFLAGS = 
 LIBOBJS = 
 LIBS = 
 LIBTOOL = $(SHELL) $(top_builddir)/libtool
-LIBTOOL_APP_LDFLAGS =  -all-static
+LIBTOOL_APP_LDFLAGS = 
 LIBUNIVALUE_AGE = 100
 LIBUNIVALUE_CURRENT = 100
 LIBUNIVALUE_REVISION = 3
@@ -512,12 +512,12 @@ LIPO =
 LN_S = ln -s
 LTLIBOBJS = 
 LT_SYS_LIBRARY_PATH = 
-MAKEINFO = ${SHELL} /home/silence/FGC-Core/src/univalue/build-aux/missing makeinfo
+MAKEINFO = ${SHELL} /home/dev/Desktop/fantasygold-core/src/univalue/build-aux/missing makeinfo
 MANIFEST_TOOL = :
 MKDIR_P = /bin/mkdir -p
-NM = x86_64-w64-mingw32-nm
+NM = /usr/bin/nm -B
 NMEDIT = 
-OBJDUMP = x86_64-w64-mingw32-objdump
+OBJDUMP = objdump
 OBJEXT = o
 OTOOL = 
 OTOOL64 = 
@@ -529,19 +529,19 @@ PACKAGE_TARNAME = univalue
 PACKAGE_URL = 
 PACKAGE_VERSION = 1.0.3
 PATH_SEPARATOR = :
-RANLIB = x86_64-w64-mingw32-ranlib
+RANLIB = ranlib
 SED = /bin/sed
 SET_MAKE = 
 SHELL = /bin/bash
-STRIP = x86_64-w64-mingw32-strip
+STRIP = strip
 VERSION = 1.0.3
-abs_builddir = /home/silence/FGC-Core/src/univalue
-abs_srcdir = /home/silence/FGC-Core/src/univalue
-abs_top_builddir = /home/silence/FGC-Core/src/univalue
-abs_top_srcdir = /home/silence/FGC-Core/src/univalue
-ac_ct_AR = 
-ac_ct_CC = 
-ac_ct_CXX = 
+abs_builddir = /home/dev/Desktop/fantasygold-core/src/univalue
+abs_srcdir = /home/dev/Desktop/fantasygold-core/src/univalue
+abs_top_builddir = /home/dev/Desktop/fantasygold-core/src/univalue
+abs_top_srcdir = /home/dev/Desktop/fantasygold-core/src/univalue
+ac_ct_AR = ar
+ac_ct_CC = gcc
+ac_ct_CXX = g++
 ac_ct_DUMPBIN = 
 am__include = include
 am__leading_dot = .
@@ -560,15 +560,15 @@ datarootdir = ${prefix}/share
 docdir = ${datarootdir}/doc/${PACKAGE_TARNAME}
 dvidir = ${docdir}
 exec_prefix = ${prefix}
-host = x86_64-w64-mingw32
-host_alias = x86_64-w64-mingw32
+host = x86_64-pc-linux-gnu
+host_alias = 
 host_cpu = x86_64
-host_os = mingw32
-host_vendor = w64
+host_os = linux-gnu
+host_vendor = pc
 htmldir = ${docdir}
 includedir = ${prefix}/include
 infodir = ${datarootdir}/info
-install_sh = ${SHELL} /home/silence/FGC-Core/src/univalue/build-aux/install-sh
+install_sh = ${SHELL} /home/dev/Desktop/fantasygold-core/src/univalue/build-aux/install-sh
 libdir = ${exec_prefix}/lib
 libexecdir = ${exec_prefix}/libexec
 localedir = ${datarootdir}/locale
@@ -577,7 +577,7 @@ mandir = ${datarootdir}/man
 mkdir_p = $(MKDIR_P)
 oldincludedir = /usr/include
 pdfdir = ${docdir}
-prefix = /
+prefix = /usr/local
 program_transform_name = s,x,x,
 psdir = ${docdir}
 runstatedir = ${localstatedir}/run
@@ -839,122 +839,122 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
-#include lib/$(DEPDIR)/libunivalue_la-univalue.Plo
-#include lib/$(DEPDIR)/libunivalue_la-univalue_get.Plo
-#include lib/$(DEPDIR)/libunivalue_la-univalue_read.Plo
-#include lib/$(DEPDIR)/libunivalue_la-univalue_write.Plo
-#include test/$(DEPDIR)/test_no_nul-no_nul.Po
-#include test/$(DEPDIR)/test_object-object.Po
-#include test/$(DEPDIR)/test_test_json-test_json.Po
-#include test/$(DEPDIR)/test_unitester-unitester.Po
+include lib/$(DEPDIR)/libunivalue_la-univalue.Plo
+include lib/$(DEPDIR)/libunivalue_la-univalue_get.Plo
+include lib/$(DEPDIR)/libunivalue_la-univalue_read.Plo
+include lib/$(DEPDIR)/libunivalue_la-univalue_write.Plo
+include test/$(DEPDIR)/test_no_nul-no_nul.Po
+include test/$(DEPDIR)/test_object-object.Po
+include test/$(DEPDIR)/test_test_json-test_json.Po
+include test/$(DEPDIR)/test_unitester-unitester.Po
 
 .cpp.o:
-#	$(AM_V_CXX)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.o$$||'`;\
-#	$(CXXCOMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ $< &&\
-#	$(am__mv) $$depbase.Tpo $$depbase.Po
-#	$(AM_V_CXX)source='$<' object='$@' libtool=no 
-#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) 
-	$(AM_V_CXX)$(CXXCOMPILE) -c -o $@ $<
+	$(AM_V_CXX)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.o$$||'`;\
+	$(CXXCOMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ $< &&\
+	$(am__mv) $$depbase.Tpo $$depbase.Po
+#	$(AM_V_CXX)source='$<' object='$@' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXXCOMPILE) -c -o $@ $<
 
 .cpp.obj:
-#	$(AM_V_CXX)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.obj$$||'`;\
-#	$(CXXCOMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ `$(CYGPATH_W) '$<'` &&\
-#	$(am__mv) $$depbase.Tpo $$depbase.Po
-#	$(AM_V_CXX)source='$<' object='$@' libtool=no 
-#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) 
-	$(AM_V_CXX)$(CXXCOMPILE) -c -o $@ `$(CYGPATH_W) '$<'`
+	$(AM_V_CXX)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.obj$$||'`;\
+	$(CXXCOMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ `$(CYGPATH_W) '$<'` &&\
+	$(am__mv) $$depbase.Tpo $$depbase.Po
+#	$(AM_V_CXX)source='$<' object='$@' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXXCOMPILE) -c -o $@ `$(CYGPATH_W) '$<'`
 
 .cpp.lo:
-#	$(AM_V_CXX)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.lo$$||'`;\
-#	$(LTCXXCOMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ $< &&\
-#	$(am__mv) $$depbase.Tpo $$depbase.Plo
-#	$(AM_V_CXX)source='$<' object='$@' libtool=yes 
-#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) 
-	$(AM_V_CXX)$(LTCXXCOMPILE) -c -o $@ $<
+	$(AM_V_CXX)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.lo$$||'`;\
+	$(LTCXXCOMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ $< &&\
+	$(am__mv) $$depbase.Tpo $$depbase.Plo
+#	$(AM_V_CXX)source='$<' object='$@' libtool=yes \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(LTCXXCOMPILE) -c -o $@ $<
 
 lib/libunivalue_la-univalue.lo: lib/univalue.cpp
-#	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libunivalue_la_CXXFLAGS) $(CXXFLAGS) -MT lib/libunivalue_la-univalue.lo -MD -MP -MF lib/$(DEPDIR)/libunivalue_la-univalue.Tpo -c -o lib/libunivalue_la-univalue.lo `test -f 'lib/univalue.cpp' || echo '$(srcdir)/'`lib/univalue.cpp
-#	$(AM_V_at)$(am__mv) lib/$(DEPDIR)/libunivalue_la-univalue.Tpo lib/$(DEPDIR)/libunivalue_la-univalue.Plo
-#	$(AM_V_CXX)source='lib/univalue.cpp' object='lib/libunivalue_la-univalue.lo' libtool=yes 
-#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) 
-	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libunivalue_la_CXXFLAGS) $(CXXFLAGS) -c -o lib/libunivalue_la-univalue.lo `test -f 'lib/univalue.cpp' || echo '$(srcdir)/'`lib/univalue.cpp
+	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libunivalue_la_CXXFLAGS) $(CXXFLAGS) -MT lib/libunivalue_la-univalue.lo -MD -MP -MF lib/$(DEPDIR)/libunivalue_la-univalue.Tpo -c -o lib/libunivalue_la-univalue.lo `test -f 'lib/univalue.cpp' || echo '$(srcdir)/'`lib/univalue.cpp
+	$(AM_V_at)$(am__mv) lib/$(DEPDIR)/libunivalue_la-univalue.Tpo lib/$(DEPDIR)/libunivalue_la-univalue.Plo
+#	$(AM_V_CXX)source='lib/univalue.cpp' object='lib/libunivalue_la-univalue.lo' libtool=yes \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libunivalue_la_CXXFLAGS) $(CXXFLAGS) -c -o lib/libunivalue_la-univalue.lo `test -f 'lib/univalue.cpp' || echo '$(srcdir)/'`lib/univalue.cpp
 
 lib/libunivalue_la-univalue_get.lo: lib/univalue_get.cpp
-#	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libunivalue_la_CXXFLAGS) $(CXXFLAGS) -MT lib/libunivalue_la-univalue_get.lo -MD -MP -MF lib/$(DEPDIR)/libunivalue_la-univalue_get.Tpo -c -o lib/libunivalue_la-univalue_get.lo `test -f 'lib/univalue_get.cpp' || echo '$(srcdir)/'`lib/univalue_get.cpp
-#	$(AM_V_at)$(am__mv) lib/$(DEPDIR)/libunivalue_la-univalue_get.Tpo lib/$(DEPDIR)/libunivalue_la-univalue_get.Plo
-#	$(AM_V_CXX)source='lib/univalue_get.cpp' object='lib/libunivalue_la-univalue_get.lo' libtool=yes 
-#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) 
-	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libunivalue_la_CXXFLAGS) $(CXXFLAGS) -c -o lib/libunivalue_la-univalue_get.lo `test -f 'lib/univalue_get.cpp' || echo '$(srcdir)/'`lib/univalue_get.cpp
+	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libunivalue_la_CXXFLAGS) $(CXXFLAGS) -MT lib/libunivalue_la-univalue_get.lo -MD -MP -MF lib/$(DEPDIR)/libunivalue_la-univalue_get.Tpo -c -o lib/libunivalue_la-univalue_get.lo `test -f 'lib/univalue_get.cpp' || echo '$(srcdir)/'`lib/univalue_get.cpp
+	$(AM_V_at)$(am__mv) lib/$(DEPDIR)/libunivalue_la-univalue_get.Tpo lib/$(DEPDIR)/libunivalue_la-univalue_get.Plo
+#	$(AM_V_CXX)source='lib/univalue_get.cpp' object='lib/libunivalue_la-univalue_get.lo' libtool=yes \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libunivalue_la_CXXFLAGS) $(CXXFLAGS) -c -o lib/libunivalue_la-univalue_get.lo `test -f 'lib/univalue_get.cpp' || echo '$(srcdir)/'`lib/univalue_get.cpp
 
 lib/libunivalue_la-univalue_read.lo: lib/univalue_read.cpp
-#	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libunivalue_la_CXXFLAGS) $(CXXFLAGS) -MT lib/libunivalue_la-univalue_read.lo -MD -MP -MF lib/$(DEPDIR)/libunivalue_la-univalue_read.Tpo -c -o lib/libunivalue_la-univalue_read.lo `test -f 'lib/univalue_read.cpp' || echo '$(srcdir)/'`lib/univalue_read.cpp
-#	$(AM_V_at)$(am__mv) lib/$(DEPDIR)/libunivalue_la-univalue_read.Tpo lib/$(DEPDIR)/libunivalue_la-univalue_read.Plo
-#	$(AM_V_CXX)source='lib/univalue_read.cpp' object='lib/libunivalue_la-univalue_read.lo' libtool=yes 
-#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) 
-	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libunivalue_la_CXXFLAGS) $(CXXFLAGS) -c -o lib/libunivalue_la-univalue_read.lo `test -f 'lib/univalue_read.cpp' || echo '$(srcdir)/'`lib/univalue_read.cpp
+	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libunivalue_la_CXXFLAGS) $(CXXFLAGS) -MT lib/libunivalue_la-univalue_read.lo -MD -MP -MF lib/$(DEPDIR)/libunivalue_la-univalue_read.Tpo -c -o lib/libunivalue_la-univalue_read.lo `test -f 'lib/univalue_read.cpp' || echo '$(srcdir)/'`lib/univalue_read.cpp
+	$(AM_V_at)$(am__mv) lib/$(DEPDIR)/libunivalue_la-univalue_read.Tpo lib/$(DEPDIR)/libunivalue_la-univalue_read.Plo
+#	$(AM_V_CXX)source='lib/univalue_read.cpp' object='lib/libunivalue_la-univalue_read.lo' libtool=yes \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libunivalue_la_CXXFLAGS) $(CXXFLAGS) -c -o lib/libunivalue_la-univalue_read.lo `test -f 'lib/univalue_read.cpp' || echo '$(srcdir)/'`lib/univalue_read.cpp
 
 lib/libunivalue_la-univalue_write.lo: lib/univalue_write.cpp
-#	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libunivalue_la_CXXFLAGS) $(CXXFLAGS) -MT lib/libunivalue_la-univalue_write.lo -MD -MP -MF lib/$(DEPDIR)/libunivalue_la-univalue_write.Tpo -c -o lib/libunivalue_la-univalue_write.lo `test -f 'lib/univalue_write.cpp' || echo '$(srcdir)/'`lib/univalue_write.cpp
-#	$(AM_V_at)$(am__mv) lib/$(DEPDIR)/libunivalue_la-univalue_write.Tpo lib/$(DEPDIR)/libunivalue_la-univalue_write.Plo
-#	$(AM_V_CXX)source='lib/univalue_write.cpp' object='lib/libunivalue_la-univalue_write.lo' libtool=yes 
-#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) 
-	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libunivalue_la_CXXFLAGS) $(CXXFLAGS) -c -o lib/libunivalue_la-univalue_write.lo `test -f 'lib/univalue_write.cpp' || echo '$(srcdir)/'`lib/univalue_write.cpp
+	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libunivalue_la_CXXFLAGS) $(CXXFLAGS) -MT lib/libunivalue_la-univalue_write.lo -MD -MP -MF lib/$(DEPDIR)/libunivalue_la-univalue_write.Tpo -c -o lib/libunivalue_la-univalue_write.lo `test -f 'lib/univalue_write.cpp' || echo '$(srcdir)/'`lib/univalue_write.cpp
+	$(AM_V_at)$(am__mv) lib/$(DEPDIR)/libunivalue_la-univalue_write.Tpo lib/$(DEPDIR)/libunivalue_la-univalue_write.Plo
+#	$(AM_V_CXX)source='lib/univalue_write.cpp' object='lib/libunivalue_la-univalue_write.lo' libtool=yes \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libunivalue_la_CXXFLAGS) $(CXXFLAGS) -c -o lib/libunivalue_la-univalue_write.lo `test -f 'lib/univalue_write.cpp' || echo '$(srcdir)/'`lib/univalue_write.cpp
 
 test/test_no_nul-no_nul.o: test/no_nul.cpp
-#	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(test_no_nul_CXXFLAGS) $(CXXFLAGS) -MT test/test_no_nul-no_nul.o -MD -MP -MF test/$(DEPDIR)/test_no_nul-no_nul.Tpo -c -o test/test_no_nul-no_nul.o `test -f 'test/no_nul.cpp' || echo '$(srcdir)/'`test/no_nul.cpp
-#	$(AM_V_at)$(am__mv) test/$(DEPDIR)/test_no_nul-no_nul.Tpo test/$(DEPDIR)/test_no_nul-no_nul.Po
-#	$(AM_V_CXX)source='test/no_nul.cpp' object='test/test_no_nul-no_nul.o' libtool=no 
-#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) 
-	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(test_no_nul_CXXFLAGS) $(CXXFLAGS) -c -o test/test_no_nul-no_nul.o `test -f 'test/no_nul.cpp' || echo '$(srcdir)/'`test/no_nul.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(test_no_nul_CXXFLAGS) $(CXXFLAGS) -MT test/test_no_nul-no_nul.o -MD -MP -MF test/$(DEPDIR)/test_no_nul-no_nul.Tpo -c -o test/test_no_nul-no_nul.o `test -f 'test/no_nul.cpp' || echo '$(srcdir)/'`test/no_nul.cpp
+	$(AM_V_at)$(am__mv) test/$(DEPDIR)/test_no_nul-no_nul.Tpo test/$(DEPDIR)/test_no_nul-no_nul.Po
+#	$(AM_V_CXX)source='test/no_nul.cpp' object='test/test_no_nul-no_nul.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(test_no_nul_CXXFLAGS) $(CXXFLAGS) -c -o test/test_no_nul-no_nul.o `test -f 'test/no_nul.cpp' || echo '$(srcdir)/'`test/no_nul.cpp
 
 test/test_no_nul-no_nul.obj: test/no_nul.cpp
-#	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(test_no_nul_CXXFLAGS) $(CXXFLAGS) -MT test/test_no_nul-no_nul.obj -MD -MP -MF test/$(DEPDIR)/test_no_nul-no_nul.Tpo -c -o test/test_no_nul-no_nul.obj `if test -f 'test/no_nul.cpp'; then $(CYGPATH_W) 'test/no_nul.cpp'; else $(CYGPATH_W) '$(srcdir)/test/no_nul.cpp'; fi`
-#	$(AM_V_at)$(am__mv) test/$(DEPDIR)/test_no_nul-no_nul.Tpo test/$(DEPDIR)/test_no_nul-no_nul.Po
-#	$(AM_V_CXX)source='test/no_nul.cpp' object='test/test_no_nul-no_nul.obj' libtool=no 
-#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) 
-	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(test_no_nul_CXXFLAGS) $(CXXFLAGS) -c -o test/test_no_nul-no_nul.obj `if test -f 'test/no_nul.cpp'; then $(CYGPATH_W) 'test/no_nul.cpp'; else $(CYGPATH_W) '$(srcdir)/test/no_nul.cpp'; fi`
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(test_no_nul_CXXFLAGS) $(CXXFLAGS) -MT test/test_no_nul-no_nul.obj -MD -MP -MF test/$(DEPDIR)/test_no_nul-no_nul.Tpo -c -o test/test_no_nul-no_nul.obj `if test -f 'test/no_nul.cpp'; then $(CYGPATH_W) 'test/no_nul.cpp'; else $(CYGPATH_W) '$(srcdir)/test/no_nul.cpp'; fi`
+	$(AM_V_at)$(am__mv) test/$(DEPDIR)/test_no_nul-no_nul.Tpo test/$(DEPDIR)/test_no_nul-no_nul.Po
+#	$(AM_V_CXX)source='test/no_nul.cpp' object='test/test_no_nul-no_nul.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(test_no_nul_CXXFLAGS) $(CXXFLAGS) -c -o test/test_no_nul-no_nul.obj `if test -f 'test/no_nul.cpp'; then $(CYGPATH_W) 'test/no_nul.cpp'; else $(CYGPATH_W) '$(srcdir)/test/no_nul.cpp'; fi`
 
 test/test_object-object.o: test/object.cpp
-#	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(test_object_CXXFLAGS) $(CXXFLAGS) -MT test/test_object-object.o -MD -MP -MF test/$(DEPDIR)/test_object-object.Tpo -c -o test/test_object-object.o `test -f 'test/object.cpp' || echo '$(srcdir)/'`test/object.cpp
-#	$(AM_V_at)$(am__mv) test/$(DEPDIR)/test_object-object.Tpo test/$(DEPDIR)/test_object-object.Po
-#	$(AM_V_CXX)source='test/object.cpp' object='test/test_object-object.o' libtool=no 
-#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) 
-	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(test_object_CXXFLAGS) $(CXXFLAGS) -c -o test/test_object-object.o `test -f 'test/object.cpp' || echo '$(srcdir)/'`test/object.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(test_object_CXXFLAGS) $(CXXFLAGS) -MT test/test_object-object.o -MD -MP -MF test/$(DEPDIR)/test_object-object.Tpo -c -o test/test_object-object.o `test -f 'test/object.cpp' || echo '$(srcdir)/'`test/object.cpp
+	$(AM_V_at)$(am__mv) test/$(DEPDIR)/test_object-object.Tpo test/$(DEPDIR)/test_object-object.Po
+#	$(AM_V_CXX)source='test/object.cpp' object='test/test_object-object.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(test_object_CXXFLAGS) $(CXXFLAGS) -c -o test/test_object-object.o `test -f 'test/object.cpp' || echo '$(srcdir)/'`test/object.cpp
 
 test/test_object-object.obj: test/object.cpp
-#	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(test_object_CXXFLAGS) $(CXXFLAGS) -MT test/test_object-object.obj -MD -MP -MF test/$(DEPDIR)/test_object-object.Tpo -c -o test/test_object-object.obj `if test -f 'test/object.cpp'; then $(CYGPATH_W) 'test/object.cpp'; else $(CYGPATH_W) '$(srcdir)/test/object.cpp'; fi`
-#	$(AM_V_at)$(am__mv) test/$(DEPDIR)/test_object-object.Tpo test/$(DEPDIR)/test_object-object.Po
-#	$(AM_V_CXX)source='test/object.cpp' object='test/test_object-object.obj' libtool=no 
-#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) 
-	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(test_object_CXXFLAGS) $(CXXFLAGS) -c -o test/test_object-object.obj `if test -f 'test/object.cpp'; then $(CYGPATH_W) 'test/object.cpp'; else $(CYGPATH_W) '$(srcdir)/test/object.cpp'; fi`
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(test_object_CXXFLAGS) $(CXXFLAGS) -MT test/test_object-object.obj -MD -MP -MF test/$(DEPDIR)/test_object-object.Tpo -c -o test/test_object-object.obj `if test -f 'test/object.cpp'; then $(CYGPATH_W) 'test/object.cpp'; else $(CYGPATH_W) '$(srcdir)/test/object.cpp'; fi`
+	$(AM_V_at)$(am__mv) test/$(DEPDIR)/test_object-object.Tpo test/$(DEPDIR)/test_object-object.Po
+#	$(AM_V_CXX)source='test/object.cpp' object='test/test_object-object.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(test_object_CXXFLAGS) $(CXXFLAGS) -c -o test/test_object-object.obj `if test -f 'test/object.cpp'; then $(CYGPATH_W) 'test/object.cpp'; else $(CYGPATH_W) '$(srcdir)/test/object.cpp'; fi`
 
 test/test_test_json-test_json.o: test/test_json.cpp
-#	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(test_test_json_CXXFLAGS) $(CXXFLAGS) -MT test/test_test_json-test_json.o -MD -MP -MF test/$(DEPDIR)/test_test_json-test_json.Tpo -c -o test/test_test_json-test_json.o `test -f 'test/test_json.cpp' || echo '$(srcdir)/'`test/test_json.cpp
-#	$(AM_V_at)$(am__mv) test/$(DEPDIR)/test_test_json-test_json.Tpo test/$(DEPDIR)/test_test_json-test_json.Po
-#	$(AM_V_CXX)source='test/test_json.cpp' object='test/test_test_json-test_json.o' libtool=no 
-#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) 
-	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(test_test_json_CXXFLAGS) $(CXXFLAGS) -c -o test/test_test_json-test_json.o `test -f 'test/test_json.cpp' || echo '$(srcdir)/'`test/test_json.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(test_test_json_CXXFLAGS) $(CXXFLAGS) -MT test/test_test_json-test_json.o -MD -MP -MF test/$(DEPDIR)/test_test_json-test_json.Tpo -c -o test/test_test_json-test_json.o `test -f 'test/test_json.cpp' || echo '$(srcdir)/'`test/test_json.cpp
+	$(AM_V_at)$(am__mv) test/$(DEPDIR)/test_test_json-test_json.Tpo test/$(DEPDIR)/test_test_json-test_json.Po
+#	$(AM_V_CXX)source='test/test_json.cpp' object='test/test_test_json-test_json.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(test_test_json_CXXFLAGS) $(CXXFLAGS) -c -o test/test_test_json-test_json.o `test -f 'test/test_json.cpp' || echo '$(srcdir)/'`test/test_json.cpp
 
 test/test_test_json-test_json.obj: test/test_json.cpp
-#	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(test_test_json_CXXFLAGS) $(CXXFLAGS) -MT test/test_test_json-test_json.obj -MD -MP -MF test/$(DEPDIR)/test_test_json-test_json.Tpo -c -o test/test_test_json-test_json.obj `if test -f 'test/test_json.cpp'; then $(CYGPATH_W) 'test/test_json.cpp'; else $(CYGPATH_W) '$(srcdir)/test/test_json.cpp'; fi`
-#	$(AM_V_at)$(am__mv) test/$(DEPDIR)/test_test_json-test_json.Tpo test/$(DEPDIR)/test_test_json-test_json.Po
-#	$(AM_V_CXX)source='test/test_json.cpp' object='test/test_test_json-test_json.obj' libtool=no 
-#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) 
-	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(test_test_json_CXXFLAGS) $(CXXFLAGS) -c -o test/test_test_json-test_json.obj `if test -f 'test/test_json.cpp'; then $(CYGPATH_W) 'test/test_json.cpp'; else $(CYGPATH_W) '$(srcdir)/test/test_json.cpp'; fi`
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(test_test_json_CXXFLAGS) $(CXXFLAGS) -MT test/test_test_json-test_json.obj -MD -MP -MF test/$(DEPDIR)/test_test_json-test_json.Tpo -c -o test/test_test_json-test_json.obj `if test -f 'test/test_json.cpp'; then $(CYGPATH_W) 'test/test_json.cpp'; else $(CYGPATH_W) '$(srcdir)/test/test_json.cpp'; fi`
+	$(AM_V_at)$(am__mv) test/$(DEPDIR)/test_test_json-test_json.Tpo test/$(DEPDIR)/test_test_json-test_json.Po
+#	$(AM_V_CXX)source='test/test_json.cpp' object='test/test_test_json-test_json.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(test_test_json_CXXFLAGS) $(CXXFLAGS) -c -o test/test_test_json-test_json.obj `if test -f 'test/test_json.cpp'; then $(CYGPATH_W) 'test/test_json.cpp'; else $(CYGPATH_W) '$(srcdir)/test/test_json.cpp'; fi`
 
 test/test_unitester-unitester.o: test/unitester.cpp
-#	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(test_unitester_CXXFLAGS) $(CXXFLAGS) -MT test/test_unitester-unitester.o -MD -MP -MF test/$(DEPDIR)/test_unitester-unitester.Tpo -c -o test/test_unitester-unitester.o `test -f 'test/unitester.cpp' || echo '$(srcdir)/'`test/unitester.cpp
-#	$(AM_V_at)$(am__mv) test/$(DEPDIR)/test_unitester-unitester.Tpo test/$(DEPDIR)/test_unitester-unitester.Po
-#	$(AM_V_CXX)source='test/unitester.cpp' object='test/test_unitester-unitester.o' libtool=no 
-#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) 
-	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(test_unitester_CXXFLAGS) $(CXXFLAGS) -c -o test/test_unitester-unitester.o `test -f 'test/unitester.cpp' || echo '$(srcdir)/'`test/unitester.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(test_unitester_CXXFLAGS) $(CXXFLAGS) -MT test/test_unitester-unitester.o -MD -MP -MF test/$(DEPDIR)/test_unitester-unitester.Tpo -c -o test/test_unitester-unitester.o `test -f 'test/unitester.cpp' || echo '$(srcdir)/'`test/unitester.cpp
+	$(AM_V_at)$(am__mv) test/$(DEPDIR)/test_unitester-unitester.Tpo test/$(DEPDIR)/test_unitester-unitester.Po
+#	$(AM_V_CXX)source='test/unitester.cpp' object='test/test_unitester-unitester.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(test_unitester_CXXFLAGS) $(CXXFLAGS) -c -o test/test_unitester-unitester.o `test -f 'test/unitester.cpp' || echo '$(srcdir)/'`test/unitester.cpp
 
 test/test_unitester-unitester.obj: test/unitester.cpp
-#	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(test_unitester_CXXFLAGS) $(CXXFLAGS) -MT test/test_unitester-unitester.obj -MD -MP -MF test/$(DEPDIR)/test_unitester-unitester.Tpo -c -o test/test_unitester-unitester.obj `if test -f 'test/unitester.cpp'; then $(CYGPATH_W) 'test/unitester.cpp'; else $(CYGPATH_W) '$(srcdir)/test/unitester.cpp'; fi`
-#	$(AM_V_at)$(am__mv) test/$(DEPDIR)/test_unitester-unitester.Tpo test/$(DEPDIR)/test_unitester-unitester.Po
-#	$(AM_V_CXX)source='test/unitester.cpp' object='test/test_unitester-unitester.obj' libtool=no 
-#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) 
-	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(test_unitester_CXXFLAGS) $(CXXFLAGS) -c -o test/test_unitester-unitester.obj `if test -f 'test/unitester.cpp'; then $(CYGPATH_W) 'test/unitester.cpp'; else $(CYGPATH_W) '$(srcdir)/test/unitester.cpp'; fi`
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(test_unitester_CXXFLAGS) $(CXXFLAGS) -MT test/test_unitester-unitester.obj -MD -MP -MF test/$(DEPDIR)/test_unitester-unitester.Tpo -c -o test/test_unitester-unitester.obj `if test -f 'test/unitester.cpp'; then $(CYGPATH_W) 'test/unitester.cpp'; else $(CYGPATH_W) '$(srcdir)/test/unitester.cpp'; fi`
+	$(AM_V_at)$(am__mv) test/$(DEPDIR)/test_unitester-unitester.Tpo test/$(DEPDIR)/test_unitester-unitester.Po
+#	$(AM_V_CXX)source='test/unitester.cpp' object='test/test_unitester-unitester.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(test_unitester_CXXFLAGS) $(CXXFLAGS) -c -o test/test_unitester-unitester.obj `if test -f 'test/unitester.cpp'; then $(CYGPATH_W) 'test/unitester.cpp'; else $(CYGPATH_W) '$(srcdir)/test/unitester.cpp'; fi`
 
 mostlyclean-libtool:
 	-rm -f *.lo
@@ -1237,13 +1237,13 @@ test/no_nul.log: test/no_nul$(EXEEXT)
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_TEST_LOG_DRIVER_FLAGS) $(TEST_LOG_DRIVER_FLAGS) -- $(TEST_LOG_COMPILE) \
 	"$$tst" $(AM_TESTS_FD_REDIRECT)
-.test$(EXEEXT).log:
-	@p='$<'; \
-	$(am__set_b); \
-	$(am__check_pre) $(TEST_LOG_DRIVER) --test-name "$$f" \
-	--log-file $$b.log --trs-file $$b.trs \
-	$(am__common_driver_flags) $(AM_TEST_LOG_DRIVER_FLAGS) $(TEST_LOG_DRIVER_FLAGS) -- $(TEST_LOG_COMPILE) \
-	"$$tst" $(AM_TESTS_FD_REDIRECT)
+#.test$(EXEEXT).log:
+#	@p='$<'; \
+#	$(am__set_b); \
+#	$(am__check_pre) $(TEST_LOG_DRIVER) --test-name "$$f" \
+#	--log-file $$b.log --trs-file $$b.trs \
+#	$(am__common_driver_flags) $(AM_TEST_LOG_DRIVER_FLAGS) $(TEST_LOG_DRIVER_FLAGS) -- $(TEST_LOG_COMPILE) \
+#	"$$tst" $(AM_TESTS_FD_REDIRECT)
 
 distdir: $(DISTFILES)
 	$(am__remove_distdir)

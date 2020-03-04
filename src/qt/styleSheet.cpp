@@ -16,7 +16,7 @@
 
 static const QString STYLE_FORMAT = ":/styles/%1/%2";
 static const QString STYLE_CONFIG_FORMAT = ":/styles/%1/config";
-static const QColor LINK_COLOR = "#2d9ad0";
+static const QColor LINK_COLOR = "#c9b05e";
 
 class FantasyGoldStyle : public QProxyStyle
 {

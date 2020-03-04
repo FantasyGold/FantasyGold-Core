@@ -51,7 +51,7 @@ public:
         QAbstractItemDelegate(parent), unit(BitcoinUnits::BTC),
         platformStyle(_platformStyle)
     {
-        background_color_selected = GetStringStyleValue("txviewdelegate/background-color-selected", "#009ee5");
+        background_color_selected = GetStringStyleValue("txviewdelegate/background-color-selected", "#e0c469");
         background_color = GetStringStyleValue("txviewdelegate/background-color", "#393939");
         alternate_background_color = GetStringStyleValue("txviewdelegate/alternate-background-color", "#2e2e2e");
         foreground_color = GetStringStyleValue("txviewdelegate/foreground-color", "#dedede");

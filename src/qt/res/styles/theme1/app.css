@@ -68,7 +68,7 @@ QLabel#labelTotal,
 #labelNetwork,
 #labelBlockChain,
 #labelMempoolTitle{
-    color: #049ee8;
+    color: #e0c469;
 }
 QLabel#overriddenByCommandLineLabel{
     color: #bdbdbd;
@@ -244,16 +244,16 @@ QSlider::add-page:horizontal {
 QSlider::sub-page:horizontal {
     margin: 9px -9px;
     border: none;
-    background: #57b2d5;
-    border-left: 1px solid #498ea9;
+    background: #000000;
+    border-left: 1px solid #e0c469;
 }
 QSlider::add-page:horizontal:disabled {
     background: rgba(215, 215, 215, 40%);
     border-right: 1px solid rgba(171, 171, 171, 40%);
 }
 QSlider::sub-page:horizontal:disabled {
-    background: rgba(87, 178, 213, 40%);
-    border-left: 1px solid rgba(73, 142, 169, 40%);
+    background: rgba(179,156,84, 40%);
+    border-left: 1px solid rgba(156,137,73, 40%);
 }
 QSlider::handle:horizontal:disabled {
     background-image: url(":/styles/theme1/app-icons/slider_switcher_disabled");
@@ -500,7 +500,7 @@ QTableView::item{
 }
 QTableView::item:selected{
     qproperty-showGrid: false;
-    background: rgba(0, 138, 200, 40%);
+    background: rgba(156,137,73, 40%);
     color: white;
 }
 QHeaderView::disabled{
@@ -640,11 +640,11 @@ QTabBar::tab {
 }
 QTabBar::tab:selected {
     color: white;
-    border-bottom: 5px solid rgba(0, 138, 200, 40%);
+    border-bottom: 5px solid rgba(156,137,73, 40%);
 }
 QTabBar::tab:hover:!selected {
     color: rgba(255, 255, 255, 85%);
-    border-bottom: 5px solid rgba(0, 138, 200, 90%);
+    border-bottom: 5px solid rgba(156,137,73, 90%);
 }
 QTabBar::tab:disabled {
     color: rgba(255, 255, 255, 30%);
@@ -828,7 +828,7 @@ Push Button CSS
 --------------------------------------------*/
 QPushButton {
     color: white; 
-    background: #029ce0;
+    background: #333333;
     border: none;
     border-radius: 12px;
     min-width: 5em;
@@ -836,15 +836,15 @@ QPushButton {
     margin: 0px;
 }
 QPushButton:hover{
-    background: #0188c4;
+    background: #e0c469;
 }
 QPushButton:pressed {
-    background: #007cb3;
-    color: #a4d1f0;
+    background: #000000;
+    color: #333333;
 }
 QPushButton::disabled {
     color: rgba(255, 255, 255, 40%);
-    background: rgba(2, 156, 224, 60%);
+    background: rgba(255, 255, 224, 60%);
 }
 /*--------------------------------------------
 Scroll Area CSS
@@ -912,7 +912,7 @@ QCalendarWidget QWidget{
     border-radius: 0px;
 }
 #qt_calendar_navigationbar{
-    background: #2E9AD0;
+    background: #e0c469;
 }
 QCalendarWidget QAbstractSpinBox {
     min-width: 0px;
@@ -1012,7 +1012,7 @@ Stake Page Widget CSS
     margin-top: 20px;
 }
 #frameStakeInfo #labelAssets{
-    color: #049ee8;
+    color: #e0c469;
     font: 17pt;
 }
 #frameStakeInfo #labelHeight,

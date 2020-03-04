@@ -3,11 +3,11 @@ Tree view CSS
 --------------------------------------------*/
 QTreeWidget {
     background-color:rgba(0,0,0,0);
-    selection-background-color: #4f9fdd;
+    selection-background-color: #e0c469;
     show-decoration-selected:0;
 }
 QTreeView{
-    color: #6f80ab;
+    color: #e0c469;
     background-color: #1d2843;
     alternate-background-color: #1d2843;
     border: none;
@@ -22,7 +22,7 @@ QTreeView::item{
 }
 QTreeView::item:selected{
     qproperty-showGrid: false;
-    background: #4f9fdd;
+    background: #e0c469;
     color: #ffffff;
 }
 QTreeView::disabled{

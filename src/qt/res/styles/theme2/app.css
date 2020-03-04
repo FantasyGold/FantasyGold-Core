@@ -58,7 +58,7 @@ QDialog{
     background-color: #1d2843;
 }
 QLabel{
-    color: #6f80ab;
+    color: #e0c469;
 }
 QLabel::disabled{
     color: rgba(111, 128, 171, 20%);
@@ -67,20 +67,20 @@ QLabel#labelGeneral,
 #labelNetwork,
 #labelBlockChain,
 #labelMempoolTitle{
-    color: #049ee8;
+    color: #e0c469;
 }
 .QWidget#widget_header{
     background-color: #252f49;
 }
 QLabel#overriddenByCommandLineLabel{
-    color: #6f80ab;
+    color: #b49e54;
 }
 NavigationBar #labelLogo{
     image:url(":/icons/logo");
 }
 NavigationBar #hLineLogo,
 NavigationBar #hLineStatus{
-    border-top: 1px solid #1d2843;
+    border-top: 1px solid #b49e54;
 }
 /*-------------------------------------------- 
 Line Edit CSS
@@ -89,7 +89,7 @@ QLineEdit{
     border: 1px solid #49587A;
     border-radius: 14px;
     background-color: #1a233a;
-    color: #6f80ab;
+    color: #b49e54;
     padding: 4px;
 }
 QLineEdit::hover:!read-only{
@@ -131,7 +131,7 @@ QComboBox {
     border: 1px solid #49587A;
     border-radius: 14px;
     background-color: #1A233A;
-    color: #6f80ab;
+    color: #c9b05e;
     padding: 4px;
     padding-left: 10px;
     padding-right: 8px;
@@ -235,8 +235,8 @@ QSlider::add-page:horizontal {
 QSlider::sub-page:horizontal {
     margin: 9px -9px;
     border: none;
-    background: #57b2d5;
-    border-left: 1px solid #498ea9;
+    background: #e0c469;
+    border-left: 1px solid #c9b05e;
 }
 QSlider::add-page:horizontal:disabled {
     background: rgba(215, 215, 215, 40%);
@@ -244,7 +244,7 @@ QSlider::add-page:horizontal:disabled {
 }
 QSlider::sub-page:horizontal:disabled {
     background: rgba(87, 178, 213, 40%);
-    border-left: 1px solid rgba(73, 142, 169, 40%);
+    border-left: 1px solid rgba(156,137,73, 40%);
 }
 QSlider::handle:horizontal:disabled {
     background-image: url(":/styles/theme2/app-icons/slider_switcher_disabled");
@@ -455,7 +455,7 @@ QScrollBar::handle:horizontal:disabled {
 Table View CSS
 --------------------------------------------*/
 QHeaderView{
-    color: #6f80ab;
+    color: #e0c469;
     background-color: transparent;
     border: none;
 }
@@ -479,7 +479,7 @@ QHeaderView::up-arrow {
     margin-bottom: 1px;
 }
 QTableView{
-    color: #6f80ab;
+    color: #e0c469;
     background-color: #1d2843;
     border: none;
     font: normal;
@@ -492,7 +492,7 @@ QTableView::item{
 }
 QTableView::item:selected{
     qproperty-showGrid: false;
-    background: #4f9fdd;
+    background: #e0c469;
     color: #ffffff;
 }
 QHeaderView::disabled{
@@ -571,9 +571,9 @@ QStatusBar QLabel::disabled{
     color: rgba(111, 128, 171, 20%);
 }
 UnitDisplayStatusBarControl {
-    color: #6f80ab; 
+    color: #c9b05e; 
     background: transparent;
-    border: 1px solid #3B4767;
+    border: 1px solid #c9b05e;
     border-radius: 12px;
     font: 16px;
     padding: 0px;
@@ -601,12 +601,12 @@ Progress Bar CSS
 QProgressBar {
     background-color: #1A233A;
     font: 10pt;
-    color: #94ccf2;
+    color: #000000;
     border-radius: 0px;
     text-align: center;
 }
 QProgressBar::chunk {
-    background-color: #4f9fdd;
+    background-color: #e0c469;
     border-radius: 0px;
 }
 QProgressBar::disabled {
@@ -617,7 +617,7 @@ Tab Bar CSS
 --------------------------------------------*/
 QTabBar::tab {
     background-color: transparent;
-    color: #4d6087;
+    color: #9c8949;
     padding: 11px 0px;
     border-width: 0px;
     border-radius: 0px;
@@ -627,12 +627,12 @@ QTabBar::tab {
     margin-right: 10px;
 }
 QTabBar::tab:selected {
-    color: #4d6087;
-    border-bottom: 3px solid #4d6087;
+    color: #9c8949;
+    border-bottom: 3px solid #9c8949;
 }
 QTabBar::tab:hover:!selected {
-    color: #18aae0;
-    border-bottom: 3px solid #18aae0;
+    color: #e0c469;
+    border-bottom: 3px solid #e0c469;
 }
 QTabBar::tab:disabled {
     color: rgba(111, 128, 171, 20%);
@@ -658,11 +658,11 @@ QMenuBar::item {
     background-color: transparent;
     padding: 5px 6px;
     border-radius: 4px;
-    color: #6f80ab;
+    color: #c9b05e;
 }
 QMenuBar::item:selected {
     border: none;
-    color: #4f9fdd;
+    color: #e0c469;
 }
 QMenuBar::item:disabled {
     color: rgba(111, 128, 171, 20%);
@@ -697,11 +697,11 @@ QMenu::item:disabled {
 Check Box CSS
 --------------------------------------------*/
 QCheckBox{
-    color: #6f80ab;
+    color: #c9b05e;
     outline-style: none;
 }
 QCheckBox:hover, QCheckBox:checked {
-    color: #6f80ab;
+    color: #c9b05e;
 }
 QCheckBox:disabled {
     color: rgba(111, 128, 171, 20%);
@@ -741,11 +741,11 @@ QCheckBox:indicator:indeterminate:disabled {
 Radio Button CSS
 --------------------------------------------*/
 QRadioButton{
-    color: #6f80ab;
+    color: #c9b05e;
     outline-style: none;
 }
 QRadioButton:hover, QRadioButton:checked {
-    color: #6f80ab;
+    color: #c9b05e;
 }
 QRadioButton:disabled {
     color: rgba(111, 128, 171, 20%);
@@ -818,19 +818,19 @@ QBalloonTip QPushButton::disabled {
 Push Button CSS
 --------------------------------------------*/
 QPushButton {
-    color: #4f9fdd; 
+    color: #e0c469; 
     background: transparent;
-    border: 1px solid #49587a;
+    border: 1px solid #c9b05e;
     border-radius: 14px;
     min-width: 5em;
     padding: 6px;
     margin: 0px;
 }
 QPushButton:hover{
-    border: 1px solid #5d6b8f;
+    border: 1px solid #c9b05e;
 }
 QPushButton:pressed {
-    background: #4697D9;
+    background: #e0c469;
     color: #ffffff;
 }
 QPushButton::disabled {
@@ -903,7 +903,7 @@ QCalendarWidget QWidget{
     border-radius: 0px;
 }
 #qt_calendar_navigationbar{
-    background: #2E9AD0;
+    background: #e0c469;
 }
 QCalendarWidget QAbstractSpinBox {
     min-width: 0px;
@@ -941,18 +941,18 @@ Modal Overlay CSS
     height: 9px;
 }
 #ModalOverlay QProgressBar::chunk {
-    background-color: #4f9fdd;
+    background-color: #b39c54;
     border-radius: 4px;
 }
 #ModalOverlay QLabel { 
-    color: #6f80ab;  
+    color: #c9b05e;  
 }
 #ModalOverlay #labelNumberOfBlocksLeft, 
 #ModalOverlay #labelLastBlockTime, 
 #ModalOverlay #labelSyncDone, 
 #ModalOverlay #labelProgressIncrease, 
 #ModalOverlay #labelEstimatedTimeLeft{
-    color: #47587d;
+    color: #c9b05e;
 }
 #ModalOverlay #labelNote {
     font: 20pt;
@@ -996,12 +996,12 @@ QToolButton#tabBarTool::hover{
 Stake Page Widget CSS
 --------------------------------------------*/
 #StakePage QLabel{
-    color: #47587d;
+    color: #b39c54;
 }
 #frameStakeInfo {
     background-color: #222f4b;
-    border: 1px dotted #47587d;
-    color: #47587d;
+    border: 1px dotted #c9b05e;
+    color: #c9b05e;
     border-radius: 4px;
 }
 #frameStakeInfo #labelAssets{
@@ -1013,7 +1013,7 @@ Stake Page Widget CSS
 #frameStakeInfo #labelReward,
 #frameStakeInfo #labelROI,
 #frameStakeInfo #labelStaking{
-    color: #6f80ab;
+    color: #c9b05e;
 }
 #frameStakeInfo #hLine{
     border-top: 1px solid #1a2845;

@@ -95,10 +95,10 @@ PlatformStyle::PlatformStyle(const QString &_name, bool _imagesOnButtons, bool _
 
     // Determine icon highlighting color
     if (colorizeIcons) {
-        singleColor = GetStringStyleValue("platformstyle/single-color", "#008ac8");
+        singleColor = GetStringStyleValue("platformstyle/single-color", "#b39c54");
     }
     // Determine text color
-    textColor = GetStringStyleValue("platformstyle/text-color", "#e6f0f0");
+    textColor = GetStringStyleValue("platformstyle/text-color", "#706234");
     menuColor = GetColorStyleValue("platformstyle/menu-color", QColor(QApplication::palette().color(QPalette::WindowText)));
 
     // Determine table color

@@ -35,7 +35,7 @@ Basic usage resources:
 * [Running FantasyGold on Amazon AWS using FantasyGold AMI](https://github.com/FantasyGold-Core/documents/tree/master/en/FantasyGold-AWS)
 * [Encrypting and unlocking wallet](https://github.com/FantasyGold-Core/documents/tree/master/en/Encrypt-and-Unlock-FantasyGold-Wallet)
 * [Testnet guide](https://github.com/FantasyGold-Core/documents/blob/master/en/Testnet-User-Guide.md)
-* [Block explorer](https://fantasygold.info), [Older explorer](https://explorer.fantasygold.org)
+* [Block explorer](https://fantasygold.info), [Older explorer](https://explorer.FantasyGold.io)
 
 
 Development resources:
@@ -133,9 +133,9 @@ Make sure to check out these resources as well for more information and to keep 
 *	FantasyGold Telegram Group https://t.me/fantasygoldofficial, other languages available
 * FantasyGold Discord https://discordapp.com/invite/wRfmkQ9
 *	/r/FantasyGold on Reddit https://www.reddit.com/r/FantasyGold/
-*	FantasyGold.org https://fantasygold.org
+*	FantasyGold.io https://FantasyGold.io
 *	FantasyGold on Facebook https://www.facebook.com/FantasyGoldOfficial/
-*	FantasyGold Forum https://forum.fantasygold.org
+*	FantasyGold Forum https://forum.FantasyGold.io
 
 ### FantasyGold Smart Contract Limitations
 
