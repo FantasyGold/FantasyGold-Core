@@ -168,7 +168,7 @@
         <translation>ウォレットの暗号化の承諾</translation>
     </message>
     <message>
-        <source>Warning: If you encrypt your wallet and lose your passphrase, you will &lt;b&gt;LOSE ALL OF YOUR FANTASYGOLDS&lt;/b&gt;!</source>
+        <source>Warning: If you encrypt your wallet and lose your passphrase, you will &lt;b&gt;LOSE ALL OF YOUR FGCS&lt;/b&gt;!</source>
         <translation>警告: もしもあなたのウォレットを暗号化してパスフレーズを忘れてしまったら、&lt;b&gt;あなたの FantasyGold はすべて失われます&lt;/b&gt;！</translation>
     </message>
     <message>

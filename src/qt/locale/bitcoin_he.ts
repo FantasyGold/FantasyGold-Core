@@ -168,7 +168,7 @@
         <translation>אשר הצפנת ארנק</translation>
     </message>
     <message>
-        <source>Warning: If you encrypt your wallet and lose your passphrase, you will &lt;b&gt;LOSE ALL OF YOUR FANTASYGOLDS&lt;/b&gt;!</source>
+        <source>Warning: If you encrypt your wallet and lose your passphrase, you will &lt;b&gt;LOSE ALL OF YOUR FGCS&lt;/b&gt;!</source>
         <translation>אזהרה: אם אתה מצפין את הארנק ומאבד את הסיסמה, אתה &lt;b&gt;תאבד את כל הביטקוינים שלך&lt;/b&gt;!</translation>
     </message>
     <message>

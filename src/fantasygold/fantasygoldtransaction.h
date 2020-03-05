@@ -1,5 +1,5 @@
-#ifndef FANTASYGOLDTRANSACTION_H
-#define FANTASYGOLDTRANSACTION_H
+#ifndef FGCTRANSACTION_H
+#define FGCTRANSACTION_H
 
 #include <libethereum/Transaction.h>
 

@@ -653,7 +653,7 @@ void BitcoinGUI::setClientModel(ClientModel *_clientModel)
         // Check for updates
         if(_clientModel->getOptionsModel()->getCheckForUpdates() && fantasygoldVersionChecker->newVersionAvailable())
         {
-            QString link = QString("<a href=%1>%2</a>").arg(FANTASYGOLD_RELEASES, FANTASYGOLD_RELEASES);
+            QString link = QString("<a href=%1>%2</a>").arg(FGC_RELEASES, FGC_RELEASES);
             QString message(tr("New version of FantasyGold wallet is available on the FantasyGold source code repository: <br /> %1. <br />It is recommended to download it and update this application").arg(link));
             QMessageBox::information(this, tr("Check for updates"), message);
         }

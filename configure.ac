@@ -323,7 +323,7 @@ if test x$use_sanitizers != x; then
     ]],[[]])])
 fi
 
-CPPFLAGS="$CPPFLAGS -DFANTASYGOLD_BUILD"
+CPPFLAGS="$CPPFLAGS -DFGC_BUILD"
 
 ERROR_CXXFLAGS=
 if test "x$enable_werror" = "xyes"; then

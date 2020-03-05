@@ -150,8 +150,8 @@ public:
         // This is fine at runtime as we'll fall back to using them as a oneshot if they don't support the
         // service bits we want, but we should get them updated to support all service bits wanted by any
         // release ASAP to avoid it where possible.
-        vFixedSeeds.clear();
-		vSeeds.clear();
+        vSeeds.emplace_back("fgc1.fantasygold.io"); // FantasyGold mainnet
+        vSeeds.emplace_back("fgc2.fantasygold.io"); // FantasyGold mainnet
 
         base58Prefixes[PUBKEY_ADDRESS] = std::vector<unsigned char>(1,35);
         base58Prefixes[SCRIPT_ADDRESS] = std::vector<unsigned char>(1,38);
@@ -173,6 +173,7 @@ public:
                 {0, uint256S("0x00000000c2d6c00523c13656709668b65ab59c80c18c33ef22f2c5824542ee8c")},
 				{8800, uint256S("0x00004c2cf34f5d15ce61868d230c3c4cbc50df8feca03724e1c6d1170e8eecd6")}, //last PoW block
                 {10000, uint256S("0xa5b4947a26cbde596eb52a015a3be0733bf6192baedcf7d039ecf66a9d4672a7")},
+                {150000, uint256S("0x2a6d96119a9ab6d88f49c837c2eedb28d62e437134a055615718adea9884fe60")},
             }
         };
 
@@ -260,7 +261,7 @@ public:
         vFixedSeeds.clear();
         vSeeds.clear();
         // nodes with support for servicebits filtering should be at the top
-        //vSeeds.emplace_back("fantasygold4.io"); // FantasyGold testnet
+        //vSeeds.emplace_back("testnet.fantasygold.io"); // FantasyGold testnet
 
         base58Prefixes[PUBKEY_ADDRESS] = std::vector<unsigned char>(1,95);
         base58Prefixes[SCRIPT_ADDRESS] = std::vector<unsigned char>(1,88);

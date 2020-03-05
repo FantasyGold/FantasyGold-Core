@@ -240,7 +240,8 @@ am__DIST_COMMON = $(srcdir)/Makefile.in \
 	$(top_srcdir)/test/util/bitcoin-util-test.py \
 	$(top_srcdir)/test/util/rpcauth-test.py COPYING \
 	build-aux/compile build-aux/config.guess build-aux/config.sub \
-	build-aux/install-sh build-aux/ltmain.sh build-aux/missing
+	build-aux/depcomp build-aux/install-sh build-aux/ltmain.sh \
+	build-aux/missing
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 distdir = $(PACKAGE)-$(VERSION)
 top_distdir = $(distdir)
@@ -328,7 +329,7 @@ COPYRIGHT_HOLDERS_SUBSTITUTION = FantasyGold Core
 COPYRIGHT_YEAR = 2020
 CPP = gcc -E
 CPPFILT = /usr/bin/c++filt
-CPPFLAGS =  -DFANTASYGOLD_BUILD -DHAVE_BUILD_INFO -D__STDC_FORMAT_MACROS
+CPPFLAGS =  -DFGC_BUILD -DHAVE_BUILD_INFO -D__STDC_FORMAT_MACROS
 CRYPTOPP_CPPFLAGS = 
 CRYPTOPP_TARGET_FLAGS = 
 CRYPTO_CFLAGS = 

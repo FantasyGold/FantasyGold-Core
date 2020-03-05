@@ -1,5 +1,5 @@
-#ifndef FANTASYGOLD_CONVERT_H
-#define FANTASYGOLD_CONVERT_H
+#ifndef FGC_CONVERT_H
+#define FGC_CONVERT_H
 
 ////////////////////////////////////////////////////// fantasygold
 #include <uint256.h>
@@ -35,4 +35,4 @@ inline uint256 u256Touint(const dev::u256& in)
 }
 //////////////////////////////////////////////////////
 
-#endif // FANTASYGOLD_CONVERT_H
+#endif // FGC_CONVERT_H

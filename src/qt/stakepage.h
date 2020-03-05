@@ -1,5 +1,5 @@
-#ifndef FANTASYGOLD_QT_STAKEPAGE_H
-#define FANTASYGOLD_QT_STAKEPAGE_H
+#ifndef FGC_QT_STAKEPAGE_H
+#define FGC_QT_STAKEPAGE_H
 
 #include <interfaces/wallet.h>
 
@@ -62,4 +62,4 @@ private:
     void updateAnnualROI();
 };
 
-#endif // FANTASYGOLD_QT_STAKEPAGE_H
+#endif // FGC_QT_STAKEPAGE_H

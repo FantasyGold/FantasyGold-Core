@@ -83,7 +83,7 @@ void SendTokenPage::setModel(WalletModel *_model)
     if (m_model && m_model->getOptionsModel())
         connect(m_model->getOptionsModel(), &OptionsModel::displayUnitChanged, this, &SendTokenPage::updateDisplayUnit);
 
-    // update the display unit, to not use the default ("FANTASYGOLD")
+    // update the display unit, to not use the default ("FGC")
     updateDisplayUnit();
 }
 
@@ -138,7 +138,7 @@ void SendTokenPage::on_gasInfoChanged(quint64 blockGasLimit, quint64 minGasPrice
 {
     Q_UNUSED(nGasPrice);
     ui->labelGasLimit->setToolTip(tr("Gas limit. Default = %1, Max = %2").arg(DEFAULT_GAS_LIMIT_OP_CREATE).arg(blockGasLimit));
-    ui->labelGasPrice->setToolTip(tr("Gas price: FANTASYGOLD price per gas unit. Default = %1, Min = %2").arg(QString::fromStdString(FormatMoney(DEFAULT_GAS_PRICE))).arg(QString::fromStdString(FormatMoney(minGasPrice))));
+    ui->labelGasPrice->setToolTip(tr("Gas price: FGC price per gas unit. Default = %1, Min = %2").arg(QString::fromStdString(FormatMoney(DEFAULT_GAS_PRICE))).arg(QString::fromStdString(FormatMoney(minGasPrice))));
     ui->lineEditGasPrice->SetMinValue(minGasPrice);
     ui->lineEditGasLimit->setMaximum(blockGasLimit);
 }

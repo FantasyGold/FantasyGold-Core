@@ -1,5 +1,5 @@
-#ifndef FANTASYGOLDDGP_H
-#define FANTASYGOLDDGP_H
+#ifndef FGCDGP_H
+#define FGCDGP_H
 
 #include <fantasygold/fantasygoldstate.h>
 #include <primitives/block.h>

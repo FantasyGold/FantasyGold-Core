@@ -57,11 +57,11 @@ public:
     {
         if(instance().network == "main")
         {
-            return FANTASYGOLD_INFO_MAINNET.arg("tx", txHash);
+            return FGC_INFO_MAINNET.arg("tx", txHash);
         }
         else if(instance().network == "test")
         {
-            return FANTASYGOLD_INFO_TESTNET.arg("tx", txHash);
+            return FGC_INFO_TESTNET.arg("tx", txHash);
         }
 
         return txHash;

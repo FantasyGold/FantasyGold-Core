@@ -52,9 +52,9 @@ static const int TOOLTIP_WRAP_THRESHOLD = 80;
 static constexpr uint64_t GB_BYTES{1000000000};
 
 /* Mainnet fantasygold explorer uri */
-static const QString FANTASYGOLD_INFO_MAINNET = "<a href='https://fantasygold.info/%1/%2'>%2</a>";
+static const QString FGC_INFO_MAINNET = "<a href='https://fantasygold.network/%1/%2'>%2</a>";
 
 /* Testnet fantasygold explorer uri */
-static const QString FANTASYGOLD_INFO_TESTNET = "<a href='https://testnet.fantasygold.info/%1/%2'>%2</a>";
+static const QString FGC_INFO_TESTNET = "<a href='https://testnet.fantasygold.network/%1/%2'>%2</a>";
 
 #endif // BITCOIN_QT_GUICONSTANTS_H

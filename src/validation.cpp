@@ -1127,7 +1127,7 @@ bool MemPoolAccept::Finalize(ATMPArgs& args, Workspace& ws)
     // Remove conflicting transactions from the mempool
     for (CTxMemPool::txiter it : allConflicting)
     {
-        LogPrint(BCLog::MEMPOOL, "replacing tx %s with %s for %s FANTASYGOLD additional fees, %d delta bytes\n",
+        LogPrint(BCLog::MEMPOOL, "replacing tx %s with %s for %s FGC additional fees, %d delta bytes\n",
                 it->GetTx().GetHash().ToString(),
                 hash.ToString(),
                 FormatMoney(nModifiedFees - nConflictingFees),
@@ -1459,7 +1459,7 @@ CAmount GetBlockSubsidy(int nHeight, const Consensus::Params& consensusParams)
     if (halvings >= 7)
         return 0;
 
-    CAmount nSubsidy = 4 * COIN;
+    CAmount nSubsidy = 5 * COIN;
     // Subsidy is cut in half every 985500 blocks which will occur approximately every 4 years.
     nSubsidy >>= halvings;
     return nSubsidy;
@@ -3491,10 +3491,10 @@ bool CChainState::ConnectBlock(const CBlock& block, CValidationState& state, CBl
 //////////////////////////////////////////////////////////////////
 
     pindex->nMoneySupply = (pindex->pprev? pindex->pprev->nMoneySupply : 0) + nValueOut - nValueIn;
-    //only start checking this error after block 5000 and only on testnet and mainnet, not regtest
-    if(pindex->nHeight > 5000 && !Params().MineBlocksOnDemand()) {
+    //only start checking this error after block 8800 and only on testnet and mainnet, not regtest
+    if(pindex->nHeight > 8800 && !Params().MineBlocksOnDemand()) {
         //sanity check in case an exploit happens that allows new coins to be minted
-        if(pindex->nMoneySupply > (uint64_t)(100000000 + ((pindex->nHeight - 5000) * 4)) * COIN){
+        if(pindex->nMoneySupply > (uint64_t)(176000000 + ((pindex->nHeight - 8800) * 5)) * COIN){
             return state.Invalid(ValidationInvalidReason::CONSENSUS, error("ConnectBlock(): Unknown error caused actual money supply to exceed expected money supply"), REJECT_INVALID, "incorrect-money-supply");
         }
     }

@@ -605,7 +605,7 @@ static UniValue createcontract(const JSONRPCRequest& request){
                 {
                     {"bytecode", RPCArg::Type::STR_HEX, RPCArg::Optional::NO, "contract bytcode."},
                     {"gasLimit", RPCArg::Type::AMOUNT, RPCArg::Optional::OMITTED, "gasLimit, default: "+i64tostr(DEFAULT_GAS_LIMIT_OP_CREATE)+", max: "+i64tostr(blockGasLimit)},
-                    {"gasPrice", RPCArg::Type::AMOUNT, RPCArg::Optional::OMITTED, "gasPrice FANTASYGOLD price per gas unit, default: "+FormatMoney(nGasPrice)+", min:"+FormatMoney(minGasPrice)},
+                    {"gasPrice", RPCArg::Type::AMOUNT, RPCArg::Optional::OMITTED, "gasPrice FGC price per gas unit, default: "+FormatMoney(nGasPrice)+", min:"+FormatMoney(minGasPrice)},
                     {"senderaddress", RPCArg::Type::STR_HEX, RPCArg::Optional::OMITTED, "The fantasygold address that will be used to create the contract."},
                     {"broadcast", RPCArg::Type::BOOL, RPCArg::Optional::OMITTED, "Whether to broadcast the transaction or not."},
                     {"changeToSender", RPCArg::Type::BOOL, RPCArg::Optional::OMITTED, "Return the change to the sender."},
@@ -2697,7 +2697,7 @@ static UniValue walletpassphrase(const JSONRPCRequest& request)
 
             RPCHelpMan{"walletpassphrase",
                 "\nStores the wallet decryption key in memory for 'timeout' seconds.\n"
-                "This is needed prior to performing transactions related to private keys such as sending FANTASYGOLD and staking\n"
+                "This is needed prior to performing transactions related to private keys such as sending FGC and staking\n"
             "\nNote:\n"
             "Issuing the walletpassphrase command while the wallet is already unlocked will set a new unlock\n"
             "time that overrides the old one.\n",

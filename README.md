@@ -40,7 +40,7 @@ Basic usage resources:
 
 Development resources:
 
-* [FantasyGold Book - A Developer's Guide To FANTASYGOLD](http://book.fantasygold.site/en/)
+* [FantasyGold Book - A Developer's Guide To FantasyGold](http://book.fantasygold.site/en/)
 * [FantasyGold contract usage](https://docs.fantasygold.site/en/FGC20-Token-Introduce.html)
 * [Deploying a custom token to FantasyGold](https://blog.fantasygold.io/fantasygold-custom-token-walkthrough-467d725fa27d)
 * [FantasyGoldJS document](https://FantasyGold-Core.github.io/fantasygoldjs-doc/)
@@ -68,7 +68,7 @@ Developer's Tools
   * https://github.com/FantasyGold/FantasyGold-Coreportal
 * Docker images for running fantasygold services
   * https://github.com/FantasyGold/FantasyGold-Core-docker
-* fantasygold.info API that powers the block explorer and the FANTASYGOLD Web wallet
+* fantasygold.info API that powers the block explorer and the FantasyGold Web wallet
   * https://github.com/FantasyGold/FantasyGold-Coreinfo-api#fantasygoldinfo-api-documentation
 
 
@@ -79,7 +79,7 @@ FantasyGold Core is our primary mainnet wallet. It implements a full node and is
 
 FantasyGold Core currently implements the following:
 
-* Sending/Receiving FANTASYGOLD coins
+* Sending/Receiving FantasyGold coins
 * Sending/Receiving FGC20 tokens on the FantasyGold network
 * Staking and creating blocks for the FantasyGold network
 * Creating and interacting with smart contracts
@@ -101,7 +101,7 @@ A browser wallet that supports the Ledger hardware wallet, offline cold wallet, 
 
 Web site https://fantasygoldwallet.org
 
-User documentation https://github.com/FantasyGold-Core/documents/tree/master/en/FANTASYGOLD-WebWallet-usage
+User documentation https://github.com/FantasyGold-Core/documents/tree/master/en/FantasyGold-WebWallet-usage
 
 ### FantasyGold Electrum
 

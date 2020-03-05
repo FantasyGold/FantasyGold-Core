@@ -1,5 +1,5 @@
-#ifndef FANTASYGOLDPUSHBUTTON_H
-#define FANTASYGOLDPUSHBUTTON_H
+#ifndef FGCPUSHBUTTON_H
+#define FGCPUSHBUTTON_H
 #include <QPushButton>
 #include <QStyleOptionButton>
 #include <QIcon>
@@ -21,4 +21,4 @@ private:
     QIcon m_downIcon;
 };
 
-#endif // FANTASYGOLDPUSHBUTTON_H
+#endif // FGCPUSHBUTTON_H

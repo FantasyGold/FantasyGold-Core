@@ -1,5 +1,5 @@
-#ifndef FANTASYGOLDUTILS_H
-#define FANTASYGOLDUTILS_H
+#ifndef FGCUTILS_H
+#define FGCUTILS_H
 
 #include <libdevcore/Common.h>
 #include <libdevcore/FixedHash.h>
