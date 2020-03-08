@@ -208,18 +208,18 @@ public:
     CTestNetParams() {
         strNetworkID = "test";
         consensus.nSubsidyHalvingInterval = 985500; // fantasygold halving every 4 years
-        consensus.BIP16Exception = uint256S("0x00005d862c9ec18e7e3ba01062a9451ace7fc4da888d5a0817de199726477e9a");
+        consensus.BIP16Exception = uint256S("0x00000000f4df2cfa0dc2cb56758f5a54351d8a2c2d715278e876f448c3e23506");
         consensus.BIP34Height = 0;
-        consensus.BIP34Hash = uint256S("0x00005d862c9ec18e7e3ba01062a9451ace7fc4da888d5a0817de199726477e9a");
-        consensus.BIP65Height = 0; // 00000000007f6655f22f98e72ed80d8b06dc761d5da09df0fa1dc4be4f861eb6
-        consensus.BIP66Height = 0; // 000000002104c8c45e99a8853285a3b592602a3ccde2b832481da85e9e4ba182
-        consensus.CSVHeight = 0; // 00000000025e930139bac5c6c31a403776da130831ab85be56578f3fa75369bb
-        consensus.SegwitHeight = 0; // 00000000002b980fcd729daaa248fd9316a5200e9b367f4ff2c42453e84201ca
+        consensus.BIP34Hash = uint256S("0x00000000f4df2cfa0dc2cb56758f5a54351d8a2c2d715278e876f448c3e23506");
+        consensus.BIP65Height = 0; // 0x00000000f4df2cfa0dc2cb56758f5a54351d8a2c2d715278e876f448c3e23506
+        consensus.BIP66Height = 0; // 0x00000000f4df2cfa0dc2cb56758f5a54351d8a2c2d715278e876f448c3e23506
+        consensus.CSVHeight = 0; // 0x00000000f4df2cfa0dc2cb56758f5a54351d8a2c2d715278e876f448c3e23506
+        consensus.SegwitHeight = 0; // 0x00000000f4df2cfa0dc2cb56758f5a54351d8a2c2d715278e876f448c3e23506
         consensus.MinBIP9WarningHeight = 0; // segwit activation height + miner confirmation window
-        consensus.QIP5Height = 156000;
-        consensus.QIP6Height = 156000;
-        consensus.QIP7Height = 156000;
-        consensus.QIP9Height = 156000;
+        consensus.QIP5Height = 1880;
+        consensus.QIP6Height = 1880;
+        consensus.QIP7Height = 1880;
+        consensus.QIP9Height = 1880;
         consensus.powLimit = uint256S("0000ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff");
         consensus.posLimit = uint256S("0000ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff");
         consensus.QIP9PosLimit = uint256S("0000000000001fffffffffffffffffffffffffffffffffffffffffffffffffff"); // The new POS-limit activated after QIP9
@@ -229,8 +229,8 @@ public:
         consensus.fPowAllowMinDifficultyBlocks = false;
         consensus.fPowNoRetargeting = true;
         consensus.fPoSNoRetargeting = false;
-        consensus.nRuleChangeActivationThreshold = 1512; // 75% for testchains
-        consensus.nMinerConfirmationWindow = 2016; // nPowTargetTimespan / nPowTargetSpacing
+        consensus.nRuleChangeActivationThreshold = 108; // 75% for testchains - 1512
+        consensus.nMinerConfirmationWindow = 144; // nPowTargetTimespan / nPowTargetSpacing - 2016
         consensus.vDeployments[Consensus::DEPLOYMENT_TESTDUMMY].bit = 28;
         consensus.vDeployments[Consensus::DEPLOYMENT_TESTDUMMY].nStartTime = 1199145601; // January 1, 2008
         consensus.vDeployments[Consensus::DEPLOYMENT_TESTDUMMY].nTimeout = 1230767999; // December 31, 2008
@@ -250,12 +250,11 @@ public:
         m_assumed_blockchain_size = 2;
         m_assumed_chain_state_size = 1;
 
-        genesis = CreateGenesisBlock(1561661716, 11077, 0x1f00ffff, 1, 50 * COIN);
+        genesis = CreateGenesisBlock(1561661716, 895853871, 0x1d00ffff, 1, 50 * COIN);
         
-         
         consensus.hashGenesisBlock = genesis.GetHash();
-                       
-        assert(consensus.hashGenesisBlock == uint256S("0x00005d862c9ec18e7e3ba01062a9451ace7fc4da888d5a0817de199726477e9a"));
+        
+        assert(consensus.hashGenesisBlock == uint256S("0x00000000f4df2cfa0dc2cb56758f5a54351d8a2c2d715278e876f448c3e23506"));
         assert(genesis.hashMerkleRoot == uint256S("0x445f47dbb97c4ccad83a131158776d06dcd0bf85ba26d2f5fb7845b5cd7311e8"));
 
         vFixedSeeds.clear();
@@ -280,7 +279,7 @@ public:
 
         checkpointData = {
             {
-                { 0, uint256S("00005d862c9ec18e7e3ba01062a9451ace7fc4da888d5a0817de199726477e9a")},
+                { 0, uint256S("00000000f4df2cfa0dc2cb56758f5a54351d8a2c2d715278e876f448c3e23506")},
                 { }, //last PoW block
                 
             }
@@ -296,14 +295,14 @@ public:
         /* enable fallback fee on testnet */
         //m_fallback_fee_enabled = true;
 
-        consensus.nLastPOWBlock = 8800;
+        consensus.nLastPOWBlock = 880;
         consensus.nMPoSRewardRecipients = 10;
         consensus.nFirstMPoSBlock = consensus.nLastPOWBlock + 
                                     consensus.nMPoSRewardRecipients + 
                                     COINBASE_MATURITY;
 
-        consensus.nFixUTXOCacheHFHeight = 84500; //new
-        consensus.nEnableHeaderSignatureHeight = 8801;
+        consensus.nFixUTXOCacheHFHeight = 950; //new
+        consensus.nEnableHeaderSignatureHeight = 881;
         consensus.nCheckpointSpan = COINBASE_MATURITY; //new
     }
 };
