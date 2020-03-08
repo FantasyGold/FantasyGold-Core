@@ -193,20 +193,16 @@ public:
         consensus.nEnableHeaderSignatureHeight = 100000; //try set this
     }
 };
-
-/**
- * Testnet (v3)
- */
 class CTestNetParams : public CChainParams {
 public:
     CTestNetParams() {
         strNetworkID = "test";
         consensus.nSubsidyHalvingInterval = 985500; // fantasygold halving every 4 years
-        consensus.BIP16Exception = uint256S("0x00005d862c9ec18e7e3ba01062a9451ace7fc4da888d5a0817de199726477e9a");
+        consensus.BIP16Exception = uint256S("0x00000000f4df2cfa0dc2cb56758f5a54351d8a2c2d715278e876f448c3e23506");
         consensus.BIP34Height = 0;
-        consensus.BIP34Hash = uint256S("0x00005d862c9ec18e7e3ba01062a9451ace7fc4da888d5a0817de199726477e9a");
-        consensus.BIP65Height = 0; // 00000000007f6655f22f98e72ed80d8b06dc761d5da09df0fa1dc4be4f861eb6
-        consensus.BIP66Height = 0; // 000000002104c8c45e99a8853285a3b592602a3ccde2b832481da85e9e4ba182
+        consensus.BIP34Hash = uint256S("0x00000000f4df2cfa0dc2cb56758f5a54351d8a2c2d715278e876f448c3e23506");
+        consensus.BIP65Height = 0; // 00000000f4df2cfa0dc2cb56758f5a54351d8a2c2d715278e876f448c3e23506
+        consensus.BIP66Height = 0; // 00000000f4df2cfa0dc2cb56758f5a54351d8a2c2d715278e876f448c3e23506
         consensus.powLimit = uint256S("0000ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff");
         consensus.posLimit = uint256S("0000ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff");
         consensus.nPowTargetTimespan = 16 * 60; // 16 minutes
@@ -243,19 +239,17 @@ public:
         nDefaultPort = 58806;
         nPruneAfterHeight = 1000;
 
-        genesis = CreateGenesisBlock(1561661716, 11077, 0x1f00ffff, 1, 50 * COIN);
+        genesis = CreateGenesisBlock(1561661716, 895853871, 0x1d00ffff, 1, 50 * COIN);
         
          
         consensus.hashGenesisBlock = genesis.GetHash();
-                       
-        assert(consensus.hashGenesisBlock == uint256S("0x00005d862c9ec18e7e3ba01062a9451ace7fc4da888d5a0817de199726477e9a"));
+        assert(consensus.hashGenesisBlock == uint256S("0x00000000f4df2cfa0dc2cb56758f5a54351d8a2c2d715278e876f448c3e23506"));
         assert(genesis.hashMerkleRoot == uint256S("0x445f47dbb97c4ccad83a131158776d06dcd0bf85ba26d2f5fb7845b5cd7311e8"));
 
         vFixedSeeds.clear();
         vSeeds.clear();
         // nodes with support for servicebits filtering should be at the top
         //vSeeds.emplace_back("fantasygold4.io"); // FantasyGold testnet
-
         base58Prefixes[PUBKEY_ADDRESS] = std::vector<unsigned char>(1,95);
         base58Prefixes[SCRIPT_ADDRESS] = std::vector<unsigned char>(1,88);
         base58Prefixes[SECRET_KEY] =     std::vector<unsigned char>(1,140);
@@ -273,14 +267,13 @@ public:
 
         checkpointData = {
             {
-                { 0, uint256S("00005d862c9ec18e7e3ba01062a9451ace7fc4da888d5a0817de199726477e9a")},
+                { 0, uint256S("00000000f4df2cfa0dc2cb56758f5a54351d8a2c2d715278e876f448c3e23506")}, //genesis block
                 { }, //last PoW block
-                
             }
         };
 
         chainTxData = ChainTxData{
-            // Data as of block 2820e75dd90210a1dcf59efe839a1e5f212e272c6bcb7fd94e749f5e01822813 (height 239905)
+            // Data as of block 00000000f4df2cfa0dc2cb56758f5a54351d8a2c2d715278e876f448c3e23506 (height 0)
         	1561661716,
 			0,
 			0.0175
