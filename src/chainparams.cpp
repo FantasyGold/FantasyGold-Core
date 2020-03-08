@@ -282,14 +282,14 @@ public:
         /* enable fallback fee on testnet */
         m_fallback_fee_enabled = true;
 
-        consensus.nLastPOWBlock = 8800;
+        consensus.nLastPOWBlock = 880;
         consensus.nMPoSRewardRecipients = 10;
         consensus.nFirstMPoSBlock = consensus.nLastPOWBlock + 
                                     consensus.nMPoSRewardRecipients + 
                                     COINBASE_MATURITY;
 
         
-        consensus.nEnableHeaderSignatureHeight = 8801;
+        consensus.nEnableHeaderSignatureHeight = 881;
     }
 };
 
