@@ -119,7 +119,7 @@ public:
         consensus.nMinimumChainWork = uint256S("0x000000000000000000000000000000000000000000000002ea72da07ce28fa4e"); // fantasygold
 
         // By default assume that the signatures in ancestors of this block are valid.
-       // consensus.defaultAssumeValid = uint256S("0x0000f286807cd4035cadfe039e4691f4960794344640c234abeae3544310fb9c"); // block height
+       // consensus.defaultAssumeValid = uint256S("0x0000f286807cd4035cadfe039e4691f4960794344640c234abeae3544310fb9c"); // block heightconsensus.defaultAssumeValid = uint256S("0x0000f286807cd4035cadfe039e4691f4960794344640c234abeae3544310fb9c"); // block height
 
         /**
          * The message start string is designed to be unlikely to occur in normal data.
@@ -236,10 +236,11 @@ public:
         consensus.vDeployments[Consensus::DEPLOYMENT_TESTDUMMY].nTimeout = 1230767999; // December 31, 2008
 
         // The best chain should have at least this much work.
-        consensus.nMinimumChainWork = uint256S("0000000000000000000000000000000000000000000000000000000100010001"); // fantasygold
+        consensus.nMinimumChainWork = uint256S("00000000000000000000000000000000000000000000000002825f9044fb82d4"); // fantasygold
 
         // By default assume that the signatures in ancestors of this block are valid.
         //consensus.defaultAssumeValid = uint256S("0x00"); // 320000
+        consensus.defaultAssumeValid = uint256S("0x42fe1e765622b546db87f1a3d9ab5af0560c25b97fde5c06eecafdb94389c199"); // block heightc // 1008
 
         pchMessageStart[0] = 0x0c;
         pchMessageStart[1] = 0x33;
@@ -280,7 +281,7 @@ public:
         checkpointData = {
             {
                 { 0, uint256S("00000000f4df2cfa0dc2cb56758f5a54351d8a2c2d715278e876f448c3e23506")},
-                { }, //last PoW block
+                { 1008, uint256S("42fe1e765622b546db87f1a3d9ab5af0560c25b97fde5c06eecafdb94389c199")}, //last PoW block
                 
             }
         };
