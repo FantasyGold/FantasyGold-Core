@@ -301,7 +301,7 @@ public:
                                     consensus.nMPoSRewardRecipients + 
                                     COINBASE_MATURITY;
 
-        consensus.nFixUTXOCacheHFHeight = 950; //new
+        consensus.nFixUTXOCacheHFHeight = 1550; //new
         consensus.nEnableHeaderSignatureHeight = 881;
         consensus.nCheckpointSpan = COINBASE_MATURITY; //new
     }
