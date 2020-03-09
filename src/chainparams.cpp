@@ -213,9 +213,9 @@ public:
         consensus.BIP34Hash = uint256S("0x00000000f4df2cfa0dc2cb56758f5a54351d8a2c2d715278e876f448c3e23506");
         consensus.BIP65Height = 0; // 0x00000000f4df2cfa0dc2cb56758f5a54351d8a2c2d715278e876f448c3e23506
         consensus.BIP66Height = 0; // 0x00000000f4df2cfa0dc2cb56758f5a54351d8a2c2d715278e876f448c3e23506
-        consensus.CSVHeight = 0; // 0x00000000f4df2cfa0dc2cb56758f5a54351d8a2c2d715278e876f448c3e23506
-        consensus.SegwitHeight = 0; // 0x00000000f4df2cfa0dc2cb56758f5a54351d8a2c2d715278e876f448c3e23506
-        consensus.MinBIP9WarningHeight = 0; // segwit activation height + miner confirmation window
+        consensus.CSVHeight = 432; // 00006b24f0bb1e286d6384ca10dc49be4c8740d8b9389934f16bd60f5e1073b3
+        consensus.SegwitHeight = 432; // 00006b24f0bb1e286d6384ca10dc49be4c8740d8b9389934f16bd60f5e1073b3
+        consensus.MinBIP9WarningHeight = 576; // segwit activation height + miner confirmation window
         consensus.QIP5Height = 1880;
         consensus.QIP6Height = 1880;
         consensus.QIP7Height = 1880;
