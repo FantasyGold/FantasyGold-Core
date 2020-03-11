@@ -236,11 +236,11 @@ public:
         consensus.vDeployments[Consensus::DEPLOYMENT_TESTDUMMY].nTimeout = 1230767999; // December 31, 2008
 
         // The best chain should have at least this much work.
-        consensus.nMinimumChainWork = uint256S("000000000000000000000000000000000000000000000000000058d7680a79aa"); // fantasygold
+        consensus.nMinimumChainWork = uint256S("0000000000000000000000000000000000000000000000001bb0211d6a722c08"); // fantasygold
 
         // By default assume that the signatures in ancestors of this block are valid.
         //consensus.defaultAssumeValid = uint256S("0x00"); // 320000
-        consensus.defaultAssumeValid = uint256S("0xaa3e405e7c5be74d445b6d980a048d1477d3207b8a2a015d2aa616c1243da02e"); // block heightc //881
+        consensus.defaultAssumeValid = uint256S("0x76a6f3fc227d341f52be6585f5aa37b54df89d931cbde811fd7be048dcc12f93"); // block heightc //881
 
         pchMessageStart[0] = 0x0c;
         pchMessageStart[1] = 0x33;
@@ -281,16 +281,16 @@ public:
         checkpointData = {
             {
                 { 0, uint256S("00000000f4df2cfa0dc2cb56758f5a54351d8a2c2d715278e876f448c3e23506")},
-                { 881, uint256S("aa3e405e7c5be74d445b6d980a048d1477d3207b8a2a015d2aa616c1243da02e")}, //last PoW block
+                { 1300, uint256S("76a6f3fc227d341f52be6585f5aa37b54df89d931cbde811fd7be048dcc12f93")}, //last PoW block
                 
             }
         };
 
         chainTxData = ChainTxData{
-            // Data as of block 2820e75dd90210a1dcf59efe839a1e5f212e272c6bcb7fd94e749f5e01822813 (height 239905)
-        	1561661716,
+            // Data as of block 3afbc669b40f3a669d742bc835fc93b3c59910ce2fb8e10ca89465ede91b360e (height 1300)
+        	1583886672,
 			0,
-			0.0175
+			0.027
         };
 
         /* enable fallback fee on testnet */
