@@ -91,10 +91,10 @@ public:
 		    consensus.CSVHeight = 0; // 000000000000000004a1b34462cb8aeebd5799177f7a29cf28f2d1961716b5b5
         consensus.SegwitHeight = 0; // 0000000000000000001c8018d9cb3b742ef25114f27563e3fc4a1902167f9893
         consensus.MinBIP9WarningHeight = 0; // segwit activation height + miner confirmation window
-        consensus.QIP5Height = 200000;
-        consensus.QIP6Height = 200000;
-        consensus.QIP7Height = 200000;
-        consensus.QIP9Height = 200000;
+        consensus.QIP5Height = 175000;
+        consensus.QIP6Height = 175000;
+        consensus.QIP7Height = 175000;
+        consensus.QIP9Height = 175000;
 		
         consensus.powLimit = uint256S("0000ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff");
         consensus.posLimit = uint256S("00000000ffffffffffffffffffffffffffffffffffffffffffffffffffffffff");
