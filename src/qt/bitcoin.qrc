@@ -106,9 +106,9 @@
         <file alias="spinner-035">res/movies/spinner-035.png</file>
     </qresource>
     <qresource prefix="/tokens">
-        <file alias="6b8bf98ff497c064e8f0bde13e0c4f5ed5bf8ce7">res/tokens/6b8bf98ff497c064e8f0bde13e0c4f5ed5bf8ce7.png</file>
-        <file alias="9d3d4cc1986d81f9109f2b091b7732e7d9bcf63b">res/tokens/9d3d4cc1986d81f9109f2b091b7732e7d9bcf63b.png</file>
-        <file alias="57931faffdec114056a49adfcaa1caac159a1a25">res/tokens/57931faffdec114056a49adfcaa1caac159a1a25.png</file>
+        <file alias="77b9c2de95908905b36cdba5cd1958053b2437bb">res/tokens/77b9c2de95908905b36cdba5cd1958053b2437bb.png</file>
+        <file alias="7564b6686fb62d1de08de677abff9da0a516a692">res/tokens/7564b6686fb62d1de08de677abff9da0a516a692.png</file>
+        <file alias="5a996ae697b718e219b7340656ab6b0a804adf4a">res/tokens/5a996ae697b718e219b7340656ab6b0a804adf4a.png</file>
         </qresource>
     <qresource prefix="/styles/theme1">
         <file alias="app">res/styles/theme1/app.css</file>
