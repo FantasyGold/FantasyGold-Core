@@ -11,7 +11,7 @@
 #define CLIENT_VERSION_IS_RELEASE true
 
 /* Major version */
-#define CLIENT_VERSION_MAJOR 0
+#define CLIENT_VERSION_MAJOR 2
 
 /* Minor version */
 #define CLIENT_VERSION_MINOR 19
@@ -29,7 +29,7 @@
 #define COPYRIGHT_HOLDERS_SUBSTITUTION "Bitcoin Core"
 
 /* Copyright year */
-#define COPYRIGHT_YEAR 2019
+#define COPYRIGHT_YEAR 2020
 
 /* Define to 1 to enable wallet functions */
 #define ENABLE_WALLET 1

@@ -1,5 +1,5 @@
 ---
-name: "fantasygold-core-win-0.19"
+name: "fantasygold-core-win-2.19.1"
 enable_cache: true
 distro: "ubuntu"
 suites:

@@ -1,5 +1,5 @@
 ---
-name: "fantasygold-core-osx-0.19"
+name: "fantasygold-core-osx-2.19.1"
 enable_cache: true
 distro: "ubuntu"
 suites:
