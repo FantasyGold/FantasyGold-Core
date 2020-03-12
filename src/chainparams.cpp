@@ -116,10 +116,10 @@ public:
         consensus.vDeployments[Consensus::DEPLOYMENT_TESTDUMMY].nTimeout = 1230767999; // December 31, 2008
 
         // The best chain should have at least this much work.
-        consensus.nMinimumChainWork = uint256S("0x000000000000000000000000000000000000000000000002ea72da07ce28fa4e"); // fantasygold
+        consensus.nMinimumChainWork = uint256S("0x0000000000000000000000000000000000000000000001272aba15f39c3de685"); // block 160864
 
         // By default assume that the signatures in ancestors of this block are valid.
-       // consensus.defaultAssumeValid = uint256S("0x0000f286807cd4035cadfe039e4691f4960794344640c234abeae3544310fb9c"); // block heightconsensus.defaultAssumeValid = uint256S("0x0000f286807cd4035cadfe039e4691f4960794344640c234abeae3544310fb9c"); // block height
+       consensus.defaultAssumeValid = uint256S("0xb9e862650737156f2e7c202af0b2997cf5f097fc44f9247602298f665e97530c"); // block 160000
 
         /**
          * The message start string is designed to be unlikely to occur in normal data.
@@ -174,6 +174,8 @@ public:
 				{8800, uint256S("0x00004c2cf34f5d15ce61868d230c3c4cbc50df8feca03724e1c6d1170e8eecd6")}, //last PoW block
                 {10000, uint256S("0xa5b4947a26cbde596eb52a015a3be0733bf6192baedcf7d039ecf66a9d4672a7")},
                 {150000, uint256S("0x2a6d96119a9ab6d88f49c837c2eedb28d62e437134a055615718adea9884fe60")},
+                {160000, uint256S("0x160f06f9038a2efb85387bfe9f659296f3fd703109983b04e14ef5f69bd0d2e8")},
+                {160800, uint256S("0xb9e862650737156f2e7c202af0b2997cf5f097fc44f9247602298f665e97530c")},
             }
         };
 
