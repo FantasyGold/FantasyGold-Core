@@ -162,9 +162,9 @@ def filterbyasn(ips, max_per_asn, max_per_net):
         asn = lookup_asn(ip['net'], ip['ip'])
         if asn is None or asn_count[asn] == max_per_asn:
                 continue
-            asn_count[asn] += 1
+        asn_count[asn] += 1
         net_count[ip['net']] += 1
-            result.append(ip)
+        result.append(ip)
 
     # Add back Onions (up to max_per_net)
     result.extend(ips_onion[0:max_per_net])
