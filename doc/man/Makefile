@@ -86,15 +86,18 @@ NORMAL_UNINSTALL = :
 PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = x86_64-pc-linux-gnu
-host_triplet = x86_64-w64-mingw32
+host_triplet = x86_64-pc-linux-gnu
 am__append_1 = bitcoind.1
 am__append_2 = bitcoin-qt.1
-am__append_3 = bitcoin-cli.1 bitcoin-tx.1
+am__append_3 = bitcoin-cli.1
+am__append_4 = bitcoin-tx.1
+am__append_5 = bitcoin-wallet.1
 subdir = doc/man
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/build-aux/m4/ax_boost_base.m4 \
 	$(top_srcdir)/build-aux/m4/ax_boost_chrono.m4 \
 	$(top_srcdir)/build-aux/m4/ax_boost_filesystem.m4 \
+	$(top_srcdir)/build-aux/m4/ax_boost_program_options.m4 \
 	$(top_srcdir)/build-aux/m4/ax_boost_random.m4 \
 	$(top_srcdir)/build-aux/m4/ax_boost_system.m4 \
 	$(top_srcdir)/build-aux/m4/ax_boost_thread.m4 \
@@ -175,16 +178,16 @@ MANS = $(dist_man1_MANS)
 am__tagged_files = $(HEADERS) $(SOURCES) $(TAGS_FILES) $(LISP)
 am__DIST_COMMON = $(dist_man1_MANS) $(srcdir)/Makefile.in
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
-ACLOCAL = ${SHELL} /home/silence/FGC-Core/build-aux/missing aclocal-1.15
+ACLOCAL = ${SHELL} /home/dev/Desktop/fantasygold-core/build-aux/missing aclocal-1.15
 AMTAR = $${TAR-tar}
 AM_DEFAULT_VERBOSITY = 0
-AR = /usr/bin/x86_64-w64-mingw32-ar
+AR = /usr/bin/ar
 ARFLAGS = cr
-AUTOCONF = ${SHELL} /home/silence/FGC-Core/build-aux/missing autoconf
-AUTOHEADER = ${SHELL} /home/silence/FGC-Core/build-aux/missing autoheader
-AUTOMAKE = ${SHELL} /home/silence/FGC-Core/build-aux/missing automake-1.15
+AUTOCONF = ${SHELL} /home/dev/Desktop/fantasygold-core/build-aux/missing autoconf
+AUTOHEADER = ${SHELL} /home/dev/Desktop/fantasygold-core/build-aux/missing autoheader
+AUTOMAKE = ${SHELL} /home/dev/Desktop/fantasygold-core/build-aux/missing automake-1.15
 AVX2_CXXFLAGS = -mavx -mavx2
-AWK = mawk
+AWK = gawk
 BDB_CFLAGS = 
 BDB_CPPFLAGS = 
 BDB_LIBS = -ldb_cxx-4.8
@@ -192,48 +195,50 @@ BITCOIN_CLI_NAME = fantasygold-cli
 BITCOIN_DAEMON_NAME = fantasygoldd
 BITCOIN_GUI_NAME = fantasygold-qt
 BITCOIN_TX_NAME = fantasygold-tx
-BOOST_CHRONO_LIB = -lboost_chrono-mt-s
-BOOST_CPPFLAGS = -DBOOST_SP_USE_STD_ATOMIC -DBOOST_AC_USE_STD_ATOMIC -mthreads -I/home/silence/FGC-Core/depends/x86_64-w64-mingw32/share/../include
-BOOST_FILESYSTEM_LIB = -lboost_filesystem-mt-s
-BOOST_LDFLAGS = -L/home/silence/FGC-Core/depends/x86_64-w64-mingw32/share/../lib
-BOOST_LIBS = -L/home/silence/FGC-Core/depends/x86_64-w64-mingw32/share/../lib -lboost_system-mt-s -lboost_filesystem-mt-s -lboost_thread_win32-mt-s -lboost_chrono-mt-s -lboost_random-mt-s
-BOOST_RANDOM_LIB = -lboost_random-mt-s
-BOOST_SYSTEM_LIB = -lboost_system-mt-s
-BOOST_THREAD_LIB = -lboost_thread_win32-mt-s
-BOOST_UNIT_TEST_FRAMEWORK_LIB = -lboost_unit_test_framework-mt-s
+BITCOIN_WALLET_TOOL_NAME = fantasygold-wallet
+BOOST_CHRONO_LIB = -lboost_chrono
+BOOST_CPPFLAGS = -DBOOST_SP_USE_STD_ATOMIC -DBOOST_AC_USE_STD_ATOMIC -pthread -I/usr/include
+BOOST_FILESYSTEM_LIB = -lboost_filesystem
+BOOST_LDFLAGS = -L/usr/lib/x86_64-linux-gnu
+BOOST_LIBS = -L/usr/lib/x86_64-linux-gnu -lboost_system -lboost_filesystem -lboost_program_options -lboost_thread -lpthread -lboost_chrono -lboost_random
+BOOST_PROGRAM_OPTIONS_LIB = -lboost_program_options
+BOOST_RANDOM_LIB = -lboost_random
+BOOST_SYSTEM_LIB = -lboost_system
+BOOST_THREAD_LIB = -lboost_thread -lpthread
+BOOST_UNIT_TEST_FRAMEWORK_LIB = -lboost_unit_test_framework
 BREW = 
-CC = x86_64-w64-mingw32-gcc-posix
+CC = gcc
 CCACHE = 
-CCDEPMODE = depmode=none
-CFLAGS = -pipe -O2 -g
-CLIENT_VERSION_BUILD = 0
+CCDEPMODE = depmode=gcc3
+CFLAGS = -g -O2
+CLIENT_VERSION_BUILD = 1
 CLIENT_VERSION_IS_RELEASE = true
-CLIENT_VERSION_MAJOR = 2
-CLIENT_VERSION_MINOR = 0
+CLIENT_VERSION_MAJOR = 0
+CLIENT_VERSION_MINOR = 19
 CLIENT_VERSION_REVISION = 0
 COMPAT_LDFLAGS = 
 COPYRIGHT_HOLDERS = The %s developers
 COPYRIGHT_HOLDERS_FINAL = The FantasyGold Core developers
 COPYRIGHT_HOLDERS_SUBSTITUTION = FantasyGold Core
-COPYRIGHT_YEAR = 2019
-CPP = x86_64-w64-mingw32-gcc-posix -E
-CPPFILT = /usr/bin/x86_64-w64-mingw32-c++filt
-CPPFLAGS = -I/home/silence/FGC-Core/depends/x86_64-w64-mingw32/share/../include/  -DFGC_BUILD -DHAVE_BUILD_INFO -D__STDC_FORMAT_MACROS -D_MT -DWIN32 -D_WINDOWS -DBOOST_THREAD_USE_LIB -D_FILE_OFFSET_BITS=64
+COPYRIGHT_YEAR = 2020
+CPP = gcc -E
+CPPFILT = /usr/bin/c++filt
+CPPFLAGS =  -DFGC_BUILD -DHAVE_BUILD_INFO -D__STDC_FORMAT_MACROS
 CRYPTOPP_CPPFLAGS = 
 CRYPTOPP_TARGET_FLAGS = 
 CRYPTO_CFLAGS = 
 CRYPTO_LIBS = -lcrypto
-CXX = x86_64-w64-mingw32-g++-posix -std=c++11
-CXXCPP = x86_64-w64-mingw32-g++-posix -std=c++11 -E
-CXXDEPMODE = depmode=none
-CXXFLAGS = -pipe -O2 -g -fvisibility=hidden
+CXX = g++ -std=c++11
+CXXCPP = g++ -std=c++11 -E
+CXXDEPMODE = depmode=gcc3
+CXXFLAGS = -g -O2
 CYGPATH_W = echo
 DEBUG_CPPFLAGS = 
 DEBUG_CXXFLAGS = 
 DEFS = -DHAVE_CONFIG_H
 DEPDIR = .deps
-DLLTOOL = x86_64-w64-mingw32-dlltool
-DOXYGEN = /usr/local/bin/doxygen
+DLLTOOL = false
+DOXYGEN = 
 DSYMUTIL = 
 DUMPBIN = 
 ECHO_C = 
@@ -243,21 +248,23 @@ EGREP = /bin/grep -E
 ERROR_CXXFLAGS = 
 EVENT_CFLAGS = 
 EVENT_LIBS = -levent
-EVENT_PTHREADS_CFLAGS = 
-EVENT_PTHREADS_LIBS = 
-EXEEXT = .exe
+EVENT_PTHREADS_CFLAGS = -pthread
+EVENT_PTHREADS_LIBS = -levent_pthreads -levent
+EXEEXT = 
 EXTENDED_FUNCTIONAL_TESTS = 
 FGREP = /bin/grep -F
-GCOV = /usr/bin/x86_64-w64-mingw32-gcov
+GCOV = /usr/bin/gcov
 GENHTML = 
 GENISOIMAGE = 
 GIT = /usr/bin/git
+GMPXX_LIBS = -lgmpxx
+GMP_LIBS = -lgmp
 GPROF_CXXFLAGS = 
 GPROF_LDFLAGS = 
 GREP = /bin/grep
 HARDENED_CPPFLAGS =  -U_FORTIFY_SOURCE -D_FORTIFY_SOURCE=2
-HARDENED_CXXFLAGS =  -Wstack-protector -fstack-protector-all
-HARDENED_LDFLAGS =  -Wl,--dynamicbase -Wl,--nxcompat -Wl,--high-entropy-va -pie
+HARDENED_CXXFLAGS =  -fstack-reuse=none -Wstack-protector -fstack-protector-all
+HARDENED_LDFLAGS =  -Wl,-z,relro -Wl,-z,now -pie
 HAVE_CXX11 = 1
 HEXDUMP = /usr/bin/hexdump
 IMAGEMAGICK_CONVERT = 
@@ -269,69 +276,70 @@ INSTALL_SCRIPT = ${INSTALL}
 INSTALL_STRIP_PROGRAM = $(install_sh) -c -s
 LCOV = 
 LCOV_OPTS = 
-LD = /usr/bin/x86_64-w64-mingw32-ld
-LDFLAGS = -L/home/silence/FGC-Core/depends/x86_64-w64-mingw32/share/../lib 
+LD = /usr/bin/ld -m elf_x86_64
+LDFLAGS = 
 LEVELDB_CPPFLAGS = 
-LEVELDB_TARGET_FLAGS = -DOS_WINDOWS
+LEVELDB_TARGET_FLAGS = -DOS_LINUX
 LIBCRYPTOPP = 
+LIBFF = 
+LIBFF_CPPFLAGS = 
 LIBLEVELDB = 
 LIBMEMENV = 
 LIBOBJS = 
-LIBS = -lQt5AccessibilitySupport -lQt5DeviceDiscoverySupport -lQt5FbSupport -lQt5ThemeSupport -lQt5EventDispatcherSupport -lQt5FontDatabaseSupport -lssp -lcrypt32 -liphlpapi -lshlwapi -lmswsock -lws2_32 -ladvapi32 -lrpcrt4 -luuid -loleaut32 -lole32 -lcomctl32 -lshell32 -lwinmm -lwinspool -lcomdlg32 -lgdi32 -luser32 -lkernel32 -lmingwthrd 
+LIBS = 
 LIBTOOL = $(SHELL) $(top_builddir)/libtool
-LIBTOOL_APP_LDFLAGS =  -all-static
+LIBTOOL_APP_LDFLAGS = 
 LIPO = 
 LN_S = ln -s
-LRELEASE = /home/silence/FGC-Core/depends/x86_64-w64-mingw32/share/../native/bin/lrelease
+LRELEASE = /usr/lib/qt5/bin/lrelease
 LTLIBOBJS = 
 LT_SYS_LIBRARY_PATH = 
-LUPDATE = /home/silence/FGC-Core/depends/x86_64-w64-mingw32/share/../native/bin/lupdate
-MAINT = #
-MAKEINFO = ${SHELL} /home/silence/FGC-Core/build-aux/missing makeinfo
-MAKENSIS = /usr/bin/makensis
+LUPDATE = /usr/lib/qt5/bin/lupdate
+MAINT = 
+MAKEINFO = ${SHELL} /home/dev/Desktop/fantasygold-core/build-aux/missing makeinfo
+MAKENSIS = 
 MANIFEST_TOOL = :
-MINIUPNPC_CPPFLAGS = -DSTATICLIB -DMINIUPNP_STATICLIB
+MINIUPNPC_CPPFLAGS = 
 MINIUPNPC_LIBS = -lminiupnpc
 MKDIR_P = /bin/mkdir -p
-MOC = /home/silence/FGC-Core/depends/x86_64-w64-mingw32/share/../native/bin/moc
+MOC = /usr/lib/qt5/bin/moc
 MOC_DEFS = -DHAVE_CONFIG_H -I$(srcdir)
-NM = x86_64-w64-mingw32-nm
+NM = /usr/bin/nm -B
 NMEDIT = 
-NOWARN_CXXFLAGS = 
-OBJCOPY = /usr/bin/x86_64-w64-mingw32-objcopy
-OBJCXX = x86_64-w64-mingw32-g++-posix -std=c++11
-OBJCXXDEPMODE = depmode=none
+NOWARN_CXXFLAGS =  -Wno-unused-parameter -Wno-implicit-fallthrough -Wno-unknown-pragmas
+OBJCOPY = /usr/bin/objcopy
+OBJCXX = g++ -std=c++11
+OBJCXXDEPMODE = depmode=gcc3
 OBJCXXFLAGS = 
-OBJDUMP = x86_64-w64-mingw32-objdump
+OBJDUMP = objdump
 OBJEXT = o
 OTOOL = 
 OTOOL64 = 
 PACKAGE = fantasygold
 PACKAGE_BUGREPORT = https://github.com/FantasyGold/FantasyGold-Core/issues
 PACKAGE_NAME = FantasyGold Core
-PACKAGE_STRING = FantasyGold Core 2.0.0
+PACKAGE_STRING = FantasyGold Core 0.19.0.1
 PACKAGE_TARNAME = fantasygold
 PACKAGE_URL = https://fantasygold.io/
-PACKAGE_VERSION = 2.0.0
+PACKAGE_VERSION = 0.19.0.1
 PATH_SEPARATOR = :
-PIC_FLAGS = 
+PIC_FLAGS = -fPIC
 PIE_FLAGS = -fPIE
-PKG_CONFIG = /usr/bin/pkg-config --static
+PKG_CONFIG = /usr/bin/pkg-config
 PKG_CONFIG_LIBDIR = 
-PKG_CONFIG_PATH = /home/silence/FGC-Core/depends/x86_64-w64-mingw32/share/../share/pkgconfig:/home/silence/FGC-Core/depends/x86_64-w64-mingw32/share/../lib/pkgconfig
-PORT = 
+PKG_CONFIG_PATH = 
 PROTOBUF_CFLAGS = 
-PROTOBUF_LIBS = -lprotobuf
-PROTOC = /home/silence/FGC-Core/depends/x86_64-w64-mingw32/share/../native/bin/protoc
-PTHREAD_CC = x86_64-w64-mingw32-gcc-posix
+PROTOBUF_LIBS = 
+PROTOC = 
+PTHREAD_CC = gcc
 PTHREAD_CFLAGS = -pthread
 PTHREAD_LIBS = 
 PYTHON = /usr/bin/python3.6
-PYTHONPATH = /home/silence/FGC-Core/depends/x86_64-w64-mingw32/share/../native/lib/python/dist-packages:
+PYTHONPATH = 
 QR_CFLAGS = 
-QR_LIBS = -lqrencode
-QT5_CFLAGS = 
-QT5_LIBS = 
+QR_LIBS = 
+QT5_CFLAGS = -I/usr/include/x86_64-linux-gnu/qt5/QtNetwork -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/x86_64-linux-gnu/qt5
+QT5_LIBS = -lQt5Network -lQt5Widgets -lQt5Gui -lQt5Core
 QTACCESSIBILITY_CFLAGS = 
 QTACCESSIBILITY_LIBS = 
 QTCGL_CFLAGS = 
@@ -354,22 +362,23 @@ QTTHEME_CFLAGS =
 QTTHEME_LIBS = 
 QTXCBQPA_CFLAGS = 
 QTXCBQPA_LIBS = 
-QT_DBUS_CFLAGS = 
-QT_DBUS_INCLUDES = 
-QT_DBUS_LIBS = -lQt5DBus -L/home/silence/FGC-Core/depends/x86_64-w64-mingw32/share/../lib
-QT_INCLUDES = -I/home/silence/FGC-Core/depends/x86_64-w64-mingw32/share/../include -I/home/silence/FGC-Core/depends/x86_64-w64-mingw32/share/../include/QtCore -I/home/silence/FGC-Core/depends/x86_64-w64-mingw32/share/../include/QtGui -I/home/silence/FGC-Core/depends/x86_64-w64-mingw32/share/../include/QtWidgets -I/home/silence/FGC-Core/depends/x86_64-w64-mingw32/share/../include/QtNetwork -I/home/silence/FGC-Core/depends/x86_64-w64-mingw32/share/../include/QtTest -I/home/silence/FGC-Core/depends/x86_64-w64-mingw32/share/../include/QtDBus
-QT_LDFLAGS =  -mwindows
-QT_LIBS = -lqwindows -lqminimal -lQt5Widgets -lQt5Network -lQt5Gui     -lQt5Core    -lqtharfbuzz -lqtpcre2 -lqtlibpng -lz  -limm32  -L/home/silence/FGC-Core/depends/x86_64-w64-mingw32/share/../lib -L/home/silence/FGC-Core/depends/x86_64-w64-mingw32/share/../plugins/platforms -lversion -ldwmapi -luxtheme
-QT_PIE_FLAGS = -fPIE
+QT_DBUS_CFLAGS = -I/usr/include/x86_64-linux-gnu/qt5/QtDBus -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/x86_64-linux-gnu/qt5
+QT_DBUS_INCLUDES = -I/usr/include/x86_64-linux-gnu/qt5/QtDBus -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/x86_64-linux-gnu/qt5
+QT_DBUS_LIBS = -lQt5DBus -lQt5Core
+QT_INCLUDES = -I/usr/include/x86_64-linux-gnu/qt5/QtNetwork -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/x86_64-linux-gnu/qt5
+QT_LDFLAGS = 
+QT_LIBS = -lQt5Network -lQt5Widgets -lQt5Gui -lQt5Core
+QT_PIE_FLAGS = -fPIC
 QT_SELECT = qt5
-QT_TEST_CFLAGS = 
-QT_TEST_INCLUDES = 
-QT_TEST_LIBS = -lQt5Test -L/home/silence/FGC-Core/depends/x86_64-w64-mingw32/share/../lib
-QT_TRANSLATION_DIR = /home/silence/FGC-Core/depends/x86_64-w64-mingw32/share/../translations
-RANLIB = /usr/bin/x86_64-w64-mingw32-ranlib
-RCC = /home/silence/FGC-Core/depends/x86_64-w64-mingw32/share/../native/bin/rcc
-READELF = /usr/bin/x86_64-w64-mingw32-readelf
-RELDFLAGS = -Wl,--exclude-libs,ALL
+QT_TEST_CFLAGS = -I/usr/include/x86_64-linux-gnu/qt5/QtTest -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/x86_64-linux-gnu/qt5
+QT_TEST_INCLUDES = -I/usr/include/x86_64-linux-gnu/qt5/QtTest -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/x86_64-linux-gnu/qt5
+QT_TEST_LIBS = -lQt5Test -lQt5Core
+QT_TRANSLATION_DIR = 
+RANLIB = /usr/bin/ranlib
+RAPIDCHECK_LIBS = 
+RCC = /usr/lib/qt5/bin/rcc
+READELF = /usr/bin/readelf
+RELDFLAGS = 
 RSVG_CONVERT = 
 SANITIZER_CXXFLAGS = 
 SANITIZER_LDFLAGS = 
@@ -381,30 +390,28 @@ SSE41_CXXFLAGS = -msse4.1
 SSE42_CXXFLAGS = -msse4.2
 SSL_CFLAGS = 
 SSL_LIBS = -lssl
-STRIP = /usr/bin/x86_64-w64-mingw32-strip
-TESTDEFS = 
+STRIP = /usr/bin/strip
+TESTDEFS =  -DBOOST_TEST_DYN_LINK
 TIFFCP = 
-UIC = /home/silence/FGC-Core/depends/x86_64-w64-mingw32/share/../native/bin/uic
+UIC = /usr/lib/qt5/bin/uic
 UNIVALUE_CFLAGS = -I$(srcdir)/univalue/include
 UNIVALUE_LIBS = univalue/libunivalue.la
 USE_QRCODE = 
 USE_UPNP = 
-VERSION = 2.0.0
-WARN_CXXFLAGS = 
-WINDOWS_BITS = 64
-WINDRES = /usr/bin/x86_64-w64-mingw32-windres
-X11XCB_CFLAGS = 
-X11XCB_LIBS = 
-XGETTEXT = 
-ZMQ_CFLAGS =  -DZMQ_STATIC
+VERSION = 0.19.0.1
+WARN_CXXFLAGS =  -Wall -Wextra -Wformat -Wvla -Wswitch -Wformat-security -Wredundant-decls
+WINDOWS_BITS = 
+WINDRES = 
+XGETTEXT = /usr/bin/xgettext
+ZMQ_CFLAGS = 
 ZMQ_LIBS = -lzmq
-abs_builddir = /home/silence/FGC-Core/doc/man
-abs_srcdir = /home/silence/FGC-Core/doc/man
-abs_top_builddir = /home/silence/FGC-Core
-abs_top_srcdir = /home/silence/FGC-Core
-ac_ct_AR = 
-ac_ct_CC = 
-ac_ct_CXX = 
+abs_builddir = /home/dev/Desktop/fantasygold-core/doc/man
+abs_srcdir = /home/dev/Desktop/fantasygold-core/doc/man
+abs_top_builddir = /home/dev/Desktop/fantasygold-core
+abs_top_srcdir = /home/dev/Desktop/fantasygold-core
+ac_ct_AR = ar
+ac_ct_CC = gcc
+ac_ct_CXX = g++
 ac_ct_DUMPBIN = 
 ac_ct_OBJCXX = 
 am__include = include
@@ -425,15 +432,15 @@ datarootdir = ${prefix}/share
 docdir = ${datarootdir}/doc/${PACKAGE_TARNAME}
 dvidir = ${docdir}
 exec_prefix = ${prefix}
-host = x86_64-w64-mingw32
-host_alias = x86_64-w64-mingw32
+host = x86_64-pc-linux-gnu
+host_alias = 
 host_cpu = x86_64
-host_os = mingw32
-host_vendor = w64
+host_os = linux-gnu
+host_vendor = pc
 htmldir = ${docdir}
 includedir = ${prefix}/include
 infodir = ${datarootdir}/info
-install_sh = ${SHELL} /home/silence/FGC-Core/build-aux/install-sh
+install_sh = ${SHELL} /home/dev/Desktop/fantasygold-core/build-aux/install-sh
 libdir = ${exec_prefix}/lib
 libexecdir = ${exec_prefix}/libexec
 localedir = ${datarootdir}/locale
@@ -442,7 +449,7 @@ mandir = ${datarootdir}/man
 mkdir_p = $(MKDIR_P)
 oldincludedir = /usr/include
 pdfdir = ${docdir}
-prefix = /
+prefix = /usr/local
 program_transform_name = s,x,x,
 psdir = ${docdir}
 runstatedir = ${localstatedir}/run
@@ -455,11 +462,12 @@ target_alias =
 top_build_prefix = ../../
 top_builddir = ../..
 top_srcdir = ../..
-dist_man1_MANS = $(am__append_1) $(am__append_2) $(am__append_3)
+dist_man1_MANS = $(am__append_1) $(am__append_2) $(am__append_3) \
+	$(am__append_4) $(am__append_5)
 all: all-am
 
 .SUFFIXES:
-$(srcdir)/Makefile.in: # $(srcdir)/Makefile.am  $(am__configure_deps)
+$(srcdir)/Makefile.in:  $(srcdir)/Makefile.am  $(am__configure_deps)
 	@for dep in $?; do \
 	  case '$(am__configure_deps)' in \
 	    *$$dep*) \
@@ -483,9 +491,9 @@ Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
 $(top_builddir)/config.status: $(top_srcdir)/configure $(CONFIG_STATUS_DEPENDENCIES)
 	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh
 
-$(top_srcdir)/configure: # $(am__configure_deps)
+$(top_srcdir)/configure:  $(am__configure_deps)
 	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh
-$(ACLOCAL_M4): # $(am__aclocal_m4_deps)
+$(ACLOCAL_M4):  $(am__aclocal_m4_deps)
 	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh
 $(am__aclocal_m4_deps):
 

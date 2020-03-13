@@ -1,4 +1,4 @@
-// Copyright (c) 2011-2018 The Bitcoin Core developers
+// Copyright (c) 2011-2019 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -11,20 +11,16 @@
 
 #include <base58.h>
 #include <chainparams.h>
-#include <primitives/transaction.h>
-#include <key_io.h>
 #include <interfaces/node.h>
+#include <key_io.h>
 #include <policy/policy.h>
+#include <primitives/transaction.h>
 #include <protocol.h>
 #include <script/script.h>
 #include <script/standard.h>
-#include <util.h>
+#include <util/system.h>
 
 #ifdef WIN32
-#ifdef _WIN32_WINNT
-#undef _WIN32_WINNT
-#endif
-#define _WIN32_WINNT 0x0501
 #ifdef _WIN32_IE
 #undef _WIN32_IE
 #endif
@@ -38,39 +34,33 @@
 #include <shlwapi.h>
 #endif
 
-#include <boost/scoped_array.hpp>
-
 #include <QAbstractItemView>
 #include <QApplication>
 #include <QClipboard>
 #include <QDateTime>
 #include <QDesktopServices>
-#include <QDesktopWidget>
 #include <QDoubleValidator>
 #include <QFileDialog>
 #include <QFont>
+#include <QFontDatabase>
+#include <QFontMetrics>
 #include <QKeyEvent>
 #include <QLineEdit>
+#include <QMouseEvent>
+#include <QProgressDialog>
 #include <QSettings>
 #include <QTextDocument> // for Qt::mightBeRichText
 #include <QThread>
 #include <QUrlQuery>
-#include <QMouseEvent>
-
-
-#if QT_VERSION >= 0x50200
-#include <QFontDatabase>
-#endif
-
-static fs::detail::utf8_codecvt_facet utf8;
 
 #if defined(Q_OS_MAC)
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
 
-#include <objc/objc-runtime.h>
 #include <CoreServices/CoreServices.h>
 #include <QProcess>
+
+void ForceActivation();
 #endif
 
 namespace GUIUtil {
@@ -87,13 +77,7 @@ QString dateTimeStr(qint64 nTime)
 
 QFont fixedPitchFont()
 {
-#if QT_VERSION >= 0x50200
     return QFontDatabase::systemFont(QFontDatabase::FixedFont);
-#else
-    QFont font("Monospace");
-    font.setStyleHint(QFont::Monospace);
-    return font;
-#endif
 }
 
 // Just some dummy data to generate a convincing random-looking (but consistent) address
@@ -192,7 +176,9 @@ bool parseBitcoinURI(QString uri, SendCoinsRecipient *out)
 
 QString formatBitcoinURI(const SendCoinsRecipient &info)
 {
-    QString ret = QString("fantasygold:%1").arg(info.address);
+    bool bech_32 = info.address.startsWith(QString::fromStdString(Params().Bech32HRP() + "1"));
+
+    QString ret = QString("fantasygold:%1").arg(bech_32 ? info.address.toUpper() : info.address);
     int paramCount = 0;
 
     if (info.amount)
@@ -272,6 +258,11 @@ QList<QModelIndex> getEntryData(QAbstractItemView *view, int column)
     if(!view || !view->selectionModel())
         return QList<QModelIndex>();
     return view->selectionModel()->selectedRows(column);
+}
+
+QString getDefaultDataDirectory()
+{
+    return boostPathToQString(GetDefaultDataDir());
 }
 
 QString getSaveFileName(QWidget *parent, const QString &caption, const QString &dir,
@@ -367,7 +358,7 @@ bool checkPoint(const QPoint &p, const QWidget *w)
 {
     QWidget *atW = QApplication::widgetAt(w->mapToGlobal(p));
     if (!atW) return false;
-    return atW->topLevelWidget() == w;
+    return atW->window() == w;
 }
 
 bool isObscured(QWidget *w)
@@ -382,10 +373,7 @@ bool isObscured(QWidget *w)
 void bringToFront(QWidget* w)
 {
 #ifdef Q_OS_MAC
-    // Force application activation on macOS. With Qt 5.4 this is required when
-    // an action in the dock menu is triggered.
-    id app = objc_msgSend((id) objc_getClass("NSApplication"), sel_registerName("sharedApplication"));
-    objc_msgSend(app, sel_registerName("activateIgnoringOtherApps:"), YES);
+    ForceActivation();
 #endif
 
     if (w) {
@@ -411,10 +399,10 @@ void openDebugLogfile()
 
 bool openBitcoinConf()
 {
-    boost::filesystem::path pathConfig = GetConfigFile(gArgs.GetArg("-conf", BITCOIN_CONF_FILENAME));
+    fs::path pathConfig = GetConfigFile(gArgs.GetArg("-conf", BITCOIN_CONF_FILENAME));
 
     /* Create the file */
-    boost::filesystem::ofstream configFile(pathConfig, std::ios_base::app);
+    fsbridge::ofstream configFile(pathConfig, std::ios_base::app);
 
     if (!configFile.good())
         return false;
@@ -424,7 +412,7 @@ bool openBitcoinConf()
     /* Open fantasygold.conf with the associated application */
     bool res = QDesktopServices::openUrl(QUrl::fromLocalFile(boostPathToQString(pathConfig)));
 #ifdef Q_OS_MAC
-    // Workaround for macOS-specific behavior; see #689.
+    // Workaround for macOS-specific behavior; see #15409.
     if (!res) {
         res = QProcess::startDetached("/usr/bin/open", QStringList{"-t", boostPathToQString(pathConfig)});
     }
@@ -460,15 +448,15 @@ bool ToolTipToRichTextFilter::eventFilter(QObject *obj, QEvent *evt)
 
 void TableViewLastColumnResizingFixer::connectViewHeadersSignals()
 {
-    connect(tableView->horizontalHeader(), SIGNAL(sectionResized(int,int,int)), this, SLOT(on_sectionResized(int,int,int)));
-    connect(tableView->horizontalHeader(), SIGNAL(geometriesChanged()), this, SLOT(on_geometriesChanged()));
+    connect(tableView->horizontalHeader(), &QHeaderView::sectionResized, this, &TableViewLastColumnResizingFixer::on_sectionResized);
+    connect(tableView->horizontalHeader(), &QHeaderView::geometriesChanged, this, &TableViewLastColumnResizingFixer::on_geometriesChanged);
 }
 
 // We need to disconnect these while handling the resize events, otherwise we can enter infinite loops.
 void TableViewLastColumnResizingFixer::disconnectViewHeadersSignals()
 {
-    disconnect(tableView->horizontalHeader(), SIGNAL(sectionResized(int,int,int)), this, SLOT(on_sectionResized(int,int,int)));
-    disconnect(tableView->horizontalHeader(), SIGNAL(geometriesChanged()), this, SLOT(on_geometriesChanged()));
+    disconnect(tableView->horizontalHeader(), &QHeaderView::sectionResized, this, &TableViewLastColumnResizingFixer::on_sectionResized);
+    disconnect(tableView->horizontalHeader(), &QHeaderView::geometriesChanged, this, &TableViewLastColumnResizingFixer::on_geometriesChanged);
 }
 
 // Setup the resize mode, handles compatibility for Qt5 and below as the method signatures changed.
@@ -496,7 +484,9 @@ int TableViewLastColumnResizingFixer::getColumnsWidth()
 
 int TableViewLastColumnResizingFixer::getAvailableWidthForColumn(int column)
 {
-    int nResult = lastColumnMinimumWidth;
+    int nResult = allColumnsMinimumWidth;
+    if(column == lastColumnIndex)
+        nResult = lastColumnMinimumWidth;
     int nTableWidth = tableView->horizontalHeader()->width();
 
     if (nTableWidth > 0)
@@ -599,40 +589,28 @@ bool SetStartOnSystemStartup(bool fAutoStart)
         CoInitialize(nullptr);
 
         // Get a pointer to the IShellLink interface.
-        IShellLink* psl = nullptr;
+        IShellLinkW* psl = nullptr;
         HRESULT hres = CoCreateInstance(CLSID_ShellLink, nullptr,
-            CLSCTX_INPROC_SERVER, IID_IShellLink,
+            CLSCTX_INPROC_SERVER, IID_IShellLinkW,
             reinterpret_cast<void**>(&psl));
 
         if (SUCCEEDED(hres))
         {
             // Get the current executable path
-            TCHAR pszExePath[MAX_PATH];
-            GetModuleFileName(nullptr, pszExePath, sizeof(pszExePath));
+            WCHAR pszExePath[MAX_PATH];
+            GetModuleFileNameW(nullptr, pszExePath, ARRAYSIZE(pszExePath));
 
             // Start client minimized
             QString strArgs = "-min";
             // Set -testnet /-regtest options
-            strArgs += QString::fromStdString(strprintf(" -testnet=%d -regtest=%d", gArgs.GetBoolArg("-testnet", false), gArgs.GetBoolArg("-regtest", false)));
-
-#ifdef UNICODE
-            boost::scoped_array<TCHAR> args(new TCHAR[strArgs.length() + 1]);
-            // Convert the QString to TCHAR*
-            strArgs.toWCharArray(args.get());
-            // Add missing '\0'-termination to string
-            args[strArgs.length()] = '\0';
-#endif
+            strArgs += QString::fromStdString(strprintf(" -chain=%s", gArgs.GetChainName()));
 
             // Set the path to the shortcut target
             psl->SetPath(pszExePath);
-            PathRemoveFileSpec(pszExePath);
+            PathRemoveFileSpecW(pszExePath);
             psl->SetWorkingDirectory(pszExePath);
             psl->SetShowCmd(SW_SHOWMINNOACTIVE);
-#ifndef UNICODE
-            psl->SetArguments(strArgs.toStdString().c_str());
-#else
-            psl->SetArguments(args.get());
-#endif
+            psl->SetArguments(strArgs.toStdWString().c_str());
 
             // Query IShellLink for the IPersistFile interface for
             // saving the shortcut in persistent storage.
@@ -640,11 +618,8 @@ bool SetStartOnSystemStartup(bool fAutoStart)
             hres = psl->QueryInterface(IID_IPersistFile, reinterpret_cast<void**>(&ppf));
             if (SUCCEEDED(hres))
             {
-                WCHAR pwsz[MAX_PATH];
-                // Ensure that the string is ANSI.
-                MultiByteToWideChar(CP_ACP, 0, StartupShortcutPath().string().c_str(), -1, pwsz, MAX_PATH);
                 // Save the link by calling IPersistFile::Save.
-                hres = ppf->Save(pwsz, TRUE);
+                hres = ppf->Save(StartupShortcutPath().wstring().c_str(), TRUE);
                 ppf->Release();
                 psl->Release();
                 CoUninitialize();
@@ -676,12 +651,12 @@ fs::path static GetAutostartFilePath()
     std::string chain = gArgs.GetChainName();
     if (chain == CBaseChainParams::MAIN)
         return GetAutostartDir() / "fantasygold.desktop";
-    return GetAutostartDir() / strprintf("fantasygold-%s.lnk", chain);
+    return GetAutostartDir() / strprintf("fantasygold-%s.desktop", chain);
 }
 
 bool GetStartOnSystemStartup()
 {
-    fs::ifstream optionFile(GetAutostartFilePath());
+    fsbridge::ifstream optionFile(GetAutostartFilePath());
     if (!optionFile.good())
         return false;
     // Scan through file for "Hidden=true":
@@ -712,7 +687,7 @@ bool SetStartOnSystemStartup(bool fAutoStart)
 
         fs::create_directories(GetAutostartDir());
 
-        fs::ofstream optionFile(GetAutostartFilePath(), std::ios_base::out|std::ios_base::trunc);
+        fsbridge::ofstream optionFile(GetAutostartFilePath(), std::ios_base::out | std::ios_base::trunc);
         if (!optionFile.good())
             return false;
         std::string chain = gArgs.GetChainName();
@@ -723,7 +698,7 @@ bool SetStartOnSystemStartup(bool fAutoStart)
             optionFile << "Name=FantasyGold\n";
         else
             optionFile << strprintf("Name=FantasyGold (%s)\n", chain);
-        optionFile << "Exec=" << pszExePath << strprintf(" -min -testnet=%d -regtest=%d\n", gArgs.GetBoolArg("-testnet", false), gArgs.GetBoolArg("-regtest", false));
+        optionFile << "Exec=" << pszExePath << strprintf(" -min -chain=%s\n", chain);
         optionFile << "Terminal=false\n";
         optionFile << "Hidden=false\n";
         optionFile.close();
@@ -732,13 +707,11 @@ bool SetStartOnSystemStartup(bool fAutoStart)
 }
 
 
-#elif defined(Q_OS_MAC)
+#elif defined(Q_OS_MAC) && defined(MAC_OS_X_VERSION_MIN_REQUIRED) && MAC_OS_X_VERSION_MIN_REQUIRED <= 101100
 // based on: https://github.com/Mozketo/LaunchAtLoginController/blob/master/LaunchAtLoginController.m
 
-LSSharedFileListItemRef findStartupItemInList(LSSharedFileListRef list, CFURLRef findUrl);
-LSSharedFileListItemRef findStartupItemInList(LSSharedFileListRef list, CFURLRef findUrl)
+LSSharedFileListItemRef findStartupItemInList(CFArrayRef listSnapshot, LSSharedFileListRef list, CFURLRef findUrl)
 {
-    CFArrayRef listSnapshot = LSSharedFileListCopySnapshot(list, nullptr);
     if (listSnapshot == nullptr) {
         return nullptr;
     }
@@ -763,15 +736,12 @@ LSSharedFileListItemRef findStartupItemInList(LSSharedFileListRef list, CFURLRef
         if(currentItemURL) {
             if (CFEqual(currentItemURL, findUrl)) {
                 // found
-                CFRelease(listSnapshot);
                 CFRelease(currentItemURL);
                 return item;
             }
             CFRelease(currentItemURL);
         }
     }
-
-    CFRelease(listSnapshot);
     return nullptr;
 }
 
@@ -783,10 +753,12 @@ bool GetStartOnSystemStartup()
     }
 
     LSSharedFileListRef loginItems = LSSharedFileListCreate(nullptr, kLSSharedFileListSessionLoginItems, nullptr);
-    LSSharedFileListItemRef foundItem = findStartupItemInList(loginItems, bitcoinAppUrl);
-
+    CFArrayRef listSnapshot = LSSharedFileListCopySnapshot(loginItems, nullptr);
+    bool res = (findStartupItemInList(listSnapshot, loginItems, bitcoinAppUrl) != nullptr);
     CFRelease(bitcoinAppUrl);
-    return !!foundItem; // return boolified object
+    CFRelease(loginItems);
+    CFRelease(listSnapshot);
+    return res;
 }
 
 bool SetStartOnSystemStartup(bool fAutoStart)
@@ -797,7 +769,8 @@ bool SetStartOnSystemStartup(bool fAutoStart)
     }
 
     LSSharedFileListRef loginItems = LSSharedFileListCreate(nullptr, kLSSharedFileListSessionLoginItems, nullptr);
-    LSSharedFileListItemRef foundItem = findStartupItemInList(loginItems, bitcoinAppUrl);
+    CFArrayRef listSnapshot = LSSharedFileListCopySnapshot(loginItems, nullptr);
+    LSSharedFileListItemRef foundItem = findStartupItemInList(listSnapshot, loginItems, bitcoinAppUrl);
 
     if(fAutoStart && !foundItem) {
         // add bitcoin app to startup item list
@@ -809,6 +782,8 @@ bool SetStartOnSystemStartup(bool fAutoStart)
     }
 
     CFRelease(bitcoinAppUrl);
+    CFRelease(loginItems);
+    CFRelease(listSnapshot);
     return true;
 }
 #pragma GCC diagnostic pop
@@ -827,12 +802,12 @@ void setClipboard(const QString& str)
 
 fs::path qstringToBoostPath(const QString &path)
 {
-    return fs::path(path.toStdString(), utf8);
+    return fs::path(path.toStdString());
 }
 
 QString boostPathToQString(const fs::path &path)
 {
-    return QString::fromStdString(path.string(utf8));
+    return QString::fromStdString(path.string());
 }
 
 QString formatDurationStr(int secs)
@@ -877,9 +852,6 @@ QString formatServicesStr(quint64 mask)
                 break;
             case NODE_WITNESS:
                 strList.append("WITNESS");
-                break;
-            case NODE_XTHIN:
-                strList.append("XTHIN");
                 break;
             default:
                 strList.append(QString("%1[%2]").arg("UNKNOWN").arg(check));
@@ -956,7 +928,7 @@ qreal calculateIdealFontSize(int width, const QString& text, QFont font, qreal m
     while(font_size >= minPointSize) {
         font.setPointSizeF(font_size);
         QFontMetrics fm(font);
-        if (fm.width(text) < width) {
+        if (TextWidth(fm, text) < width) {
             break;
         }
         font_size -= 0.5;
@@ -982,6 +954,27 @@ bool ItemDelegate::eventFilter(QObject *object, QEvent *event)
         }
     }
     return QItemDelegate::eventFilter(object, event);
+}
+
+void PolishProgressDialog(QProgressDialog* dialog)
+{
+#ifdef Q_OS_MAC
+    // Workaround for macOS-only Qt bug; see: QTBUG-65750, QTBUG-70357.
+    const int margin = TextWidth(dialog->fontMetrics(), ("X"));
+    dialog->resize(dialog->width() + 2 * margin, dialog->height());
+    dialog->show();
+#else
+    Q_UNUSED(dialog);
+#endif
+}
+
+int TextWidth(const QFontMetrics& fm, const QString& text)
+{
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 11, 0))
+    return fm.horizontalAdvance(text);
+#else
+    return fm.width(text);
+#endif
 }
 
 void formatToolButtons(QToolButton *btn1, QToolButton *btn2, QToolButton *btn3)

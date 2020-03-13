@@ -6,16 +6,16 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>722</width>
-    <height>33</height>
+    <width>453</width>
+    <height>37</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QHBoxLayout" name="horizontalLayout">
+  <layout class="QHBoxLayout" name="horizontalLayout_4">
    <property name="spacing">
-    <number>2</number>
+    <number>0</number>
    </property>
    <property name="leftMargin">
     <number>0</number>
@@ -24,7 +24,7 @@
     <number>0</number>
    </property>
    <property name="rightMargin">
-    <number>20</number>
+    <number>0</number>
    </property>
    <property name="bottomMargin">
     <number>0</number>
@@ -63,6 +63,30 @@
     </widget>
    </item>
    <item>
+    <widget class="QWidget" name="widgetTitle" native="true">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <layout class="QHBoxLayout" name="horizontalLayout">
+      <property name="spacing">
+       <number>0</number>
+      </property>
+      <property name="leftMargin">
+       <number>0</number>
+      </property>
+      <property name="topMargin">
+       <number>0</number>
+      </property>
+      <property name="rightMargin">
+       <number>10</number>
+      </property>
+      <property name="bottomMargin">
+       <number>0</number>
+      </property>
+      <item>
     <spacer name="horizontalSpacer_3">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
@@ -72,8 +96,8 @@
      </property>
      <property name="sizeHint" stdset="0">
       <size>
-       <width>20</width>
-       <height>20</height>
+          <width>17</width>
+          <height>17</height>
       </size>
      </property>
     </spacer>
@@ -119,7 +143,7 @@
      <property name="sizeHint" stdset="0">
       <size>
        <width>0</width>
-       <height>20</height>
+          <height>17</height>
       </size>
      </property>
     </spacer>
@@ -148,6 +172,30 @@
       </widget>
      </item>
     </layout>
+   </item>
+  </layout>
+ </widget>
+   </item>
+   <item>
+    <widget class="QWidget" name="widgetWallet" native="true">
+     <layout class="QHBoxLayout" name="horizontalLayout_5">
+      <property name="spacing">
+       <number>0</number>
+      </property>
+      <property name="leftMargin">
+       <number>0</number>
+      </property>
+      <property name="topMargin">
+       <number>0</number>
+      </property>
+      <property name="rightMargin">
+       <number>10</number>
+      </property>
+      <property name="bottomMargin">
+       <number>0</number>
+      </property>
+     </layout>
+    </widget>
    </item>
   </layout>
  </widget>

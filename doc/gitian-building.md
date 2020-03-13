@@ -1,6 +1,5 @@
 Gitian building
 ================
-
 *Setup instructions for a Gitian build of FantasyGold Core using a Debian VM or physical system.*
 
 Gitian is the deterministic build process that is used to build the FantasyGold
@@ -11,7 +10,7 @@ the same, tested dependencies are used and statically built into the executable.
 Multiple developers build the source code by following a specific descriptor
 ("recipe"), cryptographically sign the result, and upload the resulting signature.
 These results are compared and only if they match, the build is accepted and uploaded
-to fantasygold.org.
+to FantasyGold.io.
 
 More independent Gitian builders are needed, which is why this guide exists.
 It is preferred you follow these steps yourself instead of using someone else's
@@ -315,7 +314,7 @@ Clone the git repositories for fantasygold and Gitian.
 ```bash
 git clone https://github.com/devrandom/gitian-builder.git
 git clone https://github.com/FantasyGold/FantasyGold-Core --recursive
-git clone https://github.com/fantasygold/gitian.sigs.git
+git clone https://github.com/FantasyGold-Core/gitian.sigs.git
 ```
 
 Setting up the Gitian image
@@ -491,5 +490,5 @@ Uploading signatures
 ---------------------
 
 After building and signing you can push your signatures (both the `.assert` and `.assert.sig` files) to the
-[fantasygoldproject/gitian.sigs](https://github.com/fantasygold/gitian.sigs/) repository, or if that's not possible create a pull
-request. You can also mail the files to Jordan Earls (earlz@fantasygold.org) and he will commit them.
+[FantasyGold-Core/gitian.sigs](https://github.com/FantasyGold/gitian.sigs/) repository, or if that's not possible create a pull
+request. You can also mail the files to Jordan Earls (earlz@FantasyGold.io) and he will commit them.

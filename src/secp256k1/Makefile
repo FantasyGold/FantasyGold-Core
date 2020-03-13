@@ -90,7 +90,7 @@ NORMAL_UNINSTALL = :
 PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = x86_64-pc-linux-gnu
-host_triplet = x86_64-w64-mingw32
+host_triplet = x86_64-pc-linux-gnu
 noinst_PROGRAMS = $(am__EXEEXT_1) $(am__EXEEXT_2) $(am__EXEEXT_3) \
 	$(am__EXEEXT_4) $(am__EXEEXT_5)
 #am__append_1 = bench_verify bench_sign bench_internal
@@ -510,7 +510,7 @@ am__set_TESTS_bases = \
   bases=`echo $$bases`
 RECHECK_LOGS = $(TEST_LOGS)
 TEST_SUITE_LOG = test-suite.log
-TEST_EXTENSIONS = .exe .test
+TEST_EXTENSIONS =  .test
 LOG_DRIVER = $(SHELL) $(top_srcdir)/build-aux/test-driver
 LOG_COMPILE = $(LOG_COMPILER) $(AM_LOG_FLAGS) $(LOG_FLAGS)
 am__set_b = \
@@ -524,7 +524,7 @@ am__set_b = \
       b='$*';; \
   esac
 am__test_logs1 = $(TESTS:=.log)
-am__test_logs2 = $(am__test_logs1:.exe.log=.log)
+am__test_logs2 = $(am__test_logs1:.log=.log)
 TEST_LOGS = $(am__test_logs2:.test.log=.log)
 TEST_LOG_DRIVER = $(SHELL) $(top_srcdir)/build-aux/test-driver
 TEST_LOG_COMPILE = $(TEST_LOG_COMPILER) $(AM_TEST_LOG_FLAGS) \
@@ -561,42 +561,42 @@ distuninstallcheck_listfiles = find . -type f -print
 am__distuninstallcheck_listfiles = $(distuninstallcheck_listfiles) \
   | sed 's|^\./|$(prefix)/|' | grep -v '$(infodir)/dir$$'
 distcleancheck_listfiles = find . -type f -print
-ACLOCAL = ${SHELL} /home/silence/FGC-Core/src/secp256k1/build-aux/missing aclocal-1.15
+ACLOCAL = ${SHELL} /home/dev/Desktop/fantasygold-core/src/secp256k1/build-aux/missing aclocal-1.15
 AMTAR = $${TAR-tar}
 AM_DEFAULT_VERBOSITY = 0
-AR = /usr/bin/x86_64-w64-mingw32-ar
-AUTOCONF = ${SHELL} /home/silence/FGC-Core/src/secp256k1/build-aux/missing autoconf
-AUTOHEADER = ${SHELL} /home/silence/FGC-Core/src/secp256k1/build-aux/missing autoheader
-AUTOMAKE = ${SHELL} /home/silence/FGC-Core/src/secp256k1/build-aux/missing automake-1.15
-AWK = mawk
+AR = /usr/bin/ar
+AUTOCONF = ${SHELL} /home/dev/Desktop/fantasygold-core/src/secp256k1/build-aux/missing autoconf
+AUTOHEADER = ${SHELL} /home/dev/Desktop/fantasygold-core/src/secp256k1/build-aux/missing autoheader
+AUTOMAKE = ${SHELL} /home/dev/Desktop/fantasygold-core/src/secp256k1/build-aux/missing automake-1.15
+AWK = gawk
 BREW = 
 BUILD_EXEEXT = 
 BUILD_OBJEXT = 
-CC = x86_64-w64-mingw32-gcc
-CCAS = x86_64-w64-mingw32-gcc
-CCASDEPMODE = depmode=none
-CCASFLAGS = -pipe -O2 -g
-CCDEPMODE = depmode=none
+CC = gcc
+CCAS = gcc
+CCASDEPMODE = depmode=gcc3
+CCASFLAGS = -g -O2
+CCDEPMODE = depmode=gcc3
 CC_FOR_BUILD = gcc
-CFLAGS = -pipe -O2 -g -W -std=c89 -pedantic -Wall -Wextra -Wcast-align -Wnested-externs -Wshadow -Wstrict-prototypes -Wno-unused-function -Wno-long-long -Wno-overlength-strings -fvisibility=hidden -O3
+CFLAGS = -g -O2 -W -std=c89 -pedantic -Wall -Wextra -Wcast-align -Wnested-externs -Wshadow -Wstrict-prototypes -Wno-unused-function -Wno-long-long -Wno-overlength-strings -fvisibility=hidden -O3
 CFLAGS_FOR_BUILD = -g -O2 $(am__append_9)
-CPP = x86_64-w64-mingw32-gcc -E
-CPPFLAGS = -I/home/silence/FGC-Core/depends/x86_64-w64-mingw32/share/../include/ 
+CPP = gcc -E
+CPPFLAGS = 
 CPPFLAGS_FOR_BUILD =  $(am__append_8)
 CPP_FOR_BUILD = gcc -E
-CRYPTO_CFLAGS = -I/home/silence/FGC-Core/depends/x86_64-w64-mingw32/include
-CRYPTO_LIBS = -L/home/silence/FGC-Core/depends/x86_64-w64-mingw32/lib -lcrypto -lws2_32 -lgdi32 -lcrypt32
+CRYPTO_CFLAGS = 
+CRYPTO_LIBS = -lcrypto
 CYGPATH_W = echo
 DEFS = -DHAVE_CONFIG_H
 DEPDIR = .deps
-DLLTOOL = x86_64-w64-mingw32-dlltool
+DLLTOOL = false
 DSYMUTIL = 
 DUMPBIN = 
 ECHO_C = 
 ECHO_N = -n
 ECHO_T = 
 EGREP = /bin/grep -E
-EXEEXT = .exe
+EXEEXT = 
 FGREP = /bin/grep -F
 GREP = /bin/grep
 INSTALL = /usr/bin/install -c
@@ -605,8 +605,8 @@ INSTALL_PROGRAM = ${INSTALL}
 INSTALL_SCRIPT = ${INSTALL}
 INSTALL_STRIP_PROGRAM = $(install_sh) -c -s
 JNI_INCLUDES = 
-LD = /usr/bin/x86_64-w64-mingw32-ld
-LDFLAGS = -L/home/silence/FGC-Core/depends/x86_64-w64-mingw32/share/../lib 
+LD = /usr/bin/ld -m elf_x86_64
+LDFLAGS = 
 LDFLAGS_FOR_BUILD = 
 LIBOBJS = 
 LIBS = 
@@ -615,12 +615,12 @@ LIPO =
 LN_S = ln -s
 LTLIBOBJS = 
 LT_SYS_LIBRARY_PATH = 
-MAKEINFO = ${SHELL} /home/silence/FGC-Core/src/secp256k1/build-aux/missing makeinfo
+MAKEINFO = ${SHELL} /home/dev/Desktop/fantasygold-core/src/secp256k1/build-aux/missing makeinfo
 MANIFEST_TOOL = :
 MKDIR_P = /bin/mkdir -p
-NM = x86_64-w64-mingw32-nm
+NM = /usr/bin/nm -B
 NMEDIT = 
-OBJDUMP = x86_64-w64-mingw32-objdump
+OBJDUMP = objdump
 OBJEXT = o
 OTOOL = 
 OTOOL64 = 
@@ -632,27 +632,27 @@ PACKAGE_TARNAME = libsecp256k1
 PACKAGE_URL = 
 PACKAGE_VERSION = 0.1
 PATH_SEPARATOR = :
-PKG_CONFIG = /usr/bin/pkg-config --static
+PKG_CONFIG = /usr/bin/pkg-config
 PKG_CONFIG_LIBDIR = 
-PKG_CONFIG_PATH = /home/silence/FGC-Core/depends/x86_64-w64-mingw32/share/../share/pkgconfig:/home/silence/FGC-Core/depends/x86_64-w64-mingw32/share/../lib/pkgconfig
+PKG_CONFIG_PATH = 
 PORT = 
-RANLIB = /usr/bin/x86_64-w64-mingw32-ranlib
+RANLIB = /usr/bin/ranlib
 SECP_INCLUDES = 
 SECP_LIBS = 
-SECP_TEST_INCLUDES =  -I/home/silence/FGC-Core/depends/x86_64-w64-mingw32/include
-SECP_TEST_LIBS = -L/home/silence/FGC-Core/depends/x86_64-w64-mingw32/lib -lcrypto -lws2_32 -lgdi32 -lcrypt32 -lgdi32
+SECP_TEST_INCLUDES =  
+SECP_TEST_LIBS = -lcrypto
 SED = /bin/sed
 SET_MAKE = 
 SHELL = /bin/bash
-STRIP = /usr/bin/x86_64-w64-mingw32-strip
+STRIP = /usr/bin/strip
 VERSION = 0.1
 _ACJNI_JAVAC = 
-abs_builddir = /home/silence/FGC-Core/src/secp256k1
-abs_srcdir = /home/silence/FGC-Core/src/secp256k1
-abs_top_builddir = /home/silence/FGC-Core/src/secp256k1
-abs_top_srcdir = /home/silence/FGC-Core/src/secp256k1
-ac_ct_AR = 
-ac_ct_CC = 
+abs_builddir = /home/dev/Desktop/fantasygold-core/src/secp256k1
+abs_srcdir = /home/dev/Desktop/fantasygold-core/src/secp256k1
+abs_top_builddir = /home/dev/Desktop/fantasygold-core/src/secp256k1
+abs_top_srcdir = /home/dev/Desktop/fantasygold-core/src/secp256k1
+ac_ct_AR = ar
+ac_ct_CC = gcc
 ac_ct_CC_FOR_BUILD = gcc
 ac_ct_DUMPBIN = 
 am__include = include
@@ -672,15 +672,15 @@ datarootdir = ${prefix}/share
 docdir = ${datarootdir}/doc/${PACKAGE_TARNAME}
 dvidir = ${docdir}
 exec_prefix = ${prefix}
-host = x86_64-w64-mingw32
-host_alias = x86_64-w64-mingw32
+host = x86_64-pc-linux-gnu
+host_alias = 
 host_cpu = x86_64
-host_os = mingw32
-host_vendor = w64
+host_os = linux-gnu
+host_vendor = pc
 htmldir = ${docdir}
 includedir = ${prefix}/include
 infodir = ${datarootdir}/info
-install_sh = ${SHELL} /home/silence/FGC-Core/src/secp256k1/build-aux/install-sh
+install_sh = ${SHELL} /home/dev/Desktop/fantasygold-core/src/secp256k1/build-aux/install-sh
 libdir = ${exec_prefix}/lib
 libexecdir = ${exec_prefix}/libexec
 localedir = ${datarootdir}/locale
@@ -689,7 +689,7 @@ mandir = ${datarootdir}/man
 mkdir_p = $(MKDIR_P)
 oldincludedir = /usr/include
 pdfdir = ${docdir}
-prefix = /
+prefix = /usr/local
 program_transform_name = s,x,x,
 psdir = ${docdir}
 runstatedir = ${localstatedir}/run
@@ -975,103 +975,103 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
-#include src/$(DEPDIR)/bench_ecdh.Po
-#include src/$(DEPDIR)/bench_internal-bench_internal.Po
-#include src/$(DEPDIR)/bench_recover.Po
-#include src/$(DEPDIR)/bench_sign.Po
-#include src/$(DEPDIR)/bench_verify.Po
-#include src/$(DEPDIR)/exhaustive_tests-tests_exhaustive.Po
-#include src/$(DEPDIR)/libsecp256k1_la-secp256k1.Plo
-#include src/$(DEPDIR)/tests-tests.Po
-#include src/java/$(DEPDIR)/libsecp256k1_jni_la-org_bitcoin_NativeSecp256k1.Plo
-#include src/java/$(DEPDIR)/libsecp256k1_jni_la-org_bitcoin_Secp256k1Context.Plo
+include src/$(DEPDIR)/bench_ecdh.Po
+include src/$(DEPDIR)/bench_internal-bench_internal.Po
+include src/$(DEPDIR)/bench_recover.Po
+include src/$(DEPDIR)/bench_sign.Po
+include src/$(DEPDIR)/bench_verify.Po
+include src/$(DEPDIR)/exhaustive_tests-tests_exhaustive.Po
+include src/$(DEPDIR)/libsecp256k1_la-secp256k1.Plo
+include src/$(DEPDIR)/tests-tests.Po
+include src/java/$(DEPDIR)/libsecp256k1_jni_la-org_bitcoin_NativeSecp256k1.Plo
+include src/java/$(DEPDIR)/libsecp256k1_jni_la-org_bitcoin_Secp256k1Context.Plo
 
 .c.o:
-#	$(AM_V_CC)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.o$$||'`;\
-#	$(COMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ $< &&\
-#	$(am__mv) $$depbase.Tpo $$depbase.Po
-#	$(AM_V_CC)source='$<' object='$@' libtool=no 
-#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) 
-	$(AM_V_CC)$(COMPILE) -c -o $@ $<
+	$(AM_V_CC)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.o$$||'`;\
+	$(COMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ $< &&\
+	$(am__mv) $$depbase.Tpo $$depbase.Po
+#	$(AM_V_CC)source='$<' object='$@' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(COMPILE) -c -o $@ $<
 
 .c.obj:
-#	$(AM_V_CC)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.obj$$||'`;\
-#	$(COMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ `$(CYGPATH_W) '$<'` &&\
-#	$(am__mv) $$depbase.Tpo $$depbase.Po
-#	$(AM_V_CC)source='$<' object='$@' libtool=no 
-#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) 
-	$(AM_V_CC)$(COMPILE) -c -o $@ `$(CYGPATH_W) '$<'`
+	$(AM_V_CC)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.obj$$||'`;\
+	$(COMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ `$(CYGPATH_W) '$<'` &&\
+	$(am__mv) $$depbase.Tpo $$depbase.Po
+#	$(AM_V_CC)source='$<' object='$@' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(COMPILE) -c -o $@ `$(CYGPATH_W) '$<'`
 
 .c.lo:
-#	$(AM_V_CC)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.lo$$||'`;\
-#	$(LTCOMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ $< &&\
-#	$(am__mv) $$depbase.Tpo $$depbase.Plo
-#	$(AM_V_CC)source='$<' object='$@' libtool=yes 
-#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) 
-	$(AM_V_CC)$(LTCOMPILE) -c -o $@ $<
+	$(AM_V_CC)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.lo$$||'`;\
+	$(LTCOMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ $< &&\
+	$(am__mv) $$depbase.Tpo $$depbase.Plo
+#	$(AM_V_CC)source='$<' object='$@' libtool=yes \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(LTCOMPILE) -c -o $@ $<
 
 src/libsecp256k1_la-secp256k1.lo: src/secp256k1.c
-#	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libsecp256k1_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT src/libsecp256k1_la-secp256k1.lo -MD -MP -MF src/$(DEPDIR)/libsecp256k1_la-secp256k1.Tpo -c -o src/libsecp256k1_la-secp256k1.lo `test -f 'src/secp256k1.c' || echo '$(srcdir)/'`src/secp256k1.c
-#	$(AM_V_at)$(am__mv) src/$(DEPDIR)/libsecp256k1_la-secp256k1.Tpo src/$(DEPDIR)/libsecp256k1_la-secp256k1.Plo
-#	$(AM_V_CC)source='src/secp256k1.c' object='src/libsecp256k1_la-secp256k1.lo' libtool=yes 
-#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) 
-	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libsecp256k1_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o src/libsecp256k1_la-secp256k1.lo `test -f 'src/secp256k1.c' || echo '$(srcdir)/'`src/secp256k1.c
+	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libsecp256k1_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT src/libsecp256k1_la-secp256k1.lo -MD -MP -MF src/$(DEPDIR)/libsecp256k1_la-secp256k1.Tpo -c -o src/libsecp256k1_la-secp256k1.lo `test -f 'src/secp256k1.c' || echo '$(srcdir)/'`src/secp256k1.c
+	$(AM_V_at)$(am__mv) src/$(DEPDIR)/libsecp256k1_la-secp256k1.Tpo src/$(DEPDIR)/libsecp256k1_la-secp256k1.Plo
+#	$(AM_V_CC)source='src/secp256k1.c' object='src/libsecp256k1_la-secp256k1.lo' libtool=yes \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libsecp256k1_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o src/libsecp256k1_la-secp256k1.lo `test -f 'src/secp256k1.c' || echo '$(srcdir)/'`src/secp256k1.c
 
 src/java/libsecp256k1_jni_la-org_bitcoin_NativeSecp256k1.lo: src/java/org_bitcoin_NativeSecp256k1.c
-#	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libsecp256k1_jni_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT src/java/libsecp256k1_jni_la-org_bitcoin_NativeSecp256k1.lo -MD -MP -MF src/java/$(DEPDIR)/libsecp256k1_jni_la-org_bitcoin_NativeSecp256k1.Tpo -c -o src/java/libsecp256k1_jni_la-org_bitcoin_NativeSecp256k1.lo `test -f 'src/java/org_bitcoin_NativeSecp256k1.c' || echo '$(srcdir)/'`src/java/org_bitcoin_NativeSecp256k1.c
-#	$(AM_V_at)$(am__mv) src/java/$(DEPDIR)/libsecp256k1_jni_la-org_bitcoin_NativeSecp256k1.Tpo src/java/$(DEPDIR)/libsecp256k1_jni_la-org_bitcoin_NativeSecp256k1.Plo
-#	$(AM_V_CC)source='src/java/org_bitcoin_NativeSecp256k1.c' object='src/java/libsecp256k1_jni_la-org_bitcoin_NativeSecp256k1.lo' libtool=yes 
-#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) 
-	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libsecp256k1_jni_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o src/java/libsecp256k1_jni_la-org_bitcoin_NativeSecp256k1.lo `test -f 'src/java/org_bitcoin_NativeSecp256k1.c' || echo '$(srcdir)/'`src/java/org_bitcoin_NativeSecp256k1.c
+	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libsecp256k1_jni_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT src/java/libsecp256k1_jni_la-org_bitcoin_NativeSecp256k1.lo -MD -MP -MF src/java/$(DEPDIR)/libsecp256k1_jni_la-org_bitcoin_NativeSecp256k1.Tpo -c -o src/java/libsecp256k1_jni_la-org_bitcoin_NativeSecp256k1.lo `test -f 'src/java/org_bitcoin_NativeSecp256k1.c' || echo '$(srcdir)/'`src/java/org_bitcoin_NativeSecp256k1.c
+	$(AM_V_at)$(am__mv) src/java/$(DEPDIR)/libsecp256k1_jni_la-org_bitcoin_NativeSecp256k1.Tpo src/java/$(DEPDIR)/libsecp256k1_jni_la-org_bitcoin_NativeSecp256k1.Plo
+#	$(AM_V_CC)source='src/java/org_bitcoin_NativeSecp256k1.c' object='src/java/libsecp256k1_jni_la-org_bitcoin_NativeSecp256k1.lo' libtool=yes \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libsecp256k1_jni_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o src/java/libsecp256k1_jni_la-org_bitcoin_NativeSecp256k1.lo `test -f 'src/java/org_bitcoin_NativeSecp256k1.c' || echo '$(srcdir)/'`src/java/org_bitcoin_NativeSecp256k1.c
 
 src/java/libsecp256k1_jni_la-org_bitcoin_Secp256k1Context.lo: src/java/org_bitcoin_Secp256k1Context.c
-#	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libsecp256k1_jni_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT src/java/libsecp256k1_jni_la-org_bitcoin_Secp256k1Context.lo -MD -MP -MF src/java/$(DEPDIR)/libsecp256k1_jni_la-org_bitcoin_Secp256k1Context.Tpo -c -o src/java/libsecp256k1_jni_la-org_bitcoin_Secp256k1Context.lo `test -f 'src/java/org_bitcoin_Secp256k1Context.c' || echo '$(srcdir)/'`src/java/org_bitcoin_Secp256k1Context.c
-#	$(AM_V_at)$(am__mv) src/java/$(DEPDIR)/libsecp256k1_jni_la-org_bitcoin_Secp256k1Context.Tpo src/java/$(DEPDIR)/libsecp256k1_jni_la-org_bitcoin_Secp256k1Context.Plo
-#	$(AM_V_CC)source='src/java/org_bitcoin_Secp256k1Context.c' object='src/java/libsecp256k1_jni_la-org_bitcoin_Secp256k1Context.lo' libtool=yes 
-#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) 
-	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libsecp256k1_jni_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o src/java/libsecp256k1_jni_la-org_bitcoin_Secp256k1Context.lo `test -f 'src/java/org_bitcoin_Secp256k1Context.c' || echo '$(srcdir)/'`src/java/org_bitcoin_Secp256k1Context.c
+	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libsecp256k1_jni_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT src/java/libsecp256k1_jni_la-org_bitcoin_Secp256k1Context.lo -MD -MP -MF src/java/$(DEPDIR)/libsecp256k1_jni_la-org_bitcoin_Secp256k1Context.Tpo -c -o src/java/libsecp256k1_jni_la-org_bitcoin_Secp256k1Context.lo `test -f 'src/java/org_bitcoin_Secp256k1Context.c' || echo '$(srcdir)/'`src/java/org_bitcoin_Secp256k1Context.c
+	$(AM_V_at)$(am__mv) src/java/$(DEPDIR)/libsecp256k1_jni_la-org_bitcoin_Secp256k1Context.Tpo src/java/$(DEPDIR)/libsecp256k1_jni_la-org_bitcoin_Secp256k1Context.Plo
+#	$(AM_V_CC)source='src/java/org_bitcoin_Secp256k1Context.c' object='src/java/libsecp256k1_jni_la-org_bitcoin_Secp256k1Context.lo' libtool=yes \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libsecp256k1_jni_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o src/java/libsecp256k1_jni_la-org_bitcoin_Secp256k1Context.lo `test -f 'src/java/org_bitcoin_Secp256k1Context.c' || echo '$(srcdir)/'`src/java/org_bitcoin_Secp256k1Context.c
 
 src/bench_internal-bench_internal.o: src/bench_internal.c
-#	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(bench_internal_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT src/bench_internal-bench_internal.o -MD -MP -MF src/$(DEPDIR)/bench_internal-bench_internal.Tpo -c -o src/bench_internal-bench_internal.o `test -f 'src/bench_internal.c' || echo '$(srcdir)/'`src/bench_internal.c
-#	$(AM_V_at)$(am__mv) src/$(DEPDIR)/bench_internal-bench_internal.Tpo src/$(DEPDIR)/bench_internal-bench_internal.Po
-#	$(AM_V_CC)source='src/bench_internal.c' object='src/bench_internal-bench_internal.o' libtool=no 
-#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) 
-	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(bench_internal_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o src/bench_internal-bench_internal.o `test -f 'src/bench_internal.c' || echo '$(srcdir)/'`src/bench_internal.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(bench_internal_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT src/bench_internal-bench_internal.o -MD -MP -MF src/$(DEPDIR)/bench_internal-bench_internal.Tpo -c -o src/bench_internal-bench_internal.o `test -f 'src/bench_internal.c' || echo '$(srcdir)/'`src/bench_internal.c
+	$(AM_V_at)$(am__mv) src/$(DEPDIR)/bench_internal-bench_internal.Tpo src/$(DEPDIR)/bench_internal-bench_internal.Po
+#	$(AM_V_CC)source='src/bench_internal.c' object='src/bench_internal-bench_internal.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(bench_internal_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o src/bench_internal-bench_internal.o `test -f 'src/bench_internal.c' || echo '$(srcdir)/'`src/bench_internal.c
 
 src/bench_internal-bench_internal.obj: src/bench_internal.c
-#	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(bench_internal_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT src/bench_internal-bench_internal.obj -MD -MP -MF src/$(DEPDIR)/bench_internal-bench_internal.Tpo -c -o src/bench_internal-bench_internal.obj `if test -f 'src/bench_internal.c'; then $(CYGPATH_W) 'src/bench_internal.c'; else $(CYGPATH_W) '$(srcdir)/src/bench_internal.c'; fi`
-#	$(AM_V_at)$(am__mv) src/$(DEPDIR)/bench_internal-bench_internal.Tpo src/$(DEPDIR)/bench_internal-bench_internal.Po
-#	$(AM_V_CC)source='src/bench_internal.c' object='src/bench_internal-bench_internal.obj' libtool=no 
-#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) 
-	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(bench_internal_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o src/bench_internal-bench_internal.obj `if test -f 'src/bench_internal.c'; then $(CYGPATH_W) 'src/bench_internal.c'; else $(CYGPATH_W) '$(srcdir)/src/bench_internal.c'; fi`
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(bench_internal_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT src/bench_internal-bench_internal.obj -MD -MP -MF src/$(DEPDIR)/bench_internal-bench_internal.Tpo -c -o src/bench_internal-bench_internal.obj `if test -f 'src/bench_internal.c'; then $(CYGPATH_W) 'src/bench_internal.c'; else $(CYGPATH_W) '$(srcdir)/src/bench_internal.c'; fi`
+	$(AM_V_at)$(am__mv) src/$(DEPDIR)/bench_internal-bench_internal.Tpo src/$(DEPDIR)/bench_internal-bench_internal.Po
+#	$(AM_V_CC)source='src/bench_internal.c' object='src/bench_internal-bench_internal.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(bench_internal_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o src/bench_internal-bench_internal.obj `if test -f 'src/bench_internal.c'; then $(CYGPATH_W) 'src/bench_internal.c'; else $(CYGPATH_W) '$(srcdir)/src/bench_internal.c'; fi`
 
 src/exhaustive_tests-tests_exhaustive.o: src/tests_exhaustive.c
-#	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(exhaustive_tests_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT src/exhaustive_tests-tests_exhaustive.o -MD -MP -MF src/$(DEPDIR)/exhaustive_tests-tests_exhaustive.Tpo -c -o src/exhaustive_tests-tests_exhaustive.o `test -f 'src/tests_exhaustive.c' || echo '$(srcdir)/'`src/tests_exhaustive.c
-#	$(AM_V_at)$(am__mv) src/$(DEPDIR)/exhaustive_tests-tests_exhaustive.Tpo src/$(DEPDIR)/exhaustive_tests-tests_exhaustive.Po
-#	$(AM_V_CC)source='src/tests_exhaustive.c' object='src/exhaustive_tests-tests_exhaustive.o' libtool=no 
-#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) 
-	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(exhaustive_tests_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o src/exhaustive_tests-tests_exhaustive.o `test -f 'src/tests_exhaustive.c' || echo '$(srcdir)/'`src/tests_exhaustive.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(exhaustive_tests_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT src/exhaustive_tests-tests_exhaustive.o -MD -MP -MF src/$(DEPDIR)/exhaustive_tests-tests_exhaustive.Tpo -c -o src/exhaustive_tests-tests_exhaustive.o `test -f 'src/tests_exhaustive.c' || echo '$(srcdir)/'`src/tests_exhaustive.c
+	$(AM_V_at)$(am__mv) src/$(DEPDIR)/exhaustive_tests-tests_exhaustive.Tpo src/$(DEPDIR)/exhaustive_tests-tests_exhaustive.Po
+#	$(AM_V_CC)source='src/tests_exhaustive.c' object='src/exhaustive_tests-tests_exhaustive.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(exhaustive_tests_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o src/exhaustive_tests-tests_exhaustive.o `test -f 'src/tests_exhaustive.c' || echo '$(srcdir)/'`src/tests_exhaustive.c
 
 src/exhaustive_tests-tests_exhaustive.obj: src/tests_exhaustive.c
-#	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(exhaustive_tests_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT src/exhaustive_tests-tests_exhaustive.obj -MD -MP -MF src/$(DEPDIR)/exhaustive_tests-tests_exhaustive.Tpo -c -o src/exhaustive_tests-tests_exhaustive.obj `if test -f 'src/tests_exhaustive.c'; then $(CYGPATH_W) 'src/tests_exhaustive.c'; else $(CYGPATH_W) '$(srcdir)/src/tests_exhaustive.c'; fi`
-#	$(AM_V_at)$(am__mv) src/$(DEPDIR)/exhaustive_tests-tests_exhaustive.Tpo src/$(DEPDIR)/exhaustive_tests-tests_exhaustive.Po
-#	$(AM_V_CC)source='src/tests_exhaustive.c' object='src/exhaustive_tests-tests_exhaustive.obj' libtool=no 
-#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) 
-	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(exhaustive_tests_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o src/exhaustive_tests-tests_exhaustive.obj `if test -f 'src/tests_exhaustive.c'; then $(CYGPATH_W) 'src/tests_exhaustive.c'; else $(CYGPATH_W) '$(srcdir)/src/tests_exhaustive.c'; fi`
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(exhaustive_tests_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT src/exhaustive_tests-tests_exhaustive.obj -MD -MP -MF src/$(DEPDIR)/exhaustive_tests-tests_exhaustive.Tpo -c -o src/exhaustive_tests-tests_exhaustive.obj `if test -f 'src/tests_exhaustive.c'; then $(CYGPATH_W) 'src/tests_exhaustive.c'; else $(CYGPATH_W) '$(srcdir)/src/tests_exhaustive.c'; fi`
+	$(AM_V_at)$(am__mv) src/$(DEPDIR)/exhaustive_tests-tests_exhaustive.Tpo src/$(DEPDIR)/exhaustive_tests-tests_exhaustive.Po
+#	$(AM_V_CC)source='src/tests_exhaustive.c' object='src/exhaustive_tests-tests_exhaustive.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(exhaustive_tests_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o src/exhaustive_tests-tests_exhaustive.obj `if test -f 'src/tests_exhaustive.c'; then $(CYGPATH_W) 'src/tests_exhaustive.c'; else $(CYGPATH_W) '$(srcdir)/src/tests_exhaustive.c'; fi`
 
 src/tests-tests.o: src/tests.c
-#	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tests_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT src/tests-tests.o -MD -MP -MF src/$(DEPDIR)/tests-tests.Tpo -c -o src/tests-tests.o `test -f 'src/tests.c' || echo '$(srcdir)/'`src/tests.c
-#	$(AM_V_at)$(am__mv) src/$(DEPDIR)/tests-tests.Tpo src/$(DEPDIR)/tests-tests.Po
-#	$(AM_V_CC)source='src/tests.c' object='src/tests-tests.o' libtool=no 
-#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) 
-	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tests_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o src/tests-tests.o `test -f 'src/tests.c' || echo '$(srcdir)/'`src/tests.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tests_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT src/tests-tests.o -MD -MP -MF src/$(DEPDIR)/tests-tests.Tpo -c -o src/tests-tests.o `test -f 'src/tests.c' || echo '$(srcdir)/'`src/tests.c
+	$(AM_V_at)$(am__mv) src/$(DEPDIR)/tests-tests.Tpo src/$(DEPDIR)/tests-tests.Po
+#	$(AM_V_CC)source='src/tests.c' object='src/tests-tests.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tests_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o src/tests-tests.o `test -f 'src/tests.c' || echo '$(srcdir)/'`src/tests.c
 
 src/tests-tests.obj: src/tests.c
-#	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tests_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT src/tests-tests.obj -MD -MP -MF src/$(DEPDIR)/tests-tests.Tpo -c -o src/tests-tests.obj `if test -f 'src/tests.c'; then $(CYGPATH_W) 'src/tests.c'; else $(CYGPATH_W) '$(srcdir)/src/tests.c'; fi`
-#	$(AM_V_at)$(am__mv) src/$(DEPDIR)/tests-tests.Tpo src/$(DEPDIR)/tests-tests.Po
-#	$(AM_V_CC)source='src/tests.c' object='src/tests-tests.obj' libtool=no 
-#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) 
-	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tests_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o src/tests-tests.obj `if test -f 'src/tests.c'; then $(CYGPATH_W) 'src/tests.c'; else $(CYGPATH_W) '$(srcdir)/src/tests.c'; fi`
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tests_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT src/tests-tests.obj -MD -MP -MF src/$(DEPDIR)/tests-tests.Tpo -c -o src/tests-tests.obj `if test -f 'src/tests.c'; then $(CYGPATH_W) 'src/tests.c'; else $(CYGPATH_W) '$(srcdir)/src/tests.c'; fi`
+	$(AM_V_at)$(am__mv) src/$(DEPDIR)/tests-tests.Tpo src/$(DEPDIR)/tests-tests.Po
+#	$(AM_V_CC)source='src/tests.c' object='src/tests-tests.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tests_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o src/tests-tests.obj `if test -f 'src/tests.c'; then $(CYGPATH_W) 'src/tests.c'; else $(CYGPATH_W) '$(srcdir)/src/tests.c'; fi`
 
 .s.o:
 	$(AM_V_CCAS)$(CCASCOMPILE) -c -o $@ $<
@@ -1357,13 +1357,13 @@ exhaustive_tests.log: exhaustive_tests$(EXEEXT)
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_TEST_LOG_DRIVER_FLAGS) $(TEST_LOG_DRIVER_FLAGS) -- $(TEST_LOG_COMPILE) \
 	"$$tst" $(AM_TESTS_FD_REDIRECT)
-.test$(EXEEXT).log:
-	@p='$<'; \
-	$(am__set_b); \
-	$(am__check_pre) $(TEST_LOG_DRIVER) --test-name "$$f" \
-	--log-file $$b.log --trs-file $$b.trs \
-	$(am__common_driver_flags) $(AM_TEST_LOG_DRIVER_FLAGS) $(TEST_LOG_DRIVER_FLAGS) -- $(TEST_LOG_COMPILE) \
-	"$$tst" $(AM_TESTS_FD_REDIRECT)
+#.test$(EXEEXT).log:
+#	@p='$<'; \
+#	$(am__set_b); \
+#	$(am__check_pre) $(TEST_LOG_DRIVER) --test-name "$$f" \
+#	--log-file $$b.log --trs-file $$b.trs \
+#	$(am__common_driver_flags) $(AM_TEST_LOG_DRIVER_FLAGS) $(TEST_LOG_DRIVER_FLAGS) -- $(TEST_LOG_COMPILE) \
+#	"$$tst" $(AM_TESTS_FD_REDIRECT)
 
 distdir: $(DISTFILES)
 	$(am__remove_distdir)

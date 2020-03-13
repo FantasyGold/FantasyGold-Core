@@ -6,7 +6,8 @@
 #ifndef BITCOIN_OUTPUTTYPE_H
 #define BITCOIN_OUTPUTTYPE_H
 
-#include <keystore.h>
+#include <attributes.h>
+#include <script/signingprovider.h>
 #include <script/standard.h>
 
 #include <string>
@@ -26,7 +27,7 @@ enum class OutputType {
     CHANGE_AUTO,
 };
 
-bool ParseOutputType(const std::string& str, OutputType& output_type);
+NODISCARD bool ParseOutputType(const std::string& str, OutputType& output_type);
 const std::string& FormatOutputType(OutputType type);
 
 /**
@@ -43,7 +44,7 @@ std::vector<CTxDestination> GetAllDestinationsForKey(const CPubKey& key);
  * This function will automatically add the script (and any other
  * necessary scripts) to the keystore.
  */
-CTxDestination AddAndGetDestinationForScript(CKeyStore& keystore, const CScript& script, OutputType);
+CTxDestination AddAndGetDestinationForScript(FillableSigningProvider& keystore, const CScript& script, OutputType);
 
 #endif // BITCOIN_OUTPUTTYPE_H
 

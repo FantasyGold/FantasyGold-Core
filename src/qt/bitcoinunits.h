@@ -13,7 +13,6 @@
 #include <boost/multiprecision/cpp_int.hpp>
 using namespace boost::multiprecision;
 
-
 // U+2009 THIN SPACE = UTF-8 E2 80 89
 #define REAL_THIN_SP_CP 0x2009
 #define REAL_THIN_SP_UTF8 "\xE2\x80\x89"
@@ -109,6 +108,8 @@ public:
     static QString formatToken(int decimal_units, const int256_t& amount, bool plussign=false, SeparatorStyle separators=separatorStandard); //! Format token as string
     //! Format token as string (with unit)
     static QString formatTokenWithUnit(const QString unit, int decimals, const int256_t& amount, bool plussign=false, SeparatorStyle separators=separatorStandard);
+    //! Format integer number as string (with and without separator)
+    static QString formatInt(const int64_t& number, bool plussign=false, SeparatorStyle separators=separatorStandard);
     ///@}
 
     //! @name AbstractListModel implementation

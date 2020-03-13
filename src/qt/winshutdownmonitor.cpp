@@ -6,7 +6,7 @@
 
 #if defined(Q_OS_WIN)
 #include <shutdown.h>
-#include <util.h>
+#include <util/system.h>
 
 #include <windows.h>
 
@@ -63,7 +63,7 @@ void WinShutdownMonitor::registerShutdownBlockReason(const QString& strReason, c
     }
 
     if (shutdownBRCreate(mainWinId, strReason.toStdWString().c_str()))
-        qWarning() << "registerShutdownBlockReason: Successfully registered: " + strReason;
+        qInfo() << "registerShutdownBlockReason: Successfully registered: " + strReason;
     else
         qWarning() << "registerShutdownBlockReason: Failed to register: " + strReason;
 }

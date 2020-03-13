@@ -14592,7 +14592,6 @@ main ()
     EC_KEY_free(eckey);
     ECDSA_SIG *sig_openssl;
     sig_openssl = ECDSA_SIG_new();
-    (void)sig_openssl->r;
     ECDSA_SIG_free(sig_openssl);
 
   ;
@@ -14711,8 +14710,16 @@ _ACJNI_FOLLOWED="$_cur"
 fi
 
 case "$host_os" in
-        darwin*)        _JTOPDIR=`echo "$_JTOPDIR" | sed -e 's:/[^/]*$::'`
-                        _JINC="$_JTOPDIR/Headers";;
+        darwin*)        # Apple Java headers are inside the Xcode bundle.
+            macos_version=$(sw_vers -productVersion | sed -n -e 's/^[0-9]*.\([0-9]*\).[0-9]*/\1/p')
+            if [ "$macos_version" -gt "7" ]; then
+                _JTOPDIR="$(xcrun --show-sdk-path)/System/Library/Frameworks/JavaVM.framework"
+                _JINC="$_JTOPDIR/Headers"
+            else
+                _JTOPDIR="/System/Library/Frameworks/JavaVM.framework"
+                _JINC="$_JTOPDIR/Headers"
+            fi
+            ;;
         *)              _JINC="$_JTOPDIR/include";;
 esac
 $as_echo "$as_me:${as_lineno-$LINENO}: _JTOPDIR=$_JTOPDIR" >&5
@@ -14721,7 +14728,6 @@ $as_echo "$as_me:${as_lineno-$LINENO}: _JINC=$_JINC" >&5
 # On Mac OS X 10.6.4, jni.h is a symlink:
 # /System/Library/Frameworks/JavaVM.framework/Versions/Current/Headers/jni.h
 # -> ../../CurrentJDK/Headers/jni.h.
-
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking jni headers" >&5
 $as_echo_n "checking jni headers... " >&6; }
 if ${ac_cv_jni_header_path+:} false; then :
@@ -14745,13 +14751,11 @@ fi
 { $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_jni_header_path" >&5
 $as_echo "$ac_cv_jni_header_path" >&6; }
 
-
-
 # get the likely subdirectories for system specific java includes
 case "$host_os" in
 bsdi*)          _JNI_INC_SUBDIRS="bsdos";;
-darwin*)        _JNI_INC_SUBDIRS="darwin";;
 freebsd*)       _JNI_INC_SUBDIRS="freebsd";;
+darwin*)        _JNI_INC_SUBDIRS="darwin";;
 linux*)         _JNI_INC_SUBDIRS="linux genunix";;
 osf*)           _JNI_INC_SUBDIRS="alpha";;
 solaris*)       _JNI_INC_SUBDIRS="solaris";;

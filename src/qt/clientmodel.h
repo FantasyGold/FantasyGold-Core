@@ -46,7 +46,7 @@ class ClientModel : public QObject
     Q_OBJECT
 
 public:
-    explicit ClientModel(interfaces::Node& node, OptionsModel *optionsModel, QObject *parent = 0);
+    explicit ClientModel(interfaces::Node& node, OptionsModel *optionsModel, QObject *parent = nullptr);
     ~ClientModel();
 
     interfaces::Node& node() const { return m_node; }
@@ -69,6 +69,7 @@ public:
     bool isReleaseVersion() const;
     QString formatClientStartupTime() const;
     QString dataDir() const;
+    QString blocksDir() const;
 
     bool getProxyInfo(std::string& ip_port) const;
 
@@ -90,7 +91,8 @@ private:
     PeerTableModel *peerTableModel;
     BanTableModel *banTableModel;
 
-    QTimer *pollTimer;
+    //! A thread to interact with m_node asynchronously
+    QThread* const m_thread;
 
     void subscribeToCoreSignals();
     void unsubscribeFromCoreSignals();
@@ -112,7 +114,6 @@ Q_SIGNALS:
     void showProgress(const QString &title, int nProgress);
 
 public Q_SLOTS:
-    void updateTimer();
     void updateNumConnections(int numConnections);
     void updateNetworkActive(bool networkActive);
     void updateAlert();

@@ -4,6 +4,7 @@
 #include <qt/guiconstants.h>
 #include <qt/guiutil.h>
 #include <qt/optionsmodel.h>
+#include <qt/styleSheet.h>
 #include <qt/platformstyle.h>
 #include <qt/tokentransactiondesc.h>
 #include <qt/tokentransactionrecord.h>
@@ -13,7 +14,7 @@
 #include <validation.h>
 #include <sync.h>
 #include <uint256.h>
-#include <util.h>
+#include <util/system.h>
 #include <interfaces/wallet.h>
 #include <interfaces/handler.h>
 #include <interfaces/node.h>
@@ -262,6 +263,11 @@ TokenTransactionTableModel::TokenTransactionTableModel(const PlatformStyle *_pla
         fProcessingQueuedTransactions(false),
         platformStyle(_platformStyle)
 {
+    color_unconfirmed = GetColorStyleValue("guiconstants/color-unconfirmed", COLOR_UNCONFIRMED);
+    color_negative = GetColorStyleValue("guiconstants/color-negative", COLOR_NEGATIVE);
+    color_bareaddress = GetColorStyleValue("guiconstants/color-bareaddress", COLOR_BAREADDRESS);
+    color_black = GetColorStyleValue("guiconstants/color-black", COLOR_BLACK);
+
     columns << QString() << tr("Date") << tr("Type") << tr("Label") << tr("Name") << tr("Amount");
     priv->refreshWallet(walletModel->node(), walletModel->wallet());
 
@@ -379,10 +385,10 @@ QVariant TokenTransactionTableModel::txAddressDecoration(const TokenTransactionR
     {
     case TokenTransactionRecord::RecvWithAddress:
     case TokenTransactionRecord::RecvFromOther:
-        return platformStyle->TableColorIcon(":/icons/tx_input", PlatformStyle::Input);
+        return platformStyle->TableColorIcon(":/icons/receive_from", PlatformStyle::Input);
     case TokenTransactionRecord::SendToAddress:
     case TokenTransactionRecord::SendToOther:
-        return platformStyle->TableColorIcon(":/icons/tx_output", PlatformStyle::Output);
+        return platformStyle->TableColorIcon(":/icons/send_to", PlatformStyle::Output);
     default:
         return platformStyle->TableColorIcon(":/icons/tx_inout", PlatformStyle::Inout);
     }

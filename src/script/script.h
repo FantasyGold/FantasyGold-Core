@@ -31,12 +31,21 @@ static const int MAX_PUBKEYS_PER_MULTISIG = 20;
 // Maximum script length in bytes
 static const int MAX_SCRIPT_SIZE = 129000; // (129 kb)
 
+// Maximum base script length in bytes
+static const int MAX_BASE_SCRIPT_SIZE = 10000;
+
 // Maximum number of values on script interpreter stack
 static const int MAX_STACK_SIZE = 1000;
 
 // Threshold for nLockTime: below this value it is interpreted as block number,
 // otherwise as UNIX timestamp.
 static const unsigned int LOCKTIME_THRESHOLD = 500000000; // Tue Nov  5 00:53:20 1985 UTC
+
+// Maximum nLockTime. Since a lock time indicates the last invalid timestamp, a
+// transaction with this lock time will never be valid unless lock time
+// checking is disabled (by setting all input sequence numbers to
+// SEQUENCE_FINAL).
+static const uint32_t LOCKTIME_MAX = 0xFFFFFFFFU;
 
 template <typename T>
 std::vector<unsigned char> ToByteVector(const T& in)
@@ -185,8 +194,12 @@ enum opcodetype
     OP_CREATE = 0xc1,
     OP_CALL = 0xc2,
     OP_SPEND = 0xc3,
+    OP_SENDER = 0xc4,
 
     // template matching params
+    OP_ADDRESS_TYPE = 0xf2,
+    OP_ADDRESS = 0xf3,
+    OP_SCRIPT_SIG = 0xf4,
     OP_GAS_PRICE = 0xf5,
     OP_VERSION = 0xf6,
     OP_GAS_LIMIT = 0xf7,
@@ -470,7 +483,9 @@ public:
 
     explicit CScript(opcodetype b)     { operator<<(b); }
     explicit CScript(const CScriptNum& b) { operator<<(b); }
-    explicit CScript(const std::vector<unsigned char>& b) { operator<<(b); }
+    // delete non-existent constructor to defend against future introduction
+    // e.g. via prevector
+    explicit CScript(const std::vector<unsigned char>& b) = delete;
 
 
     CScript& operator<<(int64_t b) { return push_int64(b); }
@@ -613,10 +628,32 @@ public:
     {
         return Find(OP_CALL) == 1;
     }
+
     bool HasOpSpend() const
     {
         return size()==1 && *begin() == OP_SPEND;
     }
+
+    bool HasOpSender() const
+    {
+        return Find(OP_SENDER) == 1;
+    }
+
+    bool UpdateSenderSig(const std::vector<unsigned char>& scriptSig, CScript& scriptRet) const
+    {
+        return ReplaceParam(OP_SENDER, 1, scriptSig, scriptRet);
+    }
+
+    CScript WithoutSenderSig() const
+    {
+        std::vector<unsigned char> scriptSig;
+        CScript scriptRet;
+        if(!UpdateSenderSig(scriptSig, scriptRet))
+            scriptRet = CScript(begin(), end());
+        return scriptRet;
+    }
+
+    bool ReplaceParam(opcodetype findOp, int posBefore, const std::vector<unsigned char>& vchParam, CScript& scriptRet) const;
     /////////////////////////////////////////
 
     void clear()
@@ -645,15 +682,6 @@ struct CScriptWitness
     void SetNull() { stack.clear(); stack.shrink_to_fit(); }
 
     std::string ToString() const;
-};
-
-class CReserveScript
-{
-public:
-    CScript reserveScript;
-    virtual void KeepScript() {}
-    CReserveScript() {}
-    virtual ~CReserveScript() {}
 };
 
 #endif // BITCOIN_SCRIPT_SCRIPT_H

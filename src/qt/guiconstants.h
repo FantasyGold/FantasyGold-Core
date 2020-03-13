@@ -5,6 +5,8 @@
 #ifndef BITCOIN_QT_GUICONSTANTS_H
 #define BITCOIN_QT_GUICONSTANTS_H
 
+#include <cstdint>
+
 /* Milliseconds between model updates */
 static const int MODEL_UPDATE_DELAY = 2000;
 
@@ -37,19 +39,22 @@ static const bool DEFAULT_SPLASHSCREEN = true;
  */
 static const int TOOLTIP_WRAP_THRESHOLD = 80;
 
-/* Maximum allowed URI length */
-static const int MAX_URI_LENGTH = 255;
-
-/* QRCodeDialog -- size of exported QR Code image */
-#define QR_IMAGE_SIZE 300
-
 /* Number of frames in spinner animation */
 #define SPINNER_FRAMES 36
 
 #define QAPP_ORG_NAME "FantasyGold"
-#define QAPP_ORG_DOMAIN "fantasygold.org"
+#define QAPP_ORG_DOMAIN "FantasyGold.io"
 #define QAPP_APP_NAME_DEFAULT "FantasyGold-Qt"
 #define QAPP_APP_NAME_TESTNET "FantasyGold-Qt-testnet"
 #define QAPP_APP_NAME_REGTEST "FantasyGold-Qt-regtest"
+
+/* One gigabyte (GB) in bytes */
+static constexpr uint64_t GB_BYTES{1000000000};
+
+/* Mainnet fantasygold explorer uri */
+static const QString FGC_INFO_MAINNET = "<a href='https://fantasygold.network/%1/%2'>%2</a>";
+
+/* Testnet fantasygold explorer uri */
+static const QString FGC_INFO_TESTNET = "<a href='https://testnet.fantasygold.network/%1/%2'>%2</a>";
 
 #endif // BITCOIN_QT_GUICONSTANTS_H

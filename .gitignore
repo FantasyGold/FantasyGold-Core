@@ -3,10 +3,12 @@ Makefile
 *.tar.gz
 .vscode
 *.exe
+*.pdb
 src/bitcoin
 src/bitcoind
 src/bitcoin-cli
 src/bitcoin-tx
+src/bitcoin-wallet
 src/test/test_bitcoin
 src/test/test_bitcoin_fuzzy
 src/qt/test/test_bitcoin-qt
@@ -35,6 +37,7 @@ libtool
 src/config/bitcoin-config.h
 src/config/bitcoin-config.h.in
 src/config/stamp-h1
+src/obj
 share/setup.nsi
 share/qt/Info.plist
 
@@ -51,7 +54,7 @@ src/qt/bitcoin-qt.creator
 src/qt/bitcoin-qt.creator.user
 src/qt/bitcoin-qt.files
 src/qt/bitcoin-qt.includes
-src/data
+
 .deps
 .dirstamp
 .libs
@@ -66,6 +69,7 @@ src/data
 *.a
 *.pb.cc
 *.pb.h
+*.dat
 
 *.log
 *.trs
@@ -73,6 +77,10 @@ src/data
 
 *.json.h
 *.raw.h
+
+# Only ignore unexpected patches
+*.patch
+!depends/patches/**/*.patch
 
 #libtool object files
 *.lo
@@ -116,12 +124,24 @@ test/cache/*
 
 libbitcoinconsensus.pc
 contrib/devtools/split-debug.sh
+
+# Output from running db4 installation
+db4/
+
+# clang-check
+*.plist
+
+osx_volname
+dist/
+*.background.tiff
+
 .cproject
 .project
 .settings/language.settings.xml
 src/fantasygold-cli
 src/fantasygold-tx
 src/fantasygoldd
+src/fantasygold-wallet
 src/bench/bench_fantasygold
 src/qt/fantasygold-qt
 src/qt/test/test_fantasygold-qt

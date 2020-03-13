@@ -21,6 +21,7 @@ libevent
 libtool
 pkg-config
 python37
+gmp
 
 git clone https://github.com/FantasyGold/FantasyGold-Core --recursive
 ```

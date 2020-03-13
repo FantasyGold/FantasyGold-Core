@@ -32,7 +32,7 @@ class OptionsModel : public QAbstractListModel
     Q_OBJECT
 
 public:
-    explicit OptionsModel(interfaces::Node& node, QObject *parent = 0, bool resetSettings = false);
+    explicit OptionsModel(interfaces::Node& node, QObject *parent = nullptr, bool resetSettings = false);
 
     enum OptionID {
         StartAtStartup,         // bool
@@ -58,9 +58,10 @@ public:
         SpendZeroConfChange,    // bool
         ZeroBalanceAddressToken,// bool
         Listen,                 // bool
-        NotUseChangeAddress,    // bool
+        UseChangeAddress,       // bool
         CheckForUpdates,        // bool
         ReserveBalance,         // CAmount
+        Theme,                  // QString
         OptionIDRowCount,
     };
 
@@ -83,6 +84,9 @@ public:
     bool getCoinControlFeatures() const { return fCoinControlFeatures; }
     const QString& getOverriddenByCommandLine() { return strOverriddenByCommandLine; }
     bool getCheckForUpdates() const { return fCheckForUpdates; }
+
+    /* Explicit setters */
+    void SetPrune(bool prune, bool force = false);
     bool getZeroBalanceAddressToken() const { return bZeroBalanceAddressToken; }
 
     /* Restart flag helper */
@@ -90,6 +94,9 @@ public:
     bool isRestartRequired() const;
 
     interfaces::Node& node() const { return m_node; }
+
+    bool getRestartApp() const;
+    void setRestartApp(bool value);
 
 private:
     interfaces::Node& m_node;
@@ -105,6 +112,8 @@ private:
     QString strOverriddenByCommandLine;
     bool fCheckForUpdates;
     bool bZeroBalanceAddressToken;
+    QString theme;
+    bool restartApp;
 
     // Add option to list of GUI options overridden through command line/config file
     void addOverriddenOption(const std::string &option);

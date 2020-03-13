@@ -1,4 +1,4 @@
-﻿#include <qt/tokenitemmodel.h>
+#include <qt/tokenitemmodel.h>
 #include <qt/token.h>
 #include <qt/walletmodel.h>
 #include <interfaces/wallet.h>
@@ -161,7 +161,7 @@ Q_SIGNALS:
     void balanceChanged(QString hash, QString balance);
 };
 
-#include "tokenitemmodel.moc"
+#include <qt/tokenitemmodel.moc>
 
 struct TokenItemEntryLessThan
 {
@@ -309,7 +309,7 @@ TokenItemModel::TokenItemModel(WalletModel *parent):
     worker = new TokenTxWorker(walletModel);
     worker->tokenAbi.setModel(walletModel);
     worker->moveToThread(&(t));
-    connect(worker, SIGNAL(balanceChanged(QString,QString)), this, SLOT(balanceChanged(QString,QString)));
+    connect(worker, &TokenTxWorker::balanceChanged, this, &TokenItemModel::balanceChanged);
 
     t.start();
 

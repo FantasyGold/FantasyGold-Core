@@ -14,6 +14,18 @@
    <string>Form</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
+   <property name="leftMargin">
+    <number>0</number>
+   </property>
+   <property name="topMargin">
+    <number>9</number>
+   </property>
+   <property name="rightMargin">
+    <number>0</number>
+   </property>
+   <property name="bottomMargin">
+    <number>9</number>
+   </property>
    <item>
     <widget class="QStackedWidget" name="stackedWidget">
      <property name="currentIndex">
@@ -34,6 +46,20 @@
         <number>0</number>
        </property>
        <item>
+        <layout class="QVBoxLayout" name="verticalLayout_5">
+         <property name="leftMargin">
+          <number>9</number>
+         </property>
+         <property name="topMargin">
+          <number>0</number>
+         </property>
+         <property name="rightMargin">
+          <number>9</number>
+         </property>
+         <property name="bottomMargin">
+          <number>0</number>
+         </property>
+         <item>
         <widget class="QLabel" name="labelTitle">
          <property name="font">
           <font>
@@ -72,19 +98,15 @@
             <property name="leftMargin">
              <number>12</number>
             </property>
+              <property name="rightMargin">
+               <number>9</number>
+              </property>
             <property name="horizontalSpacing">
              <number>15</number>
             </property>
             <property name="verticalSpacing">
              <number>12</number>
             </property>
-            <item row="0" column="0">
-             <widget class="QLabel" name="labelContractAddress">
-              <property name="text">
-               <string>Contract Address</string>
-              </property>
-             </widget>
-            </item>
             <item row="1" column="2">
              <widget class="QValidatedTextEdit" name="textEditInterface">
               <property name="sizePolicy">
@@ -188,8 +210,16 @@
               </item>
              </layout>
             </item>
-            <item row="1" column="0" alignment="Qt::AlignTop">
+              <item row="1" column="0">
+               <layout class="QVBoxLayout" name="verticalLayout_10">
+                <item>
              <widget class="QLabel" name="labelInterface">
+                  <property name="minimumSize">
+                   <size>
+                    <width>160</width>
+                    <height>0</height>
+                   </size>
+                  </property>
               <property name="text">
                <string>Interface (ABI)</string>
               </property>
@@ -197,9 +227,51 @@
             </item>
            </layout>
           </item>
+              <item row="0" column="0">
+               <layout class="QVBoxLayout" name="verticalLayout_11">
+                <item>
+                 <widget class="QLabel" name="labelContractAddress">
+                  <property name="minimumSize">
+                   <size>
+                    <width>160</width>
+                    <height>0</height>
+                   </size>
+                  </property>
+                  <property name="text">
+                   <string>Contract Address</string>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </item>
+             </layout>
+            </item>
          </layout>
         </widget>
        </item>
+        </layout>
+       </item>
+       <item>
+        <widget class="Line" name="hContractLine">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <layout class="QVBoxLayout" name="verticalLayout_7">
+         <property name="leftMargin">
+          <number>9</number>
+         </property>
+         <property name="topMargin">
+          <number>0</number>
+         </property>
+         <property name="rightMargin">
+          <number>9</number>
+         </property>
+         <property name="bottomMargin">
+          <number>0</number>
+         </property>
        <item>
         <widget class="QGroupBox" name="groupBoxFunction">
          <property name="title">
@@ -223,7 +295,7 @@
                <x>0</x>
                <y>0</y>
                <width>640</width>
-               <height>155</height>
+                 <height>116</height>
               </rect>
              </property>
             </widget>
@@ -232,6 +304,29 @@
          </layout>
         </widget>
        </item>
+        </layout>
+       </item>
+       <item>
+        <widget class="Line" name="hContractLine2">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <layout class="QVBoxLayout" name="verticalLayout_8">
+         <property name="leftMargin">
+          <number>9</number>
+         </property>
+         <property name="topMargin">
+          <number>0</number>
+         </property>
+         <property name="rightMargin">
+          <number>9</number>
+         </property>
+         <property name="bottomMargin">
+          <number>0</number>
+         </property>
        <item>
         <widget class="QGroupBox" name="groupBoxOptional">
          <property name="title">
@@ -283,19 +378,21 @@
         </widget>
        </item>
       </layout>
+       </item>
+      </layout>
      </widget>
     </widget>
    </item>
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout">
      <property name="leftMargin">
-      <number>9</number>
+      <number>18</number>
      </property>
      <property name="topMargin">
       <number>9</number>
      </property>
      <property name="rightMargin">
-      <number>9</number>
+      <number>18</number>
      </property>
      <property name="bottomMargin">
       <number>9</number>
@@ -352,11 +449,6 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>QValidatedLineEdit</class>
-   <extends>QLineEdit</extends>
-   <header>qt/qvalidatedlineedit.h</header>
-  </customwidget>
-  <customwidget>
    <class>QValidatedTextEdit</class>
    <extends>QTextEdit</extends>
    <header>qt/qvalidatedtextedit.h</header>
@@ -365,6 +457,11 @@
    <class>AddressField</class>
    <extends>QComboBox</extends>
    <header>qt/addressfield.h</header>
+  </customwidget>
+  <customwidget>
+   <class>QValidatedLineEdit</class>
+   <extends>QLineEdit</extends>
+   <header>qt/qvalidatedlineedit.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

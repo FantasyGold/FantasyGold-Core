@@ -2,9 +2,10 @@
 #include <qt/execrpccommand.h>
 #include <qt/contractabi.h>
 #include <validation.h>
-#include <utilmoneystr.h>
+#include <util/moneystr.h>
 #include <key_io.h>
-#include <utilstrencodings.h>
+#include <util/strencodings.h>
+#include <util/convert.h>
 #include <qt/eventlog.h>
 #include <libethcore/ABI.h>
 #include <qt/walletmodel.h>
@@ -52,6 +53,7 @@ struct TokenData
     int evtBurn;
 
     std::string txid;
+    QString errorMessage;
 
     TokenData():
         call(0),
@@ -80,7 +82,7 @@ bool ToHash160(const std::string& strFantasyGoldAddress, std::string& strHash160
     CTxDestination fantasygoldAddress = DecodeDestination(strFantasyGoldAddress);
     if(!IsValidDestination(fantasygoldAddress))
         return false;
-    const CKeyID * keyid = boost::get<CKeyID>(&fantasygoldAddress);
+    const PKHash * keyid = boost::get<PKHash>(&fantasygoldAddress);
     if(keyid){
         strHash160 = HexStr(valtype(keyid->begin(),keyid->end()));
     }else{
@@ -92,7 +94,7 @@ bool ToHash160(const std::string& strFantasyGoldAddress, std::string& strHash160
 bool ToFantasyGoldAddress(const std::string& strHash160, std::string& strFantasyGoldAddress)
 {
     uint160 key(ParseHex(strHash160.c_str()));
-    CKeyID keyid(key);
+    PKHash keyid(key);
     CTxDestination fantasygoldAddress = keyid;
     if(IsValidDestination(fantasygoldAddress)){
         strFantasyGoldAddress = EncodeDestination(fantasygoldAddress);
@@ -544,8 +546,8 @@ bool Token::exec(const std::vector<std::string> &input, int func, std::vector<st
     ExecRPCCommand* cmd = sendTo ? d->send : d->call;
     QVariant result;
     QString resultJson;
-    QString errorMessage;
-    if(!cmd->exec(d->model->node(), d->model->wallet(), d->lstParams, result, resultJson, errorMessage))
+    d->errorMessage.clear();
+    if(!cmd->exec(d->model->node(), d->model, d->lstParams, result, resultJson, d->errorMessage))
         return false;
 
     // Get the result from calling function
@@ -617,7 +619,7 @@ bool Token::execEvents(int64_t fromBlock, int64_t toBlock, int func, std::vector
     std::string senderAddress = d->lstParams[PARAM_SENDER].toStdString();
     ToHash160(senderAddress, senderAddress);
     senderAddress  = "000000000000000000000000" + senderAddress;
-    if(!(d->eventLog->searchTokenTx(d->model->node(), d->model->wallet(), fromBlock, toBlock, contractAddress, senderAddress, result)))
+    if(!(d->eventLog->searchTokenTx(d->model->node(), d->model, fromBlock, toBlock, contractAddress, senderAddress, result)))
         return false;
 
     // Parse the result events
@@ -663,4 +665,9 @@ bool Token::execEvents(int64_t fromBlock, int64_t toBlock, int func, std::vector
 void Token::setModel(WalletModel *model)
 {
     d->model = model;
+}
+
+std::string Token::getErrorMessage()
+{
+    return d->errorMessage.toStdString();
 }

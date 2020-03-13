@@ -1,5 +1,5 @@
 #include <sstream>
-#include <util.h>
+#include <util/system.h>
 #include <validation.h>
 #include <chainparams.h>
 #include <fantasygold/fantasygoldstate.h>
@@ -29,6 +29,7 @@ ResultExecute FantasyGoldState::execute(EnvInfo const& _envInfo, SealEngineFace 
     _sealEngine.deleteAddresses.insert({_t.sender(), _envInfo.author()});
 
     h256 oldStateRoot = rootHash();
+    h256 oldUTXORoot = rootHashUTXO();
     bool voutLimit = false;
 
 	auto onOp = _onOp;
@@ -44,6 +45,7 @@ ResultExecute FantasyGoldState::execute(EnvInfo const& _envInfo, SealEngineFace 
 
     CTransactionRef tx;
     u256 startGasUsed;
+    const Consensus::Params& consensusParams = Params().GetConsensus();
     try{
         if (_t.isCreation() && _t.value())
             BOOST_THROW_EXCEPTION(CreateWithValue());
@@ -53,8 +55,10 @@ ResultExecute FantasyGoldState::execute(EnvInfo const& _envInfo, SealEngineFace 
         startGasUsed = _envInfo.gasUsed();
         if (!e.execute()){
             e.go(onOp);
+            if(ChainActive().Height() >= consensusParams.QIP7Height){
+            	validateTransfersWithChangeLog();
+            }
         } else {
-
             e.revert();
             throw Exception();
         }
@@ -68,7 +72,6 @@ ResultExecute FantasyGoldState::execute(EnvInfo const& _envInfo, SealEngineFace 
                 CondensingTX ctx(this, transfers, _t, _sealEngine.deleteAddresses);
                 tx = MakeTransactionRef(ctx.createCondensingTX());
                 if(ctx.reachedVoutLimit()){
-
                     voutLimit = true;
                     e.revert();
                     throw Exception();
@@ -81,19 +84,21 @@ ResultExecute FantasyGoldState::execute(EnvInfo const& _envInfo, SealEngineFace 
             
             fantasygold::commit(cacheUTXO, stateUTXO, m_cache);
             cacheUTXO.clear();
-            bool removeEmptyAccounts = _envInfo.number() >= _sealEngine.chainParams().u256Param("EIP158ForkBlock");
+            bool removeEmptyAccounts = _envInfo.number() >= _sealEngine.chainParams().EIP158ForkBlock;
             commit(removeEmptyAccounts ? State::CommitBehaviour::RemoveEmptyAccounts : State::CommitBehaviour::KeepEmptyAccounts);
         }
     }
     catch(Exception const& _e){
-
         printfErrorLog(dev::eth::toTransactionException(_e));
         res.excepted = dev::eth::toTransactionException(_e);
         res.gasUsed = _t.gas();
-        const Consensus::Params& consensusParams = Params().GetConsensus();
+        if(ChainActive().Height() < consensusParams.nFixUTXOCacheHFHeight  && _p != Permanence::Reverted){
+            deleteAccounts(_sealEngine.deleteAddresses);
+            commit(CommitBehaviour::RemoveEmptyAccounts);
+        } else {
         m_cache.clear();
         cacheUTXO.clear();
-        
+        }
     }
 
     if(!_t.isCreation())
@@ -117,9 +122,9 @@ ResultExecute FantasyGoldState::execute(EnvInfo const& _envInfo, SealEngineFace 
             refund.vout.push_back(CTxOut(CAmount(_t.value().convert_to<uint64_t>()), script));
         }
         //make sure to use empty transaction if no vouts made
-        return ResultExecute{ex, dev::eth::TransactionReceipt(oldStateRoot, gas, e.logs()), refund.vout.empty() ? CTransaction() : CTransaction(refund)};
+        return ResultExecute{ex, FantasyGoldTransactionReceipt(oldStateRoot, oldUTXORoot, gas, e.logs()), refund.vout.empty() ? CTransaction() : CTransaction(refund)};
     }else{
-        return ResultExecute{res, dev::eth::TransactionReceipt(rootHash(), startGasUsed + e.gasUsed(), e.logs()), tx ? *tx : CTransaction()};
+        return ResultExecute{res, FantasyGoldTransactionReceipt(rootHash(), rootHashUTXO(), startGasUsed + e.gasUsed(), e.logs()), tx ? *tx : CTransaction()};
     }
 }
 
@@ -202,7 +207,7 @@ void FantasyGoldState::addBalance(dev::Address const& _id, dev::u256 const& _amo
             // TODO: to save space we can combine this event with Balance by having
             //       Balance and Balance+Touch events.
         if (!a->isDirty() && a->isEmpty())
-            m_changeLog.emplace_back(dev::eth::detail::Change::Touch, _id);
+            m_changeLog.emplace_back(dev::eth::Change::Touch, _id);
 
             // Increase the account balance. This also is done for value 0 to mark
             // the account as dirty. Dirty account are not removed from the cache
@@ -219,7 +224,7 @@ void FantasyGoldState::addBalance(dev::Address const& _id, dev::u256 const& _amo
     }
 
     if (_amount)
-        m_changeLog.emplace_back(dev::eth::detail::Change::Balance, _id, _amount);
+        m_changeLog.emplace_back(dev::eth::Change::Balance, _id, _amount);
 }
 
 void FantasyGoldState::deleteAccounts(std::set<dev::Address>& addrs){
@@ -251,9 +256,35 @@ void FantasyGoldState::updateUTXO(const std::unordered_map<dev::Address, Vin>& v
 void FantasyGoldState::printfErrorLog(const dev::eth::TransactionException er){
     std::stringstream ss;
     ss << er;
-    clog(ExecutiveWarnChannel) << "VM exception:" << ss.str();
+    clog(dev::VerbosityWarning, "exec") << "VM exception:" << ss.str();
 }
 
+void FantasyGoldState::validateTransfersWithChangeLog(){
+	ChangeLog tmpChangeLog = m_changeLog;
+	std::vector<TransferInfo> validatedTransfers;
+
+	for(const TransferInfo& ti : transfers){
+		for(std::size_t i=0; i<tmpChangeLog.size(); ++i){
+			//find the log entry for the receiver of the transfer
+			if(tmpChangeLog[i].kind==Change::Balance && tmpChangeLog[i].address==ti.to && tmpChangeLog[i].value==ti.value){
+				for(std::size_t j=0; j<tmpChangeLog.size(); ++j){
+					//find the log entry for the sender of the transfer
+					if(tmpChangeLog[j].kind==Change::Balance && tmpChangeLog[j].address==ti.from && tmpChangeLog[j].value==0-ti.value){
+						// transfer is valid
+						validatedTransfers.push_back(ti);
+						// zero out found elements to avoid matching again
+						tmpChangeLog[i].address=dev::Address(0);
+						tmpChangeLog[j].address=dev::Address(0);
+						break;
+					}
+				}
+				break;
+			}
+		}
+	}
+
+	transfers=validatedTransfers;
+}
 ///////////////////////////////////////////////////////////////////////////////////////////
 CTransaction CondensingTX::createCondensingTX(){
     selectionVin();

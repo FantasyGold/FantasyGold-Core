@@ -27,17 +27,17 @@ ContractBookPage::ContractBookPage(const PlatformStyle *platformStyle, QWidget *
         ui->deleteContractInfo->setIcon(QIcon());
         ui->exportButton->setIcon(QIcon());
     } else {
-        ui->newContractInfo->setIcon(platformStyle->MultiStatesIcon(":/icons/add", PlatformStyle::PushButton, 0x5a5a5d));
-        ui->copyAddress->setIcon(platformStyle->MultiStatesIcon(":/icons/editcopy", PlatformStyle::PushButton, 0x5a5a5d));
-        ui->deleteContractInfo->setIcon(platformStyle->MultiStatesIcon(":/icons/remove", PlatformStyle::PushButton, 0x5a5a5d));
-        ui->exportButton->setIcon(platformStyle->MultiStatesIcon(":/icons/export"));
+        ui->newContractInfo->setIcon(platformStyle->MultiStatesIcon(":/icons/add", PlatformStyle::PushButtonLight));
+        ui->copyAddress->setIcon(platformStyle->MultiStatesIcon(":/icons/editcopy", PlatformStyle::PushButtonLight));
+        ui->deleteContractInfo->setIcon(platformStyle->MultiStatesIcon(":/icons/remove", PlatformStyle::PushButtonLight));
+        ui->exportButton->setIcon(platformStyle->MultiStatesIcon(":/icons/export", PlatformStyle::PushButton));
     }
 
-    SetObjectStyleSheet(ui->newContractInfo, StyleSheetNames::ButtonWhite);
-    SetObjectStyleSheet(ui->copyAddress, StyleSheetNames::ButtonWhite);
-    SetObjectStyleSheet(ui->deleteContractInfo, StyleSheetNames::ButtonWhite);
-    SetObjectStyleSheet(ui->exportButton, StyleSheetNames::ButtonBlue);
-    SetObjectStyleSheet(ui->chooseContractInfo, StyleSheetNames::ButtonBlue);
+    SetObjectStyleSheet(ui->newContractInfo, StyleSheetNames::ButtonLight);
+    SetObjectStyleSheet(ui->copyAddress, StyleSheetNames::ButtonLight);
+    SetObjectStyleSheet(ui->deleteContractInfo, StyleSheetNames::ButtonLight);
+    SetObjectStyleSheet(ui->exportButton, StyleSheetNames::ButtonGray);
+    SetObjectStyleSheet(ui->chooseContractInfo, StyleSheetNames::ButtonGray);
 
     setWindowTitle(tr("Choose the contract for send/call"));
     ui->labelExplanation->setText(tr("These are your saved contracts. Always check the contract address and the ABI before sending/calling."));
@@ -59,16 +59,16 @@ ContractBookPage::ContractBookPage(const PlatformStyle *platformStyle, QWidget *
     contextMenu->addSeparator();
 
     // Connect signals for context menu actions
-    connect(copyAddressAction, SIGNAL(triggered()), this, SLOT(on_copyAddress_clicked()));
-    connect(copyNameAction, SIGNAL(triggered()), this, SLOT(onCopyNameAction()));
-    connect(copyABIAction, SIGNAL(triggered()), this, SLOT(onCopyABIAction()));
-    connect(editAction, SIGNAL(triggered()), this, SLOT(onEditAction()));
-    connect(deleteAction, SIGNAL(triggered()), this, SLOT(on_deleteContractInfo_clicked()));
+    connect(copyAddressAction, &QAction::triggered, this, &ContractBookPage::on_copyAddress_clicked);
+    connect(copyNameAction, &QAction::triggered, this, &ContractBookPage::onCopyNameAction);
+    connect(copyABIAction, &QAction::triggered, this, &ContractBookPage::onCopyABIAction);
+    connect(editAction, &QAction::triggered, this, &ContractBookPage::onEditAction);
+    connect(deleteAction, &QAction::triggered, this, &ContractBookPage::on_deleteContractInfo_clicked);
 
-    connect(ui->tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(accept()));
-    connect(ui->tableView, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(contextualMenu(QPoint)));
+    connect(ui->tableView, &QTableView::doubleClicked, this, &ContractBookPage::accept);
+    connect(ui->tableView, &QTableView::customContextMenuRequested, this, &ContractBookPage::contextualMenu);
 
-    connect(ui->chooseContractInfo, SIGNAL(clicked()), this, SLOT(accept()));
+    connect(ui->chooseContractInfo, &QPushButton::clicked, this, &ContractBookPage::accept);
 }
 
 ContractBookPage::~ContractBookPage()
@@ -103,11 +103,10 @@ void ContractBookPage::setModel(ContractTableModel *_model)
     ui->tableView->horizontalHeader()->setSectionResizeMode(ContractTableModel::ABI, QHeaderView::Stretch);
 #endif
 
-    connect(ui->tableView->selectionModel(), SIGNAL(selectionChanged(QItemSelection,QItemSelection)),
-        this, SLOT(selectionChanged()));
+    connect(ui->tableView->selectionModel(), &QItemSelectionModel::selectionChanged, this, &ContractBookPage::selectionChanged);
 
     // Select row for newly created contract info
-    connect(_model, SIGNAL(rowsInserted(QModelIndex,int,int)), this, SLOT(selectNewContractInfo(QModelIndex,int,int)));
+    connect(_model, &ContractTableModel::rowsInserted, this, &ContractBookPage::selectNewContractInfo);
 
     selectionChanged();
 }

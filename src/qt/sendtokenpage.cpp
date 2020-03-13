@@ -5,7 +5,8 @@
 #include <qt/clientmodel.h>
 #include <qt/optionsmodel.h>
 #include <validation.h>
-#include <utilmoneystr.h>
+#include <util/moneystr.h>
+#include <util/convert.h>
 #include <qt/token.h>
 #include <qt/bitcoinunits.h>
 #include <wallet/wallet.h>
@@ -31,7 +32,7 @@ struct SelectedToken{
 };
 
 SendTokenPage::SendTokenPage(QWidget *parent) :
-    QWidget(parent),
+    QDialog(parent),
     ui(new Ui::SendTokenPage),
     m_model(0),
     m_clientModel(0),
@@ -42,7 +43,7 @@ SendTokenPage::SendTokenPage(QWidget *parent) :
     ui->setupUi(this);
 
     // Set stylesheet
-    SetObjectStyleSheet(ui->clearButton, StyleSheetNames::ButtonBlack);
+    SetObjectStyleSheet(ui->clearButton, StyleSheetNames::ButtonDark);
 
     ui->labelPayTo->setToolTip(tr("The address that will receive the tokens."));
     ui->labelAmount->setToolTip(tr("The amount in Token to send."));
@@ -58,9 +59,9 @@ SendTokenPage::SendTokenPage(QWidget *parent) :
     ui->confirmButton->setEnabled(false);
 
     // Connect signals with slots
-    connect(ui->lineEditPayTo, SIGNAL(textChanged(QString)), SLOT(on_updateConfirmButton()));
-    connect(ui->lineEditAmount, SIGNAL(valueChanged()), SLOT(on_updateConfirmButton()));
-    connect(ui->confirmButton, SIGNAL(clicked()), SLOT(on_confirmClicked()));
+    connect(ui->lineEditPayTo, &QValidatedLineEdit::textChanged, this, &SendTokenPage::on_updateConfirmButton);
+    connect(ui->lineEditAmount, &TokenAmountField::valueChanged,this, &SendTokenPage::on_updateConfirmButton);
+    connect(ui->confirmButton, &QPushButton::clicked, this, &SendTokenPage::on_confirmClicked);
 
     ui->lineEditPayTo->setCheckValidator(new BitcoinAddressCheckValidator(parent, true));
 }
@@ -78,6 +79,12 @@ void SendTokenPage::setModel(WalletModel *_model)
 {
     m_model = _model;
     m_tokenABI->setModel(m_model);
+
+    if (m_model && m_model->getOptionsModel())
+        connect(m_model->getOptionsModel(), &OptionsModel::displayUnitChanged, this, &SendTokenPage::updateDisplayUnit);
+
+    // update the display unit, to not use the default ("FGC")
+    updateDisplayUnit();
 }
 
 void SendTokenPage::setClientModel(ClientModel *_clientModel)
@@ -124,6 +131,7 @@ bool SendTokenPage::isDataValid()
 void SendTokenPage::on_clearButton_clicked()
 {
     clearAll();
+    QDialog::reject();
 }
 
 void SendTokenPage::on_gasInfoChanged(quint64 blockGasLimit, quint64 minGasPrice, quint64 nGasPrice)
@@ -131,14 +139,14 @@ void SendTokenPage::on_gasInfoChanged(quint64 blockGasLimit, quint64 minGasPrice
     Q_UNUSED(nGasPrice);
     ui->labelGasLimit->setToolTip(tr("Gas limit. Default = %1, Max = %2").arg(DEFAULT_GAS_LIMIT_OP_CREATE).arg(blockGasLimit));
     ui->labelGasPrice->setToolTip(tr("Gas price: FGC price per gas unit. Default = %1, Min = %2").arg(QString::fromStdString(FormatMoney(DEFAULT_GAS_PRICE))).arg(QString::fromStdString(FormatMoney(minGasPrice))));
-    ui->lineEditGasPrice->setMinimum(minGasPrice);
+    ui->lineEditGasPrice->SetMinValue(minGasPrice);
     ui->lineEditGasLimit->setMaximum(blockGasLimit);
 }
 
 void SendTokenPage::on_updateConfirmButton()
 {
     bool enabled = true;
-    if(ui->lineEditPayTo->text().isEmpty() || ui->lineEditAmount->text().isEmpty())
+    if(ui->lineEditPayTo->text().isEmpty() || ui->lineEditAmount->text().isEmpty() || !isDataValid())
     {
         enabled = false;
     }
@@ -157,9 +165,9 @@ void SendTokenPage::on_confirmClicked()
         return;
     }
 
-    if(m_model && m_model->wallet().isUnspentAddress(m_selectedToken->sender))
+    if(m_model)
     {
-        int unit = m_model->getOptionsModel()->getDisplayUnit();
+        int unit = BitcoinUnits::BTC;
         uint64_t gasLimit = ui->lineEditGasLimit->value();
         CAmount gasPrice = ui->lineEditGasPrice->value();
         std::string label = ui->lineEditDescription->text().trimmed().toStdString();
@@ -179,7 +187,7 @@ void SendTokenPage::on_confirmClicked()
         questionString.append(tr("<br />%3 <br />")
                               .arg(QString::fromStdString(toAddress)));
 
-        SendConfirmationDialog confirmationDialog(tr("Confirm send token."), questionString, 3, this);
+        SendConfirmationDialog confirmationDialog(tr("Confirm send token."), questionString, "", "", SEND_CONFIRM_DELAY, this);
         confirmationDialog.exec();
         QMessageBox::StandardButton retval = (QMessageBox::StandardButton)confirmationDialog.result();
         if(retval == QMessageBox::Yes)
@@ -196,15 +204,22 @@ void SendTokenPage::on_confirmClicked()
                 tokenTx.label = label;
                 m_model->wallet().addTokenTxEntry(tokenTx);
             }
+            else
+            {
+                QMessageBox::warning(this, tr("Send token"), QString::fromStdString(m_tokenABI->getErrorMessage()));
+            }
             clearAll();
+            QDialog::accept();
         }
     }
-    else
-    {
-        QString message = tr("To send %1 you need FGC on address <br /> %2.")
-                .arg(QString::fromStdString(m_selectedToken->symbol)).arg(QString::fromStdString(m_selectedToken->sender));
+}
 
-        QMessageBox::warning(this, tr("Send token"), message);
+void SendTokenPage::updateDisplayUnit()
+{
+    if(m_model && m_model->getOptionsModel())
+    {
+        // Update gasPriceAmount with the current unit
+        ui->lineEditGasPrice->setDisplayUnit(m_model->getOptionsModel()->getDisplayUnit());
     }
 }
 
@@ -217,6 +232,7 @@ void SendTokenPage::setTokenData(std::string address, std::string sender, std::s
     m_selectedToken->symbol = symbol;
     m_selectedToken->decimals = decimals;
     m_selectedToken->balance = balance;
+    QString unit = QString::fromStdString(symbol);
 
     // Convert values for different number of decimals
     int256_t totalSupply(balance);
@@ -245,4 +261,6 @@ void SendTokenPage::setTokenData(std::string address, std::string sender, std::s
     {
         ui->lineEditAmount->setValue(value);
     }
+    ui->labelTokenBalance->setText(BitcoinUnits::formatTokenWithUnit(unit, m_selectedToken->decimals, totalSupply, false, BitcoinUnits::separatorAlways));
+    setWindowTitle(tr("Send") + " " + unit);
 }

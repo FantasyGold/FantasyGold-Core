@@ -8,39 +8,44 @@
 
 #include <qt/splashscreen.h>
 
-#include <qt/networkstyle.h>
-
 #include <clientversion.h>
 #include <interfaces/handler.h>
 #include <interfaces/node.h>
 #include <interfaces/wallet.h>
-#include <util.h>
+#include <qt/guiutil.h>
+#include <qt/networkstyle.h>
 #include <ui_interface.h>
+#include <util/system.h>
+#include <util/translation.h>
 #include <version.h>
+#include "styleSheet.h"
+#include <qt/platformstyle.h>
 
 #include <QApplication>
 #include <QCloseEvent>
-#include <QDesktopWidget>
 #include <QPainter>
 #include <QRadialGradient>
+#include <QScreen>
+
 
 SplashScreen::SplashScreen(interfaces::Node& node, Qt::WindowFlags f, const NetworkStyle *networkStyle) :
-    QWidget(0, f), curAlignment(0), m_node(node)
+    QWidget(nullptr, f), curAlignment(0), m_node(node)
 {
     // set sizes
-    int versionTextHeight       = 30;
+    int logoSize                = 50;
+    int logoImageSize           = logoSize - 13;
+    int packageTextHeight       = 30;
+    int versionTextHeight       = 20;
     int statusHeight            = 30;
-    int titleAddTextHeight      = 20;
-
+    int titleAddTextHeight      = 12;
+    int welcomeTextHeight       = 35;
     float fontFactor            = 1.0;
     float devicePixelRatio      = 1.0;
-#if QT_VERSION > 0x050100
     devicePixelRatio = static_cast<QGuiApplication*>(QCoreApplication::instance())->devicePixelRatio();
-#endif
 
     // define text to place
-    QString titleText       = tr(PACKAGE_NAME);
-    QString versionText     = QString("Version %1").arg(QString::fromStdString(FormatFullVersion()));
+    QString titleText       = PACKAGE_NAME;
+    QString versionText     = QString("%1").arg(QString::fromStdString(FormatFullVersion()));
     QString copyrightText   = QString::fromUtf8(CopyrightHolders(strprintf("\xc2\xA9 %u ", COPYRIGHT_YEAR)).c_str());
     QString titleAddText    = networkStyle->getTitleAddText();
 
@@ -50,25 +55,39 @@ SplashScreen::SplashScreen(interfaces::Node& node, Qt::WindowFlags f, const Netw
     QSize splashSize(480,320);
     pixmap = QPixmap(480*devicePixelRatio,320*devicePixelRatio);
 
-#if QT_VERSION > 0x050100
     // change to HiDPI if it makes sense
     pixmap.setDevicePixelRatio(devicePixelRatio);
-#endif
 
     QPainter pixPaint(&pixmap);
-    pixPaint.setPen(QColor("#ffffff"));
+
+    QColor foreground_color = GetStringStyleValue("splashscreen/foreground-color", "#ffffff");
+    QColor foreground_color_statusbar = GetStringStyleValue("splashscreen/foreground-color-statusbar", "#ffffff");
+    QColor logo_frame_color = GetStringStyleValue("splashscreen/logo-frame-color", "#ffffff");
 
     QRect mainRect(QPoint(0,0), splashSize);
-    pixPaint.fillRect(mainRect, QColor("#030509"));
+    QColor background_color     = GetStringStyleValue("splashscreen/background-color", "#030509");
+    pixPaint.fillRect(mainRect, background_color);
 
     // draw background
     QRect rectBg(QPoint(-50, -50), QSize(splashSize.width() + 50, splashSize.height() + 50));
-    QPixmap bg(":/styles/app-icons/splash_bg");
+    QPixmap bg(GetStringStyleValue("splashscreen/background-image", ":/styles/theme1/app-icons/splash_bg"));
     pixPaint.drawPixmap(rectBg, bg);
 
-    pixPaint.setFont(QFont(font, 32*fontFactor, QFont::Bold));
-    QRect rectTitle(QPoint(0,0), QSize(splashSize.width(), (splashSize.height() / 2)));
-    pixPaint.drawText(rectTitle, Qt::AlignHCenter | Qt::AlignBottom, titleText);
+    QRect logoRect(splashSize.width() - logoSize - 20, 20, logoSize, logoSize);
+    QPainterPath logoPath;
+    logoPath.addRoundedRect(logoRect, logoSize / 2, logoSize / 2);
+    pixPaint.setRenderHint(QPainter::Antialiasing);
+    pixPaint.setPen(logo_frame_color);
+    pixPaint.drawPath(logoPath);
+
+    QPixmap logo = PlatformStyle::SingleColorIcon(":/icons/bitcoin", foreground_color).pixmap(QSize(logoImageSize, logoImageSize));
+    pixPaint.drawPixmap(logoRect.x() + 6, logoRect.y() + 6, logo);
+
+    pixPaint.setPen(foreground_color);
+
+    pixPaint.setFont(QFont(font, 22 * fontFactor, QFont::Bold));
+    QRect rectTitle(QPoint(0, logoRect.bottom() + 10), QSize(splashSize.width() - 20, packageTextHeight));
+    pixPaint.drawText(rectTitle, Qt::AlignRight | Qt::AlignBottom, titleText);
 
     QPoint versionPoint(rectTitle.bottomLeft());
 
@@ -77,23 +96,28 @@ SplashScreen::SplashScreen(interfaces::Node& node, Qt::WindowFlags f, const Netw
     {
         QRect titleAddRect(rectTitle.bottomLeft(), QSize(rectTitle.width(), titleAddTextHeight));
         versionPoint = titleAddRect.bottomLeft();
-        pixPaint.setFont(QFont(font, 8*fontFactor, QFont::Bold));
-        pixPaint.drawText(titleAddRect, Qt::AlignHCenter | Qt::AlignVCenter, titleAddText);
+        pixPaint.setFont(QFont("HiraginoSansGB", 8 * fontFactor, QFont::Bold));
+        pixPaint.drawText(titleAddRect, Qt::AlignRight | Qt::AlignBottom, titleAddText);
     }
 
-    pixPaint.setFont(QFont(font, 11*fontFactor));
+    pixPaint.setFont(QFont("HiraginoSansGB", 8 * fontFactor));
     QRect versionRect(versionPoint, QSize(rectTitle.width(), versionTextHeight));
-    pixPaint.drawText(versionRect, Qt::AlignHCenter | Qt::AlignTop, versionText);
+    pixPaint.drawText(versionRect, Qt::AlignRight | Qt::AlignVCenter, versionText);
+
+    QRect welcomeRect(0, splashSize.height() - statusHeight - welcomeTextHeight - 40, splashSize.width() -20, welcomeTextHeight);
+    pixPaint.setFont(QFont(font, 10 * fontFactor, QFont::Bold));
+    pixPaint.drawText(welcomeRect, Qt::AlignRight | Qt::AlignTop, "FantasyGold-Qt Wallet");
 
     // draw copyright stuff
     QFont statusFont = QApplication::font();
     statusFont.setPointSizeF(statusFont.pointSizeF() * 0.9);
     pixPaint.setFont(statusFont);
+    pixPaint.setPen(foreground_color_statusbar);
     QRect statusRect(mainRect.left(), mainRect.height() - statusHeight, mainRect.width(), statusHeight);
     QColor statusColor(255, 255, 255);
     statusColor.setAlphaF(0.1);
     pixPaint.fillRect(statusRect, statusColor);
-    pixPaint.drawText(statusRect.adjusted(10, 0, -10, 0), Qt::AlignLeft | Qt::AlignVCenter, copyrightText);
+    pixPaint.drawText(statusRect.adjusted(10, 0, -10, 0), Qt::AlignRight | Qt::AlignVCenter, copyrightText);
 
     pixPaint.end();
 
@@ -104,7 +128,7 @@ SplashScreen::SplashScreen(interfaces::Node& node, Qt::WindowFlags f, const Netw
     QRect r(QPoint(), QSize(pixmap.size().width()/devicePixelRatio,pixmap.size().height()/devicePixelRatio));
     resize(r.size());
     setFixedSize(r.size());
-    move(QApplication::desktop()->screenGeometry().center() - r.center());
+    move(QGuiApplication::primaryScreen()->geometry().center() - r.center());
 
     subscribeToCoreSignals();
     installEventFilter(this);
@@ -125,10 +149,8 @@ bool SplashScreen::eventFilter(QObject * obj, QEvent * ev) {
     return QObject::eventFilter(obj, ev);
 }
 
-void SplashScreen::slotFinish(QWidget *mainWin)
+void SplashScreen::finish()
 {
-    Q_UNUSED(mainWin);
-
     /* If the window is minimized, hide() will be ignored. */
     /* Make sure we de-minimize the splashscreen window before hiding */
     if (isMinimized())
@@ -139,24 +161,26 @@ void SplashScreen::slotFinish(QWidget *mainWin)
 
 static void InitMessage(SplashScreen *splash, const std::string &message)
 {
-    QMetaObject::invokeMethod(splash, "showMessage",
+    QColor foreground_color = GetStringStyleValue("splashscreen/foreground-color_statusbar", "#ffffff");
+    bool invoked = QMetaObject::invokeMethod(splash, "showMessage",
         Qt::QueuedConnection,
         Q_ARG(QString, QString::fromStdString(message)),
-        Q_ARG(int, Qt::AlignBottom|Qt::AlignRight),
-        Q_ARG(QColor, QColor("#ffffff")));
+        Q_ARG(int, Qt::AlignBottom|Qt::AlignLeft),
+        Q_ARG(QColor, foreground_color));
+    assert(invoked);
 }
 
 static void ShowProgress(SplashScreen *splash, const std::string &title, int nProgress, bool resume_possible)
 {
     InitMessage(splash, title + std::string("\n") +
-            (resume_possible ? _("(press q to shutdown and continue later)")
-                                : _("press q to shutdown")) +
+            (resume_possible ? _("(press q to shutdown and continue later)").translated
+                                : _("press q to shutdown").translated) +
             strprintf("\n%d", nProgress) + "%");
 }
 #ifdef ENABLE_WALLET
 void SplashScreen::ConnectWallet(std::unique_ptr<interfaces::Wallet> wallet)
 {
-    m_connected_wallet_handlers.emplace_back(wallet->handleShowProgress(boost::bind(ShowProgress, this, _1, _2, false)));
+    m_connected_wallet_handlers.emplace_back(wallet->handleShowProgress(std::bind(ShowProgress, this, std::placeholders::_1, std::placeholders::_2, false)));
     m_connected_wallets.emplace_back(std::move(wallet));
 }
 #endif
@@ -164,8 +188,8 @@ void SplashScreen::ConnectWallet(std::unique_ptr<interfaces::Wallet> wallet)
 void SplashScreen::subscribeToCoreSignals()
 {
     // Connect signals to client
-    m_handler_init_message = m_node.handleInitMessage(boost::bind(InitMessage, this, _1));
-    m_handler_show_progress = m_node.handleShowProgress(boost::bind(ShowProgress, this, _1, _2, _3));
+    m_handler_init_message = m_node.handleInitMessage(std::bind(InitMessage, this, std::placeholders::_1));
+    m_handler_show_progress = m_node.handleShowProgress(std::bind(ShowProgress, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
 #ifdef ENABLE_WALLET
     m_handler_load_wallet = m_node.handleLoadWallet([this](std::unique_ptr<interfaces::Wallet> wallet) { ConnectWallet(std::move(wallet)); });
 #endif
@@ -176,7 +200,7 @@ void SplashScreen::unsubscribeFromCoreSignals()
     // Disconnect signals from client
     m_handler_init_message->disconnect();
     m_handler_show_progress->disconnect();
-    for (auto& handler : m_connected_wallet_handlers) {
+    for (const auto& handler : m_connected_wallet_handlers) {
         handler->disconnect();
     }
     m_connected_wallet_handlers.clear();

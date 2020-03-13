@@ -42,14 +42,14 @@ CallContract::CallContract(const PlatformStyle *platformStyle, QWidget *parent) 
     m_platformStyle = platformStyle;
     // Setup ui components
     ui->setupUi(this);
-    ui->saveInfoButton->setIcon(platformStyle->MultiStatesIcon(":/icons/filesave", PlatformStyle::PushButton));
-    ui->loadInfoButton->setIcon(platformStyle->MultiStatesIcon(":/icons/address-book", PlatformStyle::PushButton));
-    ui->pasteAddressButton->setIcon(platformStyle->MultiStatesIcon(":/icons/editpaste", PlatformStyle::PushButton));
+    ui->saveInfoButton->setIcon(platformStyle->MultiStatesIcon(":/icons/filesave", PlatformStyle::PushButtonIcon));
+    ui->loadInfoButton->setIcon(platformStyle->MultiStatesIcon(":/icons/address-book", PlatformStyle::PushButtonIcon));
+    ui->pasteAddressButton->setIcon(platformStyle->MultiStatesIcon(":/icons/editpaste", PlatformStyle::PushButtonIcon));
     // Format tool buttons
     GUIUtil::formatToolButtons(ui->saveInfoButton, ui->loadInfoButton, ui->pasteAddressButton);
 
     // Set stylesheet
-    SetObjectStyleSheet(ui->pushButtonClearAll, StyleSheetNames::ButtonBlack);
+    SetObjectStyleSheet(ui->pushButtonClearAll, StyleSheetNames::ButtonDark);
 
     m_ABIFunctionField = new ABIFunctionField(platformStyle, ABIFunctionField::Call, ui->scrollAreaFunction);
     ui->scrollAreaFunction->setWidget(m_ABIFunctionField);
@@ -76,15 +76,15 @@ CallContract::CallContract(const PlatformStyle *platformStyle, QWidget *parent) 
     m_contractABI = new ContractABI();
 
     // Connect signals with slots
-    connect(ui->pushButtonClearAll, SIGNAL(clicked()), SLOT(on_clearAllClicked()));
-    connect(ui->pushButtonCallContract, SIGNAL(clicked()), SLOT(on_callContractClicked()));
-    connect(ui->lineEditContractAddress, SIGNAL(textChanged(QString)), SLOT(on_updateCallContractButton()));
-    connect(ui->textEditInterface, SIGNAL(textChanged()), SLOT(on_newContractABI()));
-    connect(ui->stackedWidget, SIGNAL(currentChanged(int)), SLOT(on_updateCallContractButton()));
-    connect(ui->saveInfoButton, SIGNAL(clicked()), SLOT(on_saveInfoClicked()));
-    connect(ui->loadInfoButton, SIGNAL(clicked()), SLOT(on_loadInfoClicked()));
-    connect(ui->pasteAddressButton, SIGNAL(clicked()), SLOT(on_pasteAddressClicked()));
-    connect(ui->lineEditContractAddress, SIGNAL(textChanged(QString)), SLOT(on_contractAddressChanged()));
+    connect(ui->pushButtonClearAll, &QPushButton::clicked, this, &CallContract::on_clearAllClicked);
+    connect(ui->pushButtonCallContract, &QPushButton::clicked, this, &CallContract::on_callContractClicked);
+    connect(ui->lineEditContractAddress, &QValidatedLineEdit::textChanged, this, &CallContract::on_updateCallContractButton);
+    connect(ui->textEditInterface, &QValidatedTextEdit::textChanged, this, &CallContract::on_newContractABI);
+    connect(ui->stackedWidget, &QStackedWidget::currentChanged, this, &CallContract::on_updateCallContractButton);
+    connect(ui->saveInfoButton, &QToolButton::clicked, this, &CallContract::on_saveInfoClicked);
+    connect(ui->loadInfoButton, &QToolButton::clicked, this, &CallContract::on_loadInfoClicked);
+    connect(ui->pasteAddressButton, &QToolButton::clicked, this, &CallContract::on_pasteAddressClicked);
+    connect(ui->lineEditContractAddress, &QValidatedLineEdit::textChanged, this, &CallContract::on_contractAddressChanged);
 
     // Set contract address validator
     QRegularExpression regEx;
@@ -171,7 +171,7 @@ void CallContract::on_callContractClicked()
         ExecRPCCommand::appendParam(lstParams, PARAM_SENDER, ui->lineEditSenderAddress->currentText());
 
         // Execute RPC command line
-        if(errorMessage.isEmpty() && m_execRPCCommand->exec(m_model->node(), m_model->wallet(), lstParams, result, resultJson, errorMessage))
+        if(errorMessage.isEmpty() && m_execRPCCommand->exec(m_model->node(), m_model, lstParams, result, resultJson, errorMessage))
         {
             ContractResult *widgetResult = new ContractResult(ui->stackedWidget);
             widgetResult->setResultData(result, m_contractABI->functions[func], m_ABIFunctionField->getParamsValues(), ContractResult::CallResult);
