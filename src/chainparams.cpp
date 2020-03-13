@@ -201,10 +201,6 @@ public:
         consensus.nCheckpointSpan = COINBASE_MATURITY; //new
     }
 };
-
-/**
- * Testnet (v3)
- */
 class CTestNetParams : public CChainParams {
 public:
     CTestNetParams() {
@@ -213,6 +209,7 @@ public:
         consensus.BIP16Exception = uint256S("0x00000000f4df2cfa0dc2cb56758f5a54351d8a2c2d715278e876f448c3e23506");
         consensus.BIP34Height = 0;
         consensus.BIP34Hash = uint256S("0x00000000f4df2cfa0dc2cb56758f5a54351d8a2c2d715278e876f448c3e23506");
+
         consensus.BIP65Height = 0; // 0x00000000f4df2cfa0dc2cb56758f5a54351d8a2c2d715278e876f448c3e23506
         consensus.BIP66Height = 0; // 0x00000000f4df2cfa0dc2cb56758f5a54351d8a2c2d715278e876f448c3e23506
         consensus.CSVHeight = 432; // 00006b24f0bb1e286d6384ca10dc49be4c8740d8b9389934f16bd60f5e1073b3
@@ -222,6 +219,7 @@ public:
         consensus.QIP6Height = 1880;
         consensus.QIP7Height = 1880;
         consensus.QIP9Height = 1880;
+
         consensus.powLimit = uint256S("0000ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff");
         consensus.posLimit = uint256S("0000ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff");
         consensus.QIP9PosLimit = uint256S("0000000000001fffffffffffffffffffffffffffffffffffffffffffffffffff"); // The new POS-limit activated after QIP9
@@ -233,6 +231,7 @@ public:
         consensus.fPoSNoRetargeting = false;
         consensus.nRuleChangeActivationThreshold = 108; // 75% for testchains - 1512
         consensus.nMinerConfirmationWindow = 144; // nPowTargetTimespan / nPowTargetSpacing - 2016
+
         consensus.vDeployments[Consensus::DEPLOYMENT_TESTDUMMY].bit = 28;
         consensus.vDeployments[Consensus::DEPLOYMENT_TESTDUMMY].nStartTime = 1199145601; // January 1, 2008
         consensus.vDeployments[Consensus::DEPLOYMENT_TESTDUMMY].nTimeout = 1230767999; // December 31, 2008
@@ -256,14 +255,16 @@ public:
         genesis = CreateGenesisBlock(1561661716, 895853871, 0x1d00ffff, 1, 50 * COIN);
         
         consensus.hashGenesisBlock = genesis.GetHash();
-        
+
         assert(consensus.hashGenesisBlock == uint256S("0x00000000f4df2cfa0dc2cb56758f5a54351d8a2c2d715278e876f448c3e23506"));
         assert(genesis.hashMerkleRoot == uint256S("0x445f47dbb97c4ccad83a131158776d06dcd0bf85ba26d2f5fb7845b5cd7311e8"));
 
         vFixedSeeds.clear();
         vSeeds.clear();
         // nodes with support for servicebits filtering should be at the top
+
         vSeeds.emplace_back(testnet.fantasygold.io); // FantasyGold testnet
+
 
         base58Prefixes[PUBKEY_ADDRESS] = std::vector<unsigned char>(1,95);
         base58Prefixes[SCRIPT_ADDRESS] = std::vector<unsigned char>(1,88);
@@ -282,9 +283,9 @@ public:
 
         checkpointData = {
             {
+
                 { 0, uint256S("00000000f4df2cfa0dc2cb56758f5a54351d8a2c2d715278e876f448c3e23506")},
                 { 1300, uint256S("76a6f3fc227d341f52be6585f5aa37b54df89d931cbde811fd7be048dcc12f93")}, //last PoW block
-                
             }
         };
 
@@ -303,10 +304,10 @@ public:
         consensus.nFirstMPoSBlock = consensus.nLastPOWBlock + 
                                     consensus.nMPoSRewardRecipients + 
                                     COINBASE_MATURITY;
-
         consensus.nFixUTXOCacheHFHeight = 1550; //new
         consensus.nEnableHeaderSignatureHeight = 881;
         consensus.nCheckpointSpan = COINBASE_MATURITY; //new
+
     }
 };
 
