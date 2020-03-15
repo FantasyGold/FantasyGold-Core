@@ -1,14 +1,6 @@
 
 sudo: required
 dist: bionic
-addons:
-  apt:
-    sources:
-      - ppa:bitcoin/bitcoin
-      - ppa:ubuntu-wine/ppa
-    packages:
-      - bc
-      - python3-zmq
 os: linux
 language: generic
 cache:
@@ -41,8 +33,10 @@ env:
     #- HOST=x86_64-w64-mingw32 DPKG_ADD_ARCH="i386" PACKAGES="python3 nsis g++-mingw-w64-x86-64 wine1.7 bc" RUN_TESTS=false GOAL="install" FGC_CONFIG="--enable-gui --enable-reduce-exports" MAKEJOBS="-j4" WINE=true
 
 before_install:
-    #- travis_retry sudo apt-get install python3
-    #- travis_retry sudo add-apt-repository ppa:ubuntu-wine/ppa -y
+    - sudo add-apt-repository -y ppa:bitcoin/bitcoin
+    - sudo add-apt-repository -y ppa:ubuntu-wine/ppa
+    - sudo apt-get -q update
+    - sudo apt-get -y install bc python3-zmq
     #- export PATH=$(echo $PATH | tr ':' "\n" | sed '/\/opt\/python/d' | tr "\n" ":" | sed "s|::|:|g")
     - unset PYENV_ROOT
     - curl -L https://github.com/pyenv/pyenv-installer/raw/master/bin/pyenv-installer | bash
