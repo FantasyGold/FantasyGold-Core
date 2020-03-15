@@ -7,6 +7,7 @@ cache:
   apt: true
   ccache: true
   directories:
+    - 
     - depends/built
     - depends/sdk-sources
     - "$HOME/.ccache"
@@ -22,7 +23,7 @@ env:
     - BASE_OUTDIR=$TRAVIS_BUILD_DIR/out
     - SDK_URL=https://github.com/phracker/MacOSX-SDKs/releases/download/10.13/
     - PYTHON_DEBUG=1
-    - WINEDEBUG=fixme-all
+    #- WINEDEBUG=fixme-all
   matrix:
     - HOST=x86_64-unknown-linux-gnu RUN_TESTS=false GOAL="install" FGC_CONFIG="--enable-zmq --enable-glibc-back-compat --enable-reduce-exports" CPPFLAGS="-DDEBUG_LOCKORDER -DENABLE_DASH_DEBUG" PYZMQ=true
 
@@ -34,7 +35,7 @@ env:
 
 before_install:
     - sudo add-apt-repository -y ppa:bitcoin/bitcoin
-    - sudo add-apt-repository -y ppa:ubuntu-wine/ppa
+    #- sudo add-apt-repository -y ppa:ubuntu-wine/ppa
     - sudo apt-get -q update
     - sudo apt-get -y install bc python3-zmq
     #- export PATH=$(echo $PATH | tr ':' "\n" | sed '/\/opt\/python/d' | tr "\n" ":" | sed "s|::|:|g")
@@ -67,8 +68,8 @@ script:
     - ./configure --cache-file=../config.cache $FGC_CONFIG_ALL $FGC_CONFIG || ( cat config.log && false)
     - make $MAKEJOBS $GOAL || ( echo "Build failure. Verbose build follows." && make $GOAL V=1 ; false )
     - export LD_LIBRARY_PATH=$TRAVIS_BUILD_DIR/depends/$HOST/lib
-    - if [ "$RUN_TESTS" = "true" -a "$WINE" != "true" ]; then make $MAKEJOBS check VERBOSE=1; fi
-    - if [ "$RUN_TESTS" = "true" -a "$WINE" = "true" ]; then wine src/test/test_fantasygold.exe; fi
+    #- if [ "$RUN_TESTS" = "true" -a "$WINE" != "true" ]; then make $MAKEJOBS check VERBOSE=1; fi
+    #- if [ "$RUN_TESTS" = "true" -a "$WINE" = "true" ]; then wine src/test/test_fantasygold.exe; fi
     - if [ "$RUN_TESTS" = "true" ]; then qa/pull-tester/rpc-tests.py --coverage; fi
 after_script:
     - if [ "$TRAVIS_PULL_REQUEST" != "false" ]; then (echo "Upload goes here. Something like: scp -r $BASE_OUTDIR server" || echo "upload failed"); fi
