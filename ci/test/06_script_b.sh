@@ -20,10 +20,5 @@ if [ "$RUN_FUNCTIONAL_TESTS" = "true" ]; then
   END_FOLD
 fi
 
-if [ "$RUN_FUZZ_TESTS" = "true" ]; then
-  BEGIN_FOLD fuzz-tests
-  DOCKER_EXEC test/fuzz/test_runner.py -l DEBUG ${DIR_FUZZ_IN}
-  END_FOLD
-fi
 
 cd ${BASE_BUILD_DIR} || (echo "could not enter travis build dir $BASE_BUILD_DIR"; exit 1)

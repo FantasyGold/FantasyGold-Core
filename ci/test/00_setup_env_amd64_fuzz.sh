@@ -11,6 +11,6 @@ export PACKAGES="clang llvm python3 libssl1.0-dev libevent-dev bsdmainutils libb
 export NO_DEPENDS=1
 export RUN_UNIT_TESTS=false
 export RUN_FUNCTIONAL_TESTS=false
-export RUN_FUZZ_TESTS=true
+export RUN_FUZZ_TESTS=false
 export GOAL="install"
-export FANTASYGOLD_CONFIG="--enable-fuzz --with-sanitizers=fuzzer,address,undefined CC=clang CXX=clang++"
+export FANTASYGOLD_CONFIG="CC=clang CXX=clang++"
