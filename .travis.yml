@@ -23,6 +23,7 @@ env:
     - BASE_OUTDIR=$TRAVIS_BUILD_DIR/out
     - SDK_URL=https://github.com/phracker/MacOSX-SDKs/releases/download/10.13/
     - PYTHON_DEBUG=1
+    - PYENV_VERSION=3.5.6
     #- WINEDEBUG=fixme-all
   matrix:
     - HOST=x86_64-unknown-linux-gnu RUN_TESTS=false GOAL="install" FGC_CONFIG="--enable-zmq --enable-glibc-back-compat --enable-reduce-exports" CPPFLAGS="-DDEBUG_LOCKORDER -DENABLE_DASH_DEBUG" PYZMQ=true
