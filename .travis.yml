@@ -9,22 +9,17 @@ cache:
     - $TRAVIS_BUILD_DIR/ci/scratch/.ccache
 stages:
   - test
-
 env:
   global:
     - CI_RETRY_EXE="travis_retry"
     - CACHE_ERR_MSG="Error! Initial build successful, but not enough time remains to run later build stages and tests. Please manually re-run this job by using the travis restart button or asking a bitcoin maintainer to restart. The next run should not time out because the build cache has been saved."
 before_install:
   - set -o errexit; source ./ci/test/00_setup_env.sh
-
-  - set -o errexit; source ./ci/test/03_before_install.sh
-
+  - set -o errexit; source ./ci/test/03_before_install.s
 install:
   - set -o errexit; source ./ci/test/04_install.sh
-
   before_script:
   - set -o errexit; source ./ci/test/05_before_script.sh
-
   script:
   - export CONTINUE=1
   - if [ $SECONDS -gt 1200 ]; then export CONTINUE=0; fi  # Likely the depends build took very long
