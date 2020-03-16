@@ -38,15 +38,8 @@ before_install:
     - sudo add-apt-repository -y ppa:bitcoin/bitcoin
     #- sudo add-apt-repository -y ppa:ubuntu-wine/ppa
     - sudo apt-get -q update
-    - sudo apt-get -y install bc python3-zmq
-    #- export PATH=$(echo $PATH | tr ':' "\n" | sed '/\/opt\/python/d' | tr "\n" ":" | sed "s|::|:|g")
-    - unset PYENV_ROOT
-    - curl -L https://github.com/pyenv/pyenv-installer/raw/master/bin/pyenv-installer | bash
-    - export PATH="$HOME/.pyenv/bin:$PATH"
+    - sudo apt-get -y install bc python3-zmq python3
     - pyenv install 3.5.6
-    - pyenv global 3.5.6
-    - pyenv local 3.5.6
-    - pyenv shell 3.5.6
 install:
     #- if [ "$PYZMQ" = "true" ]; then pip install pyzmq --user ; fi
     #- if [ -n "$PPA" ]; then travis_retry sudo add-apt-repository "$PPA" -y; fi
