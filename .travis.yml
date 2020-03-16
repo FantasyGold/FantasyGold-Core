@@ -1,74 +1,43 @@
-
-sudo: required
-dist: bionic
+dist: xenial
 os: linux
-language: generic
+language: minimal
 cache:
-  apt: true
   ccache: true
   directories:
-    - 
-    - depends/built
-    - depends/sdk-sources
-    - "$HOME/.ccache"
+    - $TRAVIS_BUILD_DIR/depends/built
+    - $TRAVIS_BUILD_DIR/depends/sdk-sources
+    - $TRAVIS_BUILD_DIR/ci/scratch/.ccache
+stages:
+  - test
+
 env:
   global:
-    - NUMBERCORES=$(nproc --all)
-    - MAKEJOBS=-j$NUMBERCORES
-    - RUN_TESTS=false
-    - BOOST_TEST_RANDOM=1$TRAVIS_BUILD_ID
-    - CCACHE_SIZE=400M
-    - CCACHE_TEMPDIR=/tmp/.ccache-temp
-    - CCACHE_COMPRESS=1
-    - BASE_OUTDIR=$TRAVIS_BUILD_DIR/out
-    - SDK_URL=https://github.com/phracker/MacOSX-SDKs/releases/download/10.13/
-    - PYTHON_DEBUG=1
-    - PYENV_VERSION=3.5.6
-    #- WINEDEBUG=fixme-all
-  matrix:
-    - HOST=x86_64-unknown-linux-gnu RUN_TESTS=false GOAL="install" FGC_CONFIG="--enable-zmq --enable-glibc-back-compat --enable-reduce-exports" CPPFLAGS="-DDEBUG_LOCKORDER -DENABLE_DASH_DEBUG"
-
-    #- HOST=arm-linux-gnueabihf PACKAGES="g++-arm-linux-gnueabihf" CHECK_DOC=0 GOAL="install" FGC_CONFIG="--enable-glibc-back-compat --enable-reduce-exports CXXFLAGS=-Wno-psabi"
-    #- HOST=i686-pc-linux-gnu PACKAGES="g++-multilib bc python3-zmq" RUN_TESTS=false GOAL="install" FGC_CONFIG="--enable-zmq --enable-glibc-back-compat --enable-reduce-exports LDFLAGS=-static-libstdc++" PYZMQ=true
-  
-    #- HOST=i686-w64-mingw32 DPKG_ADD_ARCH="i386" PACKAGES="python3 nsis g++-mingw-w64-i686 wine1.7 bc" RUN_TESTS=false GOAL="install" FGC_CONFIG="--enable-gui --enable-reduce-exports" MAKEJOBS="-j4" WINE=true
-    #- HOST=x86_64-w64-mingw32 DPKG_ADD_ARCH="i386" PACKAGES="python3 nsis g++-mingw-w64-x86-64 wine1.7 bc" RUN_TESTS=false GOAL="install" FGC_CONFIG="--enable-gui --enable-reduce-exports" MAKEJOBS="-j4" WINE=true
-
+    - CI_RETRY_EXE="travis_retry"
+    - CACHE_ERR_MSG="Error! Initial build successful, but not enough time remains to run later build stages and tests. Please manually re-run this job by using the travis restart button or asking a bitcoin maintainer to restart. The next run should not time out because the build cache has been saved."
 before_install:
-    - sudo add-apt-repository -y ppa:bitcoin/bitcoin
-    #- sudo add-apt-repository -y ppa:ubuntu-wine/ppa
-    - sudo apt-get -q update
-    - sudo apt-get -y install bc python3-zmq python3
-    - pyenv install 3.5.6
+  - set -o errexit; source ./ci/test/00_setup_env.sh
+
+  - set -o errexit; source ./ci/test/03_before_install.sh
+
 install:
-    #- if [ "$PYZMQ" = "true" ]; then pip install pyzmq --user ; fi
-    #- if [ -n "$PPA" ]; then travis_retry sudo add-apt-repository "$PPA" -y; fi
-    - if [ -n "$DPKG_ADD_ARCH" ]; then sudo dpkg --add-architecture "$DPKG_ADD_ARCH" ; fi
-    #- if [ -n "$PACKAGES" ]; then travis_retry sudo apt-get update; fi
-    #- if [ -n "$PACKAGES" ]; then travis_retry sudo apt-get install --no-install-recommends --no-upgrade -qq $PACKAGES; fi
-before_script:
-    - unset CC; unset CXX
-    - unset DISPLAY
-    - mkdir -p depends/SDKs depends/sdk-sources
-    #- if [ -n "$OSX_SDK" -a ! -f depends/sdk-sources/MacOSX${OSX_SDK}.sdk.tar.xz ]; then curl --location --fail $SDK_URL/MacOSX${OSX_SDK}.sdk.tar.xz -o depends/sdk-sources/MacOSX${OSX_SDK}.sdk.tar.xz; fi
-    #- if [ -n "$OSX_SDK" -a -f depends/sdk-sources/MacOSX${OSX_SDK}.sdk.tar.xz ]; then tar -C depends/SDKs -xf depends/sdk-sources/MacOSX${OSX_SDK}.sdk.tar.xz; fi
-    - make $MAKEJOBS -C depends HOST=$HOST $DEP_OPTS
-script:
-    - if [ -n "$USE_SHELL" ]; then export CONFIG_SHELL="$USE_SHELL"; fi
-    - OUTDIR=$BASE_OUTDIR/$TRAVIS_PULL_REQUEST/$TRAVIS_JOB_NUMBER-$HOST
-    - FGC_CONFIG_ALL="--disable-dependency-tracking --prefix=$TRAVIS_BUILD_DIR/depends/$HOST --bindir=$OUTDIR/bin --libdir=$OUTDIR/lib"
-    - depends/$HOST/native/bin/ccache --max-size=$CCACHE_SIZE
-    - test -n "$USE_SHELL" && eval '"$USE_SHELL" -c "./autogen.sh"' || ./autogen.sh
-    - ./configure --cache-file=config.cache $FGC_CONFIG_ALL $FGC_CONFIG || ( cat config.log && false)
-    - make distdir PACKAGE=fantasygold VERSION=$HOST
-    - cd fantasygold-$HOST
-    - ./configure --cache-file=../config.cache $FGC_CONFIG_ALL $FGC_CONFIG || ( cat config.log && false)
-    - make $MAKEJOBS $GOAL || ( echo "Build failure. Verbose build follows." && make $GOAL V=1 ; false )
-    - export LD_LIBRARY_PATH=$TRAVIS_BUILD_DIR/depends/$HOST/lib
-    #- if [ "$RUN_TESTS" = "true" -a "$WINE" != "true" ]; then make $MAKEJOBS check VERBOSE=1; fi
-    #- if [ "$RUN_TESTS" = "true" -a "$WINE" = "true" ]; then wine src/test/test_fantasygold.exe; fi
-    - if [ "$RUN_TESTS" = "true" ]; then qa/pull-tester/rpc-tests.py --coverage; fi
+  - set -o errexit; source ./ci/test/04_install.sh
+
+  before_script:
+  - set -o errexit; source ./ci/test/05_before_script.sh
+
+  script:
+  - export CONTINUE=1
+  - if [ $SECONDS -gt 1200 ]; then export CONTINUE=0; fi  # Likely the depends build took very long
+  - if [ $TRAVIS_REPO_SLUG = "FantasyGold/FantasyGold-Core" ]; then export CONTINUE=1; fi  # Whitelisted repo (90 minutes build time)
+  - if [ $CONTINUE = "1" ]; then set -o errexit; source ./ci/test/06_script_a.sh; else set +o errexit; echo "$CACHE_ERR_MSG"; false; fi
+  - if [ $SECONDS -gt 2000 ]; then export CONTINUE=0; fi  # Likely the build took very long; The tests take about 1000s, so we should abort if we have less than 50*60-1000=2000s left
+  - if [ $TRAVIS_REPO_SLUG = "FantasyGold/FantasyGold-Core" ]; then export CONTINUE=1; fi  # Whitelisted repo (90 minutes build time)
+  - if [ $CONTINUE = "1" ]; then set -o errexit; source ./ci/test/06_script_b.sh; else set +o errexit; echo "$CACHE_ERR_MSG"; false; fi
 after_script:
-    - if [ "$TRAVIS_PULL_REQUEST" != "false" ]; then (echo "Upload goes here. Something like: scp -r $BASE_OUTDIR server" || echo "upload failed"); fi
-    - echo $TRAVIS_COMMIT_RANGE
-    - echo $TRAVIS_COMMIT_LOG
+  - echo $TRAVIS_COMMIT_RANGE
+jobs:
+  include:
+    - stage: test
+      name: 'x86_64 Linux  [GOAL: install]  [bionic]  [uses qt5 dev package instead of depends Qt to speed up build and avoid timeout] [unsigned char]'
+      env: >-
+        FILE_ENV="./ci/test/00_setup_env_amd64_qt5.sh"
