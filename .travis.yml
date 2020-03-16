@@ -15,7 +15,7 @@ env:
     - CACHE_ERR_MSG="Error! Initial build successful, but not enough time remains to run later build stages and tests. Please manually re-run this job by using the travis restart button or asking a bitcoin maintainer to restart. The next run should not time out because the build cache has been saved."
 before_install:
   - set -o errexit; source ./ci/test/00_setup_env.sh
-  - set -o errexit; source ./ci/test/03_before_install.s
+  - set -o errexit; source ./ci/test/03_before_install.sh
 install:
   - set -o errexit; source ./ci/test/04_install.sh
 before_script:
