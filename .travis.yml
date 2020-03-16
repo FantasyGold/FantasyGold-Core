@@ -18,9 +18,9 @@ before_install:
   - set -o errexit; source ./ci/test/03_before_install.s
 install:
   - set -o errexit; source ./ci/test/04_install.sh
-  before_script:
+before_script:
   - set -o errexit; source ./ci/test/05_before_script.sh
-  script:
+script:
   - export CONTINUE=1
   - if [ $SECONDS -gt 1200 ]; then export CONTINUE=0; fi  # Likely the depends build took very long
   - if [ $TRAVIS_REPO_SLUG = "FantasyGold/FantasyGold-Core" ]; then export CONTINUE=1; fi  # Whitelisted repo (90 minutes build time)
