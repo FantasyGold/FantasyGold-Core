@@ -676,7 +676,7 @@ QMenu{
 QMenu::item {
     border: none;
     padding: 5px 32px;
-    background-color: #d5dde9;
+    background-color: #333333;
     color: #9c8949;
 }
 QMenu::item:selected {
@@ -685,7 +685,7 @@ QMenu::item:selected {
 }
 QMenu::separator{
     height: 1px;
-    background-color: #c3cdd9;
+    background-color: #333333;
 }
 QMenu::icon{
     margin-left: 15px;
@@ -945,7 +945,7 @@ Modal Overlay CSS
     border-radius: 4px;
 }
 #ModalOverlay QLabel { 
-    color: #9c8949;  
+    color: #000000;  
 }
 #ModalOverlay #labelNumberOfBlocksLeft, 
 #ModalOverlay #labelLastBlockTime, 
