@@ -1,11 +1,11 @@
-prefix=/usr/local
+prefix=/home/user/gitFGC/FantasyGold-Core/depends/aarch64-linux-gnu
 exec_prefix=${prefix}
 libdir=${exec_prefix}/lib
 includedir=${prefix}/include
 
 Name: FantasyGold Core consensus library
 Description: Library for the Bitcoin consensus protocol.
-Version: 0.19.0.1
+Version: 2.19.1
 Libs: -L${libdir} -lbitcoinconsensus
 Cflags: -I${includedir}
 Requires.private: libcrypto

@@ -89,7 +89,7 @@ QLineEdit{
     border: 1px solid #d5dde9;
     border-radius: 14px;
     background-color: #ffffff;
-    color: #9c8949;
+    color: #000000;
     padding: 4px;
 }
 QLineEdit::hover:!read-only{
@@ -109,7 +109,7 @@ QAbstractItemView#autoCompleterPopup{
 }
 QAbstractItemView#autoCompleterPopup::item{
     background-color: #bdbdbd;
-    color: #9c8949;
+    color: #000000;
     padding: 4px;
     padding-left: 10px;
 }
@@ -556,11 +556,11 @@ Status Bar CSS
 --------------------------------------------*/
 QStatusBar{
     background: #bdbdbd;
-    color: #9c8949;
+    color: #000000;
 }
 QStatusBar QLabel{
     border: 1px solid transparent;
-    color: #9c8949;
+    color: #000000;
     font: 10pt;
 }
 QStatusBar::item {
@@ -580,7 +580,7 @@ UnitDisplayStatusBarControl {
 }
 UnitDisplayStatusBarControl QMenu::item {
     background-color: #d5dde9;
-    color: #9c8949;
+    color: #000000;
     padding: 4px;
     padding-left: 10px;
 }
@@ -676,7 +676,7 @@ QMenu{
 QMenu::item {
     border: none;
     padding: 5px 32px;
-    background-color: #d5dde9;
+    background-color: #333333;
     color: #9c8949;
 }
 QMenu::item:selected {
@@ -685,7 +685,7 @@ QMenu::item:selected {
 }
 QMenu::separator{
     height: 1px;
-    background-color: #c3cdd9;
+    background-color: #333333;
 }
 QMenu::icon{
     margin-left: 15px;
@@ -945,7 +945,7 @@ Modal Overlay CSS
     border-radius: 4px;
 }
 #ModalOverlay QLabel { 
-    color: #9c8949;  
+    color: #000000;  
 }
 #ModalOverlay #labelNumberOfBlocksLeft, 
 #ModalOverlay #labelLastBlockTime, 

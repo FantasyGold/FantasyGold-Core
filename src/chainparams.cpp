@@ -239,7 +239,7 @@ public:
         vSeeds.clear();
         // nodes with support for servicebits filtering should be at the top
 
-        vSeeds.emplace_back(testnet.fantasygold.io); // FantasyGold testnet
+        vSeeds.emplace_back("testnet.fantasygold.io"); // FantasyGold testnet
 
 
         base58Prefixes[PUBKEY_ADDRESS] = std::vector<unsigned char>(1,95);

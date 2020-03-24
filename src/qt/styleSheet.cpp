@@ -178,13 +178,13 @@ QStringList StyleSheet::getSupportedThemes()
 
 QStringList StyleSheet::getSupportedThemesNames()
 {
-    return QStringList() << "Light blue theme" << "Dark blue theme" << "Dark theme";
+    return QStringList() << "Light gray theme" << "Dark blue theme" << "Dark theme";
 }
 
 
 QString StyleSheet::getDefaultTheme()
 {
-    return "theme3";
+    return "theme2";
 }
 
 bool StyleSheet::setTheme(const QString &theme)
