@@ -28,30 +28,17 @@ These are some resources that might be helpful in understanding FantasyGold. Not
 
 Basic usage resources:
 
-* [User guide](https://docs.fantasygold.site/en/)
-* [FantasyGold-Qt Wallet Tutorial](https://github.com/FantasyGold-Core/documents/tree/master/en/FantasyGold-Wallet-Tutorial#fantasygold-qt-wallet-tutorial)
-* [FantasyGold staking tutorial](https://github.com/FantasyGold-Core/documents/tree/master/en/How-to-Stake-with-FantasyGold)
-* [FantasyGold tutorial on Raspberry Pi](https://github.com/FantasyGold-Core/documents/tree/master/en/FantasyGold-on-Raspberry-Pi)
-* [Running FantasyGold on Amazon AWS using FantasyGold AMI](https://github.com/FantasyGold-Core/documents/tree/master/en/FantasyGold-AWS)
-* [Encrypting and unlocking wallet](https://github.com/FantasyGold-Core/documents/tree/master/en/Encrypt-and-Unlock-FantasyGold-Wallet)
-* [Testnet guide](https://github.com/FantasyGold-Core/documents/blob/master/en/Testnet-User-Guide.md)
-* [Block explorer](https://fantasygold.info), [Older explorer](https://explorer.FantasyGold.io)
+* [FantasyGold-Qt Wallet Tutorial](https://github.com/FantasyGold/FantasyGold-Core/wiki/FantasyGold-QT-Wallet-Tutorial)
+* [FantasyGold staking tutorial](https://github.com/FantasyGold/FantasyGold-Core/wiki/How-to-Stake-FGC-on-a-Linux-VPS)
+* [FantasyGold tutorial on Raspberry Pi](Coming Soon)
+* [Testnet guide](Coming Soon)
+* [Block explorer](https://fantasygold.network)
 
 
-Development resources:
 
-* [FantasyGold Book - A Developer's Guide To FantasyGold](http://book.fantasygold.site/en/)
-* [FantasyGold contract usage](https://docs.fantasygold.site/en/FGC20-Token-Introduce.html)
-* [Deploying a custom token to FantasyGold](https://blog.fantasygold.io/fantasygold-custom-token-walkthrough-467d725fa27d)
-* [FantasyGoldJS document](https://FantasyGold-Core.github.io/fantasygoldjs-doc/)
-* [Smart contract ICO example](http://book.fantasygold.site/en/part3/ico.htm)
-* [Early example faucet contract](http://earlz.net/view/2017/06/30/2144/the-fantasygold-sparknet-faucet)
-
-1. Deploying a token to FantasyGold (https://github.com/fantasygold/FGC20Token)
+1. Deploying a token to FantasyGold (https://github.com/FantasyGold/FGC20Token/wiki/Basic-How-To)
 2. FantasyGold PlayBook - A Developer's Guide To FGC (Comming Soon)
 
-* [CIRCLERESEARCH FantasyGold Primer](https://www.circle.com/marketing/pdfs/research/circle-research-fantasygold.pdf)
-* [FantasyGold's PoS vs CASPER](https://www.reddit.com/r/FantasyGold/comments/788oa5/fantasygolds_pos_vs_casper_and_the_nothingatstake_problem/)
 * [Technical article explaining FantasyGold's PoS model in depth](http://earlz.net/view/2017/07/27/1904/the-missing-explanation-of-proof-of-stake-version)
 
 
@@ -95,19 +82,11 @@ Alternative Wallets
 
 FantasyGold Core uses a full node model, and thus requires downloading the entire blockchain. If you do not need the entire blockchain, and do not intend on developing smart contracts, it may be more ideal to use an alternative wallet such as one of our light wallets that can be synchronized in a matter of seconds. 
 
-### FantasyGold Web Wallet
-
-A browser wallet that supports the Ledger hardware wallet, offline cold wallet, and restoration from mobile wallets.
-
-Web site https://fantasygoldwallet.org
-
-User documentation https://github.com/FantasyGold-Core/documents/tree/master/en/FantasyGold-WebWallet-usage
-
 ### FantasyGold Electrum
 
 A light wallet that supports the Ledger and Trezor hardware wallets and is based on the well-known Electrum wallet software. 
 
-Download: https://github.com/FantasyGold/FantasyGold-Core-electrum/releases
+Download: (Coming Soon)
 
 ### iOS and Android Wallets
 
@@ -121,7 +100,7 @@ iOS Download: https://github.com/FantasyGold/
 
 This light wallet runs in your Chrome browser as a browser extension. This wallet requires a Ledger device to use.
 
-How to install: https://ledger.zendesk.com/hc/en-us/articles/115003776913-How-to-install-and-use-FantasyGold-with-Ledger
+How to install: (Coming Soon)
 
 
 ### Community Resources
@@ -129,13 +108,13 @@ How to install: https://ledger.zendesk.com/hc/en-us/articles/115003776913-How-to
 Make sure to check out these resources as well for more information and to keep up to date with all the latest news about FantasyGold. At least 1 developer is always around, so if you're developing on FantasyGold and need help, we'd love to welcome you to our community.
 
 *	@FantasyGold on Twitter https://twitter.com/fantasygold
-* FantasyGold blog https://blog.fantasygold.io/
-*	FantasyGold Telegram Group https://t.me/fantasygoldofficial, other languages available
-* FantasyGold Discord https://discordapp.com/invite/wRfmkQ9
+* 
+*	FantasyGold Telegram Group https://t.me/FGC_FantasyGold, other languages available
+*       FantasyGold Discord https://discord.gg/JYuv7Er
 *	/r/FantasyGold on Reddit https://www.reddit.com/r/FantasyGold/
 *	FantasyGold.io https://FantasyGold.io
 *	FantasyGold on Facebook https://www.facebook.com/FantasyGoldOfficial/
-*	FantasyGold Forum https://forum.FantasyGold.io
+*	
 
 ### FantasyGold Smart Contract Limitations
 

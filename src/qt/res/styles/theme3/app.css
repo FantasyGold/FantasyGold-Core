@@ -89,7 +89,7 @@ QLineEdit{
     border: 1px solid #d5dde9;
     border-radius: 14px;
     background-color: #ffffff;
-    color: #9c8949;
+    color: #000000;
     padding: 4px;
 }
 QLineEdit::hover:!read-only{
@@ -109,7 +109,7 @@ QAbstractItemView#autoCompleterPopup{
 }
 QAbstractItemView#autoCompleterPopup::item{
     background-color: #bdbdbd;
-    color: #9c8949;
+    color: #000000;
     padding: 4px;
     padding-left: 10px;
 }
@@ -556,11 +556,11 @@ Status Bar CSS
 --------------------------------------------*/
 QStatusBar{
     background: #bdbdbd;
-    color: #9c8949;
+    color: #000000;
 }
 QStatusBar QLabel{
     border: 1px solid transparent;
-    color: #9c8949;
+    color: #000000;
     font: 10pt;
 }
 QStatusBar::item {
@@ -580,7 +580,7 @@ UnitDisplayStatusBarControl {
 }
 UnitDisplayStatusBarControl QMenu::item {
     background-color: #d5dde9;
-    color: #9c8949;
+    color: #000000;
     padding: 4px;
     padding-left: 10px;
 }

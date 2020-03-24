@@ -121,10 +121,10 @@ NORMAL_UNINSTALL = :
 PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = x86_64-pc-linux-gnu
-host_triplet = x86_64-pc-linux-gnu
-am__append_1 = $(LIBBITCOIN_CRYPTO_SSE41)
-am__append_2 = $(LIBBITCOIN_CRYPTO_AVX2)
-am__append_3 = $(LIBBITCOIN_CRYPTO_SHANI)
+host_triplet = aarch64-unknown-linux-gnu
+#am__append_1 = $(LIBBITCOIN_CRYPTO_SSE41)
+#am__append_2 = $(LIBBITCOIN_CRYPTO_AVX2)
+#am__append_3 = $(LIBBITCOIN_CRYPTO_SHANI)
 bin_PROGRAMS = $(am__EXEEXT_1) $(am__EXEEXT_2) $(am__EXEEXT_3) \
 	$(am__EXEEXT_4) $(am__EXEEXT_5) $(am__EXEEXT_6) \
 	$(am__EXEEXT_7) $(am__EXEEXT_8)
@@ -156,8 +156,8 @@ am__append_23 = -DLEVELDB_PLATFORM_POSIX
 #am__append_24 = leveldb/util/env_win.cc \
 #	leveldb/port/port_win.cc
 am__append_25 = leveldb/port/port_posix.cc
-am__append_26 = -DLEVELDB_PLATFORM_POSIX_SSE
-am__append_27 = $(SSE42_CXXFLAGS)
+#am__append_26 = -DLEVELDB_PLATFORM_POSIX_SSE
+#am__append_27 = $(SSE42_CXXFLAGS)
 #am__append_28 = $(FUZZ_TARGETS:=)
 am__append_29 = test/test_fantasygold
 #am__append_30 = \
@@ -1099,17 +1099,9 @@ am__qt_libbitcoinqt_a_SOURCES_DIST = qt/bantablemodel.cpp \
 	qt/res/icons/backup_wallet.png qt/res/icons/add_token.png \
 	qt/res/icons/plus_full.png $(wildcard \
 	$(srcdir)/qt/res/movies/spinner-*.png) \
-	qt/res/tokens/6b8bf98ff497c064e8f0bde13e0c4f5ed5bf8ce7.png \
-	qt/res/tokens/9d3d4cc1986d81f9109f2b091b7732e7d9bcf63b.png \
-	qt/res/tokens/57931faffdec114056a49adfcaa1caac159a1a25.png \
-	qt/res/tokens/09800417b097c61b9fd26b3ddde4238304a110d5.png \
-	qt/res/tokens/49665919e437a4bedb92faa45ed33ebb5a33ee63.png \
-	qt/res/tokens/b6c48b3a7c888713dd96eed92a4ee0397dd64e71.png \
-	qt/res/tokens/b27d7bf95b03e02b55d5eb63d3f1692762101bf9.png \
-	qt/res/tokens/d8dec2b605005749abbf4b060edad3070e23cf5c.png \
-	qt/res/tokens/f2033ede578e17fa6231047265010445bca8cf1c.png \
-	qt/res/tokens/f2703e93f87b846a7aacec1247beaec1c583daa4.png \
-	qt/res/tokens/fe59cbc1704e89a698571413a81f0de9d8f00c69.png \
+	qt/res/tokens/77b9c2de95908905b36cdba5cd1958053b2437bb.png \
+	qt/res/tokens/7564b6686fb62d1de08de677abff9da0a516a692.png \
+	qt/res/tokens/5a996ae697b718e219b7340656ab6b0a804adf4a.png \
 	qt/res/styles/theme1/buttontransparentbordered.css \
 	qt/res/styles/theme1/buttondark.css \
 	qt/res/styles/theme1/navgroupbutton.css \
@@ -2780,15 +2772,15 @@ am__relativize = \
     dir1=`echo "$$dir1" | sed -e "$$sed_rest"`; \
   done; \
   reldir="$$dir2"
-ACLOCAL = ${SHELL} /home/dev/Desktop/fantasygold-core/build-aux/missing aclocal-1.15
+ACLOCAL = ${SHELL} /home/user/gitFGC/FantasyGold-Core/build-aux/missing aclocal-1.15
 AMTAR = $${TAR-tar}
 AM_DEFAULT_VERBOSITY = 0
-AR = /usr/bin/ar
+AR = /usr/bin/aarch64-linux-gnu-ar
 ARFLAGS = cr
-AUTOCONF = ${SHELL} /home/dev/Desktop/fantasygold-core/build-aux/missing autoconf
-AUTOHEADER = ${SHELL} /home/dev/Desktop/fantasygold-core/build-aux/missing autoheader
-AUTOMAKE = ${SHELL} /home/dev/Desktop/fantasygold-core/build-aux/missing automake-1.15
-AVX2_CXXFLAGS = -mavx -mavx2
+AUTOCONF = ${SHELL} /home/user/gitFGC/FantasyGold-Core/build-aux/missing autoconf
+AUTOHEADER = ${SHELL} /home/user/gitFGC/FantasyGold-Core/build-aux/missing autoheader
+AUTOMAKE = ${SHELL} /home/user/gitFGC/FantasyGold-Core/build-aux/missing automake-1.15
+AVX2_CXXFLAGS = 
 AWK = gawk
 BDB_CFLAGS = 
 BDB_CPPFLAGS = 
@@ -2798,42 +2790,42 @@ BITCOIN_DAEMON_NAME = fantasygoldd
 BITCOIN_GUI_NAME = fantasygold-qt
 BITCOIN_TX_NAME = fantasygold-tx
 BITCOIN_WALLET_TOOL_NAME = fantasygold-wallet
-BOOST_CHRONO_LIB = -lboost_chrono
-BOOST_CPPFLAGS = -DBOOST_SP_USE_STD_ATOMIC -DBOOST_AC_USE_STD_ATOMIC -pthread -I/usr/include
-BOOST_FILESYSTEM_LIB = -lboost_filesystem
-BOOST_LDFLAGS = -L/usr/lib/x86_64-linux-gnu
-BOOST_LIBS = -L/usr/lib/x86_64-linux-gnu -lboost_system -lboost_filesystem -lboost_program_options -lboost_thread -lpthread -lboost_chrono -lboost_random
-BOOST_PROGRAM_OPTIONS_LIB = -lboost_program_options
-BOOST_RANDOM_LIB = -lboost_random
-BOOST_SYSTEM_LIB = -lboost_system
-BOOST_THREAD_LIB = -lboost_thread -lpthread
-BOOST_UNIT_TEST_FRAMEWORK_LIB = -lboost_unit_test_framework
+BOOST_CHRONO_LIB = -lboost_chrono-mt-a64
+BOOST_CPPFLAGS = -DBOOST_SP_USE_STD_ATOMIC -DBOOST_AC_USE_STD_ATOMIC -pthread -I/home/user/gitFGC/FantasyGold-Core/depends/aarch64-linux-gnu/share/../include
+BOOST_FILESYSTEM_LIB = -lboost_filesystem-mt-a64
+BOOST_LDFLAGS = -L/home/user/gitFGC/FantasyGold-Core/depends/aarch64-linux-gnu/share/../lib
+BOOST_LIBS = -L/home/user/gitFGC/FantasyGold-Core/depends/aarch64-linux-gnu/share/../lib -lboost_system-mt-a64 -lboost_filesystem-mt-a64 -lboost_program_options-mt-a64 -lboost_thread-mt-a64 -lpthread -lboost_chrono-mt-a64 -lboost_random-mt-a64
+BOOST_PROGRAM_OPTIONS_LIB = -lboost_program_options-mt-a64
+BOOST_RANDOM_LIB = -lboost_random-mt-a64
+BOOST_SYSTEM_LIB = -lboost_system-mt-a64
+BOOST_THREAD_LIB = -lboost_thread-mt-a64 -lpthread
+BOOST_UNIT_TEST_FRAMEWORK_LIB = -lboost_unit_test_framework-mt-a64
 BREW = 
-CC = gcc
+CC = aarch64-linux-gnu-gcc
 CCACHE = 
 CCDEPMODE = depmode=gcc3
-CFLAGS = -g -O2
-CLIENT_VERSION_BUILD = 1
+CFLAGS = -pipe -O2 
+CLIENT_VERSION_BUILD = 0
 CLIENT_VERSION_IS_RELEASE = true
-CLIENT_VERSION_MAJOR = 0
+CLIENT_VERSION_MAJOR = 2
 CLIENT_VERSION_MINOR = 19
-CLIENT_VERSION_REVISION = 0
+CLIENT_VERSION_REVISION = 1
 COMPAT_LDFLAGS = 
 COPYRIGHT_HOLDERS = The %s developers
 COPYRIGHT_HOLDERS_FINAL = The FantasyGold Core developers
 COPYRIGHT_HOLDERS_SUBSTITUTION = FantasyGold Core
 COPYRIGHT_YEAR = 2020
-CPP = gcc -E
-CPPFILT = /usr/bin/c++filt
-CPPFLAGS =  -DFGC_BUILD -DHAVE_BUILD_INFO -D__STDC_FORMAT_MACROS
+CPP = aarch64-linux-gnu-gcc -E
+CPPFILT = /usr/bin/aarch64-linux-gnu-c++filt
+CPPFLAGS = -I/home/user/gitFGC/FantasyGold-Core/depends/aarch64-linux-gnu/share/../include/  -DFGC_BUILD -DHAVE_BUILD_INFO -D__STDC_FORMAT_MACROS
 CRYPTOPP_CPPFLAGS = -I$(srcdir)/cryptopp/include
 CRYPTOPP_TARGET_FLAGS = 
-CRYPTO_CFLAGS = 
-CRYPTO_LIBS = -lcrypto
-CXX = g++ -std=c++11
-CXXCPP = g++ -std=c++11 -E
+CRYPTO_CFLAGS = -I/home/user/gitFGC/FantasyGold-Core/depends/aarch64-linux-gnu/include
+CRYPTO_LIBS = -L/home/user/gitFGC/FantasyGold-Core/depends/aarch64-linux-gnu/lib -lcrypto -ldl
+CXX = aarch64-linux-gnu-g++ -std=c++11
+CXXCPP = aarch64-linux-gnu-g++ -std=c++11 -E
 CXXDEPMODE = depmode=gcc3
-CXXFLAGS = -g -O2
+CXXFLAGS = -pipe -O2 
 CYGPATH_W = echo
 DEBUG_CPPFLAGS = 
 DEBUG_CXXFLAGS = 
@@ -2848,14 +2840,14 @@ ECHO_N = -n
 ECHO_T = 
 EGREP = /bin/grep -E
 ERROR_CXXFLAGS = 
-EVENT_CFLAGS = 
-EVENT_LIBS = -levent
-EVENT_PTHREADS_CFLAGS = -pthread
-EVENT_PTHREADS_LIBS = -levent_pthreads -levent
+EVENT_CFLAGS = -I/home/user/gitFGC/FantasyGold-Core/depends/aarch64-linux-gnu/include
+EVENT_LIBS = -L/home/user/gitFGC/FantasyGold-Core/depends/aarch64-linux-gnu/lib -levent
+EVENT_PTHREADS_CFLAGS = -pthread -I/home/user/gitFGC/FantasyGold-Core/depends/aarch64-linux-gnu/include
+EVENT_PTHREADS_LIBS = -L/home/user/gitFGC/FantasyGold-Core/depends/aarch64-linux-gnu/lib -levent_pthreads -levent
 EXEEXT = 
 EXTENDED_FUNCTIONAL_TESTS = 
 FGREP = /bin/grep -F
-GCOV = /usr/bin/gcov
+GCOV = /usr/bin/aarch64-linux-gnu-gcov
 GENHTML = 
 GENISOIMAGE = 
 GIT = /usr/bin/git
@@ -2878,8 +2870,8 @@ INSTALL_SCRIPT = ${INSTALL}
 INSTALL_STRIP_PROGRAM = $(install_sh) -c -s
 LCOV = 
 LCOV_OPTS = 
-LD = /usr/bin/ld -m elf_x86_64
-LDFLAGS = 
+LD = /usr/aarch64-linux-gnu/bin/ld
+LDFLAGS = -L/home/user/gitFGC/FantasyGold-Core/depends/aarch64-linux-gnu/share/../lib 
 LEVELDB_CPPFLAGS =  $(am__append_21)
 LEVELDB_TARGET_FLAGS = -DOS_LINUX
 LIBCRYPTOPP = cryptopp/libcryptopp.a $(LIBCRYPTOPP_INT)
@@ -2893,127 +2885,127 @@ LIBTOOL = $(SHELL) $(top_builddir)/libtool
 LIBTOOL_APP_LDFLAGS = 
 LIPO = 
 LN_S = ln -s
-LRELEASE = /usr/lib/qt5/bin/lrelease
+LRELEASE = /home/user/gitFGC/FantasyGold-Core/depends/aarch64-linux-gnu/share/../native/bin/lrelease
 LTLIBOBJS = 
 LT_SYS_LIBRARY_PATH = 
-LUPDATE = /usr/lib/qt5/bin/lupdate
+LUPDATE = /home/user/gitFGC/FantasyGold-Core/depends/aarch64-linux-gnu/share/../native/bin/lupdate
 MAINT = 
-MAKEINFO = ${SHELL} /home/dev/Desktop/fantasygold-core/build-aux/missing makeinfo
+MAKEINFO = ${SHELL} /home/user/gitFGC/FantasyGold-Core/build-aux/missing makeinfo
 MAKENSIS = 
 MANIFEST_TOOL = :
 MINIUPNPC_CPPFLAGS = 
 MINIUPNPC_LIBS = -lminiupnpc
 MKDIR_P = /bin/mkdir -p
-MOC = /usr/lib/qt5/bin/moc
+MOC = /home/user/gitFGC/FantasyGold-Core/depends/aarch64-linux-gnu/share/../native/bin/moc
 MOC_DEFS = -DHAVE_CONFIG_H -I$(srcdir)
-NM = /usr/bin/nm -B
+NM = aarch64-linux-gnu-nm
 NMEDIT = 
-NOWARN_CXXFLAGS =  -Wno-unused-parameter -Wno-implicit-fallthrough -Wno-unknown-pragmas
-OBJCOPY = /usr/bin/objcopy
-OBJCXX = g++ -std=c++11
+NOWARN_CXXFLAGS = 
+OBJCOPY = /usr/bin/aarch64-linux-gnu-objcopy
+OBJCXX = aarch64-linux-gnu-g++ -std=c++11
 OBJCXXDEPMODE = depmode=gcc3
 OBJCXXFLAGS = 
-OBJDUMP = objdump
+OBJDUMP = aarch64-linux-gnu-objdump
 OBJEXT = o
 OTOOL = 
 OTOOL64 = 
 PACKAGE = fantasygold
 PACKAGE_BUGREPORT = https://github.com/FantasyGold/FantasyGold-Core/issues
 PACKAGE_NAME = FantasyGold Core
-PACKAGE_STRING = FantasyGold Core 0.19.0.1
+PACKAGE_STRING = FantasyGold Core 2.19.1
 PACKAGE_TARNAME = fantasygold
 PACKAGE_URL = https://fantasygold.io/
-PACKAGE_VERSION = 0.19.0.1
+PACKAGE_VERSION = 2.19.1
 PATH_SEPARATOR = :
 PIC_FLAGS = -fPIC
 PIE_FLAGS = -fPIE
-PKG_CONFIG = /usr/bin/pkg-config
+PKG_CONFIG = /usr/bin/pkg-config --static
 PKG_CONFIG_LIBDIR = 
-PKG_CONFIG_PATH = 
+PKG_CONFIG_PATH = /home/user/gitFGC/FantasyGold-Core/depends/aarch64-linux-gnu/share/../share/pkgconfig:/home/user/gitFGC/FantasyGold-Core/depends/aarch64-linux-gnu/share/../lib/pkgconfig
 PROTOBUF_CFLAGS = 
 PROTOBUF_LIBS = 
 PROTOC = 
-PTHREAD_CC = gcc
+PTHREAD_CC = aarch64-linux-gnu-gcc
 PTHREAD_CFLAGS = -pthread
 PTHREAD_LIBS = 
 PYTHON = /usr/bin/python3.6
-PYTHONPATH = 
-QR_CFLAGS = 
-QR_LIBS = 
-QT5_CFLAGS = -I/usr/include/x86_64-linux-gnu/qt5/QtNetwork -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/x86_64-linux-gnu/qt5
-QT5_LIBS = -lQt5Network -lQt5Widgets -lQt5Gui -lQt5Core
-QTACCESSIBILITY_CFLAGS = 
-QTACCESSIBILITY_LIBS = 
+PYTHONPATH = /home/user/gitFGC/FantasyGold-Core/depends/aarch64-linux-gnu/share/../native/lib/python3/dist-packages:
+QR_CFLAGS = -I/home/user/gitFGC/FantasyGold-Core/depends/aarch64-linux-gnu/include
+QR_LIBS = -L/home/user/gitFGC/FantasyGold-Core/depends/aarch64-linux-gnu/lib -lqrencode -lpthread
+QT5_CFLAGS = -I/home/user/gitFGC/FantasyGold-Core/depends/aarch64-linux-gnu/include/QtNetwork -I/home/user/gitFGC/FantasyGold-Core/depends/aarch64-linux-gnu/include/QtWidgets -I/home/user/gitFGC/FantasyGold-Core/depends/aarch64-linux-gnu/include/QtGui -I/home/user/gitFGC/FantasyGold-Core/depends/aarch64-linux-gnu/include/QtCore
+QT5_LIBS = -L/home/user/gitFGC/FantasyGold-Core/depends/aarch64-linux-gnu/lib -lQt5Network -lQt5Core -lm -lz -lqtpcre2 -ldl -lpthread -lz -lssl -lcrypto -lQt5Widgets -lQt5Gui -lqtlibpng -lqtharfbuzz -lQt5Core -lm -lz -lqtpcre2 -ldl -lpthread -lQt5Gui -lQt5Core -lm -lz -lqtpcre2 -ldl -lpthread -lqtlibpng -lqtharfbuzz -lz -lQt5Core -lpthread -lm -lz -lqtpcre2 -ldl
+QTACCESSIBILITY_CFLAGS = -I/home/user/gitFGC/FantasyGold-Core/depends/aarch64-linux-gnu/include/QtAccessibilitySupport -I/home/user/gitFGC/FantasyGold-Core/depends/aarch64-linux-gnu/include/QtGui -I/home/user/gitFGC/FantasyGold-Core/depends/aarch64-linux-gnu/include/QtCore
+QTACCESSIBILITY_LIBS = -L/home/user/gitFGC/FantasyGold-Core/depends/aarch64-linux-gnu/lib -lQt5AccessibilitySupport -lQt5Gui -lqtlibpng -lqtharfbuzz -lQt5Core -lm -lz -lqtpcre2 -ldl -lpthread -lQt5Gui -lQt5Core -lm -lz -lqtpcre2 -ldl -lpthread -lqtlibpng -lqtharfbuzz -lz -lQt5Core -lpthread -lm -lz -lqtpcre2 -ldl
 QTCGL_CFLAGS = 
 QTCGL_LIBS = 
 QTCLIPBOARD_CFLAGS = 
 QTCLIPBOARD_LIBS = 
-QTDEVICEDISCOVERY_CFLAGS = 
-QTDEVICEDISCOVERY_LIBS = 
-QTEVENTDISPATCHER_CFLAGS = 
-QTEVENTDISPATCHER_LIBS = 
-QTFB_CFLAGS = 
-QTFB_LIBS = 
-QTFONTDATABASE_CFLAGS = 
-QTFONTDATABASE_LIBS = 
+QTDEVICEDISCOVERY_CFLAGS = -I/home/user/gitFGC/FantasyGold-Core/depends/aarch64-linux-gnu/include/QtDeviceDiscoverySupport -I/home/user/gitFGC/FantasyGold-Core/depends/aarch64-linux-gnu/include/QtCore
+QTDEVICEDISCOVERY_LIBS = -L/home/user/gitFGC/FantasyGold-Core/depends/aarch64-linux-gnu/lib -lQt5DeviceDiscoverySupport -lQt5Core -lm -lz -lqtpcre2 -ldl -lpthread -lQt5Core -lpthread -lm -lz -lqtpcre2 -ldl
+QTEVENTDISPATCHER_CFLAGS = -I/home/user/gitFGC/FantasyGold-Core/depends/aarch64-linux-gnu/include/QtEventDispatcherSupport -I/home/user/gitFGC/FantasyGold-Core/depends/aarch64-linux-gnu/include/QtGui -I/home/user/gitFGC/FantasyGold-Core/depends/aarch64-linux-gnu/include/QtCore
+QTEVENTDISPATCHER_LIBS = -L/home/user/gitFGC/FantasyGold-Core/depends/aarch64-linux-gnu/lib -lQt5EventDispatcherSupport -lQt5Gui -lqtlibpng -lqtharfbuzz -lQt5Core -lm -lz -lqtpcre2 -ldl -lpthread -lQt5Gui -lQt5Core -lm -lz -lqtpcre2 -ldl -lpthread -lqtlibpng -lqtharfbuzz -lz -lQt5Core -lpthread -lm -lz -lqtpcre2 -ldl
+QTFB_CFLAGS = -I/home/user/gitFGC/FantasyGold-Core/depends/aarch64-linux-gnu/include/QtFbSupport -I/home/user/gitFGC/FantasyGold-Core/depends/aarch64-linux-gnu/include/QtGui -I/home/user/gitFGC/FantasyGold-Core/depends/aarch64-linux-gnu/include/QtCore
+QTFB_LIBS = -L/home/user/gitFGC/FantasyGold-Core/depends/aarch64-linux-gnu/lib -lQt5FbSupport -lQt5Gui -lqtlibpng -lqtharfbuzz -lQt5Core -lm -lz -lqtpcre2 -ldl -lpthread -lQt5Gui -lQt5Core -lm -lz -lqtpcre2 -ldl -lpthread -lqtlibpng -lqtharfbuzz -lz -lQt5Core -lpthread -lm -lz -lqtpcre2 -ldl
+QTFONTDATABASE_CFLAGS = -I/home/user/gitFGC/FantasyGold-Core/depends/aarch64-linux-gnu/include/QtFontDatabaseSupport -I/home/user/gitFGC/FantasyGold-Core/depends/aarch64-linux-gnu/include/QtGui -I/home/user/gitFGC/FantasyGold-Core/depends/aarch64-linux-gnu/include/QtCore
+QTFONTDATABASE_LIBS = -L/home/user/gitFGC/FantasyGold-Core/depends/aarch64-linux-gnu/lib -L//home/user/gitFGC/FantasyGold-Core/depends/aarch64-linux-gnu/lib -L/home/user/gitFGC/FantasyGold-Core/depends/aarch64-linux-gnu/lib -lQt5FontDatabaseSupport -lQt5Gui -lqtlibpng -lqtharfbuzz -lQt5Core -lm -lz -lqtpcre2 -ldl -lpthread -lfontconfig -lfreetype -lQt5Gui -lQt5Core -lm -lz -lqtpcre2 -ldl -lpthread -lqtlibpng -lqtharfbuzz -lz -lQt5Core -lpthread -lm -lz -lqtpcre2 -ldl
 QTGRAPHICS_CFLAGS = 
 QTGRAPHICS_LIBS = 
 QTPLATFORM_CFLAGS = 
 QTPLATFORM_LIBS = 
-QTTHEME_CFLAGS = 
-QTTHEME_LIBS = 
-QTXCBQPA_CFLAGS = 
-QTXCBQPA_LIBS = 
-QT_DBUS_CFLAGS = -I/usr/include/x86_64-linux-gnu/qt5/QtDBus -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/x86_64-linux-gnu/qt5
-QT_DBUS_INCLUDES = -I/usr/include/x86_64-linux-gnu/qt5/QtDBus -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/x86_64-linux-gnu/qt5
-QT_DBUS_LIBS = -lQt5DBus -lQt5Core
-QT_INCLUDES = -I/usr/include/x86_64-linux-gnu/qt5/QtNetwork -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/x86_64-linux-gnu/qt5
+QTTHEME_CFLAGS = -I/home/user/gitFGC/FantasyGold-Core/depends/aarch64-linux-gnu/include/QtThemeSupport -I/home/user/gitFGC/FantasyGold-Core/depends/aarch64-linux-gnu/include/QtGui -I/home/user/gitFGC/FantasyGold-Core/depends/aarch64-linux-gnu/include/QtCore
+QTTHEME_LIBS = -L/home/user/gitFGC/FantasyGold-Core/depends/aarch64-linux-gnu/lib -lQt5ThemeSupport -lQt5Gui -lqtlibpng -lqtharfbuzz -lQt5Core -lm -lz -lqtpcre2 -ldl -lpthread -lQt5DBus -lQt5Core -lpthread -lm -lz -lqtpcre2 -ldl -lQt5Gui -lQt5Core -lm -lz -lqtpcre2 -ldl -lpthread -lqtlibpng -lqtharfbuzz -lz -lQt5Core -lpthread -lm -lz -lqtpcre2 -ldl
+QTXCBQPA_CFLAGS = -I/home/user/gitFGC/FantasyGold-Core/depends/aarch64-linux-gnu/include/QtXcbQpa -I/home/user/gitFGC/FantasyGold-Core/depends/aarch64-linux-gnu/include/QtServiceSupport -I/home/user/gitFGC/FantasyGold-Core/depends/aarch64-linux-gnu/include/QtThemeSupport -I/home/user/gitFGC/FantasyGold-Core/depends/aarch64-linux-gnu/include/QtEventDispatcherSupport -I/home/user/gitFGC/FantasyGold-Core/depends/aarch64-linux-gnu/include/QtFontDatabaseSupport -I/home/user/gitFGC/FantasyGold-Core/depends/aarch64-linux-gnu/include/QtGui -I/home/user/gitFGC/FantasyGold-Core/depends/aarch64-linux-gnu/include/QtCore
+QTXCBQPA_LIBS = -L/home/user/gitFGC/FantasyGold-Core/depends/aarch64-linux-gnu/lib -L//home/user/gitFGC/FantasyGold-Core/depends/aarch64-linux-gnu/lib -L/home/user/gitFGC/FantasyGold-Core/depends/aarch64-linux-gnu/lib -L//home/user/gitFGC/FantasyGold-Core/depends/aarch64-linux-gnu/lib -L/home/user/gitFGC/FantasyGold-Core/depends/aarch64-linux-gnu/lib -lQt5XcbQpa -lQt5ServiceSupport -lQt5ThemeSupport -lQt5DBus -lQt5EventDispatcherSupport -lQt5FontDatabaseSupport -lfontconfig -lfreetype -lQt5Gui -lqtlibpng -lqtharfbuzz -lQt5Core -lm -lz -lqtpcre2 -lpthread -lxcb-static -lxcb -ldl -lQt5ServiceSupport -lQt5Gui -lqtlibpng -lqtharfbuzz -lQt5Core -lm -lz -lqtpcre2 -ldl -lpthread -lQt5ThemeSupport -lQt5Gui -lqtlibpng -lqtharfbuzz -lQt5Core -lm -lz -lqtpcre2 -ldl -lpthread -lQt5DBus -lQt5Core -lpthread -lm -lz -lqtpcre2 -ldl -lQt5EventDispatcherSupport -lQt5Gui -lqtlibpng -lqtharfbuzz -lQt5Core -lm -lz -lqtpcre2 -ldl -lpthread -lQt5FontDatabaseSupport -lQt5Gui -lqtlibpng -lqtharfbuzz -lQt5Core -lm -lz -lqtpcre2 -ldl -lpthread -lfontconfig -lfreetype -lQt5Gui -lQt5Core -lm -lz -lqtpcre2 -ldl -lpthread -lqtlibpng -lqtharfbuzz -lz -lQt5Core -lpthread -lm -lz -lqtpcre2 -ldl
+QT_DBUS_CFLAGS = -I/home/user/gitFGC/FantasyGold-Core/depends/aarch64-linux-gnu/include/QtDBus -I/home/user/gitFGC/FantasyGold-Core/depends/aarch64-linux-gnu/include/QtCore
+QT_DBUS_INCLUDES = -I/home/user/gitFGC/FantasyGold-Core/depends/aarch64-linux-gnu/include/QtDBus -I/home/user/gitFGC/FantasyGold-Core/depends/aarch64-linux-gnu/include/QtCore
+QT_DBUS_LIBS = -L/home/user/gitFGC/FantasyGold-Core/depends/aarch64-linux-gnu/lib -lQt5DBus -lQt5Core -lm -lz -lqtpcre2 -ldl -lpthread -lQt5Core -lpthread -lm -lz -lqtpcre2 -ldl
+QT_INCLUDES = -I/home/user/gitFGC/FantasyGold-Core/depends/aarch64-linux-gnu/include/QtNetwork -I/home/user/gitFGC/FantasyGold-Core/depends/aarch64-linux-gnu/include/QtWidgets -I/home/user/gitFGC/FantasyGold-Core/depends/aarch64-linux-gnu/include/QtGui -I/home/user/gitFGC/FantasyGold-Core/depends/aarch64-linux-gnu/include/QtCore
 QT_LDFLAGS = 
-QT_LIBS = -lQt5Network -lQt5Widgets -lQt5Gui -lQt5Core
-QT_PIE_FLAGS = -fPIC
+QT_LIBS = -lqxcb -lxcb-static -lqminimal -L/home/user/gitFGC/FantasyGold-Core/depends/aarch64-linux-gnu/lib -L//home/user/gitFGC/FantasyGold-Core/depends/aarch64-linux-gnu/lib -L/home/user/gitFGC/FantasyGold-Core/depends/aarch64-linux-gnu/lib -L//home/user/gitFGC/FantasyGold-Core/depends/aarch64-linux-gnu/lib -L/home/user/gitFGC/FantasyGold-Core/depends/aarch64-linux-gnu/lib -lQt5XcbQpa -lQt5ServiceSupport -lQt5ThemeSupport -lQt5DBus -lQt5EventDispatcherSupport -lQt5FontDatabaseSupport -lfontconfig -lfreetype -lQt5Gui -lqtlibpng -lqtharfbuzz -lQt5Core -lm -lz -lqtpcre2 -lpthread -lxcb-static -lxcb -ldl -lQt5ServiceSupport -lQt5Gui -lqtlibpng -lqtharfbuzz -lQt5Core -lm -lz -lqtpcre2 -ldl -lpthread -lQt5ThemeSupport -lQt5Gui -lqtlibpng -lqtharfbuzz -lQt5Core -lm -lz -lqtpcre2 -ldl -lpthread -lQt5DBus -lQt5Core -lpthread -lm -lz -lqtpcre2 -ldl -lQt5EventDispatcherSupport -lQt5Gui -lqtlibpng -lqtharfbuzz -lQt5Core -lm -lz -lqtpcre2 -ldl -lpthread -lQt5FontDatabaseSupport -lQt5Gui -lqtlibpng -lqtharfbuzz -lQt5Core -lm -lz -lqtpcre2 -ldl -lpthread -lfontconfig -lfreetype -lQt5Gui -lQt5Core -lm -lz -lqtpcre2 -ldl -lpthread -lqtlibpng -lqtharfbuzz -lz -lQt5Core -lpthread -lm -lz -lqtpcre2 -ldl -lQt5FbSupport -lQt5AccessibilitySupport -lQt5DeviceDiscoverySupport -lQt5ThemeSupport -lQt5EventDispatcherSupport -lQt5FontDatabaseSupport -L/home/user/gitFGC/FantasyGold-Core/depends/aarch64-linux-gnu/lib -lQt5Network -lQt5Core -lm -lz -lqtpcre2 -ldl -lpthread -lz -lssl -lcrypto -lQt5Widgets -lQt5Gui -lqtlibpng -lqtharfbuzz -lQt5Core -lm -lz -lqtpcre2 -ldl -lpthread -lQt5Gui -lQt5Core -lm -lz -lqtpcre2 -ldl -lpthread -lqtlibpng -lqtharfbuzz -lz -lQt5Core -lpthread -lm -lz -lqtpcre2 -ldl -L/home/user/gitFGC/FantasyGold-Core/depends/aarch64-linux-gnu/share/../plugins/platforms
+QT_PIE_FLAGS = -fPIE
 QT_SELECT = qt5
-QT_TEST_CFLAGS = -I/usr/include/x86_64-linux-gnu/qt5/QtTest -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/x86_64-linux-gnu/qt5
-QT_TEST_INCLUDES = -I/usr/include/x86_64-linux-gnu/qt5/QtTest -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/x86_64-linux-gnu/qt5
-QT_TEST_LIBS = -lQt5Test -lQt5Core
-QT_TRANSLATION_DIR = 
-RANLIB = /usr/bin/ranlib
+QT_TEST_CFLAGS = -I/home/user/gitFGC/FantasyGold-Core/depends/aarch64-linux-gnu/include/QtTest -I/home/user/gitFGC/FantasyGold-Core/depends/aarch64-linux-gnu/include/QtCore
+QT_TEST_INCLUDES = -I/home/user/gitFGC/FantasyGold-Core/depends/aarch64-linux-gnu/include/QtTest -I/home/user/gitFGC/FantasyGold-Core/depends/aarch64-linux-gnu/include/QtCore
+QT_TEST_LIBS = -L/home/user/gitFGC/FantasyGold-Core/depends/aarch64-linux-gnu/lib -lQt5Test -lQt5Core -lm -lz -lqtpcre2 -ldl -lpthread -lQt5Core -lpthread -lm -lz -lqtpcre2 -ldl
+QT_TRANSLATION_DIR = /home/user/gitFGC/FantasyGold-Core/depends/aarch64-linux-gnu/share/../translations
+RANLIB = /usr/bin/aarch64-linux-gnu-ranlib
 RAPIDCHECK_LIBS = 
-RCC = /usr/lib/qt5/bin/rcc
-READELF = /usr/bin/readelf
+RCC = /home/user/gitFGC/FantasyGold-Core/depends/aarch64-linux-gnu/share/../native/bin/rcc
+READELF = /usr/bin/aarch64-linux-gnu-readelf
 RELDFLAGS = 
 RSVG_CONVERT = 
 SANITIZER_CXXFLAGS = 
 SANITIZER_LDFLAGS = 
 SED = /bin/sed
 SET_MAKE = 
-SHANI_CXXFLAGS = -msse4 -msha
+SHANI_CXXFLAGS = 
 SHELL = /bin/bash
-SSE41_CXXFLAGS = -msse4.1
-SSE42_CXXFLAGS = -msse4.2
-SSL_CFLAGS = 
-SSL_LIBS = -lssl
-STRIP = /usr/bin/strip
-TESTDEFS =  -DBOOST_TEST_DYN_LINK
+SSE41_CXXFLAGS = 
+SSE42_CXXFLAGS = 
+SSL_CFLAGS = -I/home/user/gitFGC/FantasyGold-Core/depends/aarch64-linux-gnu/include
+SSL_LIBS = -L/home/user/gitFGC/FantasyGold-Core/depends/aarch64-linux-gnu/lib -lssl -lcrypto -ldl
+STRIP = /usr/bin/aarch64-linux-gnu-strip
+TESTDEFS = 
 TIFFCP = 
-UIC = /usr/lib/qt5/bin/uic
+UIC = /home/user/gitFGC/FantasyGold-Core/depends/aarch64-linux-gnu/share/../native/bin/uic
 UNIVALUE_CFLAGS = -I$(srcdir)/univalue/include
 UNIVALUE_LIBS = univalue/libunivalue.la
 USE_QRCODE = 
 USE_UPNP = 
-VERSION = 0.19.0.1
-WARN_CXXFLAGS =  -Wall -Wextra -Wformat -Wvla -Wswitch -Wformat-security -Wredundant-decls
+VERSION = 2.19.1
+WARN_CXXFLAGS = 
 WINDOWS_BITS = 
 WINDRES = 
 XGETTEXT = /usr/bin/xgettext
-ZMQ_CFLAGS = 
-ZMQ_LIBS = -lzmq
-abs_builddir = /home/dev/Desktop/fantasygold-core/src
-abs_srcdir = /home/dev/Desktop/fantasygold-core/src
-abs_top_builddir = /home/dev/Desktop/fantasygold-core
-abs_top_srcdir = /home/dev/Desktop/fantasygold-core
-ac_ct_AR = ar
-ac_ct_CC = gcc
-ac_ct_CXX = g++
+ZMQ_CFLAGS = -I/home/user/gitFGC/FantasyGold-Core/depends/aarch64-linux-gnu/include
+ZMQ_LIBS = -L/home/user/gitFGC/FantasyGold-Core/depends/aarch64-linux-gnu/lib -lzmq -lpthread -lrt
+abs_builddir = /home/user/gitFGC/FantasyGold-Core/src
+abs_srcdir = /home/user/gitFGC/FantasyGold-Core/src
+abs_top_builddir = /home/user/gitFGC/FantasyGold-Core
+abs_top_srcdir = /home/user/gitFGC/FantasyGold-Core
+ac_ct_AR = 
+ac_ct_CC = 
+ac_ct_CXX = 
 ac_ct_DUMPBIN = 
 ac_ct_OBJCXX = 
 am__include = include
@@ -3034,15 +3026,15 @@ datarootdir = ${prefix}/share
 docdir = ${datarootdir}/doc/${PACKAGE_TARNAME}
 dvidir = ${docdir}
 exec_prefix = ${prefix}
-host = x86_64-pc-linux-gnu
-host_alias = 
-host_cpu = x86_64
+host = aarch64-unknown-linux-gnu
+host_alias = aarch64-linux-gnu
+host_cpu = aarch64
 host_os = linux-gnu
-host_vendor = pc
+host_vendor = unknown
 htmldir = ${docdir}
 includedir = ${prefix}/include
 infodir = ${datarootdir}/info
-install_sh = ${SHELL} /home/dev/Desktop/fantasygold-core/build-aux/install-sh
+install_sh = ${SHELL} /home/user/gitFGC/FantasyGold-Core/build-aux/install-sh
 libdir = ${exec_prefix}/lib
 libexecdir = ${exec_prefix}/libexec
 localedir = ${datarootdir}/locale
@@ -3051,7 +3043,7 @@ mandir = ${datarootdir}/man
 mkdir_p = $(MKDIR_P)
 oldincludedir = /usr/include
 pdfdir = ${docdir}
-prefix = /usr/local
+prefix = /home/user/gitFGC/FantasyGold-Core/depends/aarch64-linux-gnu
 program_transform_name = s,x,x,
 psdir = ${docdir}
 runstatedir = ${localstatedir}/run
@@ -3101,9 +3093,9 @@ LIBBITCOIN_WALLET = libbitcoin_wallet.a
 LIBBITCOIN_WALLET_TOOL = libbitcoin_wallet_tool.a
 LIBBITCOIN_CRYPTO = $(LIBBITCOIN_CRYPTO_BASE) $(am__append_1) \
 	$(am__append_2) $(am__append_3)
-LIBBITCOIN_CRYPTO_SSE41 = crypto/libbitcoin_crypto_sse41.a
-LIBBITCOIN_CRYPTO_AVX2 = crypto/libbitcoin_crypto_avx2.a
-LIBBITCOIN_CRYPTO_SHANI = crypto/libbitcoin_crypto_shani.a
+#LIBBITCOIN_CRYPTO_SSE41 = crypto/libbitcoin_crypto_sse41.a
+#LIBBITCOIN_CRYPTO_AVX2 = crypto/libbitcoin_crypto_avx2.a
+#LIBBITCOIN_CRYPTO_SHANI = crypto/libbitcoin_crypto_shani.a
 lib_LTLIBRARIES = $(LIBBITCOINCONSENSUS)
 BENCHMARKS = 
 # bitcoin core #
@@ -4857,17 +4849,9 @@ BITCOIN_QT_CPP = $(BITCOIN_QT_BASE_CPP) \
 	$(am__append_45)
 RES_IMAGES = 
 RES_MOVIES = $(wildcard $(srcdir)/qt/res/movies/spinner-*.png)
-RES_TOKENS = qt/res/tokens/6b8bf98ff497c064e8f0bde13e0c4f5ed5bf8ce7.png \
-qt/res/tokens/9d3d4cc1986d81f9109f2b091b7732e7d9bcf63b.png \
-qt/res/tokens/57931faffdec114056a49adfcaa1caac159a1a25.png \
-qt/res/tokens/09800417b097c61b9fd26b3ddde4238304a110d5.png \
-qt/res/tokens/49665919e437a4bedb92faa45ed33ebb5a33ee63.png \
-qt/res/tokens/b6c48b3a7c888713dd96eed92a4ee0397dd64e71.png \
-qt/res/tokens/b27d7bf95b03e02b55d5eb63d3f1692762101bf9.png \
-qt/res/tokens/d8dec2b605005749abbf4b060edad3070e23cf5c.png \
-qt/res/tokens/f2033ede578e17fa6231047265010445bca8cf1c.png \
-qt/res/tokens/f2703e93f87b846a7aacec1247beaec1c583daa4.png \
-qt/res/tokens/fe59cbc1704e89a698571413a81f0de9d8f00c69.png
+RES_TOKENS = qt/res/tokens/77b9c2de95908905b36cdba5cd1958053b2437bb.png \
+qt/res/tokens/7564b6686fb62d1de08de677abff9da0a516a692.png \
+qt/res/tokens/5a996ae697b718e219b7340656ab6b0a804adf4a.png 
 
 RES_STYLES = qt/res/styles/theme1/buttontransparentbordered.css \
 qt/res/styles/theme1/buttondark.css \

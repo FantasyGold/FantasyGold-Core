@@ -677,11 +677,11 @@ QMenu::item {
     border: none;
     padding: 5px 32px;
     background-color: #49587a;
-    color: #1A233A;
+    color: #9c8949;
 }
 QMenu::item:selected {
     background-color: #1A233A;
-    color:#ffffff;
+    color:#9c8949;
 }
 QMenu::separator{
     height: 1px;
