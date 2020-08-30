@@ -12,6 +12,7 @@ struct TransactionReceiptInfo{
     uint32_t blockNumber;
     uint256 transactionHash;
     uint32_t transactionIndex;
+    uint32_t outputIndex;
     dev::Address from;
     dev::Address to;
     uint64_t cumulativeGasUsed;
@@ -20,7 +21,10 @@ struct TransactionReceiptInfo{
     dev::eth::LogEntries logs;
     dev::eth::TransactionException excepted;
     std::string exceptedMessage;
-    uint32_t outputIndex;
+    dev::h256 stateRoot;
+    dev::h256 utxoRoot;
+    std::vector<std::pair<dev::Address, dev::bytes>> createdContracts;
+    std::vector<dev::Address> destructedContracts;
 };
 
 struct TransactionReceiptInfoSerialized{
@@ -28,6 +32,7 @@ struct TransactionReceiptInfoSerialized{
     std::vector<uint32_t> blockNumbers;
     std::vector<dev::h256> transactionHashes;
     std::vector<uint32_t> transactionIndexes;
+    std::vector<uint32_t> outputIndexes;
     std::vector<dev::h160> senders;
     std::vector<dev::h160> receivers;
     std::vector<dev::u256> cumulativeGasUsed;
@@ -36,7 +41,10 @@ struct TransactionReceiptInfoSerialized{
     std::vector<logEntriesSerialize> logs;
     std::vector<uint32_t> excepted;
     std::vector<std::string> exceptedMessage;
-    std::vector<uint32_t> outputIndexes;
+    std::vector<dev::h256> stateRoots;
+    std::vector<dev::h256> utxoRoots;
+    std::vector<std::vector<std::pair<dev::h160, dev::bytes>>> createdContracts;
+    std::vector<std::vector<dev::h160>> destructedContracts;
 };
 
 class StorageResults{
