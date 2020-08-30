@@ -15,10 +15,10 @@
 #include <util/strencodings.h>
 #include <util/validation.h>
 
-#ifdef ENABLE_BITCORE_RPC
+
 #include <txmempool.h>
 #include <validation.h>
-#endif
+
 
 #include <stdint.h>
 #include <tuple>
@@ -76,7 +76,7 @@ static UniValue validateaddress(const JSONRPCRequest& request)
     return ret;
 }
 
-#ifdef ENABLE_BITCORE_RPC
+
 /////////////////////////////////////////////////////////////////////// // fantasygold
 UniValue getdgpinfo(const JSONRPCRequest& request)
 {
@@ -732,7 +732,7 @@ UniValue getaddresstxids(const JSONRPCRequest& request)
     return result;
 }
 ///////////////////////////////////////////////////////////////////////
-#endif
+
 
 static UniValue createmultisig(const JSONRPCRequest& request)
 {
@@ -1247,7 +1247,7 @@ static const CRPCCommand commands[] =
     { "hidden",             "echo",                   &echo,                   {"arg0","arg1","arg2","arg3","arg4","arg5","arg6","arg7","arg8","arg9"}},
     { "hidden",             "echojson",               &echo,                   {"arg0","arg1","arg2","arg3","arg4","arg5","arg6","arg7","arg8","arg9"}},
 
-     #ifdef ENABLE_BITCORE_RPC  
+      
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////// // fantasygold
     { "control",            "getdgpinfo",             &getdgpinfo,             {} },
     { "util",               "getaddresstxids",        &getaddresstxids,        {"addresses"} },
@@ -1258,7 +1258,7 @@ static const CRPCCommand commands[] =
     { "util",               "getblockhashes",         &getblockhashes,         {"high","low","options"} },
     { "util",               "getspentinfo",           &getspentinfo,           {"argument"} },
   ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
-#endif
+
 };
 // clang-format on
 

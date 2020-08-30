@@ -17,9 +17,9 @@
 #include <util/system.h>
 #include <util/moneystr.h>
 #include <util/time.h>
-#ifdef ENABLE_BITCORE_RPC
+
 #include <script/sign.h>
-#endif
+
 
 CTxMemPoolEntry::CTxMemPoolEntry(const CTransactionRef& _tx, const CAmount& _nFee,
                                  int64_t _nTime, unsigned int _entryHeight,
@@ -570,10 +570,9 @@ void CTxMemPool::removeForBlock(const std::vector<CTransactionRef>& vtx, unsigne
         }
         removeConflicts(*tx);
         ClearPrioritisation(tx->GetHash());
-#ifdef ENABLE_BITCORE_RPC
+
         removeAddressIndex(tx->GetHash());
         removeSpentIndex(tx->GetHash());
-#endif
     }
     lastRollingFeeUpdate = GetTime();
     blockSinceLastRollingFeeBump = true;
@@ -1114,7 +1113,7 @@ void CTxMemPool::SetIsLoaded(bool loaded)
 
 SaltedTxidHasher::SaltedTxidHasher() : k0(GetRand(std::numeric_limits<uint64_t>::max())), k1(GetRand(std::numeric_limits<uint64_t>::max())) {}
 
-#ifdef ENABLE_BITCORE_RPC
+
 /////////////////////////////////////////////////////// // fantasygold
 void CTxMemPool::addAddressIndex(const CTxMemPoolEntry &entry, const CCoinsViewCache &view)
 {
@@ -1272,4 +1271,3 @@ bool CTxMemPool::removeSpentIndex(const uint256 txhash)
     return true;
 }
 ///////////////////////////////////////////////////////
-#endif

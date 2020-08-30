@@ -137,9 +137,9 @@ uint256 g_best_block;
 int nScriptCheckThreads = 0;
 std::atomic_bool fImporting(false);
 std::atomic_bool fReindex(false);
-#ifdef ENABLE_BITCORE_RPC
+
 bool fAddressIndex = false; // fantasygold
-#endif
+
 bool fLogEvents = false;
 bool fHavePruned = false;
 bool fPruneMode = false;
@@ -1144,7 +1144,7 @@ bool MemPoolAccept::Finalize(ATMPArgs& args, Workspace& ws)
     // - the transaction is not dependent on any other transactions in the mempool
     bool validForFeeEstimation = !fReplacementTransaction && !bypass_limits && IsCurrentForFeeEstimation() && m_pool.HasNoInputsOf(tx);
 
-#ifdef ENABLE_BITCORE_RPC
+
     //////////////////////////////////////////////////////////////// // fantasygold
     // Add memory address index
     if (fAddressIndex)
@@ -1153,7 +1153,7 @@ bool MemPoolAccept::Finalize(ATMPArgs& args, Workspace& ws)
         m_pool.addSpentIndex(*entry, m_view);
     }
     ////////////////////////////////////////////////////////////////
-#endif
+
 
     // Store transaction in memory
     m_pool.addUnchecked(*entry, setAncestors, validForFeeEstimation);
@@ -1950,12 +1950,12 @@ DisconnectResult CChainState::DisconnectBlock(const CBlock& block, const CBlockI
         return DISCONNECT_FAILED;
     }
 
-#ifdef ENABLE_BITCORE_RPC
+
     /////////////////////////////////////////////////////////// // fantasygold
     std::vector<std::pair<CAddressIndexKey, CAmount> > addressIndex;
     std::vector<std::pair<CAddressUnspentKey, CAddressUnspentValue> > addressUnspentIndex;
     ///////////////////////////////////////////////////////////
-#endif
+
 
     // undo transactions in reverse order
     for (int i = block.vtx.size() - 1; i >= 0; i--) {
@@ -1977,7 +1977,7 @@ DisconnectResult CChainState::DisconnectBlock(const CBlock& block, const CBlockI
             }
         }
 
-#ifdef ENABLE_BITCORE_RPC
+
         /////////////////////////////////////////////////////////// // fantasygold
         if (pfClean == NULL && fAddressIndex) {
 
@@ -2000,7 +2000,7 @@ DisconnectResult CChainState::DisconnectBlock(const CBlock& block, const CBlockI
             }
         }
         ///////////////////////////////////////////////////////////
-#endif
+
 
         // restore inputs
         if (i > 0) { // not coinbases
@@ -2015,7 +2015,7 @@ DisconnectResult CChainState::DisconnectBlock(const CBlock& block, const CBlockI
                 if (res == DISCONNECT_FAILED) return DISCONNECT_FAILED;
                 fClean = fClean && res != DISCONNECT_UNCLEAN;
 
-#ifdef ENABLE_BITCORE_RPC
+
                 const auto &undo = txundo.vprevout[j];
                 const bool isTxCoinStake = tx.IsCoinStake();
                 const CTxIn input = tx.vin[j];
@@ -2036,7 +2036,7 @@ DisconnectResult CChainState::DisconnectBlock(const CBlock& block, const CBlockI
                         addressUnspentIndex.push_back(std::make_pair(CAddressUnspentKey(dest.which(), uint256(addressBytes), input.prevout.hash, input.prevout.n), CAddressUnspentValue(prevout.nValue, prevout.scriptPubKey, undo.nHeight, isTxCoinStake)));
                     }
                 }
-#endif
+
             }
             // At this point, all of txundo.vprevout should have been moved out.
         }
@@ -2054,7 +2054,7 @@ DisconnectResult CChainState::DisconnectBlock(const CBlock& block, const CBlockI
     }
     pblocktree->EraseStakeIndex(pindex->nHeight);
 
-#ifdef ENABLE_BITCORE_RPC
+
     //////////////////////////////////////////////////// // fantasygold
     if (pfClean == NULL && fAddressIndex) {
         if (!pblocktree->EraseAddressIndex(addressIndex)) {
@@ -2067,7 +2067,7 @@ DisconnectResult CChainState::DisconnectBlock(const CBlock& block, const CBlockI
         }
     }
     ////////////////////////////////////////////////////
-#endif
+
 
     return fClean ? DISCONNECT_OK : DISCONNECT_UNCLEAN;
 }
@@ -3101,11 +3101,11 @@ bool CChainState::ConnectBlock(const CBlock& block, CValidationState& state, CBl
     blockundo.vtxundo.reserve(block.vtx.size() - 1);
 
     ///////////////////////////////////////////////////////// // fantasygold
-#ifdef ENABLE_BITCORE_RPC
+
     std::vector<std::pair<CAddressIndexKey, CAmount> > addressIndex;
     std::vector<std::pair<CAddressUnspentKey, CAddressUnspentValue> > addressUnspentIndex;
     std::vector<std::pair<CSpentIndexKey, CSpentIndexValue> > spentIndex;
-#endif
+
     std::map<dev::Address, std::pair<CHeightTxIndexKey, std::vector<uint256>>> heightIndexes;
     /////////////////////////////////////////////////////////
 
@@ -3156,7 +3156,7 @@ bool CChainState::ConnectBlock(const CBlock& block, CValidationState& state, CBl
                                  REJECT_INVALID, "bad-txns-nonfinal");
             }
 
-#ifdef ENABLE_BITCORE_RPC
+
             ////////////////////////////////////////////////////////////////// // fantasygold
             if (fAddressIndex)
             {
@@ -3181,7 +3181,7 @@ bool CChainState::ConnectBlock(const CBlock& block, CValidationState& state, CBl
                 }
             }
             //////////////////////////////////////////////////////////////////
-#endif
+
         }
 
         // GetTransactionSigOpCost counts 3 types of sigops:
@@ -3391,7 +3391,7 @@ bool CChainState::ConnectBlock(const CBlock& block, CValidationState& state, CBl
         }
 /////////////////////////////////////////////////////////////////////////////////////////
 
-#ifdef ENABLE_BITCORE_RPC
+
         /////////////////////////////////////////////////////////////////////////////////// // fantasygold
         if (fAddressIndex) {
 
@@ -3415,7 +3415,7 @@ bool CChainState::ConnectBlock(const CBlock& block, CValidationState& state, CBl
             }
         }
         ///////////////////////////////////////////////////////////////////////////////////
-#endif
+
 
         CTxUndo undoDummy;
         if (i > 0) {
@@ -3548,7 +3548,7 @@ bool CChainState::ConnectBlock(const CBlock& block, CValidationState& state, CBl
     }
 
     assert(pindex->phashBlock);
-#ifdef ENABLE_BITCORE_RPC
+
     ///////////////////////////////////////////////////////////// // fantasygold
     if (fAddressIndex) {
         if (!pblocktree->WriteAddressIndex(addressIndex)) {
@@ -3581,7 +3581,7 @@ bool CChainState::ConnectBlock(const CBlock& block, CValidationState& state, CBl
             return AbortNode(state, "Failed to write blockhash index");
     }
     /////////////////////////////////////////////////////////////
-#endif
+
 
     // add this block to the view's block chain
     view.SetBestBlock(pindex->GetBlockHash());
@@ -5910,12 +5910,12 @@ bool static LoadBlockIndexDB(const CChainParams& chainparams) EXCLUSIVE_LOCKS_RE
     pblocktree->ReadReindexing(fReindexing);
     if(fReindexing) fReindex = true;
 
-#ifdef ENABLE_BITCORE_RPC
+
     ///////////////////////////////////////////////////////////// // fantasygold
     pblocktree->ReadFlag("addrindex", fAddressIndex);
     LogPrintf("LoadBlockIndexDB(): address index %s\n", fAddressIndex ? "enabled" : "disabled");
     /////////////////////////////////////////////////////////////
-#endif
+
     // Check whether we have a transaction index
     pblocktree->ReadFlag("logevents", fLogEvents);
     LogPrintf("%s: log events index %s\n", __func__, fLogEvents ? "enabled" : "disabled");
@@ -6376,12 +6376,12 @@ bool LoadBlockIndex(const CChainParams& chainparams)
         // Use the provided setting for -logevents in the new database
         fLogEvents = gArgs.GetBoolArg("-logevents", DEFAULT_LOGEVENTS);
         pblocktree->WriteFlag("logevents", fLogEvents);
-#ifdef ENABLE_BITCORE_RPC
+
         /////////////////////////////////////////////////////////////// // fantasygold
         fAddressIndex = gArgs.GetBoolArg("-addrindex", DEFAULT_ADDRINDEX);
         pblocktree->WriteFlag("addrindex", fAddressIndex);
         ///////////////////////////////////////////////////////////////
-#endif
+
     }
     return true;
 }
@@ -6993,7 +6993,7 @@ public:
 };
 static CMainCleanup instance_of_cmaincleanup;
 
-#ifdef ENABLE_BITCORE_RPC
+
 ////////////////////////////////////////////////////////////////////////////////// // fantasygold
 bool GetAddressIndex(uint256 addressHash, int type, std::vector<std::pair<CAddressIndexKey, CAmount> > &addressIndex, int start, int end)
 {
@@ -7042,4 +7042,4 @@ bool GetTimestampIndex(const unsigned int &high, const unsigned int &low, const 
     return true;
 }
 //////////////////////////////////////////////////////////////////////////////////
-#endif
+

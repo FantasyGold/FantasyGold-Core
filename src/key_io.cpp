@@ -233,7 +233,7 @@ bool IsValidContractSenderAddressString(const std::string& str)
     return IsValidContractSenderAddress(DecodeDestination(str));
 }
 
-#ifdef ENABLE_BITCORE_RPC
+
 bool DecodeIndexKey(const std::string &str, uint256 &hashBytes, int &type)
 {
     CTxDestination dest = DecodeDestination(str);
@@ -272,4 +272,4 @@ bool DecodeIndexKey(const std::string &str, uint256 &hashBytes, int &type)
 
     return false;
 }
-#endif
+
