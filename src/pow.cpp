@@ -106,7 +106,7 @@ unsigned int CalculateNextWorkRequired(const CBlockIndex* pindexLast, int64_t nF
     // Limit adjustment step
     int64_t nTargetSpacing = params.nPowTargetSpacing;
     int64_t nActualSpacing = pindexLast->GetBlockTime() - nFirstBlockTime;
-	// Retarget
+    // Retarget
     const arith_uint256 bnTargetLimit = GetLimit(pindexLast ? pindexLast->nHeight+1 : 0, params, fProofOfStake);
     // ppcoin: target change every block
     // ppcoin: retarget with exponential moving toward target spacing
@@ -119,8 +119,8 @@ unsigned int CalculateNextWorkRequired(const CBlockIndex* pindexLast, int64_t nF
             nActualSpacing = nTargetSpacing;
         if (nActualSpacing > nTargetSpacing * 10)
             nActualSpacing = nTargetSpacing * 10;
-    bnNew *= ((nInterval - 1) * nTargetSpacing + nActualSpacing + nActualSpacing);
-    bnNew /= ((nInterval + 1) * nTargetSpacing);
+        bnNew *= ((nInterval - 1) * nTargetSpacing + nActualSpacing + nActualSpacing);
+        bnNew /= ((nInterval + 1) * nTargetSpacing);
     } else {
         if (nActualSpacing < 0)
             nActualSpacing = nTargetSpacing;

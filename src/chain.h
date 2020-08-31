@@ -187,7 +187,7 @@ public:
     uint256 hashStateRoot; // fantasygold
     uint256 hashUTXORoot; // fantasygold
     // block signature - proof-of-stake protect the block by signing the block using a stake holder private key
-    std::vector<unsigned char> vchBlockSig;
+    std::vector<unsigned char> vchBlockSigDlgt;
     uint256 nStakeModifier;
     // proof-of-stake specific fields
     COutPoint prevoutStake;
@@ -224,7 +224,7 @@ public:
         nNonce         = 0;
         hashStateRoot  = uint256(); // fantasygold
         hashUTXORoot   = uint256(); // fantasygold
-        vchBlockSig.clear();
+        vchBlockSigDlgt.clear();
         nStakeModifier = uint256();
         hashProof = uint256();
         prevoutStake.SetNull();
@@ -251,7 +251,7 @@ public:
         nStakeModifier = uint256();
         hashProof = uint256(); 
         prevoutStake   = block.prevoutStake; // fantasygold
-        vchBlockSig    = block.vchBlockSig; // fantasygold
+        vchBlockSigDlgt    = block.vchBlockSigDlgt; // fantasygold
     }
 
     FlatFilePos GetBlockPos() const {
@@ -284,7 +284,7 @@ public:
         block.nNonce         = nNonce;
         block.hashStateRoot  = hashStateRoot; // fantasygold
         block.hashUTXORoot   = hashUTXORoot; // fantasygold
-        block.vchBlockSig    = vchBlockSig;
+        block.vchBlockSigDlgt    = vchBlockSigDlgt;
         block.prevoutStake   = prevoutStake;
         return block;
     }
@@ -338,6 +338,12 @@ public:
     {
         return !prevoutStake.IsNull();
     }
+
+    std::vector<unsigned char> GetBlockSignature() const;
+
+    std::vector<unsigned char> GetProofOfDelegation() const;
+
+    bool HasProofOfDelegation() const;
 
     std::string ToString() const
     {
@@ -430,7 +436,7 @@ public:
         READWRITE(nStakeModifier);
         READWRITE(prevoutStake);
         READWRITE(hashProof);
-        READWRITE(vchBlockSig); // fantasygold
+        READWRITE(vchBlockSigDlgt); // fantasygold
     }
 
     uint256 GetBlockHash() const
@@ -444,7 +450,7 @@ public:
         block.nNonce          = nNonce;
         block.hashStateRoot   = hashStateRoot; // fantasygold
         block.hashUTXORoot    = hashUTXORoot; // fantasygold
-        block.vchBlockSig     = vchBlockSig;
+        block.vchBlockSigDlgt     = vchBlockSigDlgt;
         block.prevoutStake    = prevoutStake;
         return block.GetHash();
     }

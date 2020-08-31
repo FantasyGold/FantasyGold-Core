@@ -29,17 +29,17 @@ bool noui_ThreadSafeMessageBox(const std::string& message, const std::string& ca
 
     std::string strCaption;
     if (prefix) {
-    switch (style) {
-    case CClientUIInterface::MSG_ERROR:
+        switch (style) {
+        case CClientUIInterface::MSG_ERROR:
             strCaption = "Error: ";
-        break;
-    case CClientUIInterface::MSG_WARNING:
+            break;
+        case CClientUIInterface::MSG_WARNING:
             strCaption = "Warning: ";
-        break;
-    case CClientUIInterface::MSG_INFORMATION:
+            break;
+        case CClientUIInterface::MSG_INFORMATION:
             strCaption = "Information: ";
-        break;
-    default:
+            break;
+        default:
             strCaption = caption + ": "; // Use supplied caption (can be empty)
         }
     }

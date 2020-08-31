@@ -156,7 +156,8 @@ BITCOIN_TESTS =\
   test/fantasygoldtests/condensingtransaction_tests.cpp \
   test/fantasygoldtests/dgp_tests.cpp \
   test/fantasygoldtests/constantinoplefork_tests.cpp \
-  test/fantasygoldtests/btcecrecoverfork_tests.cpp
+  test/fantasygoldtests/btcecrecoverfork_tests.cpp \
+  test/fantasygoldtests/delegations_tests.cpp
 
 if ENABLE_PROPERTY_TESTS
 BITCOIN_TESTS += \

@@ -178,7 +178,7 @@ bool DecodeHexBlk(CBlock& block, const std::string& strHexBlk)
 bool ParseHashStr(const std::string& strHex, uint256& result)
 {
     if ((strHex.size() != 64) || !IsHex(strHex))
-            return false;
+        return false;
 
     result.SetHex(strHex);
     return true;

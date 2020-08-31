@@ -2128,6 +2128,17 @@ bool static ProcessMessage(CNode* pfrom, const std::string& strCommand, CDataStr
         	return false;
         }
 
+        if (::ChainActive().Tip()->nHeight >= chainparams.GetConsensus().nOfflineStakeHeight && nVersion < MIN_PEER_PROTO_VERSION_AFTER_OFFLINESTAKE) {
+            // disconnect from peers older than this proto version
+            LogPrint(BCLog::NET, "peer=%d using obsolete version after offline stake hardfork %i; disconnecting\n", pfrom->GetId(), nVersion);
+            if (enable_bip61) {
+                connman->PushMessage(pfrom, CNetMsgMaker(INIT_PROTO_VERSION).Make(NetMsgType::REJECT, strCommand, REJECT_OBSOLETE,
+                        strprintf("Version must be %d or greater after offline stake hardfork", MIN_PEER_PROTO_VERSION_AFTER_OFFLINESTAKE)));
+            }
+            pfrom->fDisconnect = true;
+            return false;
+        }
+
         if (!vRecv.empty())
             vRecv >> addrFrom >> nNonce;
         if (!vRecv.empty()) {
@@ -2800,9 +2811,9 @@ bool static ProcessMessage(CNode* pfrom, const std::string& strCommand, CDataStr
                                    state.GetRejectReason().substr(0, MAX_REJECT_MESSAGE_LENGTH), inv.hash));
             }
             MaybePunishNode(pfrom->GetId(), state, /*via_compact_block*/ false);
-            }
-        return true;
         }
+        return true;
+    }
 
     if (strCommand == NetMsgType::CMPCTBLOCK)
     {
@@ -2810,7 +2821,7 @@ bool static ProcessMessage(CNode* pfrom, const std::string& strCommand, CDataStr
         if (fImporting || fReindex) {
             LogPrint(BCLog::NET, "Unexpected cmpctblock message received from peer %d\n", pfrom->GetId());
             return true;
-    }
+        }
 
         CBlockHeaderAndShortTxIDs cmpctblock;
         vRecv >> cmpctblock;
@@ -3031,7 +3042,7 @@ bool static ProcessMessage(CNode* pfrom, const std::string& strCommand, CDataStr
         if (fImporting || fReindex) {
             LogPrint(BCLog::NET, "Unexpected blocktxn message received from peer %d\n", pfrom->GetId());
             return true;
-    }
+        }
 
         BlockTransactions resp;
         vRecv >> resp;
@@ -3195,19 +3206,19 @@ bool static ProcessMessage(CNode* pfrom, const std::string& strCommand, CDataStr
         FastRandomContext insecure_rand;
         for (const CAddress &addr : vAddr) {
             if (!g_banman->IsBanned(addr)) {
-            pfrom->PushAddress(addr, insecure_rand);
-    }
+                pfrom->PushAddress(addr, insecure_rand);
+            }
         }
         return true;
     }
 
     if (strCommand == NetMsgType::MEMPOOL) {
         if (!(pfrom->GetLocalServices() & NODE_BLOOM) && !pfrom->HasPermission(PF_MEMPOOL))
-    {
-            if (!pfrom->HasPermission(PF_NOBAN))
         {
-            LogPrint(BCLog::NET, "mempool request with bloom filters disabled, disconnect peer=%d\n", pfrom->GetId());
-            pfrom->fDisconnect = true;
+            if (!pfrom->HasPermission(PF_NOBAN))
+            {
+                LogPrint(BCLog::NET, "mempool request with bloom filters disabled, disconnect peer=%d\n", pfrom->GetId());
+                pfrom->fDisconnect = true;
             }
             return true;
         }
@@ -3215,9 +3226,9 @@ bool static ProcessMessage(CNode* pfrom, const std::string& strCommand, CDataStr
         if (connman->OutboundTargetReached(false) && !pfrom->HasPermission(PF_MEMPOOL))
         {
             if (!pfrom->HasPermission(PF_NOBAN))
-        {
-            LogPrint(BCLog::NET, "mempool request with bandwidth limit reached, disconnect peer=%d\n", pfrom->GetId());
-            pfrom->fDisconnect = true;
+            {
+                LogPrint(BCLog::NET, "mempool request with bandwidth limit reached, disconnect peer=%d\n", pfrom->GetId());
+                pfrom->fDisconnect = true;
             }
             return true;
         }
@@ -3400,8 +3411,8 @@ bool static ProcessMessage(CNode* pfrom, const std::string& strCommand, CDataStr
         return true;
     }
 
-        // Ignore unknown commands for extensibility
-        LogPrint(BCLog::NET, "Unknown command \"%s\" from peer=%d\n", SanitizeString(strCommand), pfrom->GetId());
+    // Ignore unknown commands for extensibility
+    LogPrint(BCLog::NET, "Unknown command \"%s\" from peer=%d\n", SanitizeString(strCommand), pfrom->GetId());
     return true;
 }
 
@@ -3807,7 +3818,7 @@ bool PeerLogicValidation::SendMessages(CNode* pto)
                     pindexStart = pindexStart->pprev;
                 LogPrint(BCLog::NET, "initial getheaders (%d) to peer=%d (startheight:%d)\n", pindexStart->nHeight, pto->GetId(), pto->nStartingHeight);
                 connman->PushMessage(pto, msgMaker.Make(NetMsgType::GETHEADERS, ::ChainActive().GetLocator(pindexStart), uint256()));
-        }
+            }
         }
 
         //
@@ -3969,119 +3980,119 @@ bool PeerLogicValidation::SendMessages(CNode* pto)
 
             if (pto->m_tx_relay != nullptr) {
                 LOCK(pto->m_tx_relay->cs_tx_inventory);
-            // Check whether periodic sends should happen
+                // Check whether periodic sends should happen
                 bool fSendTrickle = pto->HasPermission(PF_NOBAN);
                 if (pto->m_tx_relay->nNextInvSend < nNow) {
-                fSendTrickle = true;
-                if (pto->fInbound) {
+                    fSendTrickle = true;
+                    if (pto->fInbound) {
                         pto->m_tx_relay->nNextInvSend = connman->PoissonNextSendInbound(nNow, INVENTORY_BROADCAST_INTERVAL);
-                } else {
-                    // Use half the delay for outbound peers, as there is less privacy concern for them.
+                    } else {
+                        // Use half the delay for outbound peers, as there is less privacy concern for them.
                         pto->m_tx_relay->nNextInvSend = PoissonNextSend(nNow, INVENTORY_BROADCAST_INTERVAL >> 1);
+                    }
                 }
-            }
 
-            // Time to send but the peer has requested we not relay transactions.
-            if (fSendTrickle) {
+                // Time to send but the peer has requested we not relay transactions.
+                if (fSendTrickle) {
                     LOCK(pto->m_tx_relay->cs_filter);
                     if (!pto->m_tx_relay->fRelayTxes) pto->m_tx_relay->setInventoryTxToSend.clear();
-            }
+                }
 
-            // Respond to BIP35 mempool requests
+                // Respond to BIP35 mempool requests
                 if (fSendTrickle && pto->m_tx_relay->fSendMempool) {
-                auto vtxinfo = mempool.infoAll();
+                    auto vtxinfo = mempool.infoAll();
                     pto->m_tx_relay->fSendMempool = false;
-                CAmount filterrate = 0;
-                {
+                    CAmount filterrate = 0;
+                    {
                         LOCK(pto->m_tx_relay->cs_feeFilter);
                         filterrate = pto->m_tx_relay->minFeeFilter;
-                }
+                    }
 
                     LOCK(pto->m_tx_relay->cs_filter);
 
-                for (const auto& txinfo : vtxinfo) {
-                    const uint256& hash = txinfo.tx->GetHash();
-                    CInv inv(MSG_TX, hash);
+                    for (const auto& txinfo : vtxinfo) {
+                        const uint256& hash = txinfo.tx->GetHash();
+                        CInv inv(MSG_TX, hash);
                         pto->m_tx_relay->setInventoryTxToSend.erase(hash);
-                    if (filterrate) {
-                        if (txinfo.feeRate.GetFeePerK() < filterrate)
-                            continue;
-                    }
+                        if (filterrate) {
+                            if (txinfo.feeRate.GetFeePerK() < filterrate)
+                                continue;
+                        }
                         if (pto->m_tx_relay->pfilter) {
                             if (!pto->m_tx_relay->pfilter->IsRelevantAndUpdate(*txinfo.tx)) continue;
-                    }
+                        }
                         pto->m_tx_relay->filterInventoryKnown.insert(hash);
-                    vInv.push_back(inv);
-                    if (vInv.size() == MAX_INV_SZ) {
-                        connman->PushMessage(pto, msgMaker.Make(NetMsgType::INV, vInv));
-                        vInv.clear();
+                        vInv.push_back(inv);
+                        if (vInv.size() == MAX_INV_SZ) {
+                            connman->PushMessage(pto, msgMaker.Make(NetMsgType::INV, vInv));
+                            vInv.clear();
+                        }
                     }
-                }
                     pto->m_tx_relay->timeLastMempoolReq = GetTime();
-            }
+                }
 
-            // Determine transactions to relay
-            if (fSendTrickle) {
-                // Produce a vector with all candidates for sending
-                std::vector<std::set<uint256>::iterator> vInvTx;
+                // Determine transactions to relay
+                if (fSendTrickle) {
+                    // Produce a vector with all candidates for sending
+                    std::vector<std::set<uint256>::iterator> vInvTx;
                     vInvTx.reserve(pto->m_tx_relay->setInventoryTxToSend.size());
                     for (std::set<uint256>::iterator it = pto->m_tx_relay->setInventoryTxToSend.begin(); it != pto->m_tx_relay->setInventoryTxToSend.end(); it++) {
-                    vInvTx.push_back(it);
-                }
-                CAmount filterrate = 0;
-                {
+                        vInvTx.push_back(it);
+                    }
+                    CAmount filterrate = 0;
+                    {
                         LOCK(pto->m_tx_relay->cs_feeFilter);
                         filterrate = pto->m_tx_relay->minFeeFilter;
-                }
-                // Topologically and fee-rate sort the inventory we send for privacy and priority reasons.
-                // A heap is used so that not all items need sorting if only a few are being sent.
-                CompareInvMempoolOrder compareInvMempoolOrder(&mempool);
-                std::make_heap(vInvTx.begin(), vInvTx.end(), compareInvMempoolOrder);
-                // No reason to drain out at many times the network's capacity,
-                // especially since we have many peers and some will draw much shorter delays.
-                unsigned int nRelayedTransactions = 0;
+                    }
+                    // Topologically and fee-rate sort the inventory we send for privacy and priority reasons.
+                    // A heap is used so that not all items need sorting if only a few are being sent.
+                    CompareInvMempoolOrder compareInvMempoolOrder(&mempool);
+                    std::make_heap(vInvTx.begin(), vInvTx.end(), compareInvMempoolOrder);
+                    // No reason to drain out at many times the network's capacity,
+                    // especially since we have many peers and some will draw much shorter delays.
+                    unsigned int nRelayedTransactions = 0;
                     LOCK(pto->m_tx_relay->cs_filter);
-                while (!vInvTx.empty() && nRelayedTransactions < INVENTORY_BROADCAST_MAX) {
-                    // Fetch the top element from the heap
-                    std::pop_heap(vInvTx.begin(), vInvTx.end(), compareInvMempoolOrder);
-                    std::set<uint256>::iterator it = vInvTx.back();
-                    vInvTx.pop_back();
-                    uint256 hash = *it;
-                    // Remove it from the to-be-sent set
+                    while (!vInvTx.empty() && nRelayedTransactions < INVENTORY_BROADCAST_MAX) {
+                        // Fetch the top element from the heap
+                        std::pop_heap(vInvTx.begin(), vInvTx.end(), compareInvMempoolOrder);
+                        std::set<uint256>::iterator it = vInvTx.back();
+                        vInvTx.pop_back();
+                        uint256 hash = *it;
+                        // Remove it from the to-be-sent set
                         pto->m_tx_relay->setInventoryTxToSend.erase(it);
-                    // Check if not in the filter already
+                        // Check if not in the filter already
                         if (pto->m_tx_relay->filterInventoryKnown.contains(hash)) {
-                        continue;
-                    }
-                    // Not in the mempool anymore? don't bother sending it.
-                    auto txinfo = mempool.info(hash);
-                    if (!txinfo.tx) {
-                        continue;
-                    }
-                    if (filterrate && txinfo.feeRate.GetFeePerK() < filterrate) {
-                        continue;
-                    }
+                            continue;
+                        }
+                        // Not in the mempool anymore? don't bother sending it.
+                        auto txinfo = mempool.info(hash);
+                        if (!txinfo.tx) {
+                            continue;
+                        }
+                        if (filterrate && txinfo.feeRate.GetFeePerK() < filterrate) {
+                            continue;
+                        }
                         if (pto->m_tx_relay->pfilter && !pto->m_tx_relay->pfilter->IsRelevantAndUpdate(*txinfo.tx)) continue;
-                    // Send
-                    vInv.push_back(CInv(MSG_TX, hash));
-                    nRelayedTransactions++;
-                    {
-                        // Expire old relay messages
-                        while (!vRelayExpiration.empty() && vRelayExpiration.front().first < nNow)
+                        // Send
+                        vInv.push_back(CInv(MSG_TX, hash));
+                        nRelayedTransactions++;
                         {
-                            mapRelay.erase(vRelayExpiration.front().second);
-                            vRelayExpiration.pop_front();
-                        }
+                            // Expire old relay messages
+                            while (!vRelayExpiration.empty() && vRelayExpiration.front().first < nNow)
+                            {
+                                mapRelay.erase(vRelayExpiration.front().second);
+                                vRelayExpiration.pop_front();
+                            }
 
-                        auto ret = mapRelay.insert(std::make_pair(hash, std::move(txinfo.tx)));
-                        if (ret.second) {
-                            vRelayExpiration.push_back(std::make_pair(nNow + 15 * 60 * 1000000, ret.first));
+                            auto ret = mapRelay.insert(std::make_pair(hash, std::move(txinfo.tx)));
+                            if (ret.second) {
+                                vRelayExpiration.push_back(std::make_pair(nNow + 15 * 60 * 1000000, ret.first));
+                            }
                         }
-                    }
-                    if (vInv.size() == MAX_INV_SZ) {
-                        connman->PushMessage(pto, msgMaker.Make(NetMsgType::INV, vInv));
-                        vInv.clear();
-                    }
+                        if (vInv.size() == MAX_INV_SZ) {
+                            connman->PushMessage(pto, msgMaker.Make(NetMsgType::INV, vInv));
+                            vInv.clear();
+                        }
                         pto->m_tx_relay->filterInventoryKnown.insert(hash);
                     }
                 }
@@ -4213,15 +4224,15 @@ bool PeerLogicValidation::SendMessages(CNode* pto)
                 // then request.
                 const auto last_request_time = GetTxRequestTime(inv.hash);
                 if (last_request_time <= current_time - GETDATA_TX_INTERVAL) {
-                LogPrint(BCLog::NET, "Requesting %s peer=%d\n", inv.ToString(), pto->GetId());
-                vGetData.push_back(inv);
+                    LogPrint(BCLog::NET, "Requesting %s peer=%d\n", inv.ToString(), pto->GetId());
+                    vGetData.push_back(inv);
                     if (vGetData.size() >= MAX_GETDATA_SZ) {
-                    connman->PushMessage(pto, msgMaker.Make(NetMsgType::GETDATA, vGetData));
-                    vGetData.clear();
-                }
+                        connman->PushMessage(pto, msgMaker.Make(NetMsgType::GETDATA, vGetData));
+                        vGetData.clear();
+                    }
                     UpdateTxRequestTime(inv.hash, current_time);
                     state.m_tx_download.m_tx_in_flight.emplace(inv.hash, current_time);
-            } else {
+                } else {
                     // This transaction is in flight from someone else; queue
                     // up processing to happen after the download times out
                     // (with a slight delay for inbound peers, to prefer
@@ -4459,8 +4470,6 @@ bool ProcessNetBlock(const CChainParams& chainparams, const std::shared_ptr<cons
         LOCK(cs_main);
         mapOrphanBlocksByPrev.erase(hashPrev);
     }
-
-    LogPrintf("ProcessNetBlock: ACCEPTED\n");
 
     return true;
 }

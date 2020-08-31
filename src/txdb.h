@@ -172,7 +172,14 @@ public:
     bool ReadStakeIndex(unsigned int high, unsigned int low, std::vector<uint160> addresses);
     bool EraseStakeIndex(unsigned int height);
 
+<<<<<<< Updated upstream
 #ifdef ENABLE_BITCORE_RPC
+=======
+    bool WriteDelegateIndex(unsigned int height, uint160 address, uint8_t fee);
+    bool ReadDelegateIndex(unsigned int height, uint160& address, uint8_t& fee);
+    bool EraseDelegateIndex(unsigned int height);
+
+>>>>>>> Stashed changes
     // Block explorer database functions
     bool WriteAddressIndex(const std::vector<std::pair<CAddressIndexKey, CAmount> > &vect);
     bool EraseAddressIndex(const std::vector<std::pair<CAddressIndexKey, CAmount> > &vect);

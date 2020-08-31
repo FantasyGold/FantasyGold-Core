@@ -69,14 +69,6 @@ static CBlock CreateGenesisBlock(uint32_t nTime, uint32_t nNonce, uint32_t nBits
 /**
  * Main network
  */
-/**
- * What makes a good checkpoint block?
- * + Is surrounded by blocks with reasonable timestamps
- *   (no blocks before with a timestamp after, none after with
- *    timestamp before)
- * + Contains no strange transactions
- */
-
 class CMainParams : public CChainParams {
 public:
     CMainParams() {
@@ -94,6 +86,7 @@ public:
         consensus.QIP6Height = 185000;
         consensus.QIP7Height = 185000;
         consensus.QIP9Height = 185000;
+        consensus.nOfflineStakeHeight = 680000;
         consensus.powLimit = uint256S("0000ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff");
         consensus.posLimit = uint256S("00000000ffffffffffffffffffffffffffffffffffffffffffffffffffffffff");
         consensus.QIP9PosLimit = uint256S("0000000000001fffffffffffffffffffffffffffffffffffffffffffffffffff"); // The new POS-limit activated after QIP9
@@ -163,20 +156,24 @@ public:
 		0.01408863155086456 	// * estimated number of transactions per second after that timestamp
         };
 
-        /* disable fallback fee on mainnet */
-        //m_fallback_fee_enabled = false;
-
         consensus.nLastPOWBlock = 8800;
+        consensus.nLastBigReward = 8800;
         consensus.nMPoSRewardRecipients = 10;
         consensus.nFirstMPoSBlock = consensus.nLastPOWBlock + 
                                     consensus.nMPoSRewardRecipients + 
                                     COINBASE_MATURITY;
+        consensus.nLastMPoSBlock = 679999;
 
         consensus.nFixUTXOCacheHFHeight = 175000;
         consensus.nEnableHeaderSignatureHeight = 100000; 
-        consensus.nCheckpointSpan = COINBASE_MATURITY; //(500)
+        consensus.nCheckpointSpan = COINBASE_MATURITY;
+        consensus.delegationsAddress = uint160(ParseHex("0000000000000000000000000000000000000086")); // Delegations contract for offline staking
     }
 };
+
+/**
+ * Testnet (v3)
+ */
 class CTestNetParams : public CChainParams {
 public:
     CTestNetParams() {
@@ -195,6 +192,7 @@ public:
         consensus.QIP6Height = 1880;
         consensus.QIP7Height = 1880;
         consensus.QIP9Height = 1880;
+        consensus.nOfflineStakeHeight = 625000;
 
         consensus.powLimit = uint256S("0000ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff");
         consensus.posLimit = uint256S("0000ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff");
@@ -280,10 +278,12 @@ public:
         consensus.nFirstMPoSBlock = consensus.nLastPOWBlock + 
                                     consensus.nMPoSRewardRecipients + 
                                     COINBASE_MATURITY;
-        consensus.nFixUTXOCacheHFHeight = 1550; //new
-        consensus.nEnableHeaderSignatureHeight = 881;
-        consensus.nCheckpointSpan = COINBASE_MATURITY; //new
+        consensus.nLastMPoSBlock = 624999;
 
+        consensus.nFixUTXOCacheHFHeight = 1550;
+        consensus.nEnableHeaderSignatureHeight = 881;
+        consensus.nCheckpointSpan = COINBASE_MATURITY;
+        consensus.delegationsAddress = uint160(ParseHex("0000000000000000000000000000000000000086")); // Delegations contract for offline staking
     }
 };
 
@@ -292,7 +292,7 @@ public:
  */
 class CRegTestParams : public CChainParams {
 public:
-    explicit CRegTestParams(const ArgsManager& args) { //changed
+    explicit CRegTestParams(const ArgsManager& args) {
         strNetworkID = "regtest";
         consensus.nSubsidyHalvingInterval = 150;
         consensus.BIP16Exception = uint256S("0x3687ba41c0a4621c646ca11ed757568373e51c6e51ba20076e9d39bb58404bb4");
@@ -307,7 +307,7 @@ public:
         consensus.QIP6Height = 0;
         consensus.QIP7Height = 0;
         consensus.QIP9Height = 0;
-		
+        consensus.nOfflineStakeHeight = 1;
         consensus.powLimit = uint256S("7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff");
         consensus.posLimit = uint256S("7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff");
         consensus.QIP9PosLimit = uint256S("7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"); // The new POS-limit activated after QIP9
@@ -350,6 +350,7 @@ public:
 
         fDefaultConsistencyChecks = true;
         fRequireStandard = true;
+        fMineBlocksOnDemand = true;
         m_is_test_chain = true;
 
         checkpointData = {
@@ -364,21 +365,26 @@ public:
             0
         };
         consensus.nLastPOWBlock = 0x7fffffff;
+        consensus.nLastBigReward = 8800;
         consensus.nMPoSRewardRecipients = 10;
         consensus.nFirstMPoSBlock = 8800;
+        consensus.nLastMPoSBlock = 0;
+
         consensus.nFixUTXOCacheHFHeight=0;
         consensus.nEnableHeaderSignatureHeight = 0;
         consensus.nCheckpointSpan = COINBASE_MATURITY;
-        
-        base58Prefixes[PUBKEY_ADDRESS] = std::vector<unsigned char>(1,95);
-        base58Prefixes[SCRIPT_ADDRESS] = std::vector<unsigned char>(1,88);
-        base58Prefixes[SECRET_KEY] =     std::vector<unsigned char>(1,140);
-        base58Prefixes[EXT_PUBLIC_KEY] = {0x08, 0x45, 0xC3, 0xF8};
-        base58Prefixes[EXT_SECRET_KEY] = {0x03, 0x65, 0x43, 0x88};
-        bech32_hrp = "fgct";
-	}
+        consensus.delegationsAddress = uint160(ParseHex("0000000000000000000000000000000000000086")); // Delegations contract for offline staking
 
-	/**
+        base58Prefixes[PUBKEY_ADDRESS] = std::vector<unsigned char>(1,120);
+        base58Prefixes[SCRIPT_ADDRESS] = std::vector<unsigned char>(1,110);
+        base58Prefixes[SECRET_KEY] =     std::vector<unsigned char>(1,239);
+        base58Prefixes[EXT_PUBLIC_KEY] = {0x04, 0x35, 0x87, 0xCF};
+        base58Prefixes[EXT_SECRET_KEY] = {0x04, 0x35, 0x83, 0x94};
+
+        bech32_hrp = "fgct";
+    }
+
+    /**
      * Allows modifying the Version Bits regtest parameters.
      */
     void UpdateVersionBitsParameters(Consensus::DeploymentPos d, int64_t nStartTime, int64_t nTimeout)
@@ -401,7 +407,7 @@ void CRegTestParams::UpdateActivationParametersFromArgs(const ArgsManager& args)
         }
         consensus.SegwitHeight = static_cast<int>(height);
     }
-     
+
     if (!args.IsArgSet("-vbparams")) return;
 
     for (const std::string& strDeployment : args.GetArgs("-vbparams")) {
@@ -430,7 +436,7 @@ void CRegTestParams::UpdateActivationParametersFromArgs(const ArgsManager& args)
             throw std::runtime_error(strprintf("Invalid deployment (%s)", vDeploymentParams[0]));
         }
     }
-    }
+}
 
 /**
  * Regression network parameters overwrites for unit testing
@@ -447,10 +453,10 @@ public:
         consensus.BIP34Hash = uint256();
         consensus.BIP65Height = 1351; // BIP65 activated on regtest (Used in rpc activation tests)
         consensus.BIP66Height = 1251; // BIP66 activated on regtest (Used in rpc activation tests)
-        consensus.QIP6Height = 1000; //new
-        consensus.QIP7Height = 0; // QIP7 activated on regtest --new
+        consensus.QIP6Height = 1000;
+        consensus.QIP7Height = 0; // QIP7 activated on regtest
 
-        // FGC have 500 blocks of maturity, increased values for regtest in unit tests in order to correspond with it
+        // FANTASYGOLD have 500 blocks of maturity, increased values for regtest in unit tests in order to correspond with it
         consensus.nSubsidyHalvingInterval = 750;
         consensus.nRuleChangeActivationThreshold = 558; // 75% for testchains
         consensus.nMinerConfirmationWindow = 744; // Faster than normal for regtest (744 instead of 2016)
@@ -484,20 +490,25 @@ void SelectParams(const std::string& network)
     globalChainParams = CreateChainParams(network);
 }
 
-std::string CChainParams::EVMGenesisInfo(dev::eth::Network network) const
+std::string CChainParams::EVMGenesisInfo() const
 {
-    std::string genesisInfo = dev::eth::genesisInfo(network);
+    std::string genesisInfo = dev::eth::genesisInfo(GetEVMNetwork());
     ReplaceInt(consensus.QIP7Height, "QIP7_STARTING_BLOCK", genesisInfo);
     ReplaceInt(consensus.QIP6Height, "QIP6_STARTING_BLOCK", genesisInfo);
     return genesisInfo;
 }
 
-std::string CChainParams::EVMGenesisInfo(dev::eth::Network network, int nHeight) const
+std::string CChainParams::EVMGenesisInfo(int nHeight) const
 {
-    std::string genesisInfo = dev::eth::genesisInfo(network);
+    std::string genesisInfo = dev::eth::genesisInfo(GetEVMNetwork());
     ReplaceInt(nHeight, "QIP7_STARTING_BLOCK", genesisInfo);
     ReplaceInt(nHeight, "QIP6_STARTING_BLOCK", genesisInfo);
     return genesisInfo;
+}
+
+dev::eth::Network CChainParams::GetEVMNetwork() const
+{
+    return dev::eth::Network::fantasygoldMainNetwork;
 }
 
 void CChainParams::UpdateOpSenderBlockHeight(int nHeight)
@@ -534,6 +545,7 @@ void CChainParams::UpdateDifficultyChangeBlockHeight(int nHeight)
 {
     consensus.nSubsidyHalvingInterval = 985500; // fantasygold halving every 4 years
     consensus.posLimit = uint256S("00000000ffffffffffffffffffffffffffffffffffffffffffffffffffffffff");
+    consensus.QIP9PosLimit = uint256S("0000000000001fffffffffffffffffffffffffffffffffffffffffffffffffff");
     consensus.QIP9Height = nHeight;
     consensus.fPowAllowMinDifficultyBlocks = false;
     consensus.fPowNoRetargeting = true;
@@ -543,9 +555,40 @@ void CChainParams::UpdateDifficultyChangeBlockHeight(int nHeight)
     consensus.nFirstMPoSBlock = consensus.nLastPOWBlock + 
                                 consensus.nMPoSRewardRecipients + 
                                 COINBASE_MATURITY;
+    consensus.nLastMPoSBlock = 0;
 }
 
 void UpdateDifficultyChangeBlockHeight(int nHeight)
 {
     const_cast<CChainParams*>(globalChainParams.get())->UpdateDifficultyChangeBlockHeight(nHeight);
+}
+
+void CChainParams::UpdateOfflineStakingBlockHeight(int nHeight)
+{
+    consensus.nOfflineStakeHeight = nHeight;
+}
+
+void UpdateOfflineStakingBlockHeight(int nHeight)
+{
+    const_cast<CChainParams*>(globalChainParams.get())->UpdateOfflineStakingBlockHeight(nHeight);
+}
+
+void CChainParams::UpdateDelegationsAddress(const uint160& address)
+{
+    consensus.delegationsAddress = address;
+}
+
+void UpdateDelegationsAddress(const uint160& address)
+{
+    const_cast<CChainParams*>(globalChainParams.get())->UpdateDelegationsAddress(address);
+}
+
+void CChainParams::UpdateLastMPoSBlockHeight(int nHeight)
+{
+    consensus.nLastMPoSBlock = nHeight;
+}
+
+void UpdateLastMPoSBlockHeight(int nHeight)
+{
+    const_cast<CChainParams*>(globalChainParams.get())->UpdateLastMPoSBlockHeight(nHeight);
 }

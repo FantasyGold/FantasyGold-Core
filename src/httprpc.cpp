@@ -253,7 +253,7 @@ bool StartHTTPRPC()
 
     RegisterHTTPHandler("/", true, HTTPReq_JSONRPC);
     if (g_wallet_init_interface.HasWalletSupport()) {
-    RegisterHTTPHandler("/wallet/", false, HTTPReq_JSONRPC);
+        RegisterHTTPHandler("/wallet/", false, HTTPReq_JSONRPC);
     }
     struct event_base* eventBase = EventBase();
     assert(eventBase);
@@ -272,7 +272,7 @@ void StopHTTPRPC()
     LogPrint(BCLog::RPC, "Stopping HTTP RPC server\n");
     UnregisterHTTPHandler("/", true);
     if (g_wallet_init_interface.HasWalletSupport()) {
-    UnregisterHTTPHandler("/wallet/", false);
+        UnregisterHTTPHandler("/wallet/", false);
     }
     if (httpRPCTimerInterface) {
         RPCUnsetTimerInterface(httpRPCTimerInterface.get());

@@ -736,9 +736,9 @@ protected:
         if (nBytes == 0) {
             throw std::ios_base::failure(feof(src) ? "CBufferedFile::Fill: end of file" : "CBufferedFile::Fill: fread failed");
         }
-            nSrcPos += nBytes;
-            return true;
-        }
+        nSrcPos += nBytes;
+        return true;
+    }
 
 public:
     CBufferedFile(FILE *fileIn, uint64_t nBufSize, uint64_t nRewindIn, int nTypeIn, int nVersionIn) :
@@ -813,8 +813,8 @@ public:
             return false;
         }
         nReadPos = nPos;
-            return true;
-        }
+        return true;
+    }
 
     bool Seek(uint64_t nPos) {
         long nLongPos = nPos;

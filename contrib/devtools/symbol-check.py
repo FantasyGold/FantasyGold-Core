@@ -36,9 +36,9 @@ import os
 #   (glibc)    GLIBC_2_11
 #
 MAX_VERSIONS = {
-'GCC':     (4,4,0),
-'CXXABI':  (1,3,3),
-'GLIBCXX': (3,4,13),
+'GCC':       (4,4,0),
+'CXXABI':    (1,3,3),
+'GLIBCXX':   (3,4,13),
 'GLIBC':     (2,11),
 'LIBATOMIC': (1,0)
 }
@@ -160,10 +160,10 @@ if __name__ == '__main__':
         # Check exported symbols
         if arch != 'RISC-V':
             for sym,version,arch in read_symbols(filename, False):
-            if sym in IGNORE_EXPORTS:
-                continue
-            print('%s: export of symbol %s not allowed' % (filename, cppfilt(sym)))
-            retval = 1
+                if sym in IGNORE_EXPORTS:
+                    continue
+                print('%s: export of symbol %s not allowed' % (filename, cppfilt(sym)))
+                retval = 1
         # Check dependency libraries
         for library_name in read_libraries(filename):
             if library_name not in ALLOWED_LIBRARIES:

@@ -164,8 +164,8 @@ static uint64_t GetRdSeed() noexcept
     // RdSeed may fail when the HW RNG is overloaded. Loop indefinitely until enough entropy is gathered,
     // but pause after every failure.
 #ifdef __i386__
-        uint8_t ok;
-            uint32_t r1, r2;
+    uint8_t ok;
+    uint32_t r1, r2;
     do {
         __asm__ volatile (".byte 0x0f, 0xc7, 0xf8; setc %1" : "=a"(r1), "=q"(ok) :: "cc"); // rdseed %eax
         if (ok) break;
@@ -189,7 +189,7 @@ static uint64_t GetRdSeed() noexcept
 #else
 #error "RdSeed is only supported on x86 and x86_64"
 #endif
-        }
+}
 
 #else
 /* Access to other hardware random number generators could be added here later,
@@ -485,7 +485,7 @@ RNGState& GetRNGState() noexcept
     // on first call, even when multiple parallel calls are permitted.
     static std::vector<RNGState, secure_allocator<RNGState>> g_rng(1);
     return g_rng[0];
-    }
+}
 }
 
 void LockingCallbackOpenSSL(int mode, int i, const char* file, int line) NO_THREAD_SAFETY_ANALYSIS
@@ -559,7 +559,7 @@ static void SeedSlow(CSHA512& hasher) noexcept
 
 /** Extract entropy from rng, strengthen it, and feed it into hasher. */
 static void SeedStrengthen(CSHA512& hasher, RNGState& rng) noexcept
-    {
+{
     static std::atomic<int64_t> last_strengthen{0};
     int64_t last_time = last_strengthen.load();
     int64_t current_time = GetTimeMicros();
@@ -571,7 +571,7 @@ static void SeedStrengthen(CSHA512& hasher, RNGState& rng) noexcept
         Strengthen(strengthen_seed, last_time == 0 ? 100000 : 10000, hasher);
         last_strengthen = current_time;
     }
-    }
+}
 
 static void SeedSleep(CSHA512& hasher, RNGState& rng)
 {
@@ -652,8 +652,8 @@ static void ProcRand(unsigned char* out, int num, RNGLevel level)
         unsigned char buf[64];
         CSHA512().Write(out, num).Finalize(buf);
         RAND_add(buf, sizeof(buf), num);
-    memory_cleanse(buf, 64);
-}
+        memory_cleanse(buf, 64);
+    }
 }
 
 void GetRandBytes(unsigned char* buf, int num) noexcept { ProcRand(buf, num, RNGLevel::FAST); }

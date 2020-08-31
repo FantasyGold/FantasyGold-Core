@@ -119,8 +119,8 @@ private:
 public:
     CValidationState() : mode(MODE_VALID), m_reason(ValidationInvalidReason::NONE), chRejectCode(0) {}
     bool Invalid(ValidationInvalidReason reasonIn, bool ret = false,
-             unsigned int chRejectCodeIn=0, const std::string &strRejectReasonIn="",
-             const std::string &strDebugMessageIn="") {
+            unsigned int chRejectCodeIn=0, const std::string &strRejectReasonIn="",
+            const std::string &strDebugMessageIn="") {
         m_reason = reasonIn;
         chRejectCode = chRejectCodeIn;
         strRejectReason = strRejectReasonIn;

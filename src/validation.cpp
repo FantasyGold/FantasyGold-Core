@@ -55,6 +55,7 @@
 #include <key.h>
 #include <wallet/wallet.h>
 #include <util/convert.h>
+#include <util/signstr.h>
 
 #include <algorithm>
 #include <future>
@@ -1451,10 +1452,10 @@ bool ReadRawBlockFromDisk(std::vector<uint8_t>& block, const CBlockIndex* pindex
 
 CAmount GetBlockSubsidy(int nHeight, const Consensus::Params& consensusParams)
 {
-    if(nHeight <= consensusParams.nLastPOWBlock)
+    if(nHeight <= consensusParams.nLastBigReward)
         return 20000 * COIN;
 
-    int halvings = (nHeight - consensusParams.nLastPOWBlock - 1) / consensusParams.nSubsidyHalvingInterval;
+    int halvings = (nHeight - consensusParams.nLastBigReward - 1) / consensusParams.nSubsidyHalvingInterval;
     // Force block reward to zero when right shift is undefined.
     if (halvings >= 7)
         return 0;
@@ -2015,11 +2016,17 @@ DisconnectResult CChainState::DisconnectBlock(const CBlock& block, const CBlockI
                 if (res == DISCONNECT_FAILED) return DISCONNECT_FAILED;
                 fClean = fClean && res != DISCONNECT_UNCLEAN;
 
+<<<<<<< Updated upstream
 #ifdef ENABLE_BITCORE_RPC
                 const auto &undo = txundo.vprevout[j];
                 const bool isTxCoinStake = tx.IsCoinStake();
                 const CTxIn input = tx.vin[j];
+=======
+>>>>>>> Stashed changes
                 if (pfClean == NULL && fAddressIndex) {
+                    const auto &undo = txundo.vprevout[j];
+                    const bool isTxCoinStake = tx.IsCoinStake();
+                    const CTxIn input = tx.vin[j];
                     const CTxOut &prevout = view.GetOutputFor(input);
 
                     CTxDestination dest;
@@ -2052,9 +2059,20 @@ DisconnectResult CChainState::DisconnectBlock(const CBlock& block, const CBlockI
         pstorageresult->deleteResults(block.vtx);
         pblocktree->EraseHeightIndex(pindex->nHeight);
     }
-    pblocktree->EraseStakeIndex(pindex->nHeight);
 
+<<<<<<< Updated upstream
 #ifdef ENABLE_BITCORE_RPC
+=======
+    // The stake and delegate index is needed for MPoS, update it while MPoS is active
+    const CChainParams& chainparams = Params();
+    if(pindex->nHeight <= chainparams.GetConsensus().nLastMPoSBlock)
+    {
+        pblocktree->EraseStakeIndex(pindex->nHeight);
+        if(pindex->IsProofOfStake() && pindex->HasProofOfDelegation())
+            pblocktree->EraseDelegateIndex(pindex->nHeight);
+    }
+
+>>>>>>> Stashed changes
     //////////////////////////////////////////////////// // fantasygold
     if (pfClean == NULL && fAddressIndex) {
         if (!pblocktree->EraseAddressIndex(addressIndex)) {
@@ -2408,7 +2426,15 @@ std::vector<ResultExecute> CallContract(const dev::Address& addrContract, std::v
     tx.vout.push_back(CTxOut(0, CScript() << OP_DUP << OP_HASH160 << senderAddress.asBytes() << OP_EQUALVERIFY << OP_CHECKSIG));
     block.vtx.push_back(MakeTransactionRef(CTransaction(tx)));
  
-    FantasyGoldTransaction callTransaction(0, 1, dev::u256(gasLimit), addrContract, opcode, dev::u256(0));
+    FantasyGoldTransaction callTransaction;
+    if(addrContract == dev::Address())
+    {
+        callTransaction = FantasyGoldTransaction(0, 1, dev::u256(gasLimit), opcode, dev::u256(0));
+    }
+    else
+    {
+        callTransaction = FantasyGoldTransaction(0, 1, dev::u256(gasLimit), addrContract, opcode, dev::u256(0));
+    }
     callTransaction.forceSender(senderAddress);
     callTransaction.setVersion(VersionVM::GetEVMDefault());
 
@@ -2426,7 +2452,7 @@ bool CheckMinGasPrice(std::vector<EthTransactionParams>& etps, const uint64_t& m
     return true;
 }
 
-bool CheckReward(const CBlock& block, CValidationState& state, int nHeight, const Consensus::Params& consensusParams, CAmount nFees, CAmount gasRefunds, CAmount nActualStakeReward, const std::vector<CTxOut>& vouts)
+bool CheckReward(const CBlock& block, CValidationState& state, int nHeight, const Consensus::Params& consensusParams, CAmount nFees, CAmount gasRefunds, CAmount nActualStakeReward, const std::vector<CTxOut>& vouts, CAmount nValueCoinPrev, bool delegateOutputExist)
 {
     size_t offset = block.IsProofOfStake() ? 1 : 0;
     std::vector<CTxOut> vTempVouts=block.vtx[offset]->vout;
@@ -2460,30 +2486,44 @@ bool CheckReward(const CBlock& block, CValidationState& state, int nHeight, cons
         // The first proof-of-stake blocks get full reward, the rest of them are split between recipients
         int rewardRecipients = 1;
         int nPrevHeight = nHeight -1;
-        if(nPrevHeight >= consensusParams.nFirstMPoSBlock)
+        if(nPrevHeight >= consensusParams.nFirstMPoSBlock && nPrevHeight < consensusParams.nLastMPoSBlock)
             rewardRecipients = consensusParams.nMPoSRewardRecipients;
 
         // Check reward recipients number
         if(rewardRecipients < 1)
             return error("CheckReward(): invalid reward recipients");
 
+        // Check reward can cover the gas refunds
+        if(blockReward < gasRefunds){
+            return state.Invalid(ValidationInvalidReason::CONSENSUS, error("CheckReward(): Block Reward is less than total gas refunds"), REJECT_INVALID, "bad-cs-gas-greater-than-reward");
+        }
+
+        CAmount splitReward = (blockReward - gasRefunds) / rewardRecipients;
+
+        // Check that the reward is in the second output for the staker and the third output for the delegate
+        // Delegation contract data like the fee is checked in CheckProofOfStake
+        if(block.HasProofOfDelegation())
+        {
+            CAmount nReward = blockReward - gasRefunds - splitReward * (rewardRecipients -1);
+            CAmount nValueStaker = block.vtx[offset]->vout[1].nValue;
+            CAmount nValueDelegate = delegateOutputExist ? block.vtx[offset]->vout[2].nValue : 0;
+            CAmount nMinedReward = nValueStaker + nValueDelegate - nValueCoinPrev;
+            if(nReward != nMinedReward)
+                return state.Invalid(ValidationInvalidReason::CONSENSUS, error("CheckReward(): The block reward is not split correctly between the staker and the delegate"), REJECT_INVALID, "bad-cs-delegate-reward");
+        }
+
         //if only 1 then no MPoS logic required
         if(rewardRecipients == 1){
             return true;
         }
-        if(blockReward < gasRefunds){
-            return state.Invalid(ValidationInvalidReason::CONSENSUS, error("CheckReward(): Block Reward is less than total gas refunds"), REJECT_INVALID, "bad-cs-gas-greater-than-reward");
 
-        }
-        CAmount splitReward = (blockReward - gasRefunds) / rewardRecipients;
-
-        // Generate the list of script recipients including all of their parameters
-        std::vector<CScript> mposScriptList;
-        if(!GetMPoSOutputScripts(mposScriptList, nPrevHeight, consensusParams))
-            return error("CheckReward(): cannot create the list of MPoS output scripts");
+        // Generate the list of mpos outputs including all of their parameters
+        std::vector<CTxOut> mposOutputList;
+        if(!GetMPoSOutputs(mposOutputList, splitReward, nPrevHeight, consensusParams))
+            return error("CheckReward(): cannot create the list of MPoS outputs");
       
-        for(size_t i = 0; i < mposScriptList.size(); i++){
-            it=std::find(vTempVouts.begin(), vTempVouts.end(), CTxOut(splitReward,mposScriptList[i]));
+        for(size_t i = 0; i < mposOutputList.size(); i++){
+            it=std::find(vTempVouts.begin(), vTempVouts.end(), mposOutputList[i]);
             if(it==vTempVouts.end()){
                 return state.Invalid(ValidationInvalidReason::CONSENSUS, error("CheckReward(): An MPoS participant was not properly paid"), REJECT_INVALID, "bad-cs-mpos-missing");
             }else{
@@ -2854,6 +2894,36 @@ size_t FantasyGoldTxConverter::correctedStackSize(size_t size){
 }
 ///////////////////////////////////////////////////////////////////////
 
+bool CheckDelegationOutput(const CBlock& block, bool& delegateOutputExist)
+{
+    if(block.IsProofOfStake() && block.HasProofOfDelegation())
+    {
+        uint160 staker;
+        std::vector<unsigned char> vchPubKey;
+        if(GetBlockPublicKey(block, vchPubKey))
+        {
+            staker = uint160(ToByteVector(CPubKey(vchPubKey).GetID()));
+            uint160 address;
+            uint8_t fee = 0;
+            if(GetBlockDelegation(block, staker, address, fee))
+            {
+                delegateOutputExist = IsDelegateOutputExist(fee);
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    return true;
+}
+
 /** Apply the effects of this block (with given index) on the UTXO set represented by coins.
  *  Validity checks that depend on the UTXO set are also done; ConnectBlock()
  *  can fail if those validity checks fail (among other reasons). */
@@ -2876,7 +2946,6 @@ bool CChainState::ConnectBlock(const CBlock& block, CValidationState& state, CBl
     CBlock checkBlock(block.GetBlockHeader());
     std::vector<CTxOut> checkVouts;
 
-    uint64_t countCumulativeGasUsed = 0;
     /////////////////////////////////////////////////
     // We recheck the hardened checkpoints here since ContextualCheckBlock(Header) is not called in ConnectBlock.
     if(fCheckpointsEnabled && !Checkpoints::CheckHardened(pindex->nHeight, block.GetHash(), chainparams.Checkpoints())) {
@@ -2893,7 +2962,12 @@ bool CChainState::ConnectBlock(const CBlock& block, CValidationState& state, CBl
         return state.Invalid(ValidationInvalidReason::CONSENSUS, false, REJECT_INVALID, "bad-blk-weight", strprintf("%s : weight limit failed", __func__));
     }
 
-    if (block.IsProofOfStake() && pindex->nHeight > chainparams.GetConsensus().nEnableHeaderSignatureHeight && !CheckBlockInputPubKeyMatchesOutputPubKey(block, view)) {
+    bool delegateOutputExist = false;
+    if (!CheckDelegationOutput(block, delegateOutputExist)) {
+        return state.Invalid(ValidationInvalidReason::CONSENSUS, false, REJECT_INVALID, "bad-delegate-output", strprintf("%s : delegation output check failed", __func__));
+    }
+
+    if (block.IsProofOfStake() && pindex->nHeight > chainparams.GetConsensus().nEnableHeaderSignatureHeight && !CheckBlockInputPubKeyMatchesOutputPubKey(block, view, delegateOutputExist)) {
         return state.Invalid(ValidationInvalidReason::CONSENSUS, false, REJECT_INVALID, "bad-blk-coinstake-input-output-mismatch");
     }
 
@@ -3081,6 +3155,7 @@ bool CChainState::ConnectBlock(const CBlock& block, CValidationState& state, CBl
     std::vector<int> prevheights;
     CAmount nFees = 0;
     CAmount nActualStakeReward = 0;
+    CAmount nValueCoinPrev = 0;
     int nInputs = 0;
     int64_t nSigOpsCost = 0;
     blockundo.vtxundo.reserve(block.vtx.size() - 1);
@@ -3101,6 +3176,15 @@ bool CChainState::ConnectBlock(const CBlock& block, CValidationState& state, CBl
 
     uint64_t nValueOut=0;
     uint64_t nValueIn=0;
+
+    if(block.IsProofOfStake())
+    {
+        Coin coin;
+        if(!view.GetCoin(block.vtx[1]->vin[0].prevout, coin)){
+            return state.Invalid(ValidationInvalidReason::CONSENSUS, false, REJECT_INVALID, "stake-prevout-not-exist", strprintf("ConnectBlock() : Stake prevout does not exist %s", block.vtx[1]->vin[0].prevout.hash.ToString()));
+        }
+        nValueCoinPrev = coin.out.nValue;
+    }
 
     for (unsigned int i = 0; i < block.vtx.size(); i++)
     {
@@ -3319,10 +3403,10 @@ bool CChainState::ConnectBlock(const CBlock& block, CValidationState& state, CBl
                 return state.Invalid(ValidationInvalidReason::CONSENSUS, error("ConnectBlock(): Error processing VM execution results"), REJECT_INVALID, "bad-vm-exec-processing");
             }
 
-            countCumulativeGasUsed += bcer.usedGas;
             std::vector<TransactionReceiptInfo> tri;
             if (fLogEvents && !fJustCheck)
             {
+                uint64_t countCumulativeGasUsed = blockGasUsed;
                 for(size_t k = 0; k < resultConvertFantasyGoldTX.first.size(); k ++){
                     for(auto& log : resultExec[k].txRec.log()) {
                         if(!heightIndexes.count(log.address)){
@@ -3330,6 +3414,8 @@ bool CChainState::ConnectBlock(const CBlock& block, CValidationState& state, CBl
                         }
                         heightIndexes[log.address].second.push_back(tx.GetHash());
                     }
+                    uint64_t gasUsed = uint64_t(resultExec[k].execRes.gasUsed);
+                    countCumulativeGasUsed += gasUsed;
                     tri.push_back(TransactionReceiptInfo{
                         block.GetHash(),
                         uint32_t(pindex->nHeight),
@@ -3338,7 +3424,7 @@ bool CChainState::ConnectBlock(const CBlock& block, CValidationState& state, CBl
                         resultConvertFantasyGoldTX.first[k].from(),
                         resultConvertFantasyGoldTX.first[k].to(),
                         countCumulativeGasUsed,
-                        uint64_t(resultExec[k].execRes.gasUsed),
+                        gasUsed,
                         resultExec[k].execRes.newAddress,
                         resultExec[k].txRec.log(),
                         resultExec[k].execRes.excepted,
@@ -3410,7 +3496,7 @@ bool CChainState::ConnectBlock(const CBlock& block, CValidationState& state, CBl
     if(nFees < gasRefunds) { //make sure it won't overflow
         return state.Invalid(ValidationInvalidReason::CONSENSUS, error("ConnectBlock(): Less total fees than gas refund fees"), REJECT_INVALID, "bad-blk-fees-greater-gasrefund");
     }
-    if(!CheckReward(block, state, pindex->nHeight, chainparams.GetConsensus(), nFees, gasRefunds, nActualStakeReward, checkVouts))
+    if(!CheckReward(block, state, pindex->nHeight, chainparams.GetConsensus(), nFees, gasRefunds, nActualStakeReward, checkVouts, nValueCoinPrev, delegateOutputExist))
         return state.Invalid(ValidationInvalidReason::CONSENSUS, error("ConnectBlock(): Reward check failed"), REJECT_INVALID, "block-reward-invalid");
     if (!control.Wait())
         return state.Invalid(ValidationInvalidReason::CONSENSUS, error("%s: CheckQueue failed", __func__), REJECT_INVALID, "block-validation-failed");
@@ -3418,6 +3504,9 @@ bool CChainState::ConnectBlock(const CBlock& block, CValidationState& state, CBl
     LogPrint(BCLog::BENCH, "    - Verify %u txins: %.2fms (%.3fms/txin) [%.2fs (%.2fms/blk)]\n", nInputs - 1, MILLI * (nTime4 - nTime2), nInputs <= 1 ? 0 : MILLI * (nTime4 - nTime2) / (nInputs-1), nTimeVerify * MICRO, nTimeVerify * MILLI / nBlocksTotal);
 
 ////////////////////////////////////////////////////////////////// // fantasygold
+    if(pindex->nHeight == chainparams.GetConsensus().nOfflineStakeHeight){
+        globalState->deployDelegationsContract();
+    }
     checkBlock.hashMerkleRoot = BlockMerkleRoot(checkBlock);
     checkBlock.hashStateRoot = h256Touint(globalState->rootHash());
     checkBlock.hashUTXORoot = h256Touint(globalState->rootHashUTXO());
@@ -3513,19 +3602,33 @@ bool CChainState::ConnectBlock(const CBlock& block, CValidationState& state, CBl
             if (!pblocktree->WriteHeightIndex(e.second.first, e.second.second))
                 return AbortNode(state, "Failed to write height index");
         }
-    }    
-    if(block.IsProofOfStake()){
-        // Read the public key from the second output
-        std::vector<unsigned char> vchPubKey;
-        if(GetBlockPublicKey(block, vchPubKey))
-        {
-            uint160 pkh = uint160(ToByteVector(CPubKey(vchPubKey).GetID()));
-            pblocktree->WriteStakeIndex(pindex->nHeight, pkh);
+    }
+
+    // The stake and delegate index is needed for MPoS, update it while MPoS is active
+    if(pindex->nHeight <= chainparams.GetConsensus().nLastMPoSBlock)
+    {
+        if(block.IsProofOfStake()){
+            // Read the public key from the second output
+            std::vector<unsigned char> vchPubKey;
+            uint160 pkh;
+            if(GetBlockPublicKey(block, vchPubKey))
+            {
+                pkh = uint160(ToByteVector(CPubKey(vchPubKey).GetID()));
+                pblocktree->WriteStakeIndex(pindex->nHeight, pkh);
+            }else{
+                pblocktree->WriteStakeIndex(pindex->nHeight, uint160());
+            }
+
+            if(block.HasProofOfDelegation())
+            {
+                uint160 address;
+                uint8_t fee = 0;
+                GetBlockDelegation(block, pkh, address, fee);
+                pblocktree->WriteDelegateIndex(pindex->nHeight, address, fee);
+            }
         }else{
             pblocktree->WriteStakeIndex(pindex->nHeight, uint160());
         }
-    }else{
-        pblocktree->WriteStakeIndex(pindex->nHeight, uint160());
     }
 
     assert(pindex->phashBlock);
@@ -4655,7 +4758,7 @@ bool CheckFirstCoinstakeOutput(const CBlock& block)
 
 #ifdef ENABLE_WALLET
 // novacoin: attempt to generate suitable proof-of-stake
-bool SignBlock(std::shared_ptr<CBlock> pblock, CWallet& wallet, const CAmount& nTotalFees, uint32_t nTime, std::set<std::pair<const CWalletTx*,unsigned int> >& setCoins)
+bool SignBlock(std::shared_ptr<CBlock> pblock, CWallet& wallet, const CAmount& nTotalFees, uint32_t nTime, std::set<std::pair<const CWalletTx*,unsigned int> >& setCoins, std::vector<COutPoint>& setDelegateCoins)
 {
     // if we are trying to sign
     //    something except proof-of-stake block template
@@ -4664,19 +4767,21 @@ bool SignBlock(std::shared_ptr<CBlock> pblock, CWallet& wallet, const CAmount& n
 
     // if we are trying to sign
     //    a complete proof-of-stake block
-    if (pblock->IsProofOfStake() && !pblock->vchBlockSig.empty())
+    if (pblock->IsProofOfStake() && !pblock->vchBlockSigDlgt.empty())
         return true;
 
     CKey key;
     CMutableTransaction txCoinStake(*pblock->vtx[1]);
     uint32_t nTimeBlock = nTime;
     nTimeBlock &= ~STAKE_TIMESTAMP_MASK;
+    std::vector<unsigned char> vchPoD;
+    COutPoint headerPrevout;
     //original line:
     //int64_t nSearchInterval = IsProtocolV2(nBestHeight+1) ? 1 : nSearchTime - nLastCoinStakeSearchTime;
     //IsProtocolV2 mean POS 2 or higher, so the modified line is:
     auto locked_chain = wallet.chain().lock();
     LOCK(wallet.cs_wallet);
-    if (wallet.CreateCoinStake(*locked_chain, wallet, pblock->nBits, nTotalFees, nTimeBlock, txCoinStake, key, setCoins))
+    if (wallet.CreateCoinStake(*locked_chain, wallet, pblock->nBits, nTotalFees, nTimeBlock, txCoinStake, key, setCoins, setDelegateCoins, vchPoD, headerPrevout))
     {
         if (nTimeBlock >= ::ChainActive().Tip()->GetMedianTimePast()+1)
         {
@@ -4685,7 +4790,7 @@ bool SignBlock(std::shared_ptr<CBlock> pblock, CWallet& wallet, const CAmount& n
             pblock->nTime = nTimeBlock;
             pblock->vtx[1] = MakeTransactionRef(std::move(txCoinStake));
             pblock->hashMerkleRoot = BlockMerkleRoot(*pblock);
-            pblock->prevoutStake = pblock->vtx[1]->vin[0].prevout;
+            pblock->prevoutStake = headerPrevout;
 
             // Check timestamp against prev
             if(pblock->GetBlockTime() <= ::ChainActive().Tip()->GetBlockTime() || FutureDrift(pblock->GetBlockTime()) < ::ChainActive().Tip()->GetBlockTime())
@@ -4693,10 +4798,28 @@ bool SignBlock(std::shared_ptr<CBlock> pblock, CWallet& wallet, const CAmount& n
                 return false;
             }
 
-            // append a signature to our block and ensure that is LowS
-            return key.Sign(pblock->GetHashWithoutSign(), pblock->vchBlockSig) &&
-                       EnsureLowS(pblock->vchBlockSig) &&
-                       CheckHeaderPoS(*pblock, Params().GetConsensus());
+            // Sign block
+            if (::ChainActive().Height() + 1 >= Params().GetConsensus().nOfflineStakeHeight)
+            {
+                // append PoD to the end of the block header
+                if(vchPoD.size() > 0)
+                    pblock->SetProofOfDelegation(vchPoD);
+
+                // append a signature to our block and ensure that is compact
+                std::vector<unsigned char> vchSig;
+                bool isSigned = key.SignCompact(pblock->GetHashWithoutSign(), vchSig);
+                pblock->SetBlockSignature(vchSig);
+
+                // check block header
+                return isSigned && CheckHeaderPoS(*pblock, Params().GetConsensus());
+            }
+            else
+            {
+                // append a signature to our block and ensure that is LowS
+                return key.Sign(pblock->GetHashWithoutSign(), pblock->vchBlockSigDlgt) &&
+                           EnsureLowS(pblock->vchBlockSigDlgt) &&
+                           CheckHeaderPoS(*pblock, Params().GetConsensus());
+            }
         }
     }
 
@@ -4709,7 +4832,7 @@ bool GetBlockPublicKey(const CBlock& block, std::vector<unsigned char>& vchPubKe
     if (block.IsProofOfWork())
         return false;
 
-    if (block.vchBlockSig.empty())
+    if (block.vchBlockSigDlgt.empty())
         return false;
 
     std::vector<valtype> vSolutions;
@@ -4748,10 +4871,64 @@ bool GetBlockPublicKey(const CBlock& block, std::vector<unsigned char>& vchPubKe
     return false;
 }
 
+bool GetBlockDelegation(const CBlock& block, const uint160& staker, uint160& address, uint8_t& fee)
+{
+    // Check block parameters
+    if (block.IsProofOfWork())
+        return false;
+
+    if (block.vchBlockSigDlgt.empty())
+        return false;
+
+    if (!block.HasProofOfDelegation())
+        return false;
+
+    if(block.vtx.size() < 1)
+        return false;
+
+    // Get the delegate
+    std::string strMessage = staker.GetReverseHex();
+    CKeyID keyid;
+    if(!SignStr::GetKeyIdMessage(strMessage, block.GetProofOfDelegation(), keyid))
+        return false;
+    address = uint160(keyid);
+
+    // Get the fee from the delegation contract
+    uint8_t inFee = 0;
+    if(!GetDelegationFeeFromContract(address, inFee))
+        return false;
+
+    bool delegateOutputExist = IsDelegateOutputExist(inFee);
+    size_t minVoutSize = delegateOutputExist ? 3 : 2;
+    if(block.vtx[1]->vin.size() < 1 ||
+            block.vtx[1]->vout.size() < minVoutSize)
+        return false;
+
+    // Get the staker fee
+    CCoinsViewCache& cache = ::ChainstateActive().CoinsTip();
+    COutPoint prevout = block.vtx[1]->vin[0].prevout;
+    CAmount nValueCoin = cache.AccessCoin(prevout).out.nValue;
+    if(nValueCoin <= 0)
+        return false;
+
+    CAmount nValueStaker = block.vtx[1]->vout[1].nValue - nValueCoin;
+    CAmount nValueDelegate = delegateOutputExist ? block.vtx[1]->vout[2].nValue : 0;
+    CAmount nReward = nValueStaker + nValueDelegate;
+    if(nReward <= 0)
+        return false;
+
+    fee = (nValueStaker * 100 + nReward - 1) / nReward;
+    if(inFee != fee)
+        return false;
+
+    return true;
+}
+
 bool CheckBlockSignature(const CBlock& block)
 {
+    std::vector<unsigned char> vchBlockSig = block.GetBlockSignature();
     if (block.IsProofOfWork())
-        return block.vchBlockSig.empty();
+        return vchBlockSig.empty();
 
     std::vector<unsigned char> vchPubKey;
     if(!GetBlockPublicKey(block, vchPubKey))
@@ -4759,7 +4936,16 @@ bool CheckBlockSignature(const CBlock& block)
         return false;
     }
 
-    return CPubKey(vchPubKey).Verify(block.GetHashWithoutSign(), block.vchBlockSig);
+    uint256 hash = block.GetHashWithoutSign();
+
+    if(vchBlockSig.size() == CPubKey::COMPACT_SIGNATURE_SIZE)
+    {
+        CPubKey pubkey;
+        if(pubkey.RecoverCompact(hash, vchBlockSig) && pubkey == CPubKey(vchPubKey))
+            return true;
+    }
+
+    return CPubKey(vchPubKey).Verify(hash, vchBlockSig);
 }
 
 static bool CheckBlockHeader(const CBlockHeader& block, CValidationState& state, const Consensus::Params& consensusParams, bool fCheckPOW = true, bool fCheckPOS = true)
@@ -4834,9 +5020,12 @@ bool CheckBlock(const CBlock& block, CValidationState& state, const Consensus::P
         if (block.vtx.empty() || block.vtx.size() < 2 || !block.vtx[1]->IsCoinStake())
             return state.Invalid(ValidationInvalidReason::CONSENSUS, false, REJECT_INVALID, "bad-cs-missing", "second tx is not coinstake");
 
-        //prevoutStake must exactly match the coinstake in the block body
-        if(block.vtx[1]->vin.empty() || block.prevoutStake != block.vtx[1]->vin[0].prevout){
-            return state.Invalid(ValidationInvalidReason::CONSENSUS, false, REJECT_INVALID, "bad-cs-invalid", "prevoutStake in block header does not match coinstake in block body");
+        if(!block.HasProofOfDelegation())
+        {
+            //prevoutStake must exactly match the coinstake in the block body
+            if(block.vtx[1]->vin.empty() || block.prevoutStake != block.vtx[1]->vin[0].prevout){
+                return state.Invalid(ValidationInvalidReason::CONSENSUS, false, REJECT_INVALID, "bad-cs-invalid", "prevoutStake in block header does not match coinstake in block body");
+            }
         }
         //the rest of the transactions must not be coinstake
         for (unsigned int i = 2; i < block.vtx.size(); i++)
@@ -5102,7 +5291,7 @@ bool CChainState::UpdateHashProof(const CBlock& block, CValidationState& state, 
     if (block.IsProofOfStake())
     {
         uint256 targetProofOfStake;
-        if (!CheckProofOfStake(pindex->pprev, state, *block.vtx[1], block.nBits, block.nTime, hashProof, targetProofOfStake, view))
+        if (!CheckProofOfStake(pindex->pprev, state, *block.vtx[1], block.nBits, block.nTime, block.GetProofOfDelegation(), block.prevoutStake, hashProof, targetProofOfStake, view))
         {
             return error("UpdateHashProof() : check proof-of-stake failed for block %s", hash.ToString());
         }
@@ -5453,8 +5642,8 @@ bool CChainState::AcceptBlock(const std::shared_ptr<const CBlock>& pblock, CVali
 
     // Header is valid/has work, merkle tree and segwit merkle tree are good...RELAY NOW
     // (but if it does not build on our best tip, let the SendMessages loop relay it)
-    if (!IsInitialBlockDownload() && m_chain.Tip() == pindex->pprev)
-        GetMainSignals().NewPoWValidBlock(pindex, pblock);
+    //if (!IsInitialBlockDownload() && m_chain.Tip() == pindex->pprev)
+    //    GetMainSignals().NewPoWValidBlock(pindex, pblock);
 
     // Write block to history file
     if (fNewBlock) *fNewBlock = true;
@@ -5479,14 +5668,18 @@ bool CChainState::AcceptBlock(const std::shared_ptr<const CBlock>& pblock, CVali
 bool IsCanonicalBlockSignature(const CBlockHeader* pblock, bool checkLowS)
 {
     if (pblock->IsProofOfWork()) {
-        return pblock->vchBlockSig.empty();
+        return pblock->vchBlockSigDlgt.empty();
     }
 
-    return checkLowS ? IsLowDERSignature(pblock->vchBlockSig, NULL, false) : IsDERSignature(pblock->vchBlockSig, NULL, false);
+    return checkLowS ? IsLowDERSignature(pblock->vchBlockSigDlgt, NULL, false) : IsDERSignature(pblock->vchBlockSigDlgt, NULL, false);
 }
 
 bool CheckCanonicalBlockSignature(const CBlockHeader* pblock)
 {
+    // Check compact signature size
+    if(pblock->IsProofOfStake() && pblock->GetBlockSignature().size() == CPubKey::COMPACT_SIGNATURE_SIZE)
+        return pblock->HasProofOfDelegation() ? pblock->GetProofOfDelegation().size() == CPubKey::COMPACT_SIGNATURE_SIZE : true;
+
     //block signature encoding
     bool ret = IsCanonicalBlockSignature(pblock, false);
 

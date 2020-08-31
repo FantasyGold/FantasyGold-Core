@@ -154,10 +154,10 @@ static bool rest_headers(HTTPRequest* req,
 
     switch (rf) {
     case RetFormat::BINARY: {
-    CDataStream ssHeader(SER_NETWORK, PROTOCOL_VERSION);
-    for (const CBlockIndex *pindex : headers) {
-        ssHeader << pindex->GetBlockHeader();
-    }
+        CDataStream ssHeader(SER_NETWORK, PROTOCOL_VERSION);
+        for (const CBlockIndex *pindex : headers) {
+            ssHeader << pindex->GetBlockHeader();
+        }
 
         std::string binaryHeader = ssHeader.str();
         req->WriteHeader("Content-Type", "application/octet-stream");
@@ -178,7 +178,7 @@ static bool rest_headers(HTTPRequest* req,
     }
     case RetFormat::JSON: {
         UniValue jsonHeaders(UniValue::VARR);
-            for (const CBlockIndex *pindex : headers) {
+        for (const CBlockIndex *pindex : headers) {
             jsonHeaders.push_back(blockheaderToJSON(tip, pindex));
         }
         std::string strJSON = jsonHeaders.write() + "\n";
@@ -225,8 +225,8 @@ static bool rest_block(HTTPRequest* req,
 
     switch (rf) {
     case RetFormat::BINARY: {
-    CDataStream ssBlock(SER_NETWORK, PROTOCOL_VERSION | RPCSerializationFlags());
-    ssBlock << block;
+        CDataStream ssBlock(SER_NETWORK, PROTOCOL_VERSION | RPCSerializationFlags());
+        ssBlock << block;
         std::string binaryBlock = ssBlock.str();
         req->WriteHeader("Content-Type", "application/octet-stream");
         req->WriteReply(HTTP_OK, binaryBlock);
@@ -358,8 +358,8 @@ static bool rest_tx(HTTPRequest* req, const std::string& strURIPart)
 
     switch (rf) {
     case RetFormat::BINARY: {
-    CDataStream ssTx(SER_NETWORK, PROTOCOL_VERSION | RPCSerializationFlags());
-    ssTx << tx;
+        CDataStream ssTx(SER_NETWORK, PROTOCOL_VERSION | RPCSerializationFlags());
+        ssTx << tx;
 
         std::string binaryTx = ssTx.str();
         req->WriteHeader("Content-Type", "application/octet-stream");

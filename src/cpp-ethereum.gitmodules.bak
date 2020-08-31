@@ -1,0 +1,15 @@
+[submodule "test/jsontests"]
+	path = test/jsontests
+	url = https://github.com/ethereum/tests.git
+[submodule "scripts/dopple"]
+	path = scripts/dopple
+	url = https://github.com/ethereum/dopple
+[submodule "ethash"]
+	path = ethash
+	url = https://github.com/chfast/ethash
+[submodule "cmake/cable"]
+	path = cmake/cable
+	url = https://github.com/ethereum/cable
+[submodule "evmc"]
+	path = evmc
+	url = https://github.com/ethereum/evmc

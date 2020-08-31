@@ -368,9 +368,9 @@ void CTxMemPool::addUnchecked(const CTxMemPoolEntry &entry, setEntries &setAnces
     // into mapTx.
     CAmount delta{0};
     ApplyDelta(entry.GetTx().GetHash(), delta);
-        if (delta) {
+    if (delta) {
             mapTx.modify(newit, update_fee_delta(delta));
-        }
+    }
 
     // Update cachedInnerUsage to include contained transaction's usage.
     // (When we update the entry for in-mempool parents, memory usage will be
@@ -393,7 +393,7 @@ void CTxMemPool::addUnchecked(const CTxMemPoolEntry &entry, setEntries &setAnces
     // Update ancestors with information about this tx
     for (const auto& pit : GetIterSet(setParentTransactions)) {
             UpdateParent(newit, pit, true);
-        }
+    }
     UpdateAncestorsOf(true, newit, setAncestors);
     UpdateEntryForAncestors(newit, setAncestors);
 
@@ -487,7 +487,7 @@ void CTxMemPool::removeRecursive(const CTransaction &origTx, MemPoolRemovalReaso
         }
 
         RemoveStaged(setAllRemoves, false, reason);
-    }
+}
 
 void CTxMemPool::removeForReorg(const CCoinsViewCache *pcoins, unsigned int nMemPoolHeight, int flags)
 {
@@ -570,10 +570,17 @@ void CTxMemPool::removeForBlock(const std::vector<CTransactionRef>& vtx, unsigne
         }
         removeConflicts(*tx);
         ClearPrioritisation(tx->GetHash());
+<<<<<<< Updated upstream
 #ifdef ENABLE_BITCORE_RPC
         removeAddressIndex(tx->GetHash());
         removeSpentIndex(tx->GetHash());
 #endif
+=======
+        if(fAddressIndex) {
+            removeAddressIndex(tx->GetHash());
+            removeSpentIndex(tx->GetHash());
+        }
+>>>>>>> Stashed changes
     }
     lastRollingFeeUpdate = GetTime();
     blockSinceLastRollingFeeBump = true;
