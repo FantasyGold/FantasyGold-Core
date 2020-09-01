@@ -14,6 +14,9 @@ class FantasyGoldDuplicateStakeTest(BitcoinTestFramework):
         self.setup_clean_chain = True
         self.num_nodes = 2
 
+    def skip_test_if_missing_module(self):
+        self.skip_if_no_wallet()
+
     def start_p2p_connection(self):
         self.p2p_node = self.node.add_p2p_connection(P2PInterface())
         self.p2p_alt_node = self.nodes[1].add_p2p_connection(P2PInterface())
@@ -36,7 +39,7 @@ class FantasyGoldDuplicateStakeTest(BitcoinTestFramework):
         # Create a slightly different block using the same staking utxo (only difference is the nonce)
         alt_block = CBlock(block)
         alt_block.vtx = block.vtx[:]
-        alt_block.nNone = 1
+        alt_block.nNonce = 1
         alt_block.rehash()
         alt_block.sign_block(block_sig_key)
         alt_block.rehash()
@@ -111,13 +114,13 @@ class FantasyGoldDuplicateStakeTest(BitcoinTestFramework):
 
         # Send <alt_block> to alt_node
         self.p2p_alt_node.send_message(msg_block(alt_block))
-        time.sleep(2)
+        time.sleep(5)
         self.alt_node.generate(500)
-        time.sleep(2)
+        time.sleep(5)
         
         # Send <block> to node
         self.p2p_node.send_message(msg_block(block))
-        time.sleep(2)
+        time.sleep(5)
         assert_raises_rpc_error(-5, "Block not found", self.node.getblockheader, block.hash)
 
         time.sleep(2)

@@ -24,7 +24,6 @@ class CCoinsViewDBCursor;
 class uint256;
 struct CHeightTxIndexKey;
 struct CHeightTxIndexIteratorKey;
-#ifdef ENABLE_BITCORE_RPC
 //////////////////////////////////// //fantasygold
 struct CAddressIndexKey;
 struct CAddressUnspentKey;
@@ -34,7 +33,6 @@ struct CTimestampIndexKey;
 struct CTimestampBlockIndexKey;
 struct CTimestampBlockIndexValue;
 ////////////////////////////////////
-#endif
 
 using valtype = std::vector<unsigned char>;
 
@@ -172,14 +170,10 @@ public:
     bool ReadStakeIndex(unsigned int high, unsigned int low, std::vector<uint160> addresses);
     bool EraseStakeIndex(unsigned int height);
 
-<<<<<<< Updated upstream
-#ifdef ENABLE_BITCORE_RPC
-=======
     bool WriteDelegateIndex(unsigned int height, uint160 address, uint8_t fee);
     bool ReadDelegateIndex(unsigned int height, uint160& address, uint8_t& fee);
     bool EraseDelegateIndex(unsigned int height);
 
->>>>>>> Stashed changes
     // Block explorer database functions
     bool WriteAddressIndex(const std::vector<std::pair<CAddressIndexKey, CAmount> > &vect);
     bool EraseAddressIndex(const std::vector<std::pair<CAddressIndexKey, CAmount> > &vect);
@@ -196,7 +190,6 @@ public:
     bool ReadSpentIndex(CSpentIndexKey &key, CSpentIndexValue &value);
     bool UpdateSpentIndex(const std::vector<std::pair<CSpentIndexKey, CSpentIndexValue> >&vect);
     bool blockOnchainActive(const uint256 &hash);
-#endif
 
     //////////////////////////////////////////////////////////////////////////////
 };
@@ -265,7 +258,6 @@ struct CHeightTxIndexKey {
     }
 };
 
-#ifdef ENABLE_BITCORE_RPC
 struct CTimestampIndexIteratorKey {
     unsigned int timestamp;
 
@@ -601,7 +593,6 @@ struct CAddressIndexIteratorKey {
         hashBytes.SetNull();
     }
 };
-#endif
 ////////////////////////////////////////////////////////////
 
 #endif // BITCOIN_TXDB_H

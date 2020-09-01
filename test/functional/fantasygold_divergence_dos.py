@@ -13,13 +13,16 @@ class FantasyGoldDivergenceDosTest(BitcoinTestFramework):
         self.num_nodes = 1
         self.extra_args = [[]]
 
+    def skip_test_if_missing_module(self):
+        self.skip_if_no_wallet()
+
     def submit_block_with_txs(self, txs):
         tip = self.node.getblock(self.node.getbestblockhash())
         block = create_block(int(tip['hash'], 16), create_coinbase(tip['height']+1), tip['time']+1)
         block.hashStateRoot = int(tip['hashStateRoot'], 16)
         block.hashUTXORoot = int(tip['hashUTXORoot'], 16)
         if txs:
-            address = self.node.gettxout(hex(txs[0].vin[0].prevout.hash)[2:], txs[0].vin[0].prevout.n)['scriptPubKey']['addresses'][0]
+            address = self.node.gettxout(hex(txs[0].vin[0].prevout.hash)[2:].zfill(64), txs[0].vin[0].prevout.n)['scriptPubKey']['addresses'][0]
             haddress = hex_str_to_bytes(p2pkh_to_hex_hash(address))
             block.vtx[0].vout.append(CTxOut(100, CScript([OP_DUP, OP_HASH160, haddress, OP_EQUALVERIFY, OP_CHECKSIG])))
             if len(txs) > 1:
@@ -86,16 +89,16 @@ class FantasyGoldDivergenceDosTest(BitcoinTestFramework):
         pragma solidity ^0.4.24;
         contract Ballot {
             function() payable public {
-                throw;
+                while(true){}
             }
         }
         """
-        bytecode = "6080604052348015600f57600080fd5b50603580601d6000396000f3006080604052600080fd00a165627a7a723058208efda2b7aa7d6a6c3e6e24d1ad3dae8c44b399c5764ea9614e34720227dbd04b0029"
+        bytecode = "6080604052348015600f57600080fd5b50603d80601d6000396000f30060806040525b600115600f576005565b0000a165627a7a72305820046fe704d7206dd7bd828449504709b4786e72b5b8cb47633add96fec4d343410029"
         self.contract_address = self.node.createcontract(bytecode)['address']
         self.node.generate(1)
         self.too_few_txs_test()
         self.different_but_same_number_aal_txs_test()
         self.too_many_txs_test()
-        
+         
 if __name__ == '__main__':
     FantasyGoldDivergenceDosTest().main()

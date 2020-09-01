@@ -415,7 +415,7 @@ BITCOIN_QT_BASE_CPP = \
   qt/tokenitemmodel.cpp \
   qt/superstakeritemmodel.cpp \
   qt/trafficgraphwidget.cpp \
-  qt/utilitydialog.cpp \
+  qt/utilitydialog.cpp\
   qt/fantasygoldversionchecker.cpp \
   qt/fantasygoldpushbutton.cpp
 

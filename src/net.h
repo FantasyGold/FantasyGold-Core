@@ -298,16 +298,16 @@ public:
     void SetMaxOutboundTimeframe(uint64_t timeframe);
     uint64_t GetMaxOutboundTimeframe();
 
-    //!check if the outbound target is reached
+    //! check if the outbound target is reached
     //! if param historicalBlockServingLimit is set true, the function will
     //! response true if the limit for serving historical blocks has been reached
     bool OutboundTargetReached(bool historicalBlockServingLimit);
 
-    //!response the bytes left in the current max outbound cycle
+    //! response the bytes left in the current max outbound cycle
     //! in case of no limit, it will always response 0
     uint64_t GetOutboundTargetBytesLeft();
 
-    //!response the time in second left in the current max outbound cycle
+    //! response the time in second left in the current max outbound cycle
     //! in case of no limit, it will always response 0
     uint64_t GetMaxOutboundTimeLeftInCycle();
 
@@ -760,7 +760,7 @@ public:
         std::set<uint256> setInventoryTxToSend;
         // Used for BIP35 mempool sending
         bool fSendMempool GUARDED_BY(cs_tx_inventory){false};
-    // Last time a "MEMPOOL" request was serviced.
+        // Last time a "MEMPOOL" request was serviced.
         std::atomic<int64_t> timeLastMempoolReq{0};
         int64_t nNextInvSend{0};
 

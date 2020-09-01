@@ -388,7 +388,7 @@ class WalletTest(BitcoinTestFramework):
         for mode in [True, False]:
             self.nodes[0].rpc.ensure_ascii = mode
             # unicode check: Basic Multilingual Plane, Supplementary Plane respectively
-            for label in [u'????????', u'????']:
+            for label in [u'????', u'??']:
                 addr = self.nodes[0].getnewaddress()
                 self.nodes[0].setlabel(addr, label)
                 assert_equal(self.nodes[0].getaddressinfo(addr)['label'], label)

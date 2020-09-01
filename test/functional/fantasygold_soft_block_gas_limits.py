@@ -15,15 +15,18 @@ class FantasyGoldSoftMinerGasRelatedLimitsTest(BitcoinTestFramework):
         self.setup_clean_chain = True
         self.num_nodes = 8
         self.extra_args = [
-            ["-staker-soft-block-gas-limit=1000000000", '-rpcmaxgasprice=10000000'],
-            ["-staker-soft-block-gas-limit=400000", '-rpcmaxgasprice=10000000'],
-            ["-staker-soft-block-gas-limit=0", '-rpcmaxgasprice=10000000'],
-            ["-staker-max-tx-gas-limit=100000000", '-rpcmaxgasprice=10000000'],
-            ["-staker-max-tx-gas-limit=100000", '-rpcmaxgasprice=10000000'],
-            ["-staker-max-tx-gas-limit=0", '-rpcmaxgasprice=10000000'],
-            ["-staker-min-tx-gas-price=0", '-rpcmaxgasprice=10000000'],
-            ["-staker-min-tx-gas-price=0.0001", '-rpcmaxgasprice=10000000']
+            ["-staker-soft-block-gas-limit=1000000000", '-rpcmaxgasprice=10000000', '-acceptnonstdtxn'],
+            ["-staker-soft-block-gas-limit=400000", '-rpcmaxgasprice=10000000', '-acceptnonstdtxn'],
+            ["-staker-soft-block-gas-limit=0", '-rpcmaxgasprice=10000000', '-acceptnonstdtxn'],
+            ["-staker-max-tx-gas-limit=100000000", '-rpcmaxgasprice=10000000', '-acceptnonstdtxn'],
+            ["-staker-max-tx-gas-limit=100000", '-rpcmaxgasprice=10000000', '-acceptnonstdtxn'],
+            ["-staker-max-tx-gas-limit=0", '-rpcmaxgasprice=10000000', '-acceptnonstdtxn'],
+            ["-staker-min-tx-gas-price=0", '-rpcmaxgasprice=10000000', '-acceptnonstdtxn'],
+            ["-staker-min-tx-gas-price=0.0001", '-rpcmaxgasprice=10000000', '-acceptnonstdtxn']
         ]
+
+    def skip_test_if_missing_module(self):
+        self.skip_if_no_wallet()
 
     # Make sure that the hard block gas limit never differs in the evm.
     def verify_hard_block_gas_limit_test(self):
@@ -71,11 +74,11 @@ class FantasyGoldSoftMinerGasRelatedLimitsTest(BitcoinTestFramework):
         """
         pragma solidity ^0.4.12;
 
-        contract Test {
-            function () {}
+        contract Test{
+            function () payable { assert(false); }
         }
         """
-        contract_address = self.nodes[0].createcontract("60606040523415600e57600080fd5b5b603f80601c6000396000f30060606040525b3415600f57600080fd5b5b5b0000a165627a7a7230582058c936974fe6daaa8267ff5da1c805b0e7442b9cc687162114dfb1cb6d6f62bd0029")['address']
+        contract_address = self.nodes[0].createcontract("6080604052348015600f57600080fd5b50604280601d6000396000f3fe60806040526000600b57fe5b00fea265627a7a72305820db0c52d10779ca6ec85aa4cb3d532438cd960d532240f8f61b226bbdab137f4d64736f6c634300050a0032")['address']
         self.nodes[0].generate(1)
         assert(contract_address in self.nodes[0].listcontracts())
         self.sync_all()

@@ -14,6 +14,10 @@ class FantasyGoldIgnoreMPOSParticipantRewardTest(BitcoinTestFramework):
     def set_test_params(self):
         self.setup_clean_chain = True
         self.num_nodes = 1
+        self.extra_args = [['-lastmposheight=999999']]
+
+    def skip_test_if_missing_module(self):
+        self.skip_if_no_wallet()
 
     def remove_from_staking_prevouts(self, remove_prevout):
         for j in range(len(self.staking_prevouts)):
@@ -60,7 +64,7 @@ class FantasyGoldIgnoreMPOSParticipantRewardTest(BitcoinTestFramework):
         # This will be an mpos participant
         mpos_participant_block = self.node.getblock(self.node.getblockhash(self.node.getblockcount() - 505))
         mpos_participant_txid = mpos_participant_block['tx'][1]
-        mpos_participant_tx = self.node.getrawtransaction(mpos_participant_txid, True)
+        mpos_participant_tx = self.node.decoderawtransaction(self.node.gettransaction(mpos_participant_txid)['hex'])
         mpos_participant_pubkey = hex_str_to_bytes(mpos_participant_tx['vout'][1]['scriptPubKey']['asm'].split(' ')[0])
         mpos_participant_hpubkey = hash160(mpos_participant_pubkey)
         mpos_participant_addr = hex_hash_to_p2pkh(bytes_to_hex_str(mpos_participant_hpubkey))

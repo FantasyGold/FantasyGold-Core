@@ -69,7 +69,7 @@ static BlockAssembler::Options DefaultOptions()
     // If -blockmaxweight is not given, limit to DEFAULT_BLOCK_MAX_WEIGHT
     BlockAssembler::Options options;
     options.nBlockMaxWeight = gArgs.GetArg("-blockmaxweight", DEFAULT_BLOCK_MAX_WEIGHT);
-        CAmount n = 0;
+    CAmount n = 0;
     if (gArgs.IsArgSet("-blockmintxfee") && ParseMoney(gArgs.GetArg("-blockmintxfee", ""), n)) {
         options.blockMinFeeRate = CFeeRate(n);
     } else {
@@ -1128,7 +1128,7 @@ bool CheckStake(const std::shared_ptr<const CBlock> pblock, CWallet& wallet)
     // verify hash target and signature of coinstake tx
     {
         auto locked_chain = wallet.chain().lock();
-    CValidationState state;
+        CValidationState state;
         if (!CheckProofOfStake(::BlockIndex()[pblock->hashPrevBlock], state, *pblock->vtx[1], pblock->nBits, pblock->nTime, pblock->GetProofOfDelegation(), pblock->prevoutStake, proofHash, hashTarget, ::ChainstateActive().CoinsTip()))
             return error("CheckStake() : proof-of-stake checking failed %s",state.GetRejectReason());
     }

@@ -11,13 +11,21 @@ class FantasyGold8MBBlock(BitcoinTestFramework):
     def set_test_params(self):
         self.setup_clean_chain = True
         self.num_nodes = 2
+        self.extra_args = [['-acceptnonstdtxn']]*2
+
+
+    def skip_test_if_missing_module(self):
+        self.skip_if_no_wallet()
 
     def run_test(self):
         self.node = self.nodes[0]
         connect_nodes_bi(self.nodes, 0, 1)
         # Make sure that segwit is activated
-        self.node.generate(10+COINBASE_MATURITY*4)
-        self.sync_all()
+        for i in range(0, COINBASE_MATURITY*4, 100):
+            self.node.generate(100)
+            self.sync_blocks()
+        self.node.generate(10)
+        self.sync_blocks()
 
         tx = CTransaction()
         tx.vin = [make_vin(self.node, 2*COIN)]

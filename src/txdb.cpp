@@ -36,7 +36,6 @@ static const char DB_FLAG = 'F';
 static const char DB_REINDEX_FLAG = 'R';
 static const char DB_LAST_BLOCK = 'l';
 
-#ifdef ENABLE_BITCORE_RPC
 ////////////////////////////////////////// // fantasygold
 static const char DB_ADDRESSINDEX = 'a';
 static const char DB_ADDRESSUNSPENTINDEX = 'u';
@@ -44,7 +43,6 @@ static const char DB_TIMESTAMPINDEX = 'S';
 static const char DB_BLOCKHASHINDEX = 'z';
 static const char DB_SPENTINDEX = 'p';
 //////////////////////////////////////////
-#endif
 
 namespace {
 
@@ -455,9 +453,6 @@ bool CBlockTreeDB::EraseStakeIndex(unsigned int height) {
     return WriteBatch(batch);
 }
 
-<<<<<<< Updated upstream
-#ifdef ENABLE_BITCORE_RPC
-=======
 bool CBlockTreeDB::WriteDelegateIndex(unsigned int height, uint160 address, uint8_t fee) {
     CDBBatch batch(*this);
     batch.Write(std::make_pair(DB_DELEGATEINDEX, height), DelegateEntry(address, fee));
@@ -507,7 +502,6 @@ bool CBlockTreeDB::EraseDelegateIndex(unsigned int height) {
     return WriteBatch(batch);
 }
 
->>>>>>> Stashed changes
 bool CBlockTreeDB::WriteAddressIndex(const std::vector<std::pair<CAddressIndexKey, CAmount > >&vect) {
     CDBBatch batch(*this);
     for (std::vector<std::pair<CAddressIndexKey, CAmount> >::const_iterator it=vect.begin(); it!=vect.end(); it++)
@@ -667,7 +661,6 @@ bool CBlockTreeDB::blockOnchainActive(const uint256 &hash) {
 
     return true;
 }
-#endif
 ///////////////////////////////////////////////////////
 
 bool CBlockTreeDB::LoadBlockIndexGuts(const Consensus::Params& consensusParams, std::function<CBlockIndex*(const uint256&)> insertBlockIndex)

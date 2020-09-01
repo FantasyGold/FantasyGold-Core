@@ -152,11 +152,7 @@ bool StorageResults::readResult(dev::h256 const& _key, std::vector<TransactionRe
                 state.itemCount() >= 11 ? static_cast<dev::eth::TransactionException>(tris.excepted[j]) : dev::eth::TransactionException::NoInformation,
                 state.itemCount() >= 12 ? tris.exceptedMessage[j] : "",
                 state.itemCount() >= 13 ? tris.outputIndexes[j] : 0xffffffff
-<<<<<<< Updated upstream
-                                    };
-=======
             };
->>>>>>> Stashed changes
             _result.push_back(tri);
         }
 		return true;

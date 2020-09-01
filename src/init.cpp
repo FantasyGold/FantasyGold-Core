@@ -205,11 +205,6 @@ void Shutdown(InitInterfaces& interfaces)
     // using the other before destroying them.
     if (peerLogic) UnregisterValidationInterface(peerLogic.get());
     if (g_connman) g_connman->Stop();
-<<<<<<< Updated upstream
-    if (g_txindex) g_txindex->Stop();
-    ForEachBlockFilterIndex([](BlockFilterIndex& index) { index.Stop(); });
-=======
->>>>>>> Stashed changes
 
     StopTorControl();
 
@@ -223,11 +218,6 @@ void Shutdown(InitInterfaces& interfaces)
     peerLogic.reset();
     g_connman.reset();
     g_banman.reset();
-<<<<<<< Updated upstream
-    g_txindex.reset();
-    DestroyAllBlockFilterIndexes();
-=======
->>>>>>> Stashed changes
 
     if (::mempool.IsLoaded() && gArgs.GetArg("-persistmempool", DEFAULT_PERSIST_MEMPOOL)) {
         DumpMempool(::mempool);
@@ -260,8 +250,6 @@ void Shutdown(InitInterfaces& interfaces)
     // CValidationInterface callbacks, flush them...
     GetMainSignals().FlushBackgroundCallbacks();
 
-<<<<<<< Updated upstream
-=======
     // Stop and delete all indexes only after flushing background callbacks.
     if (g_txindex) {
         g_txindex->Stop();
@@ -270,7 +258,6 @@ void Shutdown(InitInterfaces& interfaces)
     ForEachBlockFilterIndex([](BlockFilterIndex& index) { index.Stop(); });
     DestroyAllBlockFilterIndexes();
 
->>>>>>> Stashed changes
     // Any future callbacks will be dropped. This should absolutely be safe - if
     // missing a callback results in an unrecoverable situation, unclean shutdown
     // would too. The only reason to do the above flushes is to let the wallet catch
@@ -427,9 +414,7 @@ void SetupServerArgs()
                  " If <type> is not supplied or if <type> = 1, indexes for all known types are enabled.",
                  ArgsManager::ALLOW_ANY, OptionsCategory::OPTIONS);
     gArgs.AddArg("-logevents", strprintf("Maintain a full EVM log index, used by searchlogs and gettransactionreceipt rpc calls (default: %u)", DEFAULT_LOGEVENTS), ArgsManager::ALLOW_ANY, OptionsCategory::OPTIONS);
-#ifdef ENABLE_BITCORE_RPC
     gArgs.AddArg("-addrindex", strprintf("Maintain a full address index (default: %u)", DEFAULT_ADDRINDEX), ArgsManager::ALLOW_ANY, OptionsCategory::OPTIONS);
-#endif
     gArgs.AddArg("-deleteblockchaindata", "Delete the local copy of the block chain data", ArgsManager::ALLOW_ANY, OptionsCategory::OPTIONS);
 
     gArgs.AddArg("-addnode=<ip>", "Add a node to connect to and attempt to keep the connection open (see the `addnode` RPC command help for more info). This option can be specified multiple times to add multiple nodes.", ArgsManager::ALLOW_ANY | ArgsManager::NETWORK_ONLY, OptionsCategory::CONNECTION);
@@ -1433,10 +1418,6 @@ bool AppInitMain(InitInterfaces& interfaces)
     }
 
 ////////////////////////////////////////////////////////////////////// // fantasygold
-<<<<<<< Updated upstream
-    dev::g_logPost = [&](std::string const& s, char const* c){ LogInstance().LogPrintStr(s + '\n', true); };
-=======
->>>>>>> Stashed changes
     dev::g_logPost(std::string("\n\n\n\n\n\n\n\n\n\n"), NULL);
 //////////////////////////////////////////////////////////////////////
 
@@ -1654,12 +1635,10 @@ bool AppInitMain(InitInterfaces& interfaces)
     nTotalCache = std::max(nTotalCache, nMinDbCache << 20); // total cache cannot be less than nMinDbCache
     nTotalCache = std::min(nTotalCache, nMaxDbCache << 20); // total cache cannot be greater than nMaxDbcache
     int64_t nBlockTreeDBCache = std::min(nTotalCache / 8, nMaxBlockDBCache << 20);
-#ifdef ENABLE_BITCORE_RPC
     if (gArgs.GetBoolArg("-addrindex", DEFAULT_ADDRINDEX)) {
         // enable 3/4 of the cache if addressindex and/or spentindex is enabled
         nBlockTreeDBCache = nTotalCache * 3 / 4;
     }
-#endif
     nTotalCache -= nBlockTreeDBCache;
     int64_t nTxIndexCache = std::min(nTotalCache / 8, gArgs.GetBoolArg("-txindex", DEFAULT_TXINDEX) ? nMaxTxIndexCache << 20 : 0);
     nTotalCache -= nTxIndexCache;
@@ -1838,14 +1817,12 @@ bool AppInitMain(InitInterfaces& interfaces)
                 fIsVMlogFile = fs::exists(GetDataDir() / "vmExecLogs.json");
                 ///////////////////////////////////////////////////////////
 
-#ifdef ENABLE_BITCORE_RPC
                 /////////////////////////////////////////////////////////////// // fantasygold
                 if (fAddressIndex != gArgs.GetBoolArg("-addrindex", DEFAULT_ADDRINDEX)) {
-                    strLoadError = _("You need to rebuild the database using -reindex-chainstate to change -addrindex").translated;
+                    strLoadError = _("You need to rebuild the database using -reindex to change -addrindex").translated;
                     break;
                 }
                 ///////////////////////////////////////////////////////////////
-#endif
                 // Check for changed -logevents state
                 if (fLogEvents != gArgs.GetBoolArg("-logevents", DEFAULT_LOGEVENTS) && !fLogEvents) {
                     strLoadError = _("You need to rebuild the database using -reindex to enable -logevents").translated;

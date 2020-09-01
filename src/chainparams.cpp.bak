@@ -86,6 +86,7 @@ public:
         consensus.QIP6Height = 185000;
         consensus.QIP7Height = 185000;
         consensus.QIP9Height = 185000;
+        consensus.nOfflineStakeHeight = 680000;
         consensus.powLimit = uint256S("0000ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff");
         consensus.posLimit = uint256S("00000000ffffffffffffffffffffffffffffffffffffffffffffffffffffffff");
         consensus.QIP9PosLimit = uint256S("0000000000001fffffffffffffffffffffffffffffffffffffffffffffffffff"); // The new POS-limit activated after QIP9
@@ -279,8 +280,8 @@ public:
                                     COINBASE_MATURITY;
         consensus.nLastMPoSBlock = 624999;
 
-        consensus.nFixUTXOCacheHFHeight = 84500;
-        consensus.nEnableHeaderSignatureHeight = 391993;
+        consensus.nFixUTXOCacheHFHeight = 1550;
+        consensus.nEnableHeaderSignatureHeight = 881;
         consensus.nCheckpointSpan = COINBASE_MATURITY;
         consensus.delegationsAddress = uint160(ParseHex("0000000000000000000000000000000000000086")); // Delegations contract for offline staking
     }
@@ -380,7 +381,7 @@ public:
         base58Prefixes[EXT_PUBLIC_KEY] = {0x04, 0x35, 0x87, 0xCF};
         base58Prefixes[EXT_SECRET_KEY] = {0x04, 0x35, 0x83, 0x94};
 
-        bech32_hrp = "qcrt";
+        bech32_hrp = "fgct";
     }
 
     /**

@@ -18,6 +18,9 @@ class CreatecontractTest(BitcoinTestFramework):
         self.num_nodes = 1
         self.extra_args = [['-txindex=1']]
 
+    def skip_test_if_missing_module(self):
+        self.skip_if_no_wallet()
+
     def createcontract_simple_test(self):
         """
         pragma solidity ^0.4.0;
@@ -132,7 +135,7 @@ class CreatecontractTest(BitcoinTestFramework):
 
         # verify that at least one output has a scriptPubKey of type create
         for out in decoded_tx['vout']:
-            if out['scriptPubKey']['type'] == 'create':
+            if out['scriptPubKey']['type'] == 'create' or out['scriptPubKey']['type'] == 'create_sender':
                 return
         assert(False)
 

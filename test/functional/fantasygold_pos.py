@@ -9,7 +9,7 @@ from test_framework.script import *
 from test_framework.mininode import *
 from test_framework.blocktools import *
 from test_framework.address import *
-from test_framework.key import CECKey
+from test_framework.key import ECKey
 import io
 import struct
 
@@ -19,6 +19,9 @@ class FantasyGoldPOSTest(BitcoinTestFramework):
         self.setup_clean_chain = True
         self.extra_args = [[]]
         self.tip = None
+
+    def skip_test_if_missing_module(self):
+        self.skip_if_no_wallet()
 
     def bootstrap_p2p(self):
         """Add a P2P connection to the node.
@@ -42,15 +45,21 @@ class FantasyGoldPOSTest(BitcoinTestFramework):
         self.bootstrap_p2p()
 
 
-    def sync_blocks(self, blocks, success=True, reject_code=None, reject_reason=None, request_block=True, reconnect=False, timeout=5):
+    def sync_all_blocks(self, blocks, success=True, reject_code=None, reject_reason=None, force_send=False, reconnect=False, timeout=5):
         """Sends blocks to test node. Syncs and verifies that tip has advanced to most recent block.
 
         Call with success = False if the tip shouldn't advance to the most recent block."""
-        self.nodes[0].p2p.send_blocks_and_test(blocks, self.nodes[0], success=success, reject_code=reject_code, reject_reason=reject_reason, request_block=request_block, timeout=timeout)
+        self.nodes[0].p2p.send_blocks_and_test(blocks, self.nodes[0], success=success, reject_reason=reject_reason, force_send=force_send, timeout=timeout, expect_disconnect=reconnect)
 
         if reconnect:
             self.reconnect_p2p()
 
+    def _remove_from_staking_prevouts(self, block):
+        for j in range(len(self.staking_prevouts)):
+            prevout = self.staking_prevouts[j]
+            if prevout[0].serialize() == block.prevoutStake.serialize():
+                self.staking_prevouts.pop(j)
+                break
 
     def run_test(self):
         self.node = self.nodes[0]
@@ -59,12 +68,12 @@ class FantasyGoldPOSTest(BitcoinTestFramework):
         self.bootstrap_p2p()
         # returns a test case that asserts that the current tip was accepted
         # First generate some blocks so we have some spendable coins
-        block_hashes = self.node.generatetoaddress(25, "qSrM9K6FMhZ29Vkp8Rdk8Jp66bbfpjFETq")
+        block_hashes = self.node.generatetoaddress(100, "qSrM9K6FMhZ29Vkp8Rdk8Jp66bbfpjFETq")
 
         for i in range(COINBASE_MATURITY):
             self.tip = create_block(int(self.node.getbestblockhash(), 16), create_coinbase(self.node.getblockcount()+1), int(time.time()))
             self.tip.solve()
-            self.sync_blocks([self.tip], success=True)
+            self.sync_all_blocks([self.tip], success=True)
 
         for _ in range(10):
             self.node.sendtoaddress("qSrM9K6FMhZ29Vkp8Rdk8Jp66bbfpjFETq", 1000)
@@ -111,30 +120,34 @@ class FantasyGoldPOSTest(BitcoinTestFramework):
         (self.tip, block_sig_key) = self.create_unsigned_pos_block(self.staking_prevouts, nTime=t)
         self.tip.sign_block(block_sig_key)
         self.tip.rehash()
-        self.sync_blocks([self.tip], success=False, request_block=False, reconnect=True)
+        self.sync_all_blocks([self.tip], success=False, force_send=True, reconnect=True)
+        self._remove_from_staking_prevouts(self.tip)
 
 
         # 2 A block that with a too high reward
         (self.tip, block_sig_key) = self.create_unsigned_pos_block(self.staking_prevouts, outNValue=30006)
         self.tip.sign_block(block_sig_key)
         self.tip.rehash()
-        self.sync_blocks([self.tip], success=False, reconnect=True)
+        self.sync_all_blocks([self.tip], success=False, reconnect=True)
+        self._remove_from_staking_prevouts(self.tip)
 
 
         # 3 A block with an incorrect block sig
-        bad_key = CECKey()
-        bad_key.set_secretbytes(hash256(b'horse staple battery'))
+        bad_key = ECKey()
+        bad_key.set(hash256(b'horse staple battery'), False)
         (self.tip, block_sig_key) = self.create_unsigned_pos_block(self.staking_prevouts)
         self.tip.sign_block(bad_key)
         self.tip.rehash()
-        self.sync_blocks([self.tip], success=False, reconnect=True, request_block=False)
+        self.sync_all_blocks([self.tip], success=False, reconnect=True, force_send=True)
+        self._remove_from_staking_prevouts(self.tip)
 
 
         # 4 A block that stakes with txs with too few confirmations
         (self.tip, block_sig_key) = self.create_unsigned_pos_block(self.unconfirmed_staking_prevouts)
         self.tip.sign_block(block_sig_key)
         self.tip.rehash()
-        self.sync_blocks([self.tip], success=False, reconnect=True, request_block=False)
+        self.sync_all_blocks([self.tip], success=False, reconnect=True, force_send=True)
+        self._remove_from_staking_prevouts(self.tip)
 
 
         # 5 A block that with a coinbase reward
@@ -143,7 +156,8 @@ class FantasyGoldPOSTest(BitcoinTestFramework):
         self.tip.hashMerkleRoot = self.tip.calc_merkle_root()
         self.tip.sign_block(block_sig_key)
         self.tip.rehash()
-        self.sync_blocks([self.tip], success=False, reconnect=True)
+        self.sync_all_blocks([self.tip], success=False, reconnect=True)
+        self._remove_from_staking_prevouts(self.tip)
 
 
         # 6 A block that with no vout in the coinbase
@@ -152,7 +166,8 @@ class FantasyGoldPOSTest(BitcoinTestFramework):
         self.tip.hashMerkleRoot = self.tip.calc_merkle_root()
         self.tip.sign_block(block_sig_key)
         self.tip.rehash()
-        self.sync_blocks([self.tip], success=False, reconnect=True)
+        self.sync_all_blocks([self.tip], success=False, reconnect=True)
+        self._remove_from_staking_prevouts(self.tip)
 
 
         # 7 A block way into the future
@@ -160,7 +175,8 @@ class FantasyGoldPOSTest(BitcoinTestFramework):
         (self.tip, block_sig_key) = self.create_unsigned_pos_block(self.staking_prevouts, nTime=t)
         self.tip.sign_block(block_sig_key)
         self.tip.rehash()
-        self.sync_blocks([self.tip], success=False, request_block=False, reconnect=True)
+        self.sync_all_blocks([self.tip], success=False, force_send=True)
+        self._remove_from_staking_prevouts(self.tip)
 
 
         # 8 No vout in the staking tx
@@ -169,14 +185,16 @@ class FantasyGoldPOSTest(BitcoinTestFramework):
         self.tip.hashMerkleRoot = self.tip.calc_merkle_root()
         self.tip.sign_block(block_sig_key)
         self.tip.rehash()
-        self.sync_blocks([self.tip], success=False, reconnect=True)
+        self.sync_all_blocks([self.tip], success=False, reconnect=True)
+        self._remove_from_staking_prevouts(self.tip)
 
 
         # 9 Unsigned coinstake.
         (self.tip, block_sig_key) = self.create_unsigned_pos_block(self.staking_prevouts, signStakeTx=False)
         self.tip.sign_block(block_sig_key)
         self.tip.rehash()
-        self.sync_blocks([self.tip], success=False, reconnect=True)
+        self.sync_all_blocks([self.tip], success=False, reconnect=True)
+        self._remove_from_staking_prevouts(self.tip)
         
 
         # 10 A block without a coinstake tx.
@@ -185,7 +203,8 @@ class FantasyGoldPOSTest(BitcoinTestFramework):
         self.tip.hashMerkleRoot = self.tip.calc_merkle_root()
         self.tip.sign_block(block_sig_key)
         self.tip.rehash()
-        self.sync_blocks([self.tip], success=False, reconnect=True)
+        self.sync_all_blocks([self.tip], success=False, reconnect=True)
+        self._remove_from_staking_prevouts(self.tip)
 
 
         # 11 A block without a coinbase.
@@ -194,7 +213,8 @@ class FantasyGoldPOSTest(BitcoinTestFramework):
         self.tip.hashMerkleRoot = self.tip.calc_merkle_root()
         self.tip.sign_block(block_sig_key)
         self.tip.rehash()
-        self.sync_blocks([self.tip], success=False, reconnect=True)
+        self.sync_all_blocks([self.tip], success=False, reconnect=True)
+        self._remove_from_staking_prevouts(self.tip)
 
 
         # 12 A block where the coinbase has no outputs
@@ -203,7 +223,8 @@ class FantasyGoldPOSTest(BitcoinTestFramework):
         self.tip.hashMerkleRoot = self.tip.calc_merkle_root()
         self.tip.sign_block(block_sig_key)
         self.tip.rehash()
-        self.sync_blocks([self.tip], success=False, reconnect=True)
+        self.sync_all_blocks([self.tip], success=False, reconnect=True)
+        self._remove_from_staking_prevouts(self.tip)
 
 
         # 13 A block where the coinstake has no outputs
@@ -217,7 +238,8 @@ class FantasyGoldPOSTest(BitcoinTestFramework):
         self.tip.hashMerkleRoot = self.tip.calc_merkle_root()
         self.tip.sign_block(block_sig_key)
         self.tip.rehash()
-        self.sync_blocks([self.tip], success=False, reconnect=True)
+        self.sync_all_blocks([self.tip], success=False, reconnect=True)
+        self._remove_from_staking_prevouts(self.tip)
 
 
         # 14 A block with an incorrect hashStateRoot
@@ -225,7 +247,8 @@ class FantasyGoldPOSTest(BitcoinTestFramework):
         self.tip.hashStateRoot = 0xe
         self.tip.sign_block(block_sig_key)
         self.tip.rehash()
-        self.sync_blocks([self.tip], success=False, reconnect=True)
+        self.sync_all_blocks([self.tip], success=False, reconnect=True)
+        self._remove_from_staking_prevouts(self.tip)
 
 
         # 15 A block with an incorrect hashUTXORoot
@@ -233,7 +256,8 @@ class FantasyGoldPOSTest(BitcoinTestFramework):
         self.tip.hashUTXORoot = 0xe
         self.tip.sign_block(block_sig_key)
         self.tip.rehash()
-        self.sync_blocks([self.tip], success=False, reconnect=True)
+        self.sync_all_blocks([self.tip], success=False, reconnect=True)
+        self._remove_from_staking_prevouts(self.tip)
 
 
         # 16 A block with an a signature on wrong header data
@@ -241,7 +265,8 @@ class FantasyGoldPOSTest(BitcoinTestFramework):
         self.tip.sign_block(block_sig_key)
         self.tip.nNonce = 0xfffe
         self.tip.rehash()
-        self.sync_blocks([self.tip], success=False, reconnect=True, request_block=False)
+        self.sync_all_blocks([self.tip], success=False, reconnect=True, force_send=True)
+        self._remove_from_staking_prevouts(self.tip)
 
         # 17 A block with where the pubkey of the second output of the coinstake has been modified after block signing
         (self.tip, block_sig_key) = self.create_unsigned_pos_block(self.staking_prevouts)
@@ -256,14 +281,16 @@ class FantasyGoldPOSTest(BitcoinTestFramework):
         self.tip.hashMerkleRoot = self.tip.calc_merkle_root()
         self.tip.sign_block(block_sig_key)
         self.tip.rehash()
-        self.sync_blocks([self.tip], success=False, reconnect=True)
+        self.sync_all_blocks([self.tip], success=False, reconnect=True)
+        self._remove_from_staking_prevouts(self.tip)
 
         # 18. A block in the past
         t = (int(time.time())-700) & 0xfffffff0
         (self.tip, block_sig_key) = self.create_unsigned_pos_block(self.staking_prevouts, nTime=t)
         self.tip.sign_block(block_sig_key)
         self.tip.rehash()
-        self.sync_blocks([self.tip], success=False, request_block=False, reconnect=True)
+        self.sync_all_blocks([self.tip], success=False, force_send=True, reconnect=True)
+        self._remove_from_staking_prevouts(self.tip)
 
 
         # 19. A block with too many coinbase vouts
@@ -273,28 +300,32 @@ class FantasyGoldPOSTest(BitcoinTestFramework):
         self.tip.hashMerkleRoot = self.tip.calc_merkle_root()
         self.tip.sign_block(block_sig_key)
         self.tip.rehash()
-        self.sync_blocks([self.tip], success=False, reconnect=True)
+        self.sync_all_blocks([self.tip], success=False, reconnect=True)
+        self._remove_from_staking_prevouts(self.tip)
 
 
         # 20. A block where the coinstake's vin is not the prevout specified in the block
         (self.tip, block_sig_key) = self.create_unsigned_pos_block(self.staking_prevouts, coinStakePrevout=self.staking_prevouts[-1][0])
         self.tip.sign_block(block_sig_key)
         self.tip.rehash()
-        self.sync_blocks([self.tip], success=False, reconnect=True)
+        self.sync_all_blocks([self.tip], success=False, reconnect=True)
+        self._remove_from_staking_prevouts(self.tip)
 
 
         # 21. A block that stakes with valid txs but invalid vouts
         (self.tip, block_sig_key) = self.create_unsigned_pos_block(self.bad_vout_staking_prevouts)
         self.tip.sign_block(block_sig_key)
         self.tip.rehash()
-        self.sync_blocks([self.tip], success=False, reconnect=True, request_block=False)
+        self.sync_all_blocks([self.tip], success=False, reconnect=True, force_send=True)
+        self._remove_from_staking_prevouts(self.tip)
 
 
         # 22. A block that stakes with txs that do not exist
         (self.tip, block_sig_key) = self.create_unsigned_pos_block(self.bad_txid_staking_prevouts)
         self.tip.sign_block(block_sig_key)
         self.tip.rehash()
-        self.sync_blocks([self.tip], success=False, reconnect=True, request_block=False)
+        self.sync_all_blocks([self.tip], success=False, reconnect=True, force_send=True)
+        self._remove_from_staking_prevouts(self.tip)
 
 
         # Make sure for certain that no blocks were accepted. (This is also to make sure that no segfaults ocurred)
@@ -304,7 +335,7 @@ class FantasyGoldPOSTest(BitcoinTestFramework):
         (self.tip, block_sig_key) = self.create_unsigned_pos_block(self.staking_prevouts)
         self.tip.sign_block(block_sig_key)
         self.tip.rehash()
-        self.sync_blocks([self.tip], success=True)
+        self.sync_all_blocks([self.tip], success=True)
         assert_equal(self.node.getblockcount(), block_count+1)
 
 
@@ -336,9 +367,9 @@ class FantasyGoldPOSTest(BitcoinTestFramework):
             return None
 
         # create a new private key used for block signing.
-        block_sig_key = CECKey()
-        block_sig_key.set_secretbytes(hash256(struct.pack('<I', 0)))
-        pubkey = block_sig_key.get_pubkey()
+        block_sig_key = ECKey()
+        block_sig_key.set(hash256(struct.pack('<I', 0)), False)
+        pubkey = block_sig_key.get_pubkey().get_bytes()
         scriptPubKey = CScript([pubkey, OP_CHECKSIG])
         stake_tx_unsigned = CTransaction()
 

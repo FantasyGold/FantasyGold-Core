@@ -18,6 +18,8 @@ class CondensingTxsTest(BitcoinTestFramework):
         self.num_nodes = 1
         self.extra_args = [['-txindex=1', '-rpcmaxgasprice=10000000']]
 
+    def skip_test_if_missing_module(self):
+        self.skip_if_no_wallet()
 
     # verify that the state hash is not 0 on genesis
     def setup_contracts(self):
@@ -196,7 +198,7 @@ class CondensingTxsTest(BitcoinTestFramework):
         # We need the txfee to be higher than T5 so that T4 tx is prioritized over T5.
         # We set the gas such that the the tx will run but not immediately throw a out of gas exception
         T4_raw = make_transaction(self.node, [make_vin(self.node, 3*COIN)], [make_op_call_output(2*COIN, b"\x04", 22000, CScriptNum(FGC_MIN_GAS_PRICE), hex_str_to_bytes(self.share_abi), hex_str_to_bytes(self.sender2))])
-        T4_id = self.node.sendrawtransaction(T4_raw)
+        T4_id = self.node.sendrawtransaction(T4_raw, 0)
         T5_id = self.node.sendtocontract(self.sender2, self.withdrawAll_abi, 0, 1000000, FGC_MIN_GAS_PRICE_STR, A1)['txid']
         B4_id = self.node.generate(1)[0]
         B4 = self.node.getblock(B4_id)

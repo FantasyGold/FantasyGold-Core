@@ -4921,7 +4921,7 @@ Note:  Since the fee is calculated on a per-byte basis, a fee of &quot;100 satos
     <name>RestoreDialog</name>
     <message>
         <source>Rebuild blockchain index</source>
-        <translation>rescan - rescan the blockchain for missing transactions.
+        <translation>rescan – rescan the blockchain for missing transactions.
           Fixes missing transactions, low balance.</translation>
     </message>
     <message>

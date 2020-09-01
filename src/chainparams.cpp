@@ -137,6 +137,7 @@ public:
         vFixedSeeds = std::vector<SeedSpec6>(pnSeed6_main, pnSeed6_main + ARRAYLEN(pnSeed6_main));
         fDefaultConsistencyChecks = false;
         fRequireStandard = true;
+        fMineBlocksOnDemand = false;
         m_is_test_chain = false;
         checkpointData = {
             {
@@ -252,6 +253,7 @@ public:
 
         fDefaultConsistencyChecks = false;
         fRequireStandard = false;
+        fMineBlocksOnDemand = false;
         m_is_test_chain = true;
 
 
@@ -456,7 +458,7 @@ public:
         consensus.QIP6Height = 1000;
         consensus.QIP7Height = 0; // QIP7 activated on regtest
 
-        // FANTASYGOLD have 500 blocks of maturity, increased values for regtest in unit tests in order to correspond with it
+        // FANTASYGOLD has 500 blocks of maturity, increased values for regtest in unit tests in order to correspond with it
         consensus.nSubsidyHalvingInterval = 750;
         consensus.nRuleChangeActivationThreshold = 558; // 75% for testchains
         consensus.nMinerConfirmationWindow = 744; // Faster than normal for regtest (744 instead of 2016)

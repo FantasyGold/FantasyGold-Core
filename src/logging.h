@@ -107,7 +107,7 @@ namespace BCLog {
         std::atomic<bool> m_reopen_file{false};
 
         /** Send a string to the log output */
-        void LogPrintStr(const std::string &str, bool useVMLog = false);
+        void LogPrintStr(const std::string& str, bool useVMLog = false);
 
         /** Returns whether logs will be written to any output */
         bool Enabled() const

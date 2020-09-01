@@ -17,6 +17,9 @@ class SendToContractTest(BitcoinTestFramework):
         self.num_nodes = 1
         self.extra_args = [['-txindex=1']]
  
+    def skip_test_if_missing_module(self):
+        self.skip_if_no_wallet()
+
     def setup_contract(self):
         """
         pragma solidity ^0.4.0;
@@ -107,7 +110,7 @@ class SendToContractTest(BitcoinTestFramework):
         decoded_tx = self.node.decoderawtransaction(ret['raw transaction'])
         # verify that at least one output has a scriptPubKey of type call
         for out in decoded_tx['vout']:
-            if out['scriptPubKey']['type'] == 'call':
+            if out['scriptPubKey']['type'] == 'call' or out['scriptPubKey']['type'] == 'call_sender':
                 return
         assert(False)
 

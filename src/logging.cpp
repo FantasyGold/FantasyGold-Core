@@ -49,13 +49,13 @@ bool BCLog::Logger::StartLogging()
     assert(m_fileoutVM == nullptr); // fantasygold
 
     if (m_print_to_file) {
-    assert(!m_file_path.empty());
-    assert(!m_file_pathVM.empty()); // fantasygold
-    m_fileout = fsbridge::fopen(m_file_path, "a");
-    m_fileoutVM = fsbridge::fopen(m_file_pathVM, "a");
-    if (!m_fileout || !m_fileoutVM) {
-        return false;
-    }
+        assert(!m_file_path.empty());
+        assert(!m_file_pathVM.empty()); // fantasygold
+        m_fileout = fsbridge::fopen(m_file_path, "a");
+        m_fileoutVM = fsbridge::fopen(m_file_pathVM, "a");
+        if (!m_fileout || !m_fileoutVM) {
+            return false;
+        }
 
         setbuf(m_fileout, nullptr); // unbuffered
         setbuf(m_fileoutVM, nullptr); // unbuffered
@@ -63,7 +63,7 @@ bool BCLog::Logger::StartLogging()
         // Add newlines to the logfile to distinguish this execution from the
         // last one.
         FileWriteStr("\n\n\n\n\n", m_fileout);
-        }
+    }
 
     if (m_fileout) {
         m_buffering = false;
@@ -74,8 +74,8 @@ bool BCLog::Logger::StartLogging()
         m_buffering = false;
     }
 
-        // dump buffered messages from before we opened the log
-        while (!m_msgs_before_open.empty()) {
+    // dump buffered messages from before we opened the log
+    while (!m_msgs_before_open.empty()) {
         LogMsg logmsg= m_msgs_before_open.front();
 
         FILE* file = logmsg.useVMLog ? m_fileoutVM : m_fileout;
@@ -84,8 +84,8 @@ bool BCLog::Logger::StartLogging()
         if(print_to_console && logmsg.useVMLog && !m_show_evm_logs) print_to_console = false;
         if (print_to_console) fwrite(logmsg.msg.data(), 1, logmsg.msg.size(), stdout);
 
-            m_msgs_before_open.pop_front();
-        }
+        m_msgs_before_open.pop_front();
+    }
     /////////////////////////////////////////////
 
     if (m_print_to_console) fflush(stdout);
@@ -221,7 +221,7 @@ std::vector<CLogCategoryActive> ListActiveLogCategories()
     return ret;
 }
 
-std::string BCLog::Logger::LogTimestampStr(const std::string &str)
+std::string BCLog::Logger::LogTimestampStr(const std::string& str)
 {
     std::string strStamped;
 
@@ -268,7 +268,7 @@ namespace BCLog {
     }
 }
 
-void BCLog::Logger::LogPrintStr(const std::string &str, bool useVMLog)
+void BCLog::Logger::LogPrintStr(const std::string& str, bool useVMLog)
 {
     std::lock_guard<std::mutex> scoped_lock(m_cs);
     std::string str_prefixed = LogEscapeMessage(str);
@@ -305,9 +305,9 @@ void BCLog::Logger::LogPrintStr(const std::string &str, bool useVMLog)
         ////////////////////////////////
         assert(file != nullptr);
 
-            // reopen the log file, if requested
-            if (m_reopen_file) {
-                m_reopen_file = false;
+        // reopen the log file, if requested
+        if (m_reopen_file) {
+            m_reopen_file = false;
                 fs::path file_path = m_file_path;
                 if(useVMLog)
                     file_path = m_file_pathVM;

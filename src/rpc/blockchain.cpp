@@ -1246,15 +1246,9 @@ static UniValue getblock(const JSONRPCRequest& request)
 UniValue callcontract(const JSONRPCRequest& request)
 {
             RPCHelpMan{"callcontract",
-<<<<<<< Updated upstream
-                "\nCall contract methods offline.\n",
-                {
-                    {"address", RPCArg::Type::STR_HEX, RPCArg::Optional::NO, "The contract address"},
-=======
                 "\nCall contract methods offline, or test contract deployment offline.\n",
                 {
                     {"address", RPCArg::Type::STR_HEX, RPCArg::Optional::NO, "The contract address, or empty address \"\""},
->>>>>>> Stashed changes
                     {"data", RPCArg::Type::STR_HEX, RPCArg::Optional::NO, "The data hex string"},
                     {"senderAddress", RPCArg::Type::STR, RPCArg::Optional::OMITTED_NAMED_ARG, "The sender address string"},
                     {"gasLimit", RPCArg::Type::NUM, RPCArg::Optional::OMITTED_NAMED_ARG, "The gas limit for executing the contract."},
@@ -1925,8 +1919,6 @@ UniValue gettransactionreceipt(const JSONRPCRequest& request)
     }
     return result;
 }
-<<<<<<< Updated upstream
-=======
 
 UniValue getdelegationinfoforaddress(const JSONRPCRequest& request)
 {
@@ -2067,7 +2059,6 @@ UniValue getdelegationsforstaker(const JSONRPCRequest& request)
 
     return result;
 }
->>>>>>> Stashed changes
 //////////////////////////////////////////////////////////////////////
 
 UniValue listcontracts(const JSONRPCRequest& request)
