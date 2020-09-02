@@ -277,8 +277,10 @@ bool CCoinsViewErrorCatcher::GetCoin(const COutPoint &outpoint, Coin &coin) cons
     }
 }
 
+
 const CTxOut &CCoinsViewCache::GetOutputFor(const CTxIn& input) const
 {
     const Coin& coins = AccessCoin(input.prevout);
     return coins.out;
 }
+
