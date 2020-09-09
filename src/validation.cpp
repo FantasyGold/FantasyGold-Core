@@ -7169,7 +7169,10 @@ CAmount GetTxGasFee(const CMutableTransaction& _tx)
     CAmount nGasFee = 0;
     if(tx.HasCreateOrCall())
     {
-        FantasyGoldTxConverter convert(tx);
+        CCoinsViewCache& view = ::ChainstateActive().CoinsTip();
+        const CChainParams& chainparams = Params();
+        unsigned int contractflags = GetContractScriptFlags(GetSpendHeight(view), chainparams.GetConsensus());
+        FantasyGoldTxConverter convert(tx, NULL, NULL, contractflags);
 
         ExtractFantasyGoldTX resultConvertFantasyGoldTX;
         if(!convert.extractionFantasyGoldTransactions(resultConvertFantasyGoldTX)){
