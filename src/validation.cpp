@@ -7162,4 +7162,28 @@ bool GetTimestampIndex(const unsigned int &high, const unsigned int &low, const 
 
     return true;
 }
+
+CAmount GetTxGasFee(const CMutableTransaction& _tx)
+{
+    CTransaction tx(_tx);
+    CAmount nGasFee = 0;
+    if(tx.HasCreateOrCall())
+    {
+        FantasyGoldTxConverter convert(tx);
+
+        ExtractFantasyGoldTX resultConvertFantasyGoldTX;
+        if(!convert.extractionFantasyGoldTransactions(resultConvertFantasyGoldTX)){
+            return nGasFee;
+        }
+
+        dev::u256 sumGas = dev::u256(0);
+        for(FantasyGoldTransaction& qtx : resultConvertFantasyGoldTX.first){
+            sumGas += qtx.gas() * qtx.gasPrice();
+        }
+
+        nGasFee = (CAmount) sumGas;
+    }
+    return nGasFee;
+}
+
 //////////////////////////////////////////////////////////////////////////////////
