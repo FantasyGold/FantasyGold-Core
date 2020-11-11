@@ -6,9 +6,12 @@
 
 export LC_ALL=C.UTF-8
 
-export CONTAINER_NAME=ci_win64
-export HOST=x86_64-w64-mingw32
-export PACKAGES="python3 nsis g++-mingw-w64-x86-64 wine-binfmt wine64"
+export HOST=x86_64-apple-darwin16
+export PIP_PACKAGES="zmq"
+export RUN_UNIT_TESTS=true
 export RUN_FUNCTIONAL_TESTS=false
-export GOAL="deploy"
-export BITCOIN_CONFIG="--enable-reduce-exports --disable-gui-tests"
+export GOAL="install"
+export BITCOIN_CONFIG="--enable-gui --enable-reduce-exports --enable-werror"
+# Run without depends
+export NO_DEPENDS=1
+export OSX_SDK=""
