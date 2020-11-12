@@ -6,7 +6,6 @@
 #define BITCOIN_HTTPSERVER_H
 
 #include <string>
-#include <stdint.h>
 #include <functional>
 #include <mutex>
 #include <condition_variable>

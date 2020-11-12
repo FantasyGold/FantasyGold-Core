@@ -8,7 +8,6 @@
 
 #include <atomic>
 #include <map>
-#include <memory>
 #include <set>
 #include <string>
 #include <utility>
@@ -18,6 +17,7 @@
 #include <coins.h>
 #include <crypto/siphash.h>
 #include <indirectmap.h>
+#include <optional.h>
 #include <policy/feerate.h>
 #include <primitives/transaction.h>
 #include <sync.h>
@@ -27,7 +27,6 @@
 #include <boost/multi_index/hashed_index.hpp>
 #include <boost/multi_index/ordered_index.hpp>
 #include <boost/multi_index/sequenced_index.hpp>
-#include <boost/signals2/signal.hpp>
 
 class CBlockIndex;
 extern CCriticalSection cs_main;

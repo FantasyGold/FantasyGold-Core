@@ -5,12 +5,15 @@
 #ifndef BITCOIN_BANMAN_H
 #define BITCOIN_BANMAN_H
 
+#include <addrdb.h>
+#include <bloom.h>
+#include <fs.h>
+#include <net_types.h> // For banmap_t
+#include <sync.h>
+
+#include <chrono>
 #include <cstdint>
 #include <memory>
-
-#include <addrdb.h>
-#include <fs.h>
-#include <sync.h>
 
 // NOTE: When adjusting this, update rpcnet:setban's help ("24h")
 static constexpr unsigned int DEFAULT_MISBEHAVING_BANTIME = 60 * 60 * 24; // Default 24-hour ban

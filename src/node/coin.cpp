@@ -4,6 +4,7 @@
 
 #include <node/coin.h>
 
+#include <node/context.h>
 #include <txmempool.h>
 #include <validation.h>
 

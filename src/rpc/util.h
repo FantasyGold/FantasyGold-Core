@@ -7,14 +7,15 @@
 
 #include <node/transaction.h>
 #include <outputtype.h>
-#include <pubkey.h>
 #include <protocol.h>
+#include <pubkey.h>
 #include <rpc/protocol.h>
 #include <rpc/server.h>
 #include <script/script.h>
 #include <script/sign.h>
 #include <script/standard.h>
 #include <univalue.h>
+#include <util/check.h>
 
 #include <string>
 #include <vector>

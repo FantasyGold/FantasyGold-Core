@@ -36,10 +36,7 @@
 #include <config/bitcoin-config.h>
 #endif
 
-#ifdef ENABLE_BIP70
-#include <qt/paymentrequestplus.h>
-#endif
-#include <qt/walletmodel.h>
+#include <qt/sendcoinsrecipient.h>
 
 #include <QObject>
 #include <QString>

@@ -10,6 +10,7 @@
 
 #include <qt/addresstablemodel.h>
 #include <qt/guiconstants.h>
+#include <qt/guiutil.h>
 #include <qt/optionsmodel.h>
 #include <qt/paymentserver.h>
 #include <qt/recentrequeststablemodel.h>
@@ -28,7 +29,7 @@
 #include <ui_interface.h>
 #include <util/system.h> // for GetBoolArg
 #include <wallet/coincontrol.h>
-#include <wallet/wallet.h>
+#include <wallet/wallet.h> // for CRecipient
 
 #include <stdint.h>
 

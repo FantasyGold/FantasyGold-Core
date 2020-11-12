@@ -5,10 +5,8 @@
 #include <interfaces/wallet.h>
 
 #include <amount.h>
-#include <consensus/validation.h>
 #include <interfaces/chain.h>
 #include <interfaces/handler.h>
-#include <policy/feerate.h>
 #include <policy/fees.h>
 #include <primitives/transaction.h>
 #include <script/standard.h>
@@ -20,10 +18,9 @@
 #include <wallet/feebumper.h>
 #include <wallet/fees.h>
 #include <wallet/ismine.h>
-#include <wallet/rpcwallet.h>
 #include <wallet/load.h>
+#include <wallet/rpcwallet.h>
 #include <wallet/wallet.h>
-#include <wallet/walletutil.h>
 #include <key_io.h>
 #include <fantasygold/fantasygolddelegation.h>
 #include <miner.h>

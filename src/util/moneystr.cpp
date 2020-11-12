@@ -5,9 +5,9 @@
 
 #include <util/moneystr.h>
 
-#include <primitives/transaction.h>
 #include <tinyformat.h>
 #include <util/strencodings.h>
+#include <util/string.h>
 
 std::string FormatMoney(const CAmount& n)
 {

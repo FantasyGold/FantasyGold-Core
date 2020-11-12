@@ -5,13 +5,13 @@
 
 #include <chain.h>
 #include <coins.h>
-#include <compat/byteswap.h>
 #include <consensus/validation.h>
 #include <core_io.h>
 #include <index/txindex.h>
 #include <key_io.h>
 #include <merkleblock.h>
 #include <node/coin.h>
+#include <node/context.h>
 #include <node/psbt.h>
 #include <node/transaction.h>
 #include <policy/policy.h>
@@ -19,17 +19,18 @@
 #include <primitives/transaction.h>
 #include <psbt.h>
 #include <random.h>
+#include <rpc/blockchain.h>
 #include <rpc/rawtransaction_util.h>
 #include <rpc/server.h>
 #include <rpc/util.h>
 #include <script/script.h>
-#include <script/script_error.h>
 #include <script/sign.h>
 #include <script/signingprovider.h>
 #include <script/standard.h>
 #include <uint256.h>
 #include <util/moneystr.h>
 #include <util/strencodings.h>
+#include <util/string.h>
 #include <util/moneystr.h>
 #include <validation.h>
 #include <validationinterface.h>

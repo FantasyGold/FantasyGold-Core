@@ -9,7 +9,6 @@
 
 #include <chainparamsbase.h>
 #include <clientversion.h>
-#include <fs.h>
 #include <rpc/client.h>
 #include <rpc/protocol.h>
 #include <rpc/request.h>
@@ -27,6 +26,7 @@
 #include <support/events.h>
 
 #include <univalue.h>
+#include <compat/stdin.h>
 
 const std::function<std::string(const char*)> G_TRANSLATION_FUN = nullptr;
 

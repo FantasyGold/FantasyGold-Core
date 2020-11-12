@@ -8,11 +8,11 @@
 #include <stdint.h>
 #include <vector>
 
-#include <consensus/validation.h>
 #include <interfaces/chain.h>
+#include <node/context.h>
 #include <policy/policy.h>
 #include <rpc/server.h>
-#include <test/setup_common.h>
+#include <test/util/setup_common.h>
 #include <validation.h>
 #include <wallet/coincontrol.h>
 #include <wallet/test/wallet_test_fixture.h>

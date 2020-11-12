@@ -18,12 +18,10 @@
 #include <pow.h>
 #include <pos.h>
 #include <primitives/transaction.h>
-#include <script/standard.h>
 #include <timedata.h>
 #include <util/convert.h>
 #include <util/moneystr.h>
 #include <util/system.h>
-#include <util/validation.h>
 #include <net.h>
 #include <key_io.h>
 #ifdef ENABLE_WALLET
@@ -31,7 +29,6 @@
 #endif
 
 #include <algorithm>
-#include <queue>
 #include <utility>
 
 unsigned int nMinerSleep = STAKER_POLLING_PERIOD;

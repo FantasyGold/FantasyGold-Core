@@ -11,8 +11,9 @@
 
 #include <atomic>
 #include <boost/date_time/posix_time/posix_time.hpp>
-#include <boost/thread.hpp>
 #include <ctime>
+#include <thread>
+
 #include <tinyformat.h>
 
 static std::atomic<int64_t> nMockTime(0); //!< For unit testing

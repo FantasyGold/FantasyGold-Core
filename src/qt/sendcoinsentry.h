@@ -5,7 +5,7 @@
 #ifndef BITCOIN_QT_SENDCOINSENTRY_H
 #define BITCOIN_QT_SENDCOINSENTRY_H
 
-#include <qt/walletmodel.h>
+#include <qt/sendcoinsrecipient.h>
 
 #include <QStackedWidget>
 

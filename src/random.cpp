@@ -5,18 +5,19 @@
 
 #include <random.h>
 
+#include <compat/cpuid.h>
+#include <crypto/sha256.h>
 #include <crypto/sha512.h>
 #include <support/cleanse.h>
 #ifdef WIN32
 #include <compat.h> // for Windows API
 #include <wincrypt.h>
 #endif
-#include <logging.h>  // for LogPrint()
-#include <sync.h>     // for WAIT_LOCK
-#include <util/time.h> // for GetTime()
+#include <logging.h>  // for LogPrintf()
+#include <sync.h>     // for Mutex
+#include <util/time.h> // for GetTimeMicros()
 
 #include <stdlib.h>
-#include <chrono>
 #include <thread>
 
 #include <randomenv.h>
@@ -42,16 +43,6 @@
 #include <util/strencodings.h> // for ARRAYLEN
 #include <sys/sysctl.h>
 #endif
-
-#include <mutex>
-
-#if defined(__x86_64__) || defined(__amd64__) || defined(__i386__)
-#include <cpuid.h>
-#endif
-
-#include <openssl/err.h>
-#include <openssl/rand.h>
-#include <openssl/conf.h>
 
 [[noreturn]] static void RandFailure()
 {

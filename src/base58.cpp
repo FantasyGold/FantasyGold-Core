@@ -7,9 +7,12 @@
 #include <hash.h>
 #include <uint256.h>
 #include <util/strencodings.h>
+#include <util/string.h>
 
 #include <assert.h>
 #include <string.h>
+
+#include <limits>
 
 /** All alphanumeric characters except for "0", "I", "O", and "l" */
 static const char* pszBase58 = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz";

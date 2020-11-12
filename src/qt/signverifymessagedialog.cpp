@@ -11,10 +11,9 @@
 #include <qt/walletmodel.h>
 
 #include <key_io.h>
-#include <util/validation.h> // For strMessageMagic
+#include <util/message.h> // For MessageSign(), MessageVerify()
 #include <wallet/wallet.h>
 #include <qt/styleSheet.h>
-#include <string>
 #include <vector>
 
 #include <QClipboard>

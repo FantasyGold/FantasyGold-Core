@@ -10,11 +10,6 @@
 
 #include <qt/forms/ui_helpmessagedialog.h>
 
-#include <qt/bitcoingui.h>
-#ifdef ENABLE_BIP70
-#include <qt/paymentrequestplus.h>
-#endif
-
 #include <clientversion.h>
 #include <init.h>
 #include <util/system.h>
@@ -24,9 +19,10 @@
 
 #include <QCloseEvent>
 #include <QLabel>
+#include <QMainWindow>
 #include <QRegExp>
-#include <QTextTable>
 #include <QTextCursor>
+#include <QTextTable>
 #include <QVBoxLayout>
 
 /** "Help message" or "About" dialog box */

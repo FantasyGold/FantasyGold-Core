@@ -21,14 +21,13 @@
 #include <txmempool.h> // For CTxMemPool::cs
 #include <txdb.h>
 #include <versionbits.h>
+#include <serialize.h>
 
 #include <atomic>
-#include <exception>
 #include <map>
 #include <memory>
 #include <set>
 #include <stdint.h>
-#include <string>
 #include <utility>
 #include <vector>
 

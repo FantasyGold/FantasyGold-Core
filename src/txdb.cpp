@@ -12,6 +12,7 @@
 #include <uint256.h>
 #include <util/system.h>
 #include <util/translation.h>
+#include <util/vector.h>
 #include <validation.h>
 #include <chainparams.h>
 

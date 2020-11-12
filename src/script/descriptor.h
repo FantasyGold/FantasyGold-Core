@@ -5,6 +5,8 @@
 #ifndef BITCOIN_SCRIPT_DESCRIPTOR_H
 #define BITCOIN_SCRIPT_DESCRIPTOR_H
 
+#include <optional.h>
+#include <outputtype.h>
 #include <script/script.h>
 #include <script/sign.h>
 #include <script/signingprovider.h>

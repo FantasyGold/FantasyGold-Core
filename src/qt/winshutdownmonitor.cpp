@@ -6,13 +6,10 @@
 
 #if defined(Q_OS_WIN)
 #include <shutdown.h>
-#include <util/system.h>
 
 #include <windows.h>
 
 #include <QDebug>
-
-#include <openssl/rand.h>
 
 // If we don't want a message to be processed by Qt, return true and set result to
 // the value that the window procedure should return. Otherwise return false.

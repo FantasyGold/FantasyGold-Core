@@ -13,11 +13,9 @@
 #include <util/strencodings.h>
 #include <util/threadnames.h>
 
-#include <stdio.h>
-
 #include <map>
-#include <memory>
 #include <set>
+#include <system_error>
 
 #ifdef DEBUG_LOCKCONTENTION
 #if !defined(HAVE_THREAD_LOCAL)

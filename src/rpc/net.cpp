@@ -8,16 +8,19 @@
 #include <clientversion.h>
 #include <core_io.h>
 #include <net.h>
-#include <net_processing.h>
 #include <net_permissions.h>
+#include <net_processing.h>
+#include <net_types.h> // For banmap_t
 #include <netbase.h>
-#include <policy/policy.h>
+#include <node/context.h>
 #include <policy/settings.h>
+#include <rpc/blockchain.h>
 #include <rpc/protocol.h>
 #include <rpc/util.h>
 #include <sync.h>
 #include <timedata.h>
 #include <util/strencodings.h>
+#include <util/string.h>
 #include <util/system.h>
 #include <validation.h>
 #include <version.h>

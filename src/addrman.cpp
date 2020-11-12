@@ -6,6 +6,7 @@
 #include <addrman.h>
 
 #include <hash.h>
+#include <logging.h>
 #include <serialize.h>
 
 int CAddrInfo::GetTriedBucket(const uint256& nKey) const

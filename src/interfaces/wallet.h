@@ -10,10 +10,12 @@
 #include <script/standard.h>           // For CTxDestination
 #include <support/allocators/secure.h> // For SecureString
 #include <ui_interface.h>              // For ChangeType
+#include <util/message.h>
 
 #include <functional>
 #include <map>
 #include <memory>
+#include <psbt.h>
 #include <stdint.h>
 #include <string>
 #include <tuple>

@@ -7,6 +7,7 @@
 
 #include <interfaces/chain.h>
 #include <scheduler.h>
+#include <util/string.h>
 #include <util/system.h>
 #include <util/translation.h>
 #include <wallet/wallet.h>

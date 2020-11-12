@@ -9,7 +9,7 @@
 #include <compat/endian.h>
 
 #include <algorithm>
-#include <assert.h>
+#include <cstring>
 #include <ios>
 #include <limits>
 #include <map>

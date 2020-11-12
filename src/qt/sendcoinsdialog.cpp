@@ -1,4 +1,4 @@
-// Copyright (c) 2011-2018 The Bitcoin Core developers
+// Copyright (c) 2011-2019 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -23,11 +23,12 @@
 #include <chainparams.h>
 #include <interfaces/node.h>
 #include <key_io.h>
-#include <wallet/coincontrol.h>
-#include <ui_interface.h>
-#include <txmempool.h>
 #include <policy/fees.h>
+#include <txmempool.h>
+#include <ui_interface.h>
+#include <wallet/coincontrol.h>
 #include <wallet/fees.h>
+#include <wallet/wallet.h>
 
 #include <QFontMetrics>
 #include <QMessageBox>

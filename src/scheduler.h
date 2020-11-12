@@ -7,11 +7,12 @@
 
 //
 // NOTE:
-// boost::thread / boost::chrono should be ported to std::thread / std::chrono
+// boost::thread should be ported to std::thread
 // when we support C++11.
 //
-#include <boost/chrono/chrono.hpp>
-#include <boost/thread.hpp>
+#include <condition_variable>
+#include <functional>
+#include <list>
 #include <map>
 
 #include <sync.h>

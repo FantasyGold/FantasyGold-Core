@@ -10,11 +10,13 @@
 #include <chain.h>
 #include <chainparams.h>
 #include <coins.h>
-#include <node/coinstats.h>
 #include <consensus/validation.h>
 #include <core_io.h>
 #include <hash.h>
 #include <index/blockfilterindex.h>
+#include <node/coinstats.h>
+#include <node/context.h>
+#include <node/utxo_snapshot.h>
 #include <key_io.h>
 #include <policy/feerate.h>
 #include <policy/policy.h>
@@ -30,10 +32,8 @@
 #include <undo.h>
 #include <util/strencodings.h>
 #include <util/system.h>
-#include <util/validation.h>
 #include <validation.h>
 #include <validationinterface.h>
-#include <versionbitsinfo.h>
 #include <warnings.h>
 #include <libdevcore/CommonData.h>
 #include <pow.h>
@@ -42,12 +42,9 @@
 #include <util/convert.h>
 #include <fantasygold/fantasygolddelegation.h>
 
-#include <assert.h>
 #include <stdint.h>
 
 #include <univalue.h>
-
-#include <boost/thread/thread.hpp> // boost::thread::interrupt
 
 #include <condition_variable>
 #include <memory>

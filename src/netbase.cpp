@@ -7,8 +7,9 @@
 
 #include <sync.h>
 #include <tinyformat.h>
-#include <util/system.h>
 #include <util/strencodings.h>
+#include <util/string.h>
+#include <util/system.h>
 
 #include <atomic>
 

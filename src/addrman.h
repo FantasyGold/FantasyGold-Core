@@ -6,6 +6,7 @@
 #ifndef BITCOIN_ADDRMAN_H
 #define BITCOIN_ADDRMAN_H
 
+#include <clientversion.h>
 #include <netaddress.h>
 #include <protocol.h>
 #include <random.h>
@@ -13,9 +14,13 @@
 #include <timedata.h>
 #include <util/system.h>
 
+#include <fs.h>
+#include <hash.h>
+#include <iostream>
 #include <map>
 #include <set>
 #include <stdint.h>
+#include <streams.h>
 #include <vector>
 
 /**

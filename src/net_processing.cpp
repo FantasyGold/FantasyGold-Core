@@ -7,7 +7,6 @@
 
 #include <addrman.h>
 #include <banman.h>
-#include <arith_uint256.h>
 #include <blockencodings.h>
 #include <chainparams.h>
 #include <consensus/validation.h>
@@ -27,7 +26,6 @@
 #include <txmempool.h>
 #include <util/system.h>
 #include <util/strencodings.h>
-#include <util/validation.h>
 #include <checkpoints.h>
 #include <clientversion.h>
 #include <consensus/merkle.h>

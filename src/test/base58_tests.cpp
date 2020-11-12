@@ -5,8 +5,9 @@
 #include <test/data/base58_encode_decode.json.h>
 
 #include <base58.h>
-#include <test/setup_common.h>
+#include <test/util/setup_common.h>
 #include <util/strencodings.h>
+#include <util/vector.h>
 
 #include <univalue.h>
 

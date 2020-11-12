@@ -5,13 +5,15 @@
 
 #include <validationinterface.h>
 
+#include <chain.h>
+#include <consensus/validation.h>
+#include <logging.h>
 #include <primitives/block.h>
+#include <primitives/transaction.h>
 #include <scheduler.h>
-#include <txmempool.h>
 
-#include <list>
-#include <atomic>
 #include <future>
+#include <unordered_map>
 #include <utility>
 
 #include <boost/signals2/signal.hpp>

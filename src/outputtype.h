@@ -10,6 +10,7 @@
 #include <script/signingprovider.h>
 #include <script/standard.h>
 
+#include <array>
 #include <string>
 #include <vector>
 

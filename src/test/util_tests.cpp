@@ -1,20 +1,29 @@
-// Copyright (c) 2011-2019 The Bitcoin Core developers
+// Copyright (c) 2011-2020 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
 #include <util/system.h>
 
 #include <clientversion.h>
+#include <hash.h> // For Hash()
+#include <key.h> // For CKey
+#include <optional.h>
 #include <sync.h>
-#include <test/setup_common.h>
-#include <test/util.h>
+#include <test/util/setup_common.h>
+#include <test/util/str.h>
+#include <uint256.h>
+#include <util/message.h> // For MessageSign(), MessageVerify(), MESSAGE_MAGIC
 #include <util/moneystr.h>
 #include <util/strencodings.h>
 #include <util/string.h>
 #include <util/time.h>
+#include <util/spanparsing.h>
+#include <util/vector.h>
 
+#include <array>
 #include <stdint.h>
 #include <thread>
+#include <univalue.h>
 #include <utility>
 #include <vector>
 #ifndef WIN32

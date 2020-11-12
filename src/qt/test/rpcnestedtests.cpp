@@ -1,4 +1,4 @@
-// Copyright (c) 2016-2018 The Bitcoin Core developers
+// Copyright (c) 2016-2019 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -7,7 +7,7 @@
 #include <interfaces/node.h>
 #include <rpc/server.h>
 #include <qt/rpcconsole.h>
-#include <test/setup_common.h>
+#include <test/util/setup_common.h>
 #include <univalue.h>
 #include <util/system.h>
 

@@ -5,7 +5,6 @@
 #include <scheduler.h>
 
 #include <random.h>
-#include <reverselock.h>
 
 #include <assert.h>
 #include <utility>

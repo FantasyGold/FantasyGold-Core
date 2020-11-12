@@ -3,17 +3,19 @@
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#include <crypto/ripemd160.h>
-#include <key_io.h>
 #include <httpserver.h>
+#include <key_io.h>
+#include <node/context.h>
 #include <outputtype.h>
 #include <rpc/blockchain.h>
 #include <rpc/server.h>
 #include <rpc/util.h>
+#include <scheduler.h>
 #include <script/descriptor.h>
-#include <util/system.h>
+#include <util/check.h>
+#include <util/message.h> // For MessageSign(), MessageVerify()
 #include <util/strencodings.h>
-#include <util/validation.h>
+#include <util/system.h>
 
 #include <txmempool.h>
 #include <validation.h>

@@ -1,4 +1,4 @@
-// Copyright (c) 2009-2018 The Bitcoin Core developers
+// Copyright (c) 2009-2019 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -12,13 +12,10 @@
 #include <qt/test/rpcnestedtests.h>
 #include <qt/test/uritests.h>
 #include <qt/test/compattests.h>
-#include <test/setup_common.h>
+#include <test/util/setup_common.h>
 
 #ifdef ENABLE_WALLET
 #include <qt/test/addressbooktests.h>
-#ifdef ENABLE_BIP70
-#include <qt/test/paymentservertests.h>
-#endif // ENABLE_BIP70
 #include <qt/test/wallettests.h>
 #endif // ENABLE_WALLET
 

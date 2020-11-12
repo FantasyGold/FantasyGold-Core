@@ -7,7 +7,7 @@
 #include <qt/bitcoinaddressvalidator.h>
 #include <qt/bitcoinunits.h>
 #include <qt/qvalidatedlineedit.h>
-#include <qt/walletmodel.h>
+#include <qt/sendcoinsrecipient.h>
 
 #include <base58.h>
 #include <chainparams.h>
@@ -44,20 +44,23 @@
 #include <QFont>
 #include <QFontDatabase>
 #include <QFontMetrics>
+#include <QGuiApplication>
 #include <QKeyEvent>
 #include <QLineEdit>
+#include <QList>
 #include <QMouseEvent>
 #include <QProgressDialog>
+#include <QScreen>
 #include <QSettings>
+#include <QSize>
+#include <QString>
 #include <QTextDocument> // for Qt::mightBeRichText
 #include <QThread>
 #include <QUrlQuery>
+#include <QtGlobal>
 
 #if defined(Q_OS_MAC)
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
 
-#include <CoreServices/CoreServices.h>
 #include <QProcess>
 
 void ForceActivation();

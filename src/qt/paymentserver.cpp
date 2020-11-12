@@ -23,8 +23,6 @@
 #include <cstdlib>
 #include <memory>
 
-#include <openssl/x509_vfy.h>
-
 #include <QApplication>
 #include <QByteArray>
 #include <QDataStream>
@@ -36,15 +34,7 @@
 #include <QList>
 #include <QLocalServer>
 #include <QLocalSocket>
-#include <QNetworkAccessManager>
-#include <QNetworkProxy>
-#include <QNetworkReply>
-#include <QNetworkRequest>
-#include <QSslCertificate>
-#include <QSslConfiguration>
-#include <QSslError>
 #include <QStringList>
-#include <QTextDocument>
 #include <QUrlQuery>
 
 const int BITCOIN_IPC_CONNECT_TIMEOUT = 1000; // milliseconds

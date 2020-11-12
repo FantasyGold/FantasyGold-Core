@@ -5,24 +5,18 @@
 #ifndef BITCOIN_QT_WALLETMODEL_H
 #define BITCOIN_QT_WALLETMODEL_H
 
-#include <amount.h>
-#include <key.h>
-#include <serialize.h>
-#include <script/standard.h>
-
 #if defined(HAVE_CONFIG_H)
 #include <config/bitcoin-config.h>
 #endif
 
-#ifdef ENABLE_BIP70
-#include <qt/paymentrequestplus.h>
-#endif
+#include <key.h>
+#include <script/standard.h>
+
 #include <qt/walletmodeltransaction.h>
 
 #include <interfaces/wallet.h>
 #include <support/allocators/secure.h>
 
-#include <map>
 #include <vector>
 #include <atomic>
 

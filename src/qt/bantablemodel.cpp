@@ -4,16 +4,15 @@
 
 #include <qt/bantablemodel.h>
 
-#include <qt/clientmodel.h>
-
 #include <interfaces/node.h>
-#include <sync.h>
-#include <util/time.h>
+#include <net_types.h> // For banmap_t
 
 #include <utility>
 
-#include <QDebug>
+#include <QDateTime>
 #include <QList>
+#include <QModelIndex>
+#include <QVariant>
 
 bool BannedNodeLessThan::operator()(const CCombinedBan& left, const CCombinedBan& right) const
 {

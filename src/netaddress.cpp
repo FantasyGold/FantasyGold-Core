@@ -6,6 +6,7 @@
 #include <netaddress.h>
 #include <hash.h>
 #include <util/strencodings.h>
+#include <util/asmap.h>
 #include <tinyformat.h>
 
 static const unsigned char pchIPv4[12] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0xff, 0xff };

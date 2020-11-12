@@ -4,12 +4,10 @@
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
 #include <amount.h>
-#include <consensus/validation.h>
 #include <core_io.h>
-#include <init.h>
 #include <interfaces/chain.h>
 #include <key_io.h>
-#include <node/transaction.h>
+#include <node/context.h>
 #include <outputtype.h>
 #include <policy/feerate.h>
 #include <policy/fees.h>
@@ -21,25 +19,26 @@
 #include <script/sign.h>
 #include <util/bip32.h>
 #include <util/fees.h>
+#include <util/message.h> // For MessageSign()
 #include <util/moneystr.h>
+#include <util/string.h>
 #include <util/system.h>
 #include <util/url.h>
-#include <util/validation.h>
+#include <util/vector.h>
 #include <wallet/coincontrol.h>
 #include <wallet/feebumper.h>
-#include <wallet/psbtwallet.h>
 #include <wallet/rpcwallet.h>
 #include <wallet/wallet.h>
 #include <wallet/walletdb.h>
 #include <wallet/walletutil.h>
 #include <fantasygold/fantasygolddelegation.h>
 #include <util/signstr.h>
+#include <interfaces/wallet.h>
 
 #include <stdint.h>
 
 #include <univalue.h>
 
-#include <functional>
 
 static const std::string WALLET_ENDPOINT_BASE = "/wallet/";
 

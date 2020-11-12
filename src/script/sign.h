@@ -6,7 +6,7 @@
 #ifndef BITCOIN_SCRIPT_SIGN_H
 #define BITCOIN_SCRIPT_SIGN_H
 
-#include <boost/optional.hpp>
+#include <coins.h>
 #include <hash.h>
 #include <pubkey.h>
 #include <script/interpreter.h>

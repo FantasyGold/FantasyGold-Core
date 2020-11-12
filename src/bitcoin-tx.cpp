@@ -11,7 +11,6 @@
 #include <consensus/consensus.h>
 #include <core_io.h>
 #include <key_io.h>
-#include <policy/policy.h>
 #include <policy/rbf.h>
 #include <primitives/transaction.h>
 #include <script/script.h>
@@ -21,6 +20,7 @@
 #include <util/moneystr.h>
 #include <util/rbf.h>
 #include <util/strencodings.h>
+#include <util/string.h>
 #include <util/system.h>
 #include <util/translation.h>
 

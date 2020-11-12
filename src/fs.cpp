@@ -6,6 +6,9 @@
 
 #ifndef WIN32
 #include <fcntl.h>
+#include <string>
+#include <sys/file.h>
+#include <sys/utsname.h>
 #else
 #ifndef NOMINMAX
 #define NOMINMAX

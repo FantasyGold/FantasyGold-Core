@@ -9,6 +9,7 @@
 #include <consensus/consensus.h>
 #include <consensus/tx_verify.h>
 #include <consensus/validation.h>
+#include <optional.h>
 #include <validation.h>
 #include <policy/policy.h>
 #include <policy/fees.h>
@@ -17,6 +18,7 @@
 #include <util/system.h>
 #include <util/moneystr.h>
 #include <util/time.h>
+#include <validationinterface.h>
 #include <script/sign.h>
 
 CTxMemPoolEntry::CTxMemPoolEntry(const CTransactionRef& _tx, const CAmount& _nFee,

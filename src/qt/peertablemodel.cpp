@@ -4,12 +4,10 @@
 
 #include <qt/peertablemodel.h>
 
-#include <qt/clientmodel.h>
 #include <qt/guiconstants.h>
 #include <qt/guiutil.h>
 
 #include <interfaces/node.h>
-#include <sync.h>
 
 #include <utility>
 

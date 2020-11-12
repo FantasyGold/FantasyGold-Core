@@ -8,6 +8,7 @@
 #include <type_traits>
 #include <cstddef>
 #include <algorithm>
+#include <assert.h>
 
 /** A Span is an object that can refer to a contiguous sequence of objects.
  *

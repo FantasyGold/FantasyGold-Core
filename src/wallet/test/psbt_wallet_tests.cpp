@@ -5,11 +5,10 @@
 #include <key_io.h>
 #include <util/bip32.h>
 #include <util/strencodings.h>
-#include <wallet/psbtwallet.h>
 #include <wallet/wallet.h>
 
 #include <boost/test/unit_test.hpp>
-#include <test/setup_common.h>
+#include <test/util/setup_common.h>
 #include <wallet/test/wallet_test_fixture.h>
 
 BOOST_FIXTURE_TEST_SUITE(psbt_wallet_tests, WalletTestingSetup)

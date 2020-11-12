@@ -2,7 +2,6 @@
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#include <consensus/validation.h>
 #include <interfaces/chain.h>
 #include <wallet/coincontrol.h>
 #include <wallet/feebumper.h>
@@ -13,7 +12,6 @@
 #include <util/moneystr.h>
 #include <util/rbf.h>
 #include <util/system.h>
-#include <util/validation.h>
 
 //! Check whether transaction has descendant in wallet or mempool, or has been
 //! mined, or conflicts with a mined transaction. Return a feebumper::Result.

@@ -6,7 +6,7 @@
 #define BITCOIN_QT_UTILITYDIALOG_H
 
 #include <QDialog>
-#include <QObject>
+#include <QWidget>
 
 class BitcoinGUI;
 

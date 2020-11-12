@@ -30,6 +30,7 @@
 #include <net_permissions.h>
 #include <net_processing.h>
 #include <netbase.h>
+#include <node/context.h>
 #include <policy/feerate.h>
 #include <policy/fees.h>
 #include <policy/policy.h>
@@ -47,13 +48,16 @@
 #include <txdb.h>
 #include <txmempool.h>
 #include <ui_interface.h>
+#include <util/asmap.h>
 #include <util/convert.h>
 #include <util/moneystr.h>
 #include <util/system.h>
 #include <util/threadnames.h>
 #include <util/translation.h>
-#include <util/validation.h>
 #include <validation.h>
+#include <hash.h>
+
+
 #include <validationinterface.h>
 #ifdef ENABLE_WALLET
 #include <wallet/wallet.h>
@@ -75,6 +79,7 @@
 #include <boost/algorithm/string/classification.hpp>
 #include <boost/algorithm/string/replace.hpp>
 #include <boost/algorithm/string/split.hpp>
+#include <boost/signals2/signal.hpp>
 #include <boost/thread.hpp>
 
 #if ENABLE_ZMQ

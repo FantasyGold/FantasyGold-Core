@@ -5,7 +5,9 @@
 
 #include <netaddress.h>
 #include <noui.h>
-#include <test/setup_common.h>
+#include <util/string.h>
+#include <test/util/logging.h>
+#include <test/util/setup_common.h>
 #include <timedata.h>
 #include <warnings.h>
 

@@ -5,7 +5,11 @@
 #ifndef BITCOIN_UTIL_STRING_H
 #define BITCOIN_UTIL_STRING_H
 
-#include <functional>
+#include <attributes.h>
+
+#include <cstring>
+#include <locale>
+#include <sstream>
 #include <string>
 #include <vector>
 

@@ -6,10 +6,10 @@
 #ifndef BITCOIN_NET_PROCESSING_H
 #define BITCOIN_NET_PROCESSING_H
 
-#include <net.h>
-#include <validationinterface.h>
 #include <consensus/params.h>
+#include <net.h>
 #include <sync.h>
+#include <validationinterface.h>
 #include <consensus/consensus.h>
 
 extern CCriticalSection cs_main;

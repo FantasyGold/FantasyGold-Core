@@ -6,6 +6,7 @@
 #define BITCOIN_RPC_RAWTRANSACTION_UTIL_H
 
 #include <map>
+#include <string>
 
 class FillableSigningProvider;
 class UniValue;

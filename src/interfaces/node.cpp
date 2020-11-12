@@ -5,7 +5,6 @@
 #include <interfaces/node.h>
 
 #include <addrdb.h>
-#include <amount.h>
 #include <banman.h>
 #include <chain.h>
 #include <chainparams.h>
@@ -17,9 +16,9 @@
 #include <net_processing.h>
 #include <netaddress.h>
 #include <netbase.h>
+#include <node/context.h>
 #include <policy/feerate.h>
 #include <policy/fees.h>
-#include <policy/policy.h>
 #include <policy/settings.h>
 #include <primitives/block.h>
 #include <rpc/server.h>
@@ -36,8 +35,9 @@
 #include <config/bitcoin-config.h>
 #endif
 
-#include <atomic>
 #include <univalue.h>
+
+#include <boost/signals2/signal.hpp>
 
 class CWallet;
 fs::path GetWalletDir();
@@ -70,7 +70,7 @@ public:
     std::string getNetwork() override { return Params().NetworkIDString(); }
     void initLogging() override { InitLogging(); }
     void initParameterInteraction() override { InitParameterInteraction(); }
-    std::string getWarnings(const std::string& type) override { return GetWarnings(type); }
+    std::string getWarnings() override { return GetWarnings(true); }
     uint32_t getLogCategories() override { return LogInstance().GetCategoryMask(); }
     bool baseInitialize() override
     {

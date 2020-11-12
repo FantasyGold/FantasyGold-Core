@@ -19,6 +19,8 @@
 #include <flatfile.h>
 #include <hash.h>
 #include <index/txindex.h>
+#include <logging.h>
+#include <logging/timer.h>
 #include <policy/fees.h>
 #include <policy/policy.h>
 #include <policy/settings.h>
@@ -30,7 +32,6 @@
 #include <reverse_iterator.h>
 #include <script/script.h>
 #include <script/sigcache.h>
-#include <script/standard.h>
 #include <shutdown.h>
 #include <timedata.h>
 #include <tinyformat.h>
@@ -44,10 +45,10 @@
 #include <util/strencodings.h>
 #include <util/system.h>
 #include <util/translation.h>
-#include <util/validation.h>
 #include <validationinterface.h>
 #include <warnings.h>
 #include <libethcore/ABI.h>
+#include <util/signstr.h>
 #include <net_processing.h>
 
 #include <serialize.h>
@@ -58,8 +59,6 @@
 #include <util/signstr.h>
 
 #include <algorithm>
-#include <future>
-#include <sstream>
 #include <string>
 
 #include <boost/algorithm/string/replace.hpp>

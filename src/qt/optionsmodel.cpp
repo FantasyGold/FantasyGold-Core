@@ -17,13 +17,14 @@
 #include <net.h>
 #include <netbase.h>
 #include <txdb.h> // for -dbcache defaults
+#include <util/string.h>
 
 #ifdef ENABLE_WALLET
 #include <wallet/wallet.h>
 #include <wallet/walletdb.h>
 #endif
 
-#include <QNetworkProxy>
+#include <QDebug>
 #include <QSettings>
 #include <QStringList>
 #include <util/moneystr.h>
