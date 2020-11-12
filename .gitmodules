@@ -1,5 +1,3 @@
 [submodule "src/cpp-ethereum"]
 	path = src/cpp-ethereum
 	url = https://github.com/FantasyGold/cpp-eth-fantasygold.git
-	branch = offline-staking
-
