@@ -192,6 +192,11 @@ def check_json_precision():
     if satoshis != 2000000000000003:
         raise RuntimeError("JSON encode/decode loses precision")
 
+def EncodeDecimal(o):
+    if isinstance(o, Decimal):
+        return str(o)
+    raise TypeError(repr(o) + " is not JSON serializable")
+
 def count_bytes(hex_string):
     return len(bytearray.fromhex(hex_string))
 
@@ -244,11 +249,12 @@ PORT_MIN = int(os.getenv('TEST_RUNNER_PORT_MIN', default=11000))
 # The number of ports to "reserve" for p2p and rpc, each
 PORT_RANGE = 5000
 
+
 class PortSeed:
     # Must be initialized with a unique integer for each process
     n = None
 
-def get_rpc_proxy(url, node_number, timeout=None, coveragedir=None):
+def get_rpc_proxy(url, node_number, *, timeout=None, coveragedir=None):
     """
     Args:
         url (str): URL of the RPC server to call
@@ -256,6 +262,7 @@ def get_rpc_proxy(url, node_number, timeout=None, coveragedir=None):
 
     Kwargs:
         timeout (int): HTTP timeout in seconds
+        coveragedir (str): Directory
 
     Returns:
         AuthServiceProxy. convenience object for making RPC calls.
@@ -311,6 +318,7 @@ def initialize_datadir(dirname, n, chain):
         f.write("[{}]\n".format(chain_name_conf_section))
         f.write("port=" + str(p2p_port(n)) + "\n")
         f.write("rpcport=" + str(rpc_port(n)) + "\n")
+        f.write("fallbackfee=0.0002\n")
         f.write("server=1\n")
         f.write("keypool=1\n")
         f.write("discover=0\n")
@@ -318,6 +326,7 @@ def initialize_datadir(dirname, n, chain):
         f.write("listenonion=0\n")
         f.write("printtoconsole=0\n")
         f.write("upnp=0\n")
+        f.write("shrinkdebugfile=0\n")
         os.makedirs(os.path.join(datadir, 'stderr'), exist_ok=True)
         os.makedirs(os.path.join(datadir, 'stdout'), exist_ok=True)
     return datadir
@@ -348,8 +357,7 @@ def get_auth_cookie(datadir, chain):
             split_userpass = userpass.split(':')
             user = split_userpass[0]
             password = split_userpass[1]
-    except OSError as e:
-        print(e)
+    except OSError:
         pass
     if user is None or password is None:
         raise ValueError("No RPC credentials")
@@ -394,6 +402,7 @@ def connect_nodes_bi(nodes, a, b):
     connect_nodes(nodes[a], b)
     connect_nodes(nodes[b], a)
 
+
 def sync_blocks(rpc_connections, *, wait=1, timeout=60):
     """
     Wait until everybody has the same tip.
@@ -407,8 +416,11 @@ def sync_blocks(rpc_connections, *, wait=1, timeout=60):
         best_hash = [x.getbestblockhash() for x in rpc_connections]
         if best_hash.count(best_hash[0]) == len(rpc_connections):
             return
+        # Check that each peer has at least one connection
+        assert (all([len(x.getpeerinfo()) for x in rpc_connections]))
         time.sleep(wait)
     raise AssertionError("Block sync timed out:{}".format("".join("\n  {!r}".format(b) for b in best_hash)))
+
 
 def sync_mempools(rpc_connections, *, wait=1, timeout=60, flush_scheduler=True):
     """
@@ -423,6 +435,8 @@ def sync_mempools(rpc_connections, *, wait=1, timeout=60, flush_scheduler=True):
                 for r in rpc_connections:
                     r.syncwithvalidationinterfacequeue()
             return
+        # Check that each peer has at least one connection
+        assert (all([len(x.getpeerinfo()) for x in rpc_connections]))
         time.sleep(wait)
     raise AssertionError("Mempool sync timed out:{}".format("".join("\n  {!r}".format(m) for m in pool)))
 

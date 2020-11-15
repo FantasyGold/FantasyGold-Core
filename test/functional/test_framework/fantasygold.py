@@ -444,8 +444,8 @@ def create_unsigned_mpos_block(node, staking_prevouts, nTime=None, block_fees=0)
 def activate_mpos(node, use_cache=True):
     if not node.getblockcount():
         node.setmocktime(int(time.time()) - 1000000)
-    node.generatetoaddress(4490-node.getblockcount(), "fSrM9K6FMhZ29Vkp8Rdk8Jp66bbfpjFETq")
-    staking_prevouts = collect_prevouts(node, address="fSrM9K6FMhZ29Vkp8Rdk8Jp66bbfpjFETq")
+    node.generatetoaddress(4490-node.getblockcount(), "qSrM9K6FMhZ29Vkp8Rdk8Jp66bbfpjFETq")
+    staking_prevouts = collect_prevouts(node, address="qSrM9K6FMhZ29Vkp8Rdk8Jp66bbfpjFETq")
 
 
     for i in range(510):

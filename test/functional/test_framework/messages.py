@@ -40,6 +40,7 @@ MAX_LOCATOR_SZ = 101
 MAX_BLOCK_BASE_SIZE = 1000000
 
 COIN = 100000000  # 1 btc in satoshis
+MAX_MONEY = 10782240625000000
 
 BIP125_SEQUENCE_NUMBER = 0xfffffffd  # Sequence number that is BIP 125 opt-in and BIP 68-opt-out
 
@@ -51,6 +52,7 @@ NODE_NETWORK_LIMITED = (1 << 10)
 
 MSG_TX = 1
 MSG_BLOCK = 2
+MSG_FILTERED_BLOCK = 3
 MSG_WITNESS_FLAG = 1 << 30
 MSG_TYPE_MASK = 0xffffffff >> 2
 
@@ -225,10 +227,11 @@ class CInv:
 
     typemap = {
         0: "Error",
-        1: "TX",
-        2: "Block",
-        1|MSG_WITNESS_FLAG: "WitnessTx",
-        2|MSG_WITNESS_FLAG : "WitnessBlock",
+        MSG_TX: "TX",
+        MSG_BLOCK: "Block",
+        MSG_TX | MSG_WITNESS_FLAG: "WitnessTx",
+        MSG_BLOCK | MSG_WITNESS_FLAG: "WitnessBlock",
+        MSG_FILTERED_BLOCK: "filtered Block",
         4: "CompactBlock"
     }
 
@@ -761,6 +764,7 @@ class PrefilledTransaction:
     def __repr__(self):
         return "PrefilledTransaction(index=%d, tx=%s)" % (self.index, repr(self.tx))
 
+
 # This is what we send on the wire, in a cmpctblock message.
 class P2PHeaderAndShortIDs:
     __slots__ = ("header", "nonce", "prefilled_txn", "prefilled_txn_length",
@@ -803,6 +807,7 @@ class P2PHeaderAndShortIDs:
     def __repr__(self):
         return "P2PHeaderAndShortIDs(header=%s, nonce=%d, shortids_length=%d, shortids=%s, prefilled_txn_length=%d, prefilledtxn=%s" % (repr(self.header), self.nonce, self.shortids_length, repr(self.shortids), self.prefilled_txn_length, repr(self.prefilled_txn))
 
+
 # P2P version of the above that will use witness serialization (for compact
 # block version 2)
 class P2PHeaderAndShortWitnessIDs(P2PHeaderAndShortIDs):
@@ -815,6 +820,7 @@ def calculate_shortid(k0, k1, tx_hash):
     expected_shortid = siphash256(k0, k1, tx_hash)
     expected_shortid &= 0x0000ffffffffffff
     return expected_shortid
+
 
 # This version gets rid of the array lengths, and reinterprets the differential
 # encoding into indices that can be used for lookup.
@@ -1165,16 +1171,17 @@ class msg_tx:
         self.tx.deserialize(f)
 
     def serialize(self):
-        return self.tx.serialize_without_witness()
+        return self.tx.serialize_with_witness()
 
     def __repr__(self):
         return "msg_tx(tx=%s)" % (repr(self.tx))
 
-class msg_witness_tx(msg_tx):
+
+class msg_no_witness_tx(msg_tx):
     __slots__ = ()
 
     def serialize(self):
-        return self.tx.serialize_with_witness()
+        return self.tx.serialize_without_witness()
 
 
 class msg_block:
@@ -1195,6 +1202,7 @@ class msg_block:
 
     def __repr__(self):
         return "msg_block(block=%s)" % (repr(self.block))
+
 
 # for cases where a user needs tighter control over what is sent over the wire
 # note that the user must supply the name of the command, and the data
@@ -1375,37 +1383,76 @@ class msg_headers:
         return "msg_headers(headers=%s)" % repr(self.headers)
 
 
-class msg_reject:
-    __slots__ = ("code", "data", "message", "reason")
-    command = b"reject"
-    REJECT_MALFORMED = 1
-
-    def __init__(self):
-        self.message = b""
-        self.code = 0
-        self.reason = b""
-        self.data = 0
+class msg_merkleblock:
+    command = b"merkleblock"
 
     def deserialize(self, f):
-        self.message = deser_string(f)
-        self.code = struct.unpack("<B", f.read(1))[0]
-        self.reason = deser_string(f)
-        if (self.code != self.REJECT_MALFORMED and
-                (self.message == b"block" or self.message == b"tx")):
-            self.data = deser_uint256(f)
+        pass  # Placeholder for now
+
+
+class msg_filterload:
+    __slots__ = ("data", "nHashFuncs", "nTweak", "nFlags")
+    command = b"filterload"
+
+    def __init__(self, data=b'00', nHashFuncs=0, nTweak=0, nFlags=0):
+        self.data = data
+        self.nHashFuncs = nHashFuncs
+        self.nTweak = nTweak
+        self.nFlags = nFlags
+
+    def deserialize(self, f):
+        self.data = deser_string(f)
+        self.nHashFuncs = struct.unpack("<I", f.read(4))[0]
+        self.nTweak = struct.unpack("<I", f.read(4))[0]
+        self.nFlags = struct.unpack("<B", f.read(1))[0]
 
     def serialize(self):
-        r = ser_string(self.message)
-        r += struct.pack("<B", self.code)
-        r += ser_string(self.reason)
-        if (self.code != self.REJECT_MALFORMED and
-                (self.message == b"block" or self.message == b"tx")):
-            r += ser_uint256(self.data)
+        r = b""
+        r += ser_string(self.data)
+        r += struct.pack("<I", self.nHashFuncs)
+        r += struct.pack("<I", self.nTweak)
+        r += struct.pack("<B", self.nFlags)
         return r
 
     def __repr__(self):
-        return "msg_reject: %s %d %s [%064x]" \
-            % (self.message, self.code, self.reason, self.data)
+        return "msg_filterload(data={}, nHashFuncs={}, nTweak={}, nFlags={})".format(
+            self.data, self.nHashFuncs, self.nTweak, self.nFlags)
+
+
+class msg_filteradd:
+    __slots__ = ("data")
+    command = b"filteradd"
+
+    def __init__(self, data):
+        self.data = data
+
+    def deserialize(self, f):
+        self.data = deser_string(f)
+
+    def serialize(self):
+        r = b""
+        r += ser_string(self.data)
+        return r
+
+    def __repr__(self):
+        return "msg_filteradd(data={})".format(self.data)
+
+
+class msg_filterclear:
+    __slots__ = ()
+    command = b"filterclear"
+
+    def __init__(self):
+        pass
+
+    def deserialize(self, f):
+        pass
+
+    def serialize(self):
+        return b""
+
+    def __repr__(self):
+        return "msg_filterclear()"
 
 
 class msg_feefilter:
