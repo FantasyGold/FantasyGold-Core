@@ -708,87 +708,6 @@ bool SetStartOnSystemStartup(bool fAutoStart)
     return true;
 }
 
-
-#elif defined(Q_OS_MAC) && defined(MAC_OS_X_VERSION_MIN_REQUIRED) && MAC_OS_X_VERSION_MIN_REQUIRED <= 101100
-// based on: https://github.com/Mozketo/LaunchAtLoginController/blob/master/LaunchAtLoginController.m
-
-LSSharedFileListItemRef findStartupItemInList(CFArrayRef listSnapshot, LSSharedFileListRef list, CFURLRef findUrl)
-{
-    if (listSnapshot == nullptr) {
-        return nullptr;
-    }
-
-    // loop through the list of startup items and try to find the bitcoin app
-    for(int i = 0; i < CFArrayGetCount(listSnapshot); i++) {
-        LSSharedFileListItemRef item = (LSSharedFileListItemRef)CFArrayGetValueAtIndex(listSnapshot, i);
-        UInt32 resolutionFlags = kLSSharedFileListNoUserInteraction | kLSSharedFileListDoNotMountVolumes;
-        CFURLRef currentItemURL = nullptr;
-
-#if defined(MAC_OS_X_VERSION_MAX_ALLOWED) && MAC_OS_X_VERSION_MAX_ALLOWED >= 10100
-        if(&LSSharedFileListItemCopyResolvedURL)
-            currentItemURL = LSSharedFileListItemCopyResolvedURL(item, resolutionFlags, nullptr);
-#if defined(MAC_OS_X_VERSION_MIN_REQUIRED) && MAC_OS_X_VERSION_MIN_REQUIRED < 10100
-        else
-            LSSharedFileListItemResolve(item, resolutionFlags, &currentItemURL, nullptr);
-#endif
-#else
-        LSSharedFileListItemResolve(item, resolutionFlags, &currentItemURL, nullptr);
-#endif
-
-        if(currentItemURL) {
-            if (CFEqual(currentItemURL, findUrl)) {
-                // found
-                CFRelease(currentItemURL);
-                return item;
-            }
-            CFRelease(currentItemURL);
-        }
-    }
-    return nullptr;
-}
-
-bool GetStartOnSystemStartup()
-{
-    CFURLRef bitcoinAppUrl = CFBundleCopyBundleURL(CFBundleGetMainBundle());
-    if (bitcoinAppUrl == nullptr) {
-        return false;
-    }
-
-    LSSharedFileListRef loginItems = LSSharedFileListCreate(nullptr, kLSSharedFileListSessionLoginItems, nullptr);
-    CFArrayRef listSnapshot = LSSharedFileListCopySnapshot(loginItems, nullptr);
-    bool res = (findStartupItemInList(listSnapshot, loginItems, bitcoinAppUrl) != nullptr);
-    CFRelease(bitcoinAppUrl);
-    CFRelease(loginItems);
-    CFRelease(listSnapshot);
-    return res;
-}
-
-bool SetStartOnSystemStartup(bool fAutoStart)
-{
-    CFURLRef bitcoinAppUrl = CFBundleCopyBundleURL(CFBundleGetMainBundle());
-    if (bitcoinAppUrl == nullptr) {
-        return false;
-    }
-
-    LSSharedFileListRef loginItems = LSSharedFileListCreate(nullptr, kLSSharedFileListSessionLoginItems, nullptr);
-    CFArrayRef listSnapshot = LSSharedFileListCopySnapshot(loginItems, nullptr);
-    LSSharedFileListItemRef foundItem = findStartupItemInList(listSnapshot, loginItems, bitcoinAppUrl);
-
-    if(fAutoStart && !foundItem) {
-        // add bitcoin app to startup item list
-        LSSharedFileListInsertItemURL(loginItems, kLSSharedFileListItemBeforeFirst, nullptr, nullptr, bitcoinAppUrl, nullptr, nullptr);
-    }
-    else if(!fAutoStart && foundItem) {
-        // remove item
-        LSSharedFileListItemRemove(loginItems, foundItem);
-    }
-
-    CFRelease(bitcoinAppUrl);
-    CFRelease(loginItems);
-    CFRelease(listSnapshot);
-    return true;
-}
-#pragma GCC diagnostic pop
 #else
 
 bool GetStartOnSystemStartup() { return false; }
@@ -978,6 +897,25 @@ int TextWidth(const QFontMetrics& fm, const QString& text)
 #else
     return fm.width(text);
 #endif
+}
+
+void LogQtInfo()
+{
+#ifdef QT_STATIC
+    const std::string qt_link{"static"};
+#else
+    const std::string qt_link{"dynamic"};
+#endif
+#ifdef QT_STATICPLUGIN
+    const std::string plugin_link{"static"};
+#else
+    const std::string plugin_link{"dynamic"};
+#endif
+    LogPrintf("Qt %s (%s), plugin=%s (%s)\n", qVersion(), qt_link, QGuiApplication::platformName().toStdString(), plugin_link);
+    LogPrintf("System: %s, %s\n", QSysInfo::prettyProductName().toStdString(), QSysInfo::buildAbi().toStdString());
+    for (const QScreen* s : QGuiApplication::screens()) {
+        LogPrintf("Screen: %s %dx%d, pixel ratio=%.1f\n", s->name().toStdString(), s->size().width(), s->size().height(), s->devicePixelRatio());
+    }
 }
 
 void formatToolButtons(QToolButton *btn1, QToolButton *btn2, QToolButton *btn3)

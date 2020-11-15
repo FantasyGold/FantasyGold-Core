@@ -40,6 +40,7 @@ ReceiveRequestDialog::ReceiveRequestDialog(const PlatformStyle *_platformStyle, 
 #ifndef USE_QRCODE
     ui->widgetQRMargin->setVisible(false);
 #endif
+
 }
 
 ReceiveRequestDialog::~ReceiveRequestDialog()
@@ -56,11 +57,11 @@ void ReceiveRequestDialog::setModel(WalletModel *_model)
         connect(_model->getOptionsModel(), &OptionsModel::displayUnitChanged, this, &ReceiveRequestDialog::update);
 
         // Set the button to be enabled or disabled based on whether the wallet can give out new addresses.
-        ui->btnRefreshAddress->setEnabled(model->canGetAddresses());
+        ui->btnRefreshAddress->setEnabled(model->wallet().canGetAddresses());
 
         // Enable/disable the receive button if the wallet is now able/unable to give out new addresses.
         connect(model, &WalletModel::canGetAddressesChanged, [this] {
-            ui->btnRefreshAddress->setEnabled(model->canGetAddresses());
+            ui->btnRefreshAddress->setEnabled(model->wallet().canGetAddresses());
         });
     }
 

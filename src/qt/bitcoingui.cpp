@@ -233,14 +233,14 @@ BitcoinGUI::BitcoinGUI(interfaces::Node& node, const PlatformStyle *_platformSty
         openOptionsDialogWithTab(OptionsDialog::TAB_NETWORK);
     });
 
-    modalOverlay = new ModalOverlay(this);
-    modalBackupOverlay = new ModalOverlay(this, ModalOverlay::Backup);
+    modalOverlay = new ModalOverlay(enableWallet, this);
     fantasygoldVersionChecker = new FantasyGoldVersionChecker(this);
+    connect(labelBlocksIcon, &GUIUtil::ClickableLabel::clicked, this, &BitcoinGUI::showModalOverlay);
+    connect(progressBar, &GUIUtil::ClickableProgressBar::clicked, this, &BitcoinGUI::showModalOverlay);
 #ifdef ENABLE_WALLET
     if(enableWallet) {
+        modalBackupOverlay = new ModalOverlay(enableWallet, this, ModalOverlay::Backup);
         connect(walletFrame, &WalletFrame::requestedSyncWarningInfo, this, &BitcoinGUI::showModalOverlay);
-        connect(labelBlocksIcon, &GUIUtil::ClickableLabel::clicked, this, &BitcoinGUI::showModalOverlay);
-        connect(progressBar, &GUIUtil::ClickableProgressBar::clicked, this, &BitcoinGUI::showModalOverlay);
         connect(modalBackupOverlay, SIGNAL(backupWallet()), walletFrame, SLOT(backupWallet()));
     }
 #endif
@@ -252,7 +252,7 @@ BitcoinGUI::BitcoinGUI(interfaces::Node& node, const PlatformStyle *_platformSty
 #endif
 
     // Show the backup overlay screen the first time the application is started
-    if(settings.value("ShowBackupOverlay", true).toBool())
+    if(enableWallet && settings.value("ShowBackupOverlay", true).toBool())
     {
         showModalBackupOverlay();
         settings.setValue("ShowBackupOverlay", false);
@@ -412,8 +412,8 @@ void BitcoinGUI::createActions()
     verifyMessageAction = new QAction(tr("&Verify message..."), this);
     verifyMessageAction->setStatusTip(tr("Verify messages to ensure they were signed with specified FantasyGold addresses"));
 
-    openRPCConsoleAction = new QAction(tr("&Debug window"), this);
-    openRPCConsoleAction->setStatusTip(tr("Open debugging and diagnostic console"));
+    openRPCConsoleAction = new QAction(tr("Node window"), this);
+    openRPCConsoleAction->setStatusTip(tr("Open node debugging and diagnostic console"));
     // initially disable the debug window menu item
     openRPCConsoleAction->setEnabled(false);
     openRPCConsoleAction->setObjectName("openRPCConsoleAction");
@@ -424,7 +424,7 @@ void BitcoinGUI::createActions()
     usedReceivingAddressesAction->setStatusTip(tr("Show the list of used receiving addresses and labels"));
 
     openAction = new QAction(tr("Open &URI..."), this);
-    openAction->setStatusTip(tr("Open a fantasygold: URI or payment request"));
+    openAction->setStatusTip(tr("Open a fantasygold: URI"));
 
     m_open_wallet_action = new QAction(tr("Open Wallet"), this);
     m_open_wallet_action->setEnabled(false);
@@ -779,6 +779,10 @@ void BitcoinGUI::addWallet(WalletModel* walletModel)
 void BitcoinGUI::removeWallet(WalletModel* walletModel)
 {
     if (!walletFrame) return;
+
+    labelWalletHDStatusIcon->hide();
+    labelWalletEncryptionIcon->hide();
+
     int index = m_wallet_selector->findData(QVariant::fromValue(walletModel));
     m_wallet_selector->removeItem(index);
     if (m_wallet_selector->count() == 0) {
@@ -1414,7 +1418,7 @@ void BitcoinGUI::setHDStatus(bool privkeyDisabled, int hdEnabled)
 {
     labelWalletHDStatusIcon->setPixmap(platformStyle->MultiStatesIcon(privkeyDisabled ? ":/icons/eye" : hdEnabled ? ":/icons/hd_enabled" : ":/icons/hd_disabled").pixmap(STATUSBAR_ICONSIZE,STATUSBAR_ICONSIZE));
     labelWalletHDStatusIcon->setToolTip(privkeyDisabled ? tr("Private key <b>disabled</b>") : hdEnabled ? tr("HD key generation is <b>enabled</b>") : tr("HD key generation is <b>disabled</b>"));
-
+    labelWalletHDStatusIcon->show();
     // eventually disable the QLabel to set its opacity to 50%
     labelWalletHDStatusIcon->setEnabled(hdEnabled);
 }
@@ -1474,7 +1478,7 @@ void BitcoinGUI::updateWalletStatus()
     }
     WalletModel * const walletModel = walletView->getWalletModel();
     setEncryptionStatus(walletModel);
-    setHDStatus(walletModel->privateKeysDisabled(), walletModel->wallet().hdEnabled());
+    setHDStatus(walletModel->wallet().privateKeysDisabled(), walletModel->wallet().hdEnabled());
 }
 #endif // ENABLE_WALLET
 

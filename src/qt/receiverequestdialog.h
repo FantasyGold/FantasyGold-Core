@@ -11,6 +11,7 @@
 
 class PlatformStyle;
 class ReceiveCoinsDialog;
+class WalletModel;
 
 namespace Ui {
     class ReceiveRequestDialog;

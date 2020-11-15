@@ -168,7 +168,7 @@ BitcoinCore::BitcoinCore(interfaces::Node& node) :
 void BitcoinCore::handleRunawayException(const std::exception *e)
 {
     PrintExceptionContinue(e, "Runaway exception");
-    Q_EMIT runawayException(QString::fromStdString(m_node.getWarnings("gui")));
+    Q_EMIT runawayException(QString::fromStdString(m_node.getWarnings()));
 }
 
 void BitcoinCore::initialize()
@@ -315,8 +315,11 @@ void BitcoinApplication::parameterSetup()
     m_node.initParameterInteraction();
 }
 
-void BitcoinApplication::SetPrune(bool prune, bool force) {
-     optionsModel->SetPrune(prune, force);
+void BitcoinApplication::InitializePruneSetting(bool prune)
+{
+    // If prune is set, intentionally override existing prune size with
+    // the default size since this is called when choosing a new datadir.
+    optionsModel->SetPruneTargetGB(prune ? DEFAULT_PRUNE_TARGET_GB : 0, true);
 }
 
 void BitcoinApplication::requestInitialize()
@@ -349,7 +352,7 @@ void BitcoinApplication::requestShutdown()
     // rescanning a wallet.
     m_node.startShutdown();
     // Unsetting the client model can cause the current thread to wait for node
-    // to complete an operation, like wait for a RPC execution to complate.
+    // to complete an operation, like wait for a RPC execution to complete.
     window->setClientModel(nullptr);
     pollShutdownTimer->stop();
 
@@ -667,12 +670,13 @@ int GuiMain(int argc, char* argv[])
     qInstallMessageHandler(DebugMessageHandler);
     // Allow parameter interaction before we create the options model
     app.parameterSetup();
+    GUIUtil::LogQtInfo();
     // Load GUI settings from QSettings
     app.createOptionsModel(gArgs.GetBoolArg("-resetguisettings", false));
 
     if (did_show_intro) {
         // Store intro dialog settings other than datadir (network specific)
-        app.SetPrune(prune, true);
+        app.InitializePruneSetting(prune);
     }
 
     if (gArgs.GetBoolArg("-splash", DEFAULT_SPLASHSCREEN) && !gArgs.GetBoolArg("-min", false))
@@ -702,10 +706,10 @@ int GuiMain(int argc, char* argv[])
         }
     } catch (const std::exception& e) {
         PrintExceptionContinue(&e, "Runaway exception");
-        app.handleRunawayException(QString::fromStdString(node->getWarnings("gui")));
+        app.handleRunawayException(QString::fromStdString(node->getWarnings()));
     } catch (...) {
         PrintExceptionContinue(nullptr, "Runaway exception");
-        app.handleRunawayException(QString::fromStdString(node->getWarnings("gui")));
+        app.handleRunawayException(QString::fromStdString(node->getWarnings()));
     }
     app.restartWallet();
     return rv;

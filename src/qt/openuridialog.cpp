@@ -20,8 +20,6 @@ OpenURIDialog::OpenURIDialog(QWidget *parent) :
 
     SetObjectStyleSheet(ui->buttonBox->button(QDialogButtonBox::Cancel), StyleSheetNames::ButtonLight);
     SetObjectStyleSheet(ui->buttonBox->button(QDialogButtonBox::Ok), StyleSheetNames::ButtonGray);
-
-    ui->uriEdit->setPlaceholderText("fantasygold:");
 }
 
 OpenURIDialog::~OpenURIDialog()
@@ -44,13 +42,4 @@ void OpenURIDialog::accept()
     } else {
         ui->uriEdit->setValid(false);
     }
-}
-
-void OpenURIDialog::on_selectFileButton_clicked()
-{
-    QString filename = GUIUtil::getOpenFileName(this, tr("Select payment request file to open"), "", "", nullptr);
-    if(filename.isEmpty())
-        return;
-    QUrl fileUri = QUrl::fromLocalFile(filename);
-    ui->uriEdit->setText("fantasygold:?r=" + QUrl::toPercentEncoding(fileUri.toString()));
 }

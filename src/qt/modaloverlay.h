@@ -26,8 +26,7 @@ public:
         Sync = 0,
         Backup = 1
     };
-
-    explicit ModalOverlay(QWidget *parent, OverlayType _type = OverlayType::Sync);
+    explicit ModalOverlay(bool enable_wallet, QWidget *parent, OverlayType _type = OverlayType::Sync);
     ~ModalOverlay();
 
 public Q_SLOTS:

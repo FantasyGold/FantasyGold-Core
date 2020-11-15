@@ -466,7 +466,6 @@ RPCConsole::RPCConsole(interfaces::Node& node, const PlatformStyle *_platformSty
     SetObjectStyleSheet(ui->peerWidget, StyleSheetNames::TableViewLight);
     SetObjectStyleSheet(ui->banlistWidget, StyleSheetNames::TableViewLight);
 
-
     QChar nonbreaking_hyphen(8209);
     ui->dataDir->setToolTip(ui->dataDir->toolTip().arg(QString(nonbreaking_hyphen) + "datadir"));
     ui->blocksDir->setToolTip(ui->blocksDir->toolTip().arg(QString(nonbreaking_hyphen) + "blocksdir"));
@@ -479,7 +478,6 @@ RPCConsole::RPCConsole(interfaces::Node& node, const PlatformStyle *_platformSty
     ui->fontBiggerButton->setIcon(platformStyle->MultiStatesIcon(":/icons/fontbigger", PlatformStyle::PushButtonIcon));
     ui->fontSmallerButton->setIcon(platformStyle->MultiStatesIcon(":/icons/fontsmaller", PlatformStyle::PushButtonIcon));
     ui->promptIcon->setIcon(platformStyle->MultiStatesIcon(":/icons/prompticon", PlatformStyle::PushButtonIcon));
-
     // Install event filter for up and down arrow
     ui->lineEdit->installEventFilter(this);
     ui->messagesWidget->installEventFilter(this);
@@ -1132,11 +1130,12 @@ void RPCConsole::updateNodeDetail(const CNodeCombinedStats *stats)
     ui->peerPingWait->setText(GUIUtil::formatPingTime(stats->nodeStats.m_ping_wait_usec));
     ui->peerMinPing->setText(GUIUtil::formatPingTime(stats->nodeStats.m_min_ping_usec));
     ui->timeoffset->setText(GUIUtil::formatTimeOffset(stats->nodeStats.nTimeOffset));
-    ui->peerVersion->setText(QString("%1").arg(QString::number(stats->nodeStats.nVersion)));
+    ui->peerVersion->setText(QString::number(stats->nodeStats.nVersion));
     ui->peerSubversion->setText(QString::fromStdString(stats->nodeStats.cleanSubVer));
     ui->peerDirection->setText(stats->nodeStats.fInbound ? tr("Inbound") : tr("Outbound"));
-    ui->peerHeight->setText(QString("%1").arg(QString::number(stats->nodeStats.nStartingHeight)));
+    ui->peerHeight->setText(QString::number(stats->nodeStats.nStartingHeight));
     ui->peerWhitelisted->setText(stats->nodeStats.m_legacyWhitelisted ? tr("Yes") : tr("No"));
+    ui->peerMappedAS->setText(stats->nodeStats.m_mapped_as != 0 ? QString::number(stats->nodeStats.m_mapped_as) : tr("N/A"));
 
     // This check fails for example if the lock was busy and
     // nodeStateStats couldn't be fetched.
@@ -1255,7 +1254,7 @@ void RPCConsole::unbanSelectedNode()
         QString strNode = nodes.at(i).data().toString();
         CSubNet possibleSubnet;
 
-        LookupSubNet(strNode.toStdString().c_str(), possibleSubnet);
+        LookupSubNet(strNode.toStdString(), possibleSubnet);
         if (possibleSubnet.IsValid() && m_node.unban(possibleSubnet))
         {
             clientModel->getBanTableModel()->refresh();

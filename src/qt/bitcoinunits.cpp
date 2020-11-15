@@ -323,7 +323,6 @@ QString BitcoinUnits::formatInt(const int64_t &nIn, bool fPlus, BitcoinUnits::Se
     return quotient_str;
 }
 
-
 QString BitcoinUnits::getAmountColumnTitle(int unit)
 {
     QString amountTitle = QObject::tr("Amount");

@@ -85,6 +85,7 @@ AddressBookPage::AddressBookPage(const PlatformStyle *platformStyle, Mode _mode,
     SetObjectStyleSheet(ui->deleteAddress, StyleSheetNames::ButtonLight);
     SetObjectStyleSheet(ui->exportButton, StyleSheetNames::ButtonGray);
     SetObjectStyleSheet(ui->closeButton, StyleSheetNames::ButtonGray);
+
     switch(mode)
     {
     case ForSelection:

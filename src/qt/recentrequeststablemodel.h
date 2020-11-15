@@ -11,6 +11,8 @@
 #include <QStringList>
 #include <QDateTime>
 
+class WalletModel;
+
 class RecentRequestEntry
 {
 public:

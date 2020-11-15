@@ -274,6 +274,11 @@ namespace GUIUtil
      */
     int TextWidth(const QFontMetrics& fm, const QString& text);
 
+    /**
+     * Writes to debug.log short info about the used Qt and the host system.
+     */
+    void LogQtInfo();
+
     void formatToolButtons(QToolButton* btn1, QToolButton* btn2 = 0, QToolButton* btn3 = 0);
 
     QString cutString(const QString& text, int length);

@@ -12,6 +12,10 @@
 class WalletModel;
 class PlatformStyle;
 
+namespace interfaces {
+class Node;
+} // namespace interfaces
+
 namespace Ui {
     class SendCoinsEntry;
 }

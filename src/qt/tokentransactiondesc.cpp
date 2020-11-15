@@ -57,11 +57,11 @@ public:
     {
         if(instance().network == "main")
         {
-            return FGC_INFO_MAINNET.arg("tx", txHash);
+            return QString(FGC_INFO_MAINNET).arg("tx", txHash);
         }
         else if(instance().network == "test")
         {
-            return FGC_INFO_TESTNET.arg("tx", txHash);
+            return QString(FGC_INFO_TESTNET).arg("tx", txHash);
         }
 
         return txHash;

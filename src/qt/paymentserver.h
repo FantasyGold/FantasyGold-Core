@@ -43,6 +43,10 @@
 
 class OptionsModel;
 
+namespace interfaces {
+class Node;
+} // namespace interfaces
+
 QT_BEGIN_NAMESPACE
 class QApplication;
 class QByteArray;

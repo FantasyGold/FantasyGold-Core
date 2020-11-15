@@ -18,6 +18,7 @@ static const int STATUSBAR_ICONSIZE = 16;
 
 static const bool DEFAULT_SPLASHSCREEN = true;
 
+
 /* Transaction list -- unconfirmed transaction */
 #define COLOR_UNCONFIRMED QColor(128, 128, 128)
 /* Transaction list -- negative amount */
@@ -51,10 +52,13 @@ static const int TOOLTIP_WRAP_THRESHOLD = 80;
 /* One gigabyte (GB) in bytes */
 static constexpr uint64_t GB_BYTES{1000000000};
 
+// Default prune target displayed in GUI.
+static constexpr int DEFAULT_PRUNE_TARGET_GB{2};
+
 /* Mainnet fantasygold explorer uri */
-static const QString FGC_INFO_MAINNET = "<a href='https://fantasygold.network/%1/%2'>%2</a>";
+#define FGC_INFO_MAINNET "<a href='https://fantasygold.network/%1/%2'>%2</a>"
 
 /* Testnet fantasygold explorer uri */
-static const QString FGC_INFO_TESTNET = "<a href='https://testnet.fantasygold.network/%1/%2'>%2</a>";
+#define FGC_INFO_TESTNET "<a href='https://testnet.fantasygold.network/%1/%2'>%2</a>"
 
 #endif // BITCOIN_QT_GUICONSTANTS_H
