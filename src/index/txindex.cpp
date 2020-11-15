@@ -17,7 +17,6 @@ constexpr char DB_TXINDEX_BLOCK = 'T';
 
 std::unique_ptr<TxIndex> g_txindex;
 
-
 /**
  * Access to the txindex database (indexes/txindex/)
  *
