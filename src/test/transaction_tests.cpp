@@ -153,7 +153,7 @@ BOOST_AUTO_TEST_CASE(tx_valid)
             CDataStream stream(ParseHex(transaction), SER_NETWORK, PROTOCOL_VERSION);
             CTransaction tx(deserialize, stream);
 
-            CValidationState state;
+            BlockValidationState state;
             BOOST_CHECK_MESSAGE(CheckTransaction(tx, state), strTest);
             BOOST_CHECK(state.IsValid());
 
@@ -240,7 +240,7 @@ BOOST_AUTO_TEST_CASE(tx_invalid)
             CDataStream stream(ParseHex(transaction), SER_NETWORK, PROTOCOL_VERSION );
             CTransaction tx(deserialize, stream);
 
-            CValidationState state;
+            BlockValidationState state;
             fValid = CheckTransaction(tx, state) && state.IsValid();
 
             PrecomputedTransactionData txdata(tx);
@@ -275,7 +275,7 @@ BOOST_AUTO_TEST_CASE(basic_transaction_tests)
     CDataStream stream(vch, SER_DISK, CLIENT_VERSION);
     CMutableTransaction tx;
     stream >> tx;
-    CValidationState state;
+    BlockValidationState state;
     BOOST_CHECK_MESSAGE(CheckTransaction(CTransaction(tx), state) && state.IsValid(), "Simple deserialized transaction should be valid.");
 
     // Check that duplicate txins fail

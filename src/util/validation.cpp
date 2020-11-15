@@ -9,8 +9,8 @@
 #include <tinyformat.h>
 #include <util/signstr.h>
 
-/** Convert CValidationState to a human-readable message for logging */
-std::string FormatStateMessage(const CValidationState &state)
+/** Convert BlockValidationState to a human-readable message for logging */
+std::string FormatStateMessage(const BlockValidationState &state)
 {
     return strprintf("%s%s (code %i)",
         state.GetRejectReason(),
