@@ -7,7 +7,7 @@
 #include <node/context.h>
 #include <optional.h>
 #include <test/util/mining.h>
-#include <test/util/util/setup_common.h>
+#include <test/util/setup_common.h>
 #include <test/util/wallet.h>
 #include <validationinterface.h>
 #include <wallet/wallet.h>
