@@ -550,7 +550,7 @@ static UniValue setban(const JSONRPCRequest& request)
     if (request.fHelp || !help.IsValidNumArgs(request.params.size()) || (strCommand != "add" && strCommand != "remove")) {
         throw std::runtime_error(help.ToString());
     }
-    if (!g_banman) {
+    if (!g_rpc_node->banman) {
         throw JSONRPCError(RPC_DATABASE_ERROR, "Error: Ban database not loaded");
     }
 
@@ -574,7 +574,7 @@ static UniValue setban(const JSONRPCRequest& request)
 
     if (strCommand == "add")
     {
-        if (isSubnet ? g_banman->IsBanned(subNet) : g_banman->IsBanned(netAddr)) {
+        if (isSubnet ? g_rpc_node->banman->IsBanned(subNet) : g_rpc_node->banman->IsBanned(netAddr)) {
             throw JSONRPCError(RPC_CLIENT_NODE_ALREADY_ADDED, "Error: IP/Subnet already banned");
         }
 
@@ -587,21 +587,21 @@ static UniValue setban(const JSONRPCRequest& request)
             absolute = true;
 
         if (isSubnet) {
-            g_banman->Ban(subNet, BanReasonManuallyAdded, banTime, absolute);
-            if (g_connman) {
-                g_connman->DisconnectNode(subNet);
+            g_rpc_node->banman->Ban(subNet, banTime, absolute);
+            if (g_rpc_node->connman) {
+                g_rpc_node->connman->DisconnectNode(subNet);
             }
         } else {
-            g_banman->Ban(netAddr, BanReasonManuallyAdded, banTime, absolute);
-            if (g_connman) {
-                g_connman->DisconnectNode(netAddr);
+            g_rpc_node->banman->Ban(netAddr, banTime, absolute);
+            if (g_rpc_node->connman) {
+                g_rpc_node->connman->DisconnectNode(netAddr);
             }
         }
     }
     else if(strCommand == "remove")
     {
-        if (!( isSubnet ? g_banman->Unban(subNet) : g_banman->Unban(netAddr) )) {
-            throw JSONRPCError(RPC_CLIENT_INVALID_IP_OR_SUBNET, "Error: Unban failed. Requested address/subnet was not previously banned.");
+        if (!( isSubnet ? g_rpc_node->banman->Unban(subNet) : g_rpc_node->banman->Unban(netAddr) )) {
+            throw JSONRPCError(RPC_CLIENT_INVALID_IP_OR_SUBNET, "Error: Unban failed. Requested address/subnet was not previously manually banned.");
         }
     }
     return NullUniValue;
@@ -619,12 +619,12 @@ static UniValue listbanned(const JSONRPCRequest& request)
                 },
             }.Check(request);
 
-    if(!g_banman) {
+    if(!g_rpc_node->banman) {
         throw JSONRPCError(RPC_DATABASE_ERROR, "Error: Ban database not loaded");
     }
 
     banmap_t banMap;
-    g_banman->GetBanned(banMap);
+    g_rpc_node->banman->GetBanned(banMap);
 
     UniValue bannedAddresses(UniValue::VARR);
     for (const auto& entry : banMap)
@@ -653,11 +653,11 @@ static UniValue clearbanned(const JSONRPCRequest& request)
                             + HelpExampleRpc("clearbanned", "")
                 },
             }.Check(request);
-    if (!g_banman) {
+    if (!g_rpc_node->banman) {
         throw JSONRPCError(RPC_DATABASE_ERROR, "Error: Ban database not loaded");
     }
 
-    g_banman->ClearBanned();
+    g_rpc_node->banman->ClearBanned();
 
     return NullUniValue;
 }
