@@ -94,6 +94,7 @@ static CAmount make_hard_case(int utxos, std::vector<OutputGroup>& utxo_pool)
 static void BnBExhaustion(benchmark::State& state)
 {
     // Setup
+    testWallet.SetupLegacyScriptPubKeyMan();
     std::vector<OutputGroup> utxo_pool;
     CoinSet selection;
     CAmount value_ret = 0;
