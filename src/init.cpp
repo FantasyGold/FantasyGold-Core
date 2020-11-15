@@ -96,9 +96,6 @@ static const bool DEFAULT_STOPAFTERBLOCKIMPORT = false;
 // Dump addresses to banlist.dat every 15 minutes (900s)
 static constexpr int DUMP_BANS_INTERVAL = 60 * 15;
 
-std::unique_ptr<CConnman> g_connman;
-std::unique_ptr<PeerLogicValidation> peerLogic;
-std::unique_ptr<BanMan> g_banman;
 
 #ifdef WIN32
 // Win32 LevelDB doesn't use filedescriptors, and the ones used for
@@ -174,8 +171,8 @@ void Interrupt()
     InterruptREST();
     InterruptTorControl();
     InterruptMapPort();
-    if (g_connman)
-        g_connman->Interrupt();
+    if (node.connman)
+        node.connman->Interrupt();
     if (g_txindex) {
         g_txindex->Interrupt();
     }
@@ -208,8 +205,8 @@ void Shutdown(InitInterfaces& interfaces)
 
     // Because these depend on each-other, we make sure that neither can be
     // using the other before destroying them.
-    if (peerLogic) UnregisterValidationInterface(peerLogic.get());
-    if (g_connman) g_connman->Stop();
+    if (node.peer_logic) UnregisterValidationInterface(node.peer_logic.get());
+    if (node.connman) node.connman->Stop();
 
     StopTorControl();
 
@@ -220,9 +217,9 @@ void Shutdown(InitInterfaces& interfaces)
 
     // After the threads that potentially access these pointers have been stopped,
     // destruct and reset all to nullptr.
-    peerLogic.reset();
-    g_connman.reset();
-    g_banman.reset();
+    node.peer_logic.reset();
+    node.connman.reset();
+    node.banman.reset();
 
     if (::mempool.IsLoaded() && gArgs.GetArg("-persistmempool", DEFAULT_PERSIST_MEMPOOL)) {
         DumpMempool(::mempool);
@@ -1518,16 +1515,16 @@ bool AppInitMain(InitInterfaces& interfaces)
     // is not yet setup and may end up being set up twice if we
     // need to reindex later.
 
-    assert(!g_banman);
-    g_banman = MakeUnique<BanMan>(GetDataDir() / "banlist.dat", &uiInterface, gArgs.GetArg("-bantime", DEFAULT_MISBEHAVING_BANTIME));
-    assert(!g_connman);
-    g_connman = std::unique_ptr<CConnman>(new CConnman(GetRand(std::numeric_limits<uint64_t>::max()), GetRand(std::numeric_limits<uint64_t>::max())));
+    assert(!node.banman);
+    node.banman = MakeUnique<BanMan>(GetDataDir() / "banlist.dat", &uiInterface, gArgs.GetArg("-bantime", DEFAULT_MISBEHAVING_BANTIME));
+    assert(!node.connman);
+    node.connman = std::unique_ptr<CConnman>(new CConnman(GetRand(std::numeric_limits<uint64_t>::max()), GetRand(std::numeric_limits<uint64_t>::max())));
 
-    peerLogic.reset(new PeerLogicValidation(g_connman.get(), g_banman.get(), scheduler, gArgs.GetBoolArg("-enablebip61", DEFAULT_ENABLE_BIP61)));
-    RegisterValidationInterface(peerLogic.get());
+    node.peer_logic.reset(new PeerLogicValidation(node.connman.get(), node.banman.get(), scheduler, gArgs.GetBoolArg("-enablebip61", DEFAULT_ENABLE_BIP61)));
+    RegisterValidationInterface(node.peer_logic.get());
 
 #ifdef ENABLE_WALLET
-    CWallet::defaultConnman = g_connman.get();
+    CWallet::defaultConnman = node.connman.get();
 #endif
 
     // sanitize comments per BIP-0014, format user agent and check total size
@@ -2045,8 +2042,8 @@ bool AppInitMain(InitInterfaces& interfaces)
     connOptions.nMaxFeeler = 1;
     connOptions.nBestHeight = chain_active_height;
     connOptions.uiInterface = &uiInterface;
-    connOptions.m_banman = g_banman.get();
-    connOptions.m_msgproc = peerLogic.get();
+    connOptions.m_banman = node.banman.get();
+    connOptions.m_msgproc = node.peer_logic.get();
     connOptions.nSendBufferMaxSize = 1000*gArgs.GetArg("-maxsendbuffer", DEFAULT_MAXSENDBUFFER);
     connOptions.nReceiveFloodSize = 1000*gArgs.GetArg("-maxreceivebuffer", DEFAULT_MAXRECEIVEBUFFER);
     connOptions.m_added_nodes = gArgs.GetArgs("-addnode");
@@ -2086,7 +2083,7 @@ bool AppInitMain(InitInterfaces& interfaces)
             connOptions.m_specified_outgoing = connect;
         }
     }
-    if (!g_connman->Start(scheduler, connOptions)) {
+    if (!node.connman->Start(scheduler, connOptions)) {
         return false;
     }
 
@@ -2100,7 +2097,7 @@ bool AppInitMain(InitInterfaces& interfaces)
     }
 
     scheduler.scheduleEvery([]{
-        g_banman->DumpBanlist();
+        node.banman->DumpBanlist();
     }, DUMP_BANS_INTERVAL * 1000);
 
     return true;

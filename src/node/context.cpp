@@ -5,7 +5,10 @@
 #include <node/context.h>
 
 #include <banman.h>
+#include <banman.h>
 #include <interfaces/chain.h>
+#include <net.h>
+#include <net_processing.h>
 #include <net.h>
 #include <net_processing.h>
 #include <scheduler.h>
