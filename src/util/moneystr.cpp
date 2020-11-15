@@ -31,18 +31,19 @@ std::string FormatMoney(const CAmount& n)
 }
 
 
-bool ParseMoney(const std::string& str, CAmount& nRet)
+bool ParseMoney(const std::string& money_string, CAmount& nRet)
 {
-    return ParseMoney(str.c_str(), nRet);
+    if (!ValidAsCString(money_string)) {
+        return false;
+    }
+    const std::string str = TrimString(money_string);
+    if (str.empty()) {
+        return false;
 }
 
-bool ParseMoney(const char* pszIn, CAmount& nRet)
-{
     std::string strWhole;
     int64_t nUnits = 0;
-    const char* p = pszIn;
-    while (IsSpace(*p))
-        p++;
+    const char* p = str.c_str();
     for (; *p; p++)
     {
         if (*p == '.')
@@ -57,14 +58,14 @@ bool ParseMoney(const char* pszIn, CAmount& nRet)
             break;
         }
         if (IsSpace(*p))
-            break;
+            return false;
         if (!IsDigit(*p))
             return false;
         strWhole.insert(strWhole.end(), *p);
     }
-    for (; *p; p++)
-        if (!IsSpace(*p))
+    if (*p) {
             return false;
+    }
     if (strWhole.size() > 10) // guard against 63 bit overflow
         return false;
     if (nUnits < 0 || nUnits > COIN)
