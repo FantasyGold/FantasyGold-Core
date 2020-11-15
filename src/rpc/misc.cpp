@@ -809,13 +809,14 @@ UniValue getdescriptorinfo(const JSONRPCRequest& request)
                 {"descriptor", RPCArg::Type::STR, RPCArg::Optional::NO, "The descriptor."},
             },
             RPCResult{
-            "{\n"
-            "  \"descriptor\" : \"desc\",         (string) The descriptor in canonical form, without private keys\n"
-            "  \"checksum\" : \"chksum\",         (string) The checksum for the input descriptor\n"
-            "  \"isrange\" : true|false,        (boolean) Whether the descriptor is ranged\n"
-            "  \"issolvable\" : true|false,     (boolean) Whether the descriptor is solvable\n"
-            "  \"hasprivatekeys\" : true|false, (boolean) Whether the input descriptor contained at least one private key\n"
-            "}\n"
+                RPCResult::Type::OBJ, "", "",
+                {
+                    {RPCResult::Type::STR, "descriptor", "The descriptor in canonical form, without private keys"},
+                    {RPCResult::Type::STR, "checksum", "The checksum for the input descriptor"},
+                    {RPCResult::Type::BOOL, "isrange", "Whether the descriptor is ranged"},
+                    {RPCResult::Type::BOOL, "issolvable", "Whether the descriptor is solvable"},
+                    {RPCResult::Type::BOOL, "hasprivatekeys", "Whether the input descriptor contained at least one private key"},
+                }
             },
             RPCExamples{
                 "Analyse a descriptor\n" +
@@ -926,7 +927,7 @@ static UniValue verifymessage(const JSONRPCRequest& request)
                     {"message", RPCArg::Type::STR, RPCArg::Optional::NO, "The message that was signed."},
                 },
                 RPCResult{
-            "true|false   (boolean) If the signature is verified or not.\n"
+                    RPCResult::Type::BOOL, "", "If the signature is verified or not."
                 },
                 RPCExamples{
             "\nUnlock the wallet for 30 seconds\n"
@@ -982,7 +983,7 @@ static UniValue signmessagewithprivkey(const JSONRPCRequest& request)
                     {"message", RPCArg::Type::STR, RPCArg::Optional::NO, "The message to create a signature of."},
                 },
                 RPCResult{
-            "\"signature\"          (string) The signature of the message encoded in base 64\n"
+                    RPCResult::Type::STR, "signature", "The signature of the message encoded in base 64"
                 },
                 RPCExamples{
             "\nCreate the signature\n"

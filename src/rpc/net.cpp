@@ -34,7 +34,7 @@ static UniValue getconnectioncount(const JSONRPCRequest& request)
                 "\nReturns the number of connections to other nodes.\n",
                 {},
                 RPCResult{
-            "n          (numeric) The connection count\n"
+                    RPCResult::Type::NUM, "", "The connection count"
                 },
                 RPCExamples{
                     HelpExampleCli("getconnectioncount", "")

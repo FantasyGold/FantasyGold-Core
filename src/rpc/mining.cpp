@@ -97,8 +97,7 @@ static UniValue getnetworkhashps(const JSONRPCRequest& request)
                     {"height", RPCArg::Type::NUM, /* default */ "-1", "To estimate at the time of the given height."},
                 },
                 RPCResult{
-            "x             (numeric) Hashes per second estimated\n"
-                },
+                    RPCResult::Type::NUM, "", "Hashes per second estimated"},
                 RPCExamples{
                     HelpExampleCli("getnetworkhashps", "")
             + HelpExampleRpc("getnetworkhashps", "")
@@ -362,8 +361,7 @@ static UniValue prioritisetransaction(const JSONRPCRequest& request)
             "                  considers the transaction as it would have paid a higher (or lower) fee."},
                 },
                 RPCResult{
-            "true              (boolean) Returns true\n"
-                },
+                    RPCResult::Type::BOOL, "", "Returns true"},
                 RPCExamples{
                     HelpExampleCli("prioritisetransaction", "\"txid\" 0.0 10000")
             + HelpExampleRpc("prioritisetransaction", "\"txid\", 0.0, 10000")
@@ -886,8 +884,7 @@ static UniValue submitheader(const JSONRPCRequest& request)
                     {"hexdata", RPCArg::Type::STR_HEX, RPCArg::Optional::NO, "the hex-encoded block header data"},
                 },
                 RPCResult{
-            "None"
-                },
+                    RPCResult::Type::NONE, "", "None"},
                 RPCExamples{
                     HelpExampleCli("submitheader", "\"aabbcc\"") +
                     HelpExampleRpc("submitheader", "\"aabbcc\"")

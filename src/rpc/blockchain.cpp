@@ -358,8 +358,7 @@ static UniValue getblockcount(const JSONRPCRequest& request)
                 "The genesis block has height 0.\n",
                 {},
                 RPCResult{
-            "n    (numeric) The current block count\n"
-                },
+                    RPCResult::Type::NUM, "", "The current block count"},
                 RPCExamples{
                     HelpExampleCli("getblockcount", "")
             + HelpExampleRpc("getblockcount", "")
@@ -376,8 +375,7 @@ static UniValue getbestblockhash(const JSONRPCRequest& request)
                 "\nReturns the hash of the best (tip) block in the most-work fully-validated chain.\n",
                 {},
                 RPCResult{
-            "\"hex\"      (string) the block hash, hex-encoded\n"
-                },
+                    RPCResult::Type::STR_HEX, "", "the block hash, hex-encoded"},
                 RPCExamples{
                     HelpExampleCli("getbestblockhash", "")
             + HelpExampleRpc("getbestblockhash", "")
@@ -546,8 +544,7 @@ static UniValue getdifficulty(const JSONRPCRequest& request)
                 "\nReturns the proof-of-stake difficulty as a multiple of the minimum difficulty.\n",
                 {},
                 RPCResult{
-            "n.nnn       (numeric) the proof-of-work difficulty as a multiple of the minimum difficulty.\n"
-                },
+                    RPCResult::Type::NUM, "", "the proof-of-work difficulty as a multiple of the minimum difficulty."},
                 RPCExamples{
                     HelpExampleCli("getdifficulty", "")
             + HelpExampleRpc("getdifficulty", "")
@@ -690,17 +687,17 @@ static UniValue getrawmempool(const JSONRPCRequest& request)
                 {
                     {"verbose", RPCArg::Type::BOOL, /* default */ "false", "True for a json object, false for array of transaction ids"},
                 },
-                RPCResult{"for verbose = false",
-            "[                     (json array of string)\n"
-            "  \"transactionid\"     (string) The transaction id\n"
-            "  ,...\n"
-            "]\n"
-            "\nResult: (for verbose = true):\n"
-            "{                           (json object)\n"
-            "  \"transactionid\" : {       (json object)\n"
-            + EntryDescriptionString()
-            + "  }, ...\n"
-            "}\n"
+                {
+                    RPCResult{"for verbose = false",
+                        RPCResult::Type::ARR, "", "",
+                        {
+                            {RPCResult::Type::STR_HEX, "", "The transaction id"},
+                        }},
+                    RPCResult{"for verbose = true",
+                        RPCResult::Type::OBJ, "", "",
+                        {
+                            {RPCResult::Type::OBJ_DYN, "transactionid", "", MempoolEntryDescription()},
+                        }},
                 },
                 RPCExamples{
                     HelpExampleCli("getrawmempool", "true")
@@ -725,18 +722,10 @@ static UniValue getmempoolancestors(const JSONRPCRequest& request)
                 },
                 {
                     RPCResult{"for verbose = false",
-            "[                       (json array of strings)\n"
-            "  \"transactionid\"           (string) The transaction id of an in-mempool ancestor transaction\n"
-            "  ,...\n"
-            "]\n"
-                    },
+                        RPCResult::Type::ARR, "", "",
+                        {{RPCResult::Type::STR_HEX, "", "The transaction id of an in-mempool ancestor transaction"}}},
                     RPCResult{"for verbose = true",
-            "{                           (json object)\n"
-            "  \"transactionid\" : {       (json object)\n"
-            + EntryDescriptionString()
-            + "  }, ...\n"
-            "}\n"
-                    },
+                        RPCResult::Type::OBJ_DYN, "transactionid", "", MempoolEntryDescription()},
                 },
                 RPCExamples{
                     HelpExampleCli("getmempoolancestors", "\"mytxid\"")
@@ -792,18 +781,13 @@ static UniValue getmempooldescendants(const JSONRPCRequest& request)
                 },
                 {
                     RPCResult{"for verbose = false",
-            "[                       (json array of strings)\n"
-            "  \"transactionid\"           (string) The transaction id of an in-mempool descendant transaction\n"
-            "  ,...\n"
-            "]\n"
-                    },
+                        RPCResult::Type::ARR, "", "",
+                        {{RPCResult::Type::STR_HEX, "", "The transaction id of an in-mempool descendant transaction"}}},
                     RPCResult{"for verbose = true",
-            "{                           (json object)\n"
-            "  \"transactionid\" : {       (json object)\n"
-            + EntryDescriptionString()
-            + "  }, ...\n"
-            "}\n"
-                    },
+                        RPCResult::Type::OBJ, "", "",
+                        {
+                            {RPCResult::Type::OBJ_DYN, "transactionid", "", MempoolEntryDescription()},
+                        }},
                 },
                 RPCExamples{
                     HelpExampleCli("getmempooldescendants", "\"mytxid\"")
@@ -857,10 +841,7 @@ static UniValue getmempoolentry(const JSONRPCRequest& request)
                     {"txid", RPCArg::Type::STR_HEX, RPCArg::Optional::NO, "The transaction id (must be in mempool)"},
                 },
                 RPCResult{
-            "{                           (json object)\n"
-            + EntryDescriptionString()
-            + "}\n"
-                },
+                    RPCResult::Type::OBJ_DYN, "", "", MempoolEntryDescription()},
                 RPCExamples{
                     HelpExampleCli("getmempoolentry", "\"mytxid\"")
             + HelpExampleRpc("getmempoolentry", "\"mytxid\"")
@@ -890,8 +871,7 @@ static UniValue getblockhash(const JSONRPCRequest& request)
                     {"height", RPCArg::Type::NUM, RPCArg::Optional::NO, "The height index"},
                 },
                 RPCResult{
-            "\"hash\"         (string) The block hash\n"
-                },
+                    RPCResult::Type::STR_HEX, "", "The block hash"},
                 RPCExamples{
                     HelpExampleCli("getblockhash", "1000")
             + HelpExampleRpc("getblockhash", "1000")
@@ -2122,8 +2102,7 @@ static UniValue pruneblockchain(const JSONRPCRequest& request)
             "                  to prune blocks whose block time is at least 2 hours older than the provided timestamp."},
                 },
                 RPCResult{
-            "n    (numeric) Height of the last block pruned.\n"
-                },
+                    RPCResult::Type::NUM, "", "Height of the last block pruned"},
                 RPCExamples{
                     HelpExampleCli("pruneblockchain", "1000")
             + HelpExampleRpc("pruneblockchain", "1000")
@@ -2306,8 +2285,7 @@ static UniValue verifychain(const JSONRPCRequest& request)
                     {"nblocks", RPCArg::Type::NUM, /* default */ strprintf("%d, 0=all", nCheckDepth), "The number of blocks to check."},
                 },
                 RPCResult{
-            "true|false       (boolean) Verified or not\n"
-                },
+                    RPCResult::Type::BOOL, "", "Verified or not"},
                 RPCExamples{
                     HelpExampleCli("verifychain", "")
             + HelpExampleRpc("verifychain", "")
@@ -3392,11 +3370,11 @@ static UniValue getblockfilter(const JSONRPCRequest& request)
                     {"filtertype", RPCArg::Type::STR, /*default*/ "basic", "The type name of the filter"},
                 },
                 RPCResult{
-                    "{\n"
-                    "  \"filter\" : (string) the hex-encoded filter data\n"
-                    "  \"header\" : (string) the hex-encoded filter header\n"
-                    "}\n"
-                },
+                    RPCResult::Type::OBJ, "", "",
+                    {
+                        {RPCResult::Type::STR_HEX, "filter", "the hex-encoded filter data"},
+                        {RPCResult::Type::STR_HEX, "header", "the hex-encoded filter header"},
+                    }},
                 RPCExamples{
                     HelpExampleCli("getblockfilter", "\"00000000c937983704a73af28acdec37b049d214adbda81d7e2a3dd146f6ed09\" \"basic\"")
                 }
