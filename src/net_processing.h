@@ -38,10 +38,14 @@ static const bool DEFAULT_CLEANBLOCKINDEX = true;
 /** Default for -cleanblockindextimeout. */
 static const unsigned int DEFAULT_CLEANBLOCKINDEXTIMEOUT = 600;
 
+
 class PeerLogicValidation final : public CValidationInterface, public NetEventsInterface {
 private:
     CConnman* const connman;
     BanMan* const m_banman;
+    CTxMemPool& m_mempool;
+
+    bool MaybeDiscourageAndDisconnect(CNode* pnode) EXCLUSIVE_LOCKS_REQUIRED(cs_main);
 
     bool SendRejectsAndCheckIfBanned(CNode* pnode, bool enable_bip61) EXCLUSIVE_LOCKS_REQUIRED(cs_main);
 public:
