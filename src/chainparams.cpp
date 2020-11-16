@@ -72,7 +72,7 @@ static CBlock CreateGenesisBlock(uint32_t nTime, uint32_t nNonce, uint32_t nBits
 class CMainParams : public CChainParams {
 public:
     CMainParams() {
-        strNetworkID = "main";
+        strNetworkID = CBaseChainParams::MAIN;
         consensus.nSubsidyHalvingInterval = 985500; // fantasygold halving every 4 years
         consensus.BIP16Exception = uint256S("0x00000000c2d6c00523c13656709668b65ab59c80c18c33ef22f2c5824542ee8c");
         consensus.BIP34Height = 0;
@@ -101,10 +101,13 @@ public:
         consensus.vDeployments[Consensus::DEPLOYMENT_TESTDUMMY].bit = 28;
 	consensus.vDeployments[Consensus::DEPLOYMENT_TESTDUMMY].nStartTime = 1199145601; // January 1, 2008
 	consensus.vDeployments[Consensus::DEPLOYMENT_TESTDUMMY].nTimeout = 1230767999; // December 31, 2008
+
         // The best chain should have at least this much work.
 	consensus.nMinimumChainWork = uint256S("0x000000000000000000000000000000000000000000000127116c0a1659246317"); // block 160800
+        
         // By default assume that the signatures in ancestors of this block are valid.
 	consensus.defaultAssumeValid = uint256S("0xb9e862650737156f2e7c202af0b2997cf5f097fc44f9247602298f665e97530c"); // block 160800
+        
         /**
          * The message start string is designed to be unlikely to occur in normal data.
          * The characters are rarely used upper ASCII, not valid as UTF-8, and produce
@@ -118,27 +121,37 @@ public:
         nPruneAfterHeight = 100000;
         m_assumed_blockchain_size = 8;
         m_assumed_chain_state_size = 1;
+        
         genesis = CreateGenesisBlock(1562129547, 1950712874, 0x1d00ffff, 1, 50 * COIN);
         consensus.hashGenesisBlock = genesis.GetHash(); 
         assert(consensus.hashGenesisBlock == uint256S("0x00000000c2d6c00523c13656709668b65ab59c80c18c33ef22f2c5824542ee8c"));
         assert(genesis.hashMerkleRoot == uint256S("0x445f47dbb97c4ccad83a131158776d06dcd0bf85ba26d2f5fb7845b5cd7311e8"));
+        
         // Note that of those which support the service bits prefix, most only support a subset of possible options.
         // This is fine at runtime as we'll fall back to using them as a oneshot if they don't support the
         // service bits we want, but we should get them updated to support all service bits wanted by any
         // release ASAP to avoid it where possible.
+        
         vSeeds.emplace_back("fgc1.fantasygold.io"); // FantasyGold mainnet
         vSeeds.emplace_back("fgc2.fantasygold.io"); // FantasyGold mainnet
+        
+        
         base58Prefixes[PUBKEY_ADDRESS] = std::vector<unsigned char>(1,35);
         base58Prefixes[SCRIPT_ADDRESS] = std::vector<unsigned char>(1,38);
         base58Prefixes[SECRET_KEY] =     std::vector<unsigned char>(1,138);
         base58Prefixes[EXT_PUBLIC_KEY] = {0x08, 0xB8, 0xD2, 0x3E};
         base58Prefixes[EXT_SECRET_KEY] = {0x02, 0xA7, 0xF1, 0x4B};
+        
         bech32_hrp = "fg";
+        
         vFixedSeeds = std::vector<SeedSpec6>(pnSeed6_main, pnSeed6_main + ARRAYLEN(pnSeed6_main));
+        
         fDefaultConsistencyChecks = false;
         fRequireStandard = true;
         fMineBlocksOnDemand = false;
         m_is_test_chain = false;
+        m_is_mockable_chain = false;
+
         checkpointData = {
             {
                 {0, uint256S("0x00000000c2d6c00523c13656709668b65ab59c80c18c33ef22f2c5824542ee8c")},
@@ -149,6 +162,7 @@ public:
                 {160800, uint256S("0xb9e862650737156f2e7c202af0b2997cf5f097fc44f9247602298f665e97530c")},
             }
         };
+        
         chainTxData = ChainTxData{	// Data as of block 160847 (hash 0xc55e483f1c035d2f17dc4b9b33c530701885409e289d97ca64208b1b6d8e9f14 )
             	
         	1584048384, 		// * UNIX timestamp of last known number of transactions
@@ -178,7 +192,7 @@ public:
 class CTestNetParams : public CChainParams {
 public:
     CTestNetParams() {
-        strNetworkID = "test";
+        strNetworkID = CBaseChainParams::TESTNET;
         consensus.nSubsidyHalvingInterval = 985500; // fantasygold halving every 4 years
         consensus.BIP16Exception = uint256S("0x00000000f4df2cfa0dc2cb56758f5a54351d8a2c2d715278e876f448c3e23506");
         consensus.BIP34Height = 0;
@@ -255,7 +269,7 @@ public:
         fRequireStandard = false;
         fMineBlocksOnDemand = false;
         m_is_test_chain = true;
-
+        m_is_mockable_chain = false;
 
         checkpointData = {
             {
@@ -276,6 +290,7 @@ public:
         //m_fallback_fee_enabled = true;
 
         consensus.nLastPOWBlock = 880;
+        consensus.nLastBigReward = 880;
         consensus.nMPoSRewardRecipients = 10;
         consensus.nFirstMPoSBlock = consensus.nLastPOWBlock + 
                                     consensus.nMPoSRewardRecipients + 
@@ -295,7 +310,7 @@ public:
 class CRegTestParams : public CChainParams {
 public:
     explicit CRegTestParams(const ArgsManager& args) {
-        strNetworkID = "regtest";
+        strNetworkID =  CBaseChainParams::REGTEST;
         consensus.nSubsidyHalvingInterval = 150;
         consensus.BIP16Exception = uint256S("0x3687ba41c0a4621c646ca11ed757568373e51c6e51ba20076e9d39bb58404bb4");
         consensus.BIP34Height = 0; // BIP34 has not activated on regtest (far in the future so block v1 are not rejected in tests) // activate for fantasygold
@@ -354,6 +369,7 @@ public:
         fRequireStandard = true;
         fMineBlocksOnDemand = true;
         m_is_test_chain = true;
+        m_is_mockable_chain = true;
 
         checkpointData = {
             {
