@@ -8,7 +8,7 @@
 #include <wallet/wallet.h>
 
 #include <boost/test/unit_test.hpp>
-#include <test/util/util/setup_common.h>
+#include <test/util/setup_common.h>
 #include <wallet/test/wallet_test_fixture.h>
 
 BOOST_FIXTURE_TEST_SUITE(psbt_wallet_tests, WalletTestingSetup)

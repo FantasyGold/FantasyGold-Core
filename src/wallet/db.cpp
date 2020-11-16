@@ -44,7 +44,7 @@ void CheckUniqueFileid(const BerkeleyEnvironment& env, const std::string& filena
     }
 }
 
-CCriticalSection cs_db;
+RecursiveMutex cs_db;
 std::map<std::string, std::weak_ptr<BerkeleyEnvironment>> g_dbenvs GUARDED_BY(cs_db); //!< Map from directory name to db environment.
 } // namespace
 
@@ -410,7 +410,7 @@ bool BerkeleyBatch::VerifyEnvironment(const fs::path& file_path, std::string& er
     return true;
 }
 
-bool BerkeleyBatch::VerifyDatabaseFile(const fs::path& file_path, std::string& warningStr, std::string& errorStr, BerkeleyEnvironment::recoverFunc_type recoverFunc)
+bool BerkeleyBatch::VerifyDatabaseFile(const fs::path& file_path, std::vector<std::string>& warnings, std::string& errorStr, BerkeleyEnvironment::recoverFunc_type recoverFunc)
 {
     std::string walletFile;
     std::shared_ptr<BerkeleyEnvironment> env = GetWalletEnv(file_path, walletFile);
@@ -422,11 +422,11 @@ bool BerkeleyBatch::VerifyDatabaseFile(const fs::path& file_path, std::string& w
         BerkeleyEnvironment::VerifyResult r = env->Verify(walletFile, recoverFunc, backup_filename);
         if (r == BerkeleyEnvironment::VerifyResult::RECOVER_OK)
         {
-            warningStr = strprintf(_("Warning: Wallet file corrupt, data salvaged!"
+            warnings.push_back(strprintf(_("Warning: Wallet file corrupt, data salvaged!"
                                      " Original %s saved as %s in %s; if"
                                      " your balance or transactions are incorrect you should"
                                      " restore from a backup.").translated,
-                                   walletFile, backup_filename, walletDir);
+                walletFile, backup_filename, walletDir));
         }
         if (r == BerkeleyEnvironment::VerifyResult::RECOVER_FAIL)
         {
@@ -650,7 +650,7 @@ void BerkeleyEnvironment::ReloadDbEnv()
 {
     // Make sure that no Db's are in use
     AssertLockNotHeld(cs_db);
-    std::unique_lock<CCriticalSection> lock(cs_db);
+    std::unique_lock<RecursiveMutex> lock(cs_db);
     m_db_in_use.wait(lock, [this](){
         for (auto& count : mapFileUseCount) {
             if (count.second > 0) return false;
@@ -756,7 +756,7 @@ bool BerkeleyBatch::Rewrite(BerkeleyDatabase& database, const char* pszSkip)
                 return fSuccess;
             }
         }
-        MilliSleep(100);
+        UninterruptibleSleep(std::chrono::milliseconds{100});
     }
 }
 
@@ -887,7 +887,7 @@ bool BerkeleyDatabase::Backup(const std::string& strDest) const
                 }
             }
         }
-        MilliSleep(100);
+        UninterruptibleSleep(std::chrono::milliseconds{100});
     }
 }
 

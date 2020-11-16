@@ -9,7 +9,7 @@
 #include <amount.h>
 #include <primitives/transaction.h>
 #include <random.h>
-#include <test/util/util/setup_common.h>
+#include <test/util/setup_common.h>
 #include <wallet/test/wallet_test_fixture.h>
 
 #include <boost/test/unit_test.hpp>
@@ -202,19 +202,6 @@ BOOST_AUTO_TEST_CASE(bnb_search_test)
     actual_selection.clear();
     selection.clear();
 
-    // Cost of change is greater than the difference between target value and utxo sum
-    add_coin(1 * CENT, 1, actual_selection);
-    BOOST_CHECK(SelectCoinsBnB(GroupCoins(utxo_pool), 0.9 * CENT, 0.5 * CENT, selection, value_ret, not_input_fees));
-    BOOST_CHECK_EQUAL(value_ret, 1 * CENT);
-    BOOST_CHECK(equal_sets(selection, actual_selection));
-    actual_selection.clear();
-    selection.clear();
-
-    // Cost of change is less than the difference between target value and utxo sum
-    BOOST_CHECK(!SelectCoinsBnB(GroupCoins(utxo_pool), 0.9 * CENT, 0, selection, value_ret, not_input_fees));
-    actual_selection.clear();
-    selection.clear();
-
     // Select 10 Cent
     add_coin(5 * CENT, 5, utxo_pool);
     add_coin(4 * CENT, 4, actual_selection);
@@ -310,9 +297,9 @@ BOOST_AUTO_TEST_CASE(bnb_search_test)
         add_coin(*wallet, 5 * CENT, 6 * 24, false, 0, true);
         add_coin(*wallet, 3 * CENT, 6 * 24, false, 0, true);
         add_coin(*wallet, 2 * CENT, 6 * 24, false, 0, true);
-    CCoinControl coin_control;
-    coin_control.fAllowOtherInputs = true;
-    coin_control.Select(COutPoint(vCoins.at(0).tx->GetHash(), vCoins.at(0).i));
+        CCoinControl coin_control;
+        coin_control.fAllowOtherInputs = true;
+        coin_control.Select(COutPoint(vCoins.at(0).tx->GetHash(), vCoins.at(0).i));
         coin_selection_params_bnb.effective_fee = CFeeRate(0);
         BOOST_CHECK(wallet->SelectCoins(vCoins, 10 * CENT, setCoinsRet, nValueRet, coin_control, coin_selection_params_bnb, bnb_used));
         BOOST_CHECK(bnb_used);

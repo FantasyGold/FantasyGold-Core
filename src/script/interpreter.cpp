@@ -13,7 +13,6 @@
 #include <uint256.h>
 #include <script/standard.h>
 
-
 namespace {
 
 inline bool set_success(ScriptError* ret)
@@ -1470,13 +1469,11 @@ uint256 SignatureHash(const CScript& scriptCode, const T& txTo, unsigned int nIn
         return ss.GetHash();
     }
 
-    static const uint256 one(uint256S("0000000000000000000000000000000000000000000000000000000000000001"));
-
     // Check for invalid use of SIGHASH_SINGLE
     if ((nHashType & 0x1f) == SIGHASH_SINGLE) {
         if (nIn >= txTo.vout.size()) {
             //  nOut out of range
-            return one;
+            return UINT256_ONE();
         }
     }
 
@@ -1637,57 +1634,61 @@ bool GenericTransactionSignatureOutputChecker<T>::CheckSig(const std::vector<uns
 template class GenericTransactionSignatureOutputChecker<CTransaction>;
 template class GenericTransactionSignatureOutputChecker<CMutableTransaction>;
 
+static bool ExecuteWitnessScript(const Span<const valtype>& stack_span, const CScript& scriptPubKey, unsigned int flags, SigVersion sigversion, const BaseSignatureChecker& checker, ScriptError* serror)
+{
+    std::vector<valtype> stack{stack_span.begin(), stack_span.end()};
+
+    // Disallow stack item size > MAX_SCRIPT_ELEMENT_SIZE in witness stack
+    for (const valtype& elem : stack) {
+        if (elem.size() > MAX_SCRIPT_ELEMENT_SIZE) return set_error(serror, SCRIPT_ERR_PUSH_SIZE);
+    }
+
+    // Run the script interpreter.
+    if (!EvalScript(stack, scriptPubKey, flags, checker, sigversion, serror)) return false;
+
+    // Scripts inside witness implicitly require cleanstack behaviour
+    if (stack.size() != 1) return set_error(serror, SCRIPT_ERR_CLEANSTACK);
+    if (!CastToBool(stack.back())) return set_error(serror, SCRIPT_ERR_EVAL_FALSE);
+    return true;
+}
+
 static bool VerifyWitnessProgram(const CScriptWitness& witness, int witversion, const std::vector<unsigned char>& program, unsigned int flags, const BaseSignatureChecker& checker, ScriptError* serror)
 {
-    std::vector<std::vector<unsigned char> > stack;
     CScript scriptPubKey;
+    Span<const valtype> stack = MakeSpan(witness.stack);
 
     if (witversion == 0) {
         if (program.size() == WITNESS_V0_SCRIPTHASH_SIZE) {
             // Version 0 segregated witness program: SHA256(CScript) inside the program, CScript + inputs in witness
-            if (witness.stack.size() == 0) {
+            if (stack.size() == 0) {
                 return set_error(serror, SCRIPT_ERR_WITNESS_PROGRAM_WITNESS_EMPTY);
             }
-            scriptPubKey = CScript(witness.stack.back().begin(), witness.stack.back().end());
-            stack = std::vector<std::vector<unsigned char> >(witness.stack.begin(), witness.stack.end() - 1);
+            const valtype& script_bytes = SpanPopBack(stack);
+            scriptPubKey = CScript(script_bytes.begin(), script_bytes.end());
             uint256 hashScriptPubKey;
             CSHA256().Write(&scriptPubKey[0], scriptPubKey.size()).Finalize(hashScriptPubKey.begin());
             if (memcmp(hashScriptPubKey.begin(), program.data(), 32)) {
                 return set_error(serror, SCRIPT_ERR_WITNESS_PROGRAM_MISMATCH);
             }
+            return ExecuteWitnessScript(stack, scriptPubKey, flags, SigVersion::WITNESS_V0, checker, serror);
         } else if (program.size() == WITNESS_V0_KEYHASH_SIZE) {
             // Special case for pay-to-pubkeyhash; signature + pubkey in witness
-            if (witness.stack.size() != 2) {
+            if (stack.size() != 2) {
                 return set_error(serror, SCRIPT_ERR_WITNESS_PROGRAM_MISMATCH); // 2 items in witness
             }
             scriptPubKey << OP_DUP << OP_HASH160 << program << OP_EQUALVERIFY << OP_CHECKSIG;
-            stack = witness.stack;
+            return ExecuteWitnessScript(stack, scriptPubKey, flags, SigVersion::WITNESS_V0, checker, serror);
         } else {
             return set_error(serror, SCRIPT_ERR_WITNESS_PROGRAM_WRONG_LENGTH);
         }
-    } else if (flags & SCRIPT_VERIFY_DISCOURAGE_UPGRADABLE_WITNESS_PROGRAM) {
-        return set_error(serror, SCRIPT_ERR_DISCOURAGE_UPGRADABLE_WITNESS_PROGRAM);
     } else {
+        if (flags & SCRIPT_VERIFY_DISCOURAGE_UPGRADABLE_WITNESS_PROGRAM) {
+            return set_error(serror, SCRIPT_ERR_DISCOURAGE_UPGRADABLE_WITNESS_PROGRAM);
+        }
         // Higher version witness scripts return true for future softfork compatibility
-        return set_success(serror);
+        return true;
     }
-
-    // Disallow stack item size > MAX_SCRIPT_ELEMENT_SIZE in witness stack
-    for (unsigned int i = 0; i < stack.size(); i++) {
-        if (stack.at(i).size() > MAX_SCRIPT_ELEMENT_SIZE)
-            return set_error(serror, SCRIPT_ERR_PUSH_SIZE);
-    }
-
-    if (!EvalScript(stack, scriptPubKey, flags, checker, SigVersion::WITNESS_V0, serror)) {
-        return false;
-    }
-
-    // Scripts inside witness implicitly require cleanstack behaviour
-    if (stack.size() != 1)
-        return set_error(serror, SCRIPT_ERR_CLEANSTACK);
-    if (!CastToBool(stack.back()))
-        return set_error(serror, SCRIPT_ERR_EVAL_FALSE);
-    return true;
+    // There is intentionally no return statement here, to be able to use "control reaches end of non-void function" warnings to detect gaps in the logic above.
 }
 
 bool VerifyScript(const CScript& scriptSig, const CScript& scriptPubKey, const CScriptWitness* witness, unsigned int flags, const BaseSignatureChecker& checker, ScriptError* serror)

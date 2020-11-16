@@ -26,7 +26,7 @@ def setup():
         programs += ['apt-cacher-ng', 'lxc', 'debootstrap']
     subprocess.check_call(['sudo', 'apt-get', 'install', '-qq'] + programs)
     if not os.path.isdir('gitian.sigs'):
-        subprocess.check_call(['git', 'clone', 'https://github.com/FantasyGold-Core/gitian.sigs.git'])
+        subprocess.check_call(['git', 'clone', 'https://github.com/FantasyGold/gitian.sigs.git'])
     if not os.path.isdir('fantasygold-detached-sigs'):
         subprocess.check_call(['git', 'clone', 'https://github.com/FantasyGold/FantasyGold-Core-detached-sigs.git'])
     if not os.path.isdir('gitian-builder'):

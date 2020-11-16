@@ -19,6 +19,8 @@ static const std::string OUTPUT_TYPE_STRING_LEGACY = "legacy";
 static const std::string OUTPUT_TYPE_STRING_P2SH_SEGWIT = "p2sh-segwit";
 static const std::string OUTPUT_TYPE_STRING_BECH32 = "bech32";
 
+const std::array<OutputType, 3> OUTPUT_TYPES = {OutputType::LEGACY, OutputType::P2SH_SEGWIT, OutputType::BECH32};
+
 bool ParseOutputType(const std::string& type, OutputType& output_type)
 {
     if (type == OUTPUT_TYPE_STRING_LEGACY) {
@@ -66,12 +68,13 @@ CTxDestination GetDestinationForKey(const CPubKey& key, OutputType type)
 std::vector<CTxDestination> GetAllDestinationsForKey(const CPubKey& key)
 {
     PKHash keyid(key);
+    CTxDestination p2pkh{keyid};
     if (key.IsCompressed()) {
         CTxDestination segwit = WitnessV0KeyHash(keyid);
         CTxDestination p2sh = ScriptHash(GetScriptForDestination(segwit));
-        return std::vector<CTxDestination>{std::move(keyid), std::move(p2sh), std::move(segwit)};
+        return Vector(std::move(p2pkh), std::move(p2sh), std::move(segwit));
     } else {
-        return std::vector<CTxDestination>{std::move(keyid)};
+        return Vector(std::move(p2pkh));
     }
 }
 

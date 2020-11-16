@@ -126,6 +126,7 @@ inline uint160 uint160S(const std::string& str)
     rv.SetHex(str);
     return rv;
 }
+
 /** 256-bit opaque blob.
  * @note This type is called uint256 for historical reasons only. It is an
  * opaque blob of 256 bits and has no integer operations. Use arith_uint256 if
@@ -157,5 +158,7 @@ inline uint256 uint256S(const std::string& str)
     rv.SetHex(str);
     return rv;
 }
+
+uint256& UINT256_ONE();
 
 #endif // BITCOIN_UINT256_H

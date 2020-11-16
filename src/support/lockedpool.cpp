@@ -153,7 +153,7 @@ void Arena::walk() const
         printchunk(chunk.first, chunk.second, true);
     std::cout << std::endl;
     for (const auto& chunk: chunks_free)
-        printchunk(chunk.first, chunk.second, false);
+        printchunk(chunk.first, chunk.second->first, false);
     std::cout << std::endl;
 }
 #endif
@@ -253,6 +253,9 @@ void *PosixLockedPageAllocator::AllocateLocked(size_t len, bool *lockingSuccess)
     }
     if (addr) {
         *lockingSuccess = mlock(addr, len) == 0;
+#ifdef MADV_DONTDUMP
+        madvise(addr, len, MADV_DONTDUMP);
+#endif
     }
     return addr;
 }

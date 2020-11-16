@@ -35,7 +35,6 @@ ADD_SIGNALS_IMPL_WRAPPER(InitMessage);
 ADD_SIGNALS_IMPL_WRAPPER(NotifyNumConnectionsChanged);
 ADD_SIGNALS_IMPL_WRAPPER(NotifyNetworkActiveChanged);
 ADD_SIGNALS_IMPL_WRAPPER(NotifyAlertChanged);
-
 ADD_SIGNALS_IMPL_WRAPPER(ShowProgress);
 ADD_SIGNALS_IMPL_WRAPPER(NotifyBlockTip);
 ADD_SIGNALS_IMPL_WRAPPER(NotifyHeaderTip);
@@ -47,7 +46,6 @@ void CClientUIInterface::InitMessage(const std::string& message) { return g_ui_s
 void CClientUIInterface::NotifyNumConnectionsChanged(int newNumConnections) { return g_ui_signals.NotifyNumConnectionsChanged(newNumConnections); }
 void CClientUIInterface::NotifyNetworkActiveChanged(bool networkActive) { return g_ui_signals.NotifyNetworkActiveChanged(networkActive); }
 void CClientUIInterface::NotifyAlertChanged() { return g_ui_signals.NotifyAlertChanged(); }
-
 void CClientUIInterface::ShowProgress(const std::string& title, int nProgress, bool resume_possible) { return g_ui_signals.ShowProgress(title, nProgress, resume_possible); }
 void CClientUIInterface::NotifyBlockTip(bool b, const CBlockIndex* i) { return g_ui_signals.NotifyBlockTip(b, i); }
 void CClientUIInterface::NotifyHeaderTip(bool b, const CBlockIndex* i) { return g_ui_signals.NotifyHeaderTip(b, i); }

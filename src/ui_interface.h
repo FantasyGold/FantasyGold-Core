@@ -17,8 +17,6 @@ class connection;
 }
 } // namespace boost
 
-
-
 /** General change type (added, updated, removed). */
 enum ChangeType
 {

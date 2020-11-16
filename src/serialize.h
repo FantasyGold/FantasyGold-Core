@@ -26,6 +26,9 @@
 
 static const unsigned int MAX_SIZE = 0x10000000; // FantasyGold: Increase max serialized size to 256mb
 
+/** Maximum amount of memory (in bytes) to allocate at once when deserializing vectors. */
+static const unsigned int MAX_VECTOR_ALLOCATE = 5000000;
+
 /**
  * Dummy data type to identify deserializing constructors.
  *
@@ -137,27 +140,31 @@ template<typename Stream> inline uint64_t ser_readdata64(Stream &s)
 }
 inline uint64_t ser_double_to_uint64(double x)
 {
-    union { double x; uint64_t y; } tmp;
-    tmp.x = x;
-    return tmp.y;
+    uint64_t tmp;
+    std::memcpy(&tmp, &x, sizeof(x));
+    static_assert(sizeof(tmp) == sizeof(x), "double and uint64_t assumed to have the same size");
+    return tmp;
 }
 inline uint32_t ser_float_to_uint32(float x)
 {
-    union { float x; uint32_t y; } tmp;
-    tmp.x = x;
-    return tmp.y;
+    uint32_t tmp;
+    std::memcpy(&tmp, &x, sizeof(x));
+    static_assert(sizeof(tmp) == sizeof(x), "float and uint32_t assumed to have the same size");
+    return tmp;
 }
 inline double ser_uint64_to_double(uint64_t y)
 {
-    union { double x; uint64_t y; } tmp;
-    tmp.y = y;
-    return tmp.x;
+    double tmp;
+    std::memcpy(&tmp, &y, sizeof(y));
+    static_assert(sizeof(tmp) == sizeof(y), "double and uint64_t assumed to have the same size");
+    return tmp;
 }
 inline float ser_uint32_to_float(uint32_t y)
 {
-    union { float x; uint32_t y; } tmp;
-    tmp.y = y;
-    return tmp.x;
+    float tmp;
+    std::memcpy(&tmp, &y, sizeof(y));
+    static_assert(sizeof(tmp) == sizeof(y), "float and uint32_t assumed to have the same size");
+    return tmp;
 }
 
 
@@ -491,12 +498,13 @@ public:
 template<typename Formatter, typename T>
 static inline Wrapper<Formatter, T&> Using(T&& t) { return Wrapper<Formatter, T&>(t); }
 
-#define VARINT(obj, ...) Using<VarIntFormatter<__VA_ARGS__>>(obj)
-#define COMPACTSIZE(obj) CCompactSize(REF(obj))
+#define VARINT_MODE(obj, mode) Using<VarIntFormatter<mode>>(obj)
+#define VARINT(obj) Using<VarIntFormatter<VarIntMode::DEFAULT>>(obj)
+#define COMPACTSIZE(obj) Using<CompactSizeFormatter>(obj)
 #define LIMITED_STRING(obj,n) LimitedString< n >(REF(obj))
 
 /** Serialization wrapper class for integers in VarInt format. */
-template<VarIntMode Mode=VarIntMode::DEFAULT>
+template<VarIntMode Mode>
 struct VarIntFormatter
 {
     template<typename Stream, typename I> void Ser(Stream &s, I v)
@@ -566,21 +574,26 @@ public:
     }
 };
 
-class CCompactSize
+/** Formatter for integers in CompactSize format. */
+struct CompactSizeFormatter
 {
-protected:
-    uint64_t &n;
-public:
-    explicit CCompactSize(uint64_t& nIn) : n(nIn) { }
-
-    template<typename Stream>
-    void Serialize(Stream &s) const {
-        WriteCompactSize<Stream>(s, n);
+    template<typename Stream, typename I>
+    void Unser(Stream& s, I& v)
+{
+        uint64_t n = ReadCompactSize<Stream>(s);
+        if (n < std::numeric_limits<I>::min() || n > std::numeric_limits<I>::max()) {
+            throw std::ios_base::failure("CompactSize exceeds limit of type");
+        }
+        v = n;
     }
 
-    template<typename Stream>
-    void Unserialize(Stream& s) {
-        n = ReadCompactSize<Stream>(s);
+    template<typename Stream, typename I>
+    void Ser(Stream& s, I v)
+    {
+        static_assert(std::is_unsigned<I>::value, "CompactSize only supported for unsigned integers");
+        static_assert(std::numeric_limits<I>::max() <= std::numeric_limits<uint64_t>::max(), "CompactSize only supports 64-bit integers and below");
+
+        WriteCompactSize<Stream>(s, v);
     }
 };
 
@@ -827,19 +840,7 @@ void Unserialize_impl(Stream& is, prevector<N, T>& v, const unsigned char&)
 template<typename Stream, unsigned int N, typename T, typename V>
 void Unserialize_impl(Stream& is, prevector<N, T>& v, const V&)
 {
-    v.clear();
-    unsigned int nSize = ReadCompactSize(is);
-    unsigned int i = 0;
-    unsigned int nMid = 0;
-    while (nMid < nSize)
-    {
-        nMid += 5000000 / sizeof(T);
-        if (nMid > nSize)
-            nMid = nSize;
-        v.resize_uninitialized(nMid);
-        for (; i < nMid; ++i)
-            Unserialize(is, v[i]);
-    }
+    Unserialize(is, Using<VectorFormatter<DefaultFormatter>>(v));
 }
 
 template<typename Stream, unsigned int N, typename T>
@@ -905,19 +906,7 @@ void Unserialize_impl(Stream& is, std::vector<T, A>& v, const unsigned char&)
 template<typename Stream, typename T, typename A, typename V>
 void Unserialize_impl(Stream& is, std::vector<T, A>& v, const V&)
 {
-    v.clear();
-    unsigned int nSize = ReadCompactSize(is);
-    unsigned int i = 0;
-    unsigned int nMid = 0;
-    while (nMid < nSize)
-    {
-        nMid += 5000000 / sizeof(T);
-        if (nMid > nSize)
-            nMid = nSize;
-        v.resize(nMid);
-        for (; i < nMid; i++)
-            Unserialize(is, v[i]);
-    }
+    Unserialize(is, Using<VectorFormatter<DefaultFormatter>>(v));
 }
 
 template<typename Stream, typename T, typename A>

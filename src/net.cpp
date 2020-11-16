@@ -34,7 +34,6 @@
 
 #ifdef USE_UPNP
 #include <miniupnpc/miniupnpc.h>
-#include <miniupnpc/miniwget.h>
 #include <miniupnpc/upnpcommands.h>
 #include <miniupnpc/upnperrors.h>
 // The minimum supported miniUPnPc API version is set to 10. This keeps compatibility
@@ -46,8 +45,8 @@ static_assert(MINIUPNPC_API_VERSION >= 10, "miniUPnPc API version >= 10 assumed"
 
 #include <math.h>
 
-// Dump addresses to peers.dat every 15 minutes (900s)
-static constexpr int DUMP_PEERS_INTERVAL = 15 * 60;
+// How often to dump addresses to peers.dat
+static constexpr std::chrono::minutes DUMP_PEERS_INTERVAL{15};
 
 /** Number of DNS seeds to query when the number of connections is low. */
 static constexpr int DNSSEEDS_TO_QUERY_AT_ONCE = 3;
@@ -86,7 +85,7 @@ static const uint64_t RANDOMIZER_ID_LOCALHOSTNONCE = 0xd93e69e2bbfa5735ULL; // S
 bool fDiscover = true;
 bool fListen = true;
 bool g_relay_txes = !DEFAULT_BLOCKSONLY;
-CCriticalSection cs_mapLocalHost;
+RecursiveMutex cs_mapLocalHost;
 std::map<CNetAddr, LocalServiceInfo> mapLocalHost GUARDED_BY(cs_mapLocalHost);
 static bool vfLimited[NET_MAX] GUARDED_BY(cs_mapLocalHost) = {};
 std::string strSubVersion;
@@ -411,7 +410,7 @@ CNode* CConnman::ConnectNode(CAddress addrConnect, const char *pszDest, bool fCo
             if (hSocket == INVALID_SOCKET) {
                 return nullptr;
             }
-            connected = ConnectThroughProxy(proxy, addrConnect.ToStringIP(), addrConnect.GetPort(), hSocket, nConnectTimeout, &proxyConnectionFailed);
+            connected = ConnectThroughProxy(proxy, addrConnect.ToStringIP(), addrConnect.GetPort(), hSocket, nConnectTimeout, proxyConnectionFailed);
         } else {
             // no proxy needed (none set for target network)
             hSocket = CreateSocket(addrConnect);
@@ -433,7 +432,8 @@ CNode* CConnman::ConnectNode(CAddress addrConnect, const char *pszDest, bool fCo
         std::string host;
         int port = default_port;
         SplitHostPort(std::string(pszDest), port, host);
-        connected = ConnectThroughProxy(proxy, host, port, hSocket, nConnectTimeout, nullptr);
+        bool proxyConnectionFailed;
+        connected = ConnectThroughProxy(proxy, host, port, hSocket, nConnectTimeout, proxyConnectionFailed);
     }
     if (!connected) {
         CloseSocket(hSocket);
@@ -446,6 +446,9 @@ CNode* CConnman::ConnectNode(CAddress addrConnect, const char *pszDest, bool fCo
     CAddress addr_bind = GetBindAddress(hSocket);
     CNode* pnode = new CNode(id, nLocalServices, GetBestHeight(), hSocket, addrConnect, CalculateKeyedNetGroup(addrConnect), nonce, addr_bind, pszDest ? pszDest : "", false, block_relay_only);
     pnode->AddRef();
+
+    // We're making a new connection, harvest entropy from the time (and our peer count)
+    RandAddEvent((uint32_t)id);
 
     return pnode;
 }
@@ -495,12 +498,13 @@ void CNode::SetAddrLocal(const CService& addrLocalIn) {
 
 #undef X
 #define X(name) stats.name = name
-void CNode::copyStats(CNodeStats &stats)
+void CNode::copyStats(CNodeStats &stats, const std::vector<bool> &m_asmap)
 {
     stats.nodeid = this->GetId();
     X(nServices);
     X(addr);
     X(addrBind);
+    stats.m_mapped_as = addr.GetMappedAS(m_asmap);
     if (m_tx_relay != nullptr) {
         LOCK(m_tx_relay->cs_filter);
         stats.fRelayTxes = m_tx_relay->fRelayTxes;
@@ -569,42 +573,28 @@ bool CNode::ReceiveMsgBytes(const char *pch, unsigned int nBytes, bool& complete
     nLastRecv = nTimeMicros / 1000000;
     nRecvBytes += nBytes;
     while (nBytes > 0) {
-
-        // get current incomplete message, or create a new one
-        if (vRecvMsg.empty() ||
-            vRecvMsg.back().complete())
-            vRecvMsg.push_back(CNetMessage(Params().MessageStart(), SER_NETWORK, INIT_PROTO_VERSION));
-
-        CNetMessage& msg = vRecvMsg.back();
-
         // absorb network data
-        int handled;
-        if (!msg.in_data)
-            handled = msg.readHeader(pch, nBytes);
-        else
-            handled = msg.readData(pch, nBytes);
-
-        if (handled < 0)
-            return false;
-
-        if (msg.in_data && msg.hdr.nMessageSize > dgpMaxProtoMsgLength) {
-            LogPrint(BCLog::NET, "Oversized message from peer=%i, disconnecting\n", GetId());
-            return false;
-        }
+        int handled = m_deserializer->Read(pch, nBytes);
+        if (handled < 0) return false;
 
         pch += handled;
         nBytes -= handled;
 
-        if (msg.complete()) {
+        if (m_deserializer->Complete()) {
+            // decompose a transport agnostic CNetMessage from the deserializer
+            CNetMessage msg = m_deserializer->GetMessage(Params().MessageStart(), nTimeMicros);
+
             //store received bytes per message command
             //to prevent a memory DOS, only allow valid commands
-            mapMsgCmdSize::iterator i = mapRecvBytesPerMsgCmd.find(msg.hdr.pchCommand);
+            mapMsgCmdSize::iterator i = mapRecvBytesPerMsgCmd.find(msg.m_command);
             if (i == mapRecvBytesPerMsgCmd.end())
                 i = mapRecvBytesPerMsgCmd.find(NET_MESSAGE_COMMAND_OTHER);
             assert(i != mapRecvBytesPerMsgCmd.end());
-            i->second += msg.hdr.nMessageSize + CMessageHeader::HEADER_SIZE;
+            i->second += msg.m_raw_message_size;
 
-            msg.nTime = nTimeMicros;
+            // push the message to the process queue,
+            vRecvMsg.push_back(std::move(msg));
+
             complete = true;
         }
     }
@@ -638,8 +628,7 @@ int CNode::GetSendVersion() const
     return nSendVersion;
 }
 
-
-int CNetMessage::readHeader(const char *pch, unsigned int nBytes)
+int V1TransportDeserializer::readHeader(const char *pch, unsigned int nBytes)
 {
     // copy data to temporary parsing buffer
     unsigned int nRemaining = 24 - nHdrPos;
@@ -660,9 +649,10 @@ int CNetMessage::readHeader(const char *pch, unsigned int nBytes)
         return -1;
     }
 
-    // reject messages larger than MAX_SIZE
-    if (hdr.nMessageSize > MAX_SIZE)
+    // reject messages larger than MAX_SIZE or dgpMaxProtoMsgLength
+    if (hdr.nMessageSize > MAX_SIZE || hdr.nMessageSize > dgpMaxProtoMsgLength) {
         return -1;
+    }
 
     // switch state to reading message data
     in_data = true;
@@ -670,7 +660,7 @@ int CNetMessage::readHeader(const char *pch, unsigned int nBytes)
     return nCopy;
 }
 
-int CNetMessage::readData(const char *pch, unsigned int nBytes)
+int V1TransportDeserializer::readData(const char *pch, unsigned int nBytes)
 {
     unsigned int nRemaining = hdr.nMessageSize - nDataPos;
     unsigned int nCopy = std::min(nRemaining, nBytes);
@@ -687,12 +677,58 @@ int CNetMessage::readData(const char *pch, unsigned int nBytes)
     return nCopy;
 }
 
-const uint256& CNetMessage::GetMessageHash() const
+const uint256& V1TransportDeserializer::GetMessageHash() const
 {
-    assert(complete());
+    assert(Complete());
     if (data_hash.IsNull())
         hasher.Finalize(data_hash.begin());
     return data_hash;
+}
+
+CNetMessage V1TransportDeserializer::GetMessage(const CMessageHeader::MessageStartChars& message_start, int64_t time) {
+    // decompose a single CNetMessage from the TransportDeserializer
+    CNetMessage msg(std::move(vRecv));
+
+    // store state about valid header, netmagic and checksum
+    msg.m_valid_header = hdr.IsValid(message_start);
+    msg.m_valid_netmagic = (memcmp(hdr.pchMessageStart, message_start, CMessageHeader::MESSAGE_START_SIZE) == 0);
+    uint256 hash = GetMessageHash();
+
+    // store command string, payload size
+    msg.m_command = hdr.GetCommand();
+    msg.m_message_size = hdr.nMessageSize;
+    msg.m_raw_message_size = hdr.nMessageSize + CMessageHeader::HEADER_SIZE;
+
+    // We just received a message off the wire, harvest entropy from the time (and the message checksum)
+    RandAddEvent(ReadLE32(hash.begin()));
+
+    msg.m_valid_checksum = (memcmp(hash.begin(), hdr.pchChecksum, CMessageHeader::CHECKSUM_SIZE) == 0);
+    if (!msg.m_valid_checksum) {
+        LogPrint(BCLog::NET, "CHECKSUM ERROR (%s, %u bytes), expected %s was %s\n",
+                 SanitizeString(msg.m_command), msg.m_message_size,
+                 HexStr(hash.begin(), hash.begin()+CMessageHeader::CHECKSUM_SIZE),
+                 HexStr(hdr.pchChecksum, hdr.pchChecksum+CMessageHeader::CHECKSUM_SIZE));
+    }
+
+    // store receive time
+    msg.m_time = time;
+
+    // reset the network deserializer (prepare for the next message)
+    Reset();
+    return msg;
+}
+
+void V1TransportSerializer::prepareForTransport(CSerializedNetMsg& msg, std::vector<unsigned char>& header) {
+    // create dbl-sha256 checksum
+    uint256 hash = Hash(msg.data.begin(), msg.data.end());
+
+    // create header
+    CMessageHeader hdr(Params().MessageStart(), msg.command.c_str(), msg.data.size());
+    memcpy(hdr.pchChecksum, hash.begin(), CMessageHeader::CHECKSUM_SIZE);
+
+    // serialize header
+    header.reserve(CMessageHeader::HEADER_SIZE);
+    CVectorWriter{SER_NETWORK, INIT_PROTO_VERSION, header, 0, hdr};
 }
 
 size_t CConnman::SocketSendData(CNode *pnode) const EXCLUSIVE_LOCKS_REQUIRED(pnode->cs_vSend)
@@ -1010,6 +1046,9 @@ void CConnman::AcceptConnection(const ListenSocket& hListenSocket) {
         LOCK(cs_vNodes);
         vNodes.push_back(pnode);
     }
+
+    // We received a new connection, harvest entropy from the time (and our peer count)
+    RandAddEvent((uint32_t)id);
 }
 
 void CConnman::DisconnectNodes()
@@ -1353,9 +1392,9 @@ void CConnman::SocketHandler()
                     size_t nSizeAdded = 0;
                     auto it(pnode->vRecvMsg.begin());
                     for (; it != pnode->vRecvMsg.end(); ++it) {
-                        if (!it->complete())
-                            break;
-                        nSizeAdded += it->vRecv.size() + CMessageHeader::HEADER_SIZE;
+                        // vRecvMsg contains only completed CNetMessage
+                        // the single possible partially deserialized message are held by TransportDeserializer
+                        nSizeAdded += it->m_raw_message_size;
                     }
                     {
                         LOCK(pnode->cs_vProcessMsg);
@@ -1467,7 +1506,7 @@ static void ThreadMapPort()
                 if (externalIPAddress[0]) {
                     CNetAddr resolved;
                     if (LookupHost(externalIPAddress, resolved, false)) {
-                        LogPrintf("UPnP: ExternalIPAddress = %s\n", resolved.ToString().c_str());
+                        LogPrintf("UPnP: ExternalIPAddress = %s\n", resolved.ToString());
                         AddLocal(resolved, LOCAL_UPNP);
                     }
                 } else {
@@ -1592,7 +1631,7 @@ void CConnman::ThreadDNSAddressSeed()
                 continue;
             }
             unsigned int nMaxIPs = 256; // Limits number of IPs learned from a DNS seed
-            if (LookupHost(host.c_str(), vIPs, nMaxIPs, true)) {
+            if (LookupHost(host, vIPs, nMaxIPs, true)) {
                 for (const CNetAddr& ip : vIPs) {
                     int nOneDay = 24*3600;
                     CAddress addr = CAddress(CService(ip, Params().GetDefaultPort()), requiredServiceBits);
@@ -1751,7 +1790,7 @@ void CConnman::ThreadOpenConnections(const std::vector<std::string> connect)
                     // but inbound and addnode peers do not use our outbound slots.  Inbound peers
                     // also have the added issue that they're attacker controlled and could be used
                     // to prevent us from connecting to particular hosts if we used them here.
-                    setConnected.insert(pnode->addr.GetGroup());
+                    setConnected.insert(pnode->addr.GetGroup(addrman.m_asmap));
                     if (pnode->m_tx_relay == nullptr) {
                         nOutboundBlockRelay++;
                     } else if (!pnode->fFeeler) {
@@ -1799,7 +1838,7 @@ void CConnman::ThreadOpenConnections(const std::vector<std::string> connect)
             }
 
             // Require outbound connections, other than feelers, to be to distinct network groups
-            if (!fFeeler && setConnected.count(addr.GetGroup())) {
+            if (!fFeeler && setConnected.count(addr.GetGroup(addrman.m_asmap))) {
                 break;
             }
 
@@ -1890,7 +1929,7 @@ std::vector<AddedNodeInfo> CConnman::GetAddedNodeInfo()
     }
 
     for (const std::string& strAddNode : lAddresses) {
-        CService service(LookupNumeric(strAddNode.c_str(), Params().GetDefaultPort()));
+        CService service(LookupNumeric(strAddNode, Params().GetDefaultPort()));
         AddedNodeInfo addedNode{strAddNode, CService(), false, false};
         if (service.IsValid()) {
             // strAddNode is an IP:port
@@ -2311,7 +2350,7 @@ bool CConnman::Start(CScheduler& scheduler, const Options& connOptions)
     threadMessageHandler = std::thread(&TraceThread<std::function<void()> >, "msghand", std::function<void()>(std::bind(&CConnman::ThreadMessageHandler, this)));
 
     // Dump network addresses
-    scheduler.scheduleEvery(std::bind(&CConnman::DumpAddresses, this), DUMP_PEERS_INTERVAL * 1000);
+    scheduler.scheduleEvery([this] { DumpAddresses(); }, DUMP_PEERS_INTERVAL);
 
     return true;
 }
@@ -2355,7 +2394,7 @@ void CConnman::Interrupt()
     }
 }
 
-void CConnman::Stop()
+void CConnman::StopThreads()
 {
     if (threadMessageHandler.joinable())
         threadMessageHandler.join();
@@ -2367,14 +2406,17 @@ void CConnman::Stop()
         threadDNSAddressSeed.join();
     if (threadSocketHandler.joinable())
         threadSocketHandler.join();
+}
 
-    if (fAddressesInitialized)
+void CConnman::StopNodes()
     {
+    if (fAddressesInitialized) {
         DumpAddresses();
         fAddressesInitialized = false;
     }
 
     // Close sockets
+    LOCK(cs_vNodes);
     for (CNode* pnode : vNodes)
         pnode->CloseSocketDisconnect();
     for (ListenSocket& hListenSocket : vhListenSocket)
@@ -2484,7 +2526,7 @@ void CConnman::GetNodeStats(std::vector<CNodeStats>& vstats)
     vstats.reserve(vNodes.size());
     for (CNode* pnode : vNodes) {
         vstats.emplace_back();
-        pnode->copyStats(vstats.back());
+        pnode->copyStats(vstats.back(), addrman.m_asmap);
     }
 }
 
@@ -2684,6 +2726,9 @@ CNode::CNode(NodeId idIn, ServiceFlags nLocalServicesIn, int nMyStartingHeightIn
     } else {
         LogPrint(BCLog::NET, "Added connection peer=%d\n", id);
     }
+
+    m_deserializer = MakeUnique<V1TransportDeserializer>(V1TransportDeserializer(Params().MessageStart(), SER_NETWORK, INIT_PROTO_VERSION));
+    m_serializer = MakeUnique<V1TransportSerializer>(V1TransportSerializer());
 }
 
 CNode::~CNode()
@@ -2699,16 +2744,12 @@ bool CConnman::NodeFullyConnected(const CNode* pnode)
 void CConnman::PushMessage(CNode* pnode, CSerializedNetMsg&& msg)
 {
     size_t nMessageSize = msg.data.size();
-    size_t nTotalSize = nMessageSize + CMessageHeader::HEADER_SIZE;
-    LogPrint(BCLog::NET, "sending %s (%d bytes) peer=%d\n",  SanitizeString(msg.command.c_str()), nMessageSize, pnode->GetId());
+    LogPrint(BCLog::NET, "sending %s (%d bytes) peer=%d\n",  SanitizeString(msg.command), nMessageSize, pnode->GetId());
 
+    // make sure we use the appropriate network transport format
     std::vector<unsigned char> serializedHeader;
-    serializedHeader.reserve(CMessageHeader::HEADER_SIZE);
-    uint256 hash = Hash(msg.data.data(), msg.data.data() + nMessageSize);
-    CMessageHeader hdr(Params().MessageStart(), msg.command.c_str(), nMessageSize);
-    memcpy(hdr.pchChecksum, hash.begin(), CMessageHeader::CHECKSUM_SIZE);
-
-    CVectorWriter{SER_NETWORK, INIT_PROTO_VERSION, serializedHeader, 0, hdr};
+    pnode->m_serializer->prepareForTransport(msg, serializedHeader);
+    size_t nTotalSize = nMessageSize + serializedHeader.size();
 
     size_t nBytesSent = 0;
     {
@@ -2769,7 +2810,7 @@ CSipHasher CConnman::GetDeterministicRandomizer(uint64_t id) const
 
 uint64_t CConnman::CalculateKeyedNetGroup(const CAddress& ad) const
 {
-    std::vector<unsigned char> vchNetGroup(ad.GetGroup());
+    std::vector<unsigned char> vchNetGroup(ad.GetGroup(addrman.m_asmap));
 
     return GetDeterministicRandomizer(RANDOMIZER_ID_NETGROUP).Write(vchNetGroup.data(), vchNetGroup.size()).Finalize();
 }

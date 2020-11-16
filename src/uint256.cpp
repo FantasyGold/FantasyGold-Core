@@ -114,3 +114,8 @@ template void base_blob<256>::SetHex(const std::string&);
 template std::string base_blob<256>::GetReverseHex() const;
 template void base_blob<256>::SetReverseHex(const char*);
 template void base_blob<256>::SetReverseHex(const std::string&);
+
+uint256& UINT256_ONE() {
+    static uint256* one = new uint256(uint256S("0000000000000000000000000000000000000000000000000000000000000001"));
+    return *one;
+}

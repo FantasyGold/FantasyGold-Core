@@ -25,8 +25,7 @@ CTxMemPoolEntry::CTxMemPoolEntry(const CTransactionRef& _tx, const CAmount& _nFe
                                  int64_t _nTime, unsigned int _entryHeight,
                                  bool _spendsCoinbase, int64_t _sigOpsCost, LockPoints lp, CAmount _nMinGasPrice)
     : tx(_tx), nFee(_nFee), nTxWeight(GetTransactionWeight(*tx)), nUsageSize(RecursiveDynamicUsage(tx)), nTime(_nTime), entryHeight(_entryHeight),
-    spendsCoinbase(_spendsCoinbase), sigOpCost(_sigOpsCost), lockPoints(lp),
-    nMinGasPrice(_nMinGasPrice)
+    spendsCoinbase(_spendsCoinbase), sigOpCost(_sigOpsCost), lockPoints(lp), nMinGasPrice(_nMinGasPrice), m_epoch(0)
 {
     nCountWithDescendants = 1;
     nSizeWithDescendants = GetTxSize();
@@ -162,7 +161,7 @@ bool CTxMemPool::CalculateMemPoolAncestors(const CTxMemPoolEntry &entry, setEntr
         // GetMemPoolParents() is only valid for entries in the mempool, so we
         // iterate mapTx to find parents.
         for (unsigned int i = 0; i < tx.vin.size(); i++) {
-            boost::optional<txiter> piter = GetIter(tx.vin[i].prevout.hash);
+            Optional<txiter> piter = GetIter(tx.vin[i].prevout.hash);
             if (piter) {
                 parentHashes.insert(*piter);
                 if (parentHashes.size() + 1 > limitAncestorCount) {
@@ -330,7 +329,7 @@ void CTxMemPoolEntry::UpdateAncestorState(int64_t modifySize, CAmount modifyFee,
 }
 
 CTxMemPool::CTxMemPool(CBlockPolicyEstimator* estimator)
-    : nTransactionsUpdated(0), minerPolicyEstimator(estimator)
+    : nTransactionsUpdated(0), minerPolicyEstimator(estimator), m_epoch(0), m_has_epoch_guard(false)
 {
     _clear(); //lock free clear
 
@@ -358,7 +357,6 @@ void CTxMemPool::AddTransactionsUpdated(unsigned int n)
 
 void CTxMemPool::addUnchecked(const CTxMemPoolEntry &entry, setEntries &setAncestors, bool validFeeEstimate)
 {
-    NotifyEntryAdded(entry.GetSharedTx());
     // Add to memory pool without checking anything.
     // Used by AcceptToMemoryPool(), which DOES do
     // all the appropriate checks.
@@ -409,7 +407,14 @@ void CTxMemPool::addUnchecked(const CTxMemPoolEntry &entry, setEntries &setAnces
 
 void CTxMemPool::removeUnchecked(txiter it, MemPoolRemovalReason reason)
 {
-    NotifyEntryRemoved(it->GetSharedTx(), reason);
+    if (reason != MemPoolRemovalReason::BLOCK) {
+        // Notify clients that a transaction has been removed from the mempool
+        // for any reason except being included in a block. Clients interested
+        // in transactions included in blocks can subscribe to the BlockConnected
+        // notification.
+        GetMainSignals().TransactionRemovedFromMempool(it->GetSharedTx(), reason);
+    }
+
     const uint256 hash = it->GetTx().GetHash();
     for (const CTxIn& txin : it->GetTx().vin)
         mapNextTx.erase(txin.prevout);
@@ -871,11 +876,11 @@ const CTransaction* CTxMemPool::GetConflictTx(const COutPoint& prevout) const
     return it == mapNextTx.end() ? nullptr : it->second;
 }
 
-boost::optional<CTxMemPool::txiter> CTxMemPool::GetIter(const uint256& txid) const
+Optional<CTxMemPool::txiter> CTxMemPool::GetIter(const uint256& txid) const
 {
     auto it = mapTx.find(txid);
     if (it != mapTx.end()) return it;
-    return boost::optional<txiter>{};
+    return Optional<txiter>{};
 }
 
 CTxMemPool::setEntries CTxMemPool::GetIterSet(const std::set<uint256>& hashes) const
@@ -1115,6 +1120,25 @@ void CTxMemPool::SetIsLoaded(bool loaded)
     m_is_loaded = loaded;
 }
 
+
+CTxMemPool::EpochGuard CTxMemPool::GetFreshEpoch() const
+{
+    return EpochGuard(*this);
+}
+CTxMemPool::EpochGuard::EpochGuard(const CTxMemPool& in) : pool(in)
+{
+    assert(!pool.m_has_epoch_guard);
+    ++pool.m_epoch;
+    pool.m_has_epoch_guard = true;
+}
+
+CTxMemPool::EpochGuard::~EpochGuard()
+{
+    // prevents stale results being used
+    ++pool.m_epoch;
+    pool.m_has_epoch_guard = false;
+}
+
 SaltedTxidHasher::SaltedTxidHasher() : k0(GetRand(std::numeric_limits<uint64_t>::max())), k1(GetRand(std::numeric_limits<uint64_t>::max())) {}
 
 /////////////////////////////////////////////////////// // fantasygold
@@ -1138,7 +1162,7 @@ void CTxMemPool::addAddressIndex(const CTxMemPoolEntry &entry, const CCoinsViewC
             valtype addressBytes(32);
             std::copy(bytesID.begin(), bytesID.end(), addressBytes.begin());
             CMempoolAddressDeltaKey key(dest.which(), uint256(addressBytes), txhash, j, 1);
-            CMempoolAddressDelta delta(entry.GetTime(), prevout.nValue * -1, input.prevout.hash, input.prevout.n);
+            CMempoolAddressDelta delta(entry.GetTime().count(), prevout.nValue * -1, input.prevout.hash, input.prevout.n);
             mapAddress.insert(std::make_pair(key, delta));
             inserted.push_back(key);
         }
@@ -1156,7 +1180,7 @@ void CTxMemPool::addAddressIndex(const CTxMemPoolEntry &entry, const CCoinsViewC
             valtype addressBytes(32);
             std::copy(bytesID.begin(), bytesID.end(), addressBytes.begin());
             CMempoolAddressDeltaKey key(dest.which(), uint256(addressBytes), txhash, k, 0);
-            mapAddress.insert(std::make_pair(key, CMempoolAddressDelta(entry.GetTime(), out.nValue)));
+            mapAddress.insert(std::make_pair(key, CMempoolAddressDelta(entry.GetTime().count(), out.nValue)));
             inserted.push_back(key);
         }
     }

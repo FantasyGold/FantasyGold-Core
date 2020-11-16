@@ -29,7 +29,7 @@
 #include <boost/multi_index/sequenced_index.hpp>
 
 class CBlockIndex;
-extern CCriticalSection cs_main;
+extern RecursiveMutex cs_main;
 
 /** Fake height value used in Coin to signify they are only in the memory pool (since 0.8) */
 static const uint32_t MEMPOOL_HEIGHT = 0x0FFFFFFF;
@@ -48,8 +48,6 @@ struct LockPoints
 
     LockPoints() : height(0), time(0), maxInputBlock(nullptr) { }
 };
-
-class CTxMemPool;
 
 //////////////////////////////////////////////////////// // fantasygold
 struct CSpentIndexKeyCompare
@@ -215,6 +213,7 @@ public:
     int64_t GetSigOpCostWithAncestors() const { return nSigOpCostWithAncestors; }
 
     mutable size_t vTxHashesIdx; //!< Index in mempool's vTxHashes
+    mutable uint64_t m_epoch; //!< epoch when last touched, useful for graph algorithms
 };
 
 // Helpers for modifying CTxMemPool::mapTx, which is a boost multi_index.
@@ -591,6 +590,8 @@ private:
     mutable int64_t lastRollingFeeUpdate;
     mutable bool blockSinceLastRollingFeeBump;
     mutable double rollingMinimumFeeRate; //!< minimum fee to get into the pool, decreases exponentially
+    mutable uint64_t m_epoch;
+    mutable bool m_has_epoch_guard;
 
     void trackPackageRemoved(const CFeeRate& rate) EXCLUSIVE_LOCKS_REQUIRED(cs);
 
@@ -770,7 +771,7 @@ public:
     const CTransaction* GetConflictTx(const COutPoint& prevout) const EXCLUSIVE_LOCKS_REQUIRED(cs);
 
     /** Returns an iterator to the given hash, if found */
-    boost::optional<txiter> GetIter(const uint256& txid) const EXCLUSIVE_LOCKS_REQUIRED(cs);
+    Optional<txiter> GetIter(const uint256& txid) const EXCLUSIVE_LOCKS_REQUIRED(cs);
 
     /** Translate a set of hashes into a set of pool iterators to avoid repeated lookups */
     setEntries GetIterSet(const std::set<uint256>& hashes) const EXCLUSIVE_LOCKS_REQUIRED(cs);
@@ -872,9 +873,6 @@ public:
 
     size_t DynamicMemoryUsage() const;
 
-    boost::signals2::signal<void (CTransactionRef)> NotifyEntryAdded;
-    boost::signals2::signal<void (CTransactionRef, MemPoolRemovalReason)> NotifyEntryRemoved;
-
 private:
     /** UpdateForDescendants is used by UpdateTransactionsFromBlock to update
      *  the descendants for a single transaction that has been added to the
@@ -912,6 +910,55 @@ private:
      *  removal.
      */
     void removeUnchecked(txiter entry, MemPoolRemovalReason reason) EXCLUSIVE_LOCKS_REQUIRED(cs);
+public:
+    /** EpochGuard: RAII-style guard for using epoch-based graph traversal algorithms.
+     *     When walking ancestors or descendants, we generally want to avoid
+     * visiting the same transactions twice. Some traversal algorithms use
+     * std::set (or setEntries) to deduplicate the transaction we visit.
+     * However, use of std::set is algorithmically undesirable because it both
+     * adds an asymptotic factor of O(log n) to traverals cost and triggers O(n)
+     * more dynamic memory allocations.
+     *     In many algorithms we can replace std::set with an internal mempool
+     * counter to track the time (or, "epoch") that we began a traversal, and
+     * check + update a per-transaction epoch for each transaction we look at to
+     * determine if that transaction has not yet been visited during the current
+     * traversal's epoch.
+     *     Algorithms using std::set can be replaced on a one by one basis.
+     * Both techniques are not fundamentally incompatible across the codebase.
+     * Generally speaking, however, the remaining use of std::set for mempool
+     * traversal should be viewed as a TODO for replacement with an epoch based
+     * traversal, rather than a preference for std::set over epochs in that
+     * algorithm.
+     */
+    class EpochGuard {
+        const CTxMemPool& pool;
+        public:
+        EpochGuard(const CTxMemPool& in);
+        ~EpochGuard();
+    };
+    // N.B. GetFreshEpoch modifies mutable state via the EpochGuard construction
+    // (and later destruction)
+    EpochGuard GetFreshEpoch() const EXCLUSIVE_LOCKS_REQUIRED(cs);
+
+    /** visited marks a CTxMemPoolEntry as having been traversed
+     * during the lifetime of the most recently created EpochGuard
+     * and returns false if we are the first visitor, true otherwise.
+     *
+     * An EpochGuard must be held when visited is called or an assert will be
+     * triggered.
+     *
+     */
+    bool visited(txiter it) const EXCLUSIVE_LOCKS_REQUIRED(cs) {
+        assert(m_has_epoch_guard);
+        bool ret = it->m_epoch >= m_epoch;
+        it->m_epoch = std::max(it->m_epoch, m_epoch);
+        return ret;
+    }
+
+    bool visited(Optional<txiter> it) const EXCLUSIVE_LOCKS_REQUIRED(cs) {
+        assert(m_has_epoch_guard);
+        return !it || visited(*it);
+    }
 };
 
 /**
