@@ -277,26 +277,8 @@ bool CCoinsViewErrorCatcher::GetCoin(const COutPoint &outpoint, Coin &coin) cons
     }
 }
 
-
-bool CCoinsViewErrorCatcher::GetCoin(const COutPoint &outpoint, Coin &coin) const {
-    try {
-        return CCoinsViewBacked::GetCoin(outpoint, coin);
-    } catch(const std::runtime_error& e) {
-        for (auto f : m_err_callbacks) {
-            f();
-        }
-        LogPrintf("Error reading from database: %s\n", e.what());
-        // Starting the shutdown sequence and returning false to the caller would be
-        // interpreted as 'entry not found' (as opposed to unable to read data), and
-        // could lead to invalid interpretation. Just exit immediately, as we can't
-        // continue anyway, and all writes should be atomic.
-        std::abort();
-    }
-}
-
 const CTxOut &CCoinsViewCache::GetOutputFor(const CTxIn& input) const
 {
     const Coin& coins = AccessCoin(input.prevout);
     return coins.out;
 }
-
