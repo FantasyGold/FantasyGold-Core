@@ -27,13 +27,6 @@ const int8_t CHARSET_REV[128] = {
      1,  0,  3, 16, 11, 28, 12, 14,  6,  4,  2, -1, -1, -1, -1, -1
 };
 
-/** Concatenate two byte arrays. */
-data Cat(data x, const data& y)
-{
-    x.insert(x.end(), y.begin(), y.end());
-    return x;
-}
-
 /** This function will compute what 6 5-bit values to XOR into the last 6 input values, in order to
  *  make the checksum 0. These 6 values are packed together in a single 30-bit integer. The higher
  *  bits correspond to earlier values. */
