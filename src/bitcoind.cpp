@@ -25,13 +25,13 @@
 
 const std::function<std::string(const char*)> G_TRANSLATION_FUN = nullptr;
 
-static void WaitForShutdown()
+static void WaitForShutdown(NodeContext& node)
 {
     while (!ShutdownRequested())
     {
-        MilliSleep(200);
+        UninterruptibleSleep(std::chrono::milliseconds{200});
     }
-    Interrupt();
+    Interrupt(node);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -41,7 +41,7 @@ static void WaitForShutdown()
 static bool AppInit(int argc, char* argv[])
 {
     NodeContext node;
-    node.chain = interfaces::MakeChain();
+    node.chain = interfaces::MakeChain(node);
 
     bool fRet = false;
 
@@ -71,7 +71,7 @@ static bool AppInit(int argc, char* argv[])
             strUsage += "\n" + gArgs.GetHelpMessage();
         }
 
-        tfm::format(std::cout, "%s", strUsage.c_str());
+        tfm::format(std::cout, "%s", strUsage);
         return true;
     }
 
@@ -153,9 +153,9 @@ static bool AppInit(int argc, char* argv[])
 
     if (!fRet)
     {
-        Interrupt();
+        Interrupt(node);
     } else {
-        WaitForShutdown();
+        WaitForShutdown(node);
     }
     Shutdown(node);
 
