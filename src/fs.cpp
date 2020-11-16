@@ -50,11 +50,27 @@ FileLock::~FileLock()
     }
 }
 
+static bool IsWSL()
+{
+    struct utsname uname_data;
+    return uname(&uname_data) == 0 && std::string(uname_data.version).find("Microsoft") != std::string::npos;
+}
+
 bool FileLock::TryLock()
 {
     if (fd == -1) {
         return false;
     }
+
+    // Exclusive file locking is broken on WSL using fcntl (issue #18622)
+    // This workaround can be removed once the bug on WSL is fixed
+    static const bool is_wsl = IsWSL();
+    if (is_wsl) {
+        if (flock(fd, LOCK_EX | LOCK_NB) == -1) {
+            reason = GetErrorReason();
+            return false;
+        }
+    } else {
     struct flock lock;
     lock.l_type = F_WRLCK;
     lock.l_whence = SEEK_SET;
@@ -64,6 +80,8 @@ bool FileLock::TryLock()
         reason = GetErrorReason();
         return false;
     }
+    }
+
     return true;
 }
 #else
@@ -114,10 +132,10 @@ std::string get_filesystem_error_message(const fs::filesystem_error& e)
 #else
     // Convert from Multi Byte to utf-16
     std::string mb_string(e.what());
-    int size = MultiByteToWideChar(CP_ACP, 0, mb_string.c_str(), mb_string.size(), nullptr, 0);
+    int size = MultiByteToWideChar(CP_ACP, 0, mb_string.data(), mb_string.size(), nullptr, 0);
 
     std::wstring utf16_string(size, L'\0');
-    MultiByteToWideChar(CP_ACP, 0, mb_string.c_str(), mb_string.size(), &*utf16_string.begin(), size);
+    MultiByteToWideChar(CP_ACP, 0, mb_string.data(), mb_string.size(), &*utf16_string.begin(), size);
     // Convert from utf-16 to utf-8
     return std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>, wchar_t>().to_bytes(utf16_string);
 #endif
